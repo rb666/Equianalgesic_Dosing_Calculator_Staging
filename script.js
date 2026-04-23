@@ -1,9 +1,6 @@
 const ORAL_MORPHINE_FOR_TEN_MG_IV_MORPHINE = 25;
-const METHADONE_ORAL_REFERENCE_DOSE = 10;
 const METHADONE_ORAL_MORPHINE_FACTOR = 4.7;
-const METHADONE_ORAL_REFERENCE_OME =
-  METHADONE_ORAL_REFERENCE_DOSE * METHADONE_ORAL_MORPHINE_FACTOR;
-const METHADONE_IV_REFERENCE_DOSE = METHADONE_ORAL_REFERENCE_DOSE / 2;
+const METHADONE_CONSERVATIVE_DIVISOR = 3;
 
 const conversionOptions = [
   {
@@ -24,6 +21,36 @@ const conversionOptions = [
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
     label: "Morphine oral",
+    targetable: true,
+  },
+  {
+    id: "Codeine_IV",
+    medication: "Codeine",
+    route: "IV",
+    referenceDose: 10,
+    doseUnit: "mg",
+    oralMorphineEquivalent: 3,
+    label: "Codeine IV",
+    targetable: true,
+  },
+  {
+    id: "Codeine_Oral",
+    medication: "Codeine",
+    route: "Oral",
+    referenceDose: 10,
+    doseUnit: "mg",
+    oralMorphineEquivalent: 1.5,
+    label: "Codeine oral",
+    targetable: true,
+  },
+  {
+    id: "Hydrocodone_Oral",
+    medication: "Hydrocodone",
+    route: "Oral",
+    referenceDose: 25,
+    doseUnit: "mg",
+    oralMorphineEquivalent: 25,
+    label: "Hydrocodone oral",
     targetable: true,
   },
   {
@@ -60,9 +87,9 @@ const conversionOptions = [
     id: "Methadone_Oral",
     medication: "Methadone",
     route: "Oral",
-    referenceDose: METHADONE_ORAL_REFERENCE_DOSE,
+    referenceDose: 10,
     doseUnit: "mg",
-    oralMorphineEquivalent: METHADONE_ORAL_REFERENCE_OME,
+    oralMorphineEquivalent: 47,
     label: "Methadone oral",
     targetable: true,
   },
@@ -70,9 +97,9 @@ const conversionOptions = [
     id: "Methadone_IV",
     medication: "Methadone",
     route: "IV",
-    referenceDose: METHADONE_IV_REFERENCE_DOSE,
+    referenceDose: 5,
     doseUnit: "mg",
-    oralMorphineEquivalent: METHADONE_ORAL_REFERENCE_OME,
+    oralMorphineEquivalent: 47,
     label: "Methadone IV",
     targetable: true,
   },
@@ -100,10 +127,50 @@ const conversionOptions = [
     id: "Fentanyl_Patch_12",
     medication: "Fentanyl",
     route: "Patch 12 mcg/hr",
-    referenceDose: 12,
-    doseUnit: "mcg/hr",
-    oralMorphineEquivalent: 25,
+    referenceDose: 1,
+    doseUnit: "patch",
+    oralMorphineEquivalent: 30,
     label: "Fentanyl patch 12 mcg/hr",
+    targetable: false,
+  },
+  {
+    id: "Fentanyl_Patch_25",
+    medication: "Fentanyl",
+    route: "Patch 25 mcg/hr",
+    referenceDose: 1,
+    doseUnit: "patch",
+    oralMorphineEquivalent: 60,
+    label: "Fentanyl patch 25 mcg/hr",
+    targetable: false,
+  },
+  {
+    id: "Fentanyl_Patch_50",
+    medication: "Fentanyl",
+    route: "Patch 50 mcg/hr",
+    referenceDose: 1,
+    doseUnit: "patch",
+    oralMorphineEquivalent: 120,
+    label: "Fentanyl patch 50 mcg/hr",
+    targetable: false,
+  },
+  {
+    id: "Fentanyl_Patch_75",
+    medication: "Fentanyl",
+    route: "Patch 75 mcg/hr",
+    referenceDose: 1,
+    doseUnit: "patch",
+    oralMorphineEquivalent: 180,
+    label: "Fentanyl patch 75 mcg/hr",
+    targetable: false,
+  },
+  {
+    id: "Fentanyl_Patch_100",
+    medication: "Fentanyl",
+    route: "Patch 100 mcg/hr",
+    referenceDose: 1,
+    doseUnit: "patch",
+    oralMorphineEquivalent: 240,
+    label: "Fentanyl patch 100 mcg/hr",
     targetable: false,
   },
   {
@@ -114,16 +181,6 @@ const conversionOptions = [
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
     label: "Fentanyl IV",
-    targetable: true,
-  },
-  {
-    id: "Hydrocodone_Oral",
-    medication: "Hydrocodone",
-    route: "Oral",
-    referenceDose: 30,
-    doseUnit: "mg",
-    oralMorphineEquivalent: 25,
-    label: "Hydrocodone oral",
     targetable: true,
   },
   {
@@ -208,42 +265,179 @@ const conversionOptions = [
   },
 ];
 
-const methadoneRatioTable = [
+const hepaticGuidanceRows = [
   {
-    min: 0,
-    max: 30,
-    label: "0-30 mg/day",
-    ratio: 2,
+    medication: "Morphine",
+    mild: {
+      label: "Reduce 0-25%",
+      minReduction: 0,
+      maxReduction: 25,
+    },
+    moderate: {
+      label: "Reduce 50%",
+      minReduction: 50,
+      maxReduction: 50,
+    },
+    severe: {
+      label: "Avoid",
+      avoid: true,
+    },
   },
   {
-    min: 31,
-    max: 99,
-    label: "31-99 mg/day",
-    ratio: 4,
+    medication: "Hydromorphone",
+    mild: {
+      label: "Reduce 0-25%",
+      minReduction: 0,
+      maxReduction: 25,
+    },
+    moderate: {
+      label: "Reduce 25-50%",
+      minReduction: 25,
+      maxReduction: 50,
+    },
+    severe: {
+      label: "Reduce 50-75% or avoid if you are not a specialist",
+      minReduction: 50,
+      maxReduction: 75,
+    },
   },
   {
-    min: 100,
-    max: 299,
-    label: "100-299 mg/day",
-    ratio: 8,
+    medication: "Oxycodone",
+    mild: {
+      label: "Reduce 25%",
+      minReduction: 25,
+      maxReduction: 25,
+    },
+    moderate: {
+      label: "Reduce 50%",
+      minReduction: 50,
+      maxReduction: 50,
+    },
+    severe: {
+      label: "Reduce 50-75% or avoid if you are not a specialist",
+      minReduction: 50,
+      maxReduction: 75,
+    },
   },
   {
-    min: 300,
-    max: 499,
-    label: "300-499 mg/day",
-    ratio: 12,
+    medication: "Tramadol",
+    mild: {
+      label: "Reduce 25%",
+      minReduction: 25,
+      maxReduction: 25,
+    },
+    moderate: {
+      label: "Reduce 50-75%",
+      minReduction: 50,
+      maxReduction: 75,
+    },
+    severe: {
+      label: "Avoid",
+      avoid: true,
+    },
   },
   {
-    min: 500,
-    max: 999,
-    label: "500-999 mg/day",
-    ratio: 15,
+    medication: "Fentanyl",
+    mild: {
+      label: "Reduce 0-25%",
+      minReduction: 0,
+      maxReduction: 25,
+    },
+    moderate: {
+      label: "Reduce 25-50%",
+      minReduction: 25,
+      maxReduction: 50,
+    },
+    severe: {
+      label: "Reduce 50%; may slowly titrate higher",
+      minReduction: 50,
+      maxReduction: 50,
+    },
   },
   {
-    min: 1000,
-    max: Infinity,
-    label: "1000 mg/day or more",
-    ratio: 20,
+    medication: "Methadone",
+    mild: {
+      label: "Minimal change; experts only",
+      infoOnly: true,
+    },
+    moderate: {
+      label: "Reduce 25-50%; experts only",
+      minReduction: 25,
+      maxReduction: 50,
+    },
+    severe: {
+      label: "Reduce 50% with very slow titration upward; experts only",
+      minReduction: 50,
+      maxReduction: 50,
+    },
+  },
+  {
+    medication: "Buprenorphine",
+    mild: {
+      label: "Reduce 0-25%",
+      minReduction: 0,
+      maxReduction: 25,
+    },
+    moderate: {
+      label: "Reduce 25-50%",
+      minReduction: 25,
+      maxReduction: 50,
+    },
+    severe: {
+      label: "Reduce 50% with cautious use; experts only",
+      minReduction: 50,
+      maxReduction: 50,
+    },
+  },
+];
+
+const sourceReferences = [
+  {
+    title:
+      "CDC Clinical Practice Guideline for Prescribing Opioids for Pain — United States, 2022",
+    url: "https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm",
+    note:
+      "Background source for hydrocodone, oral codeine, fentanyl transdermal, methadone, morphine, oxycodone, oxymorphone, tapentadol, and tramadol conversion factors.",
+  },
+  {
+    title: "Calculation of Oral Morphine Equivalents (OME) | Pain Management Education at UCSF",
+    url: "https://pain.ucsf.edu/opioid-analgesics/calculation-oral-morphine-equivalents-ome",
+    note:
+      "Background source for IV codeine and additional route-level OME cross-checks. This staging build still preserves selected local conversion relationships where requested.",
+  },
+  {
+    title: "A synthesis of oral morphine equivalents (OME) for opioid utilisation studies",
+    url: "https://pubmed.ncbi.nlm.nih.gov/26693665/",
+    note:
+      "Peer-reviewed OME synthesis referenced by UCSF and used here as background support for the OME framework.",
+  },
+  {
+    title:
+      "Approximate equivalent doses of transdermal opioids – West Midlands Palliative Care",
+    url:
+      "https://www.westmidspallcare.co.uk/wmpcp/guide/pain/transdermal-opioids/approximate-equivalent-doses-of-transdermal-opioids/",
+    note:
+      "Used for staged fentanyl patch strengths and buprenorphine patch background equivalents.",
+  },
+  {
+    title: "Pain Management in Renal Failure – West Midlands Palliative Care",
+    url:
+      "https://www.westmidspallcare.co.uk/wmpcp/guide/renal-disease/renal-analgesia/",
+    note:
+      "Background source for renal cautions and alternative opioid groupings; the eGFR rules in this staging build follow the client-requested configuration.",
+  },
+  {
+    title: "Liver failure pain management – West Midlands Palliative Care",
+    url:
+      "https://www.westmidspallcare.co.uk/wmpcp/guide/liver-failure/liver-failure-pain-management/",
+    note:
+      "Background source for hepatic caution language; the mild/moderate/severe percentage ranges are the client-requested staging rules.",
+  },
+  {
+    title: "Configured local staging rules",
+    url: "",
+    note:
+      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested methadone one-third conservative start and hepatic advisory bands.",
   },
 ];
 
@@ -354,20 +548,50 @@ const buprenorphineSchedules = [
   },
 ];
 
+const hepaticGuidanceByMedication = Object.fromEntries(
+  hepaticGuidanceRows.map((item) => [item.medication, item]),
+);
+
+const hepaticSeverityLabels = {
+  none: "No class selected",
+  mild: "Mild",
+  moderate: "Moderate",
+  severe: "Severe",
+};
+
+const renalRestrictedMedications = new Set(["Morphine", "Codeine", "Meperidine"]);
+const renalModerateAlternativeMedications = new Set([
+  "Oxycodone",
+  "Hydromorphone",
+]);
+const renalMinimalAlternativeMedications = new Set([
+  "Methadone",
+  "Fentanyl",
+  "Buprenorphine",
+]);
+
+let regimenEntryId = 0;
+let regimenEntriesState = [];
+
 const form = document.querySelector("#calculatorForm");
 const calculationModeSelect = document.querySelector("#calculationMode");
-const currentDrugSelect = document.querySelector("#currentDrug");
 const targetDrugSelect = document.querySelector("#targetDrug");
-const currentDoseInput = document.querySelector("#currentDose");
-const currentDoseLabel = document.querySelector("#currentDoseLabel");
-const currentDoseHint = document.querySelector("#currentDoseHint");
 const targetField = document.querySelector("#targetField");
+const regimenEntriesContainer = document.querySelector("#regimenEntries");
+const addRegimenEntryButton = document.querySelector("#addRegimenEntryButton");
 const reductionField = document.querySelector("#reductionField");
 const reductionRange = document.querySelector("#reductionRange");
 const reductionNumber = document.querySelector("#reductionNumber");
+const egfrInput = document.querySelector("#egfrInput");
+const painControlSelect = document.querySelector("#painControl");
+const renalBandNote = document.querySelector("#renalBandNote");
+const hepaticSeveritySelect = document.querySelector("#hepaticSeverity");
 const exampleButton = document.querySelector("#exampleButton");
 const mmeExampleButton = document.querySelector("#mmeExampleButton");
 const referenceTable = document.querySelector("#referenceTable");
+const hepaticGuidanceTableBody = document.querySelector("#hepaticGuidanceTable");
+const sourceTable = document.querySelector("#sourceTable");
+const regimenSummaryTable = document.querySelector("#regimenSummaryTable");
 
 const resultTitle = document.querySelector("#resultTitle");
 const finalDose = document.querySelector("#finalDose");
@@ -379,6 +603,12 @@ const targetStepLabel = document.querySelector("#targetStepLabel");
 const rawTargetDoseOutput = document.querySelector("#rawTargetDose");
 const reductionStep = document.querySelector("#reductionStep");
 const reductionAppliedOutput = document.querySelector("#reductionApplied");
+const organGuidanceSummaryOutput = document.querySelector("#organGuidanceSummary");
+const renalAdviceTitle = document.querySelector("#renalAdviceTitle");
+const renalAdviceBody = document.querySelector("#renalAdviceBody");
+const hepaticAdviceTitle = document.querySelector("#hepaticAdviceTitle");
+const hepaticAdviceBody = document.querySelector("#hepaticAdviceBody");
+
 const methadoneForm = document.querySelector("#methadoneForm");
 const methadoneMorphineDoseInput = document.querySelector("#methadoneMorphineDose");
 const methadoneRouteSelect = document.querySelector("#methadoneRoute");
@@ -388,8 +618,11 @@ const methadoneCalculateButton = document.querySelector("#methadoneCalculateButt
 const methadoneFinalDose = document.querySelector("#methadoneFinalDose");
 const methadoneFinalUnit = document.querySelector("#methadoneFinalUnit");
 const methadoneSentence = document.querySelector("#methadoneSentence");
-const methadoneRatioOutput = document.querySelector("#methadoneRatio");
+const methadoneFactorOutput = document.querySelector("#methadoneFactor");
 const methadoneRawDoseOutput = document.querySelector("#methadoneRawDose");
+const methadoneConservativeStartOutput = document.querySelector(
+  "#methadoneConservativeStart",
+);
 const methadoneRouteAdjustmentOutput = document.querySelector(
   "#methadoneRouteAdjustment",
 );
@@ -398,7 +631,7 @@ const methadoneReductionAppliedOutput = document.querySelector(
 );
 const methadoneQ8DoseOutput = document.querySelector("#methadoneQ8Dose");
 const methadoneQ12DoseOutput = document.querySelector("#methadoneQ12Dose");
-const methadoneRatioTableBody = document.querySelector("#methadoneRatioTable");
+
 const buprenorphineForm = document.querySelector("#buprenorphineForm");
 const buprenorphineMeddRangeSelect = document.querySelector(
   "#buprenorphineMeddRange",
@@ -433,46 +666,45 @@ const formatDose = (value) => {
   return value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
 };
 
+const formatDoseWithUnit = (value, unitLabel) => `${formatDose(value)} ${unitLabel}`;
+
+const formatDoseRange = (minimum, maximum, unitLabel) => {
+  if (!Number.isFinite(minimum) || !Number.isFinite(maximum)) {
+    return `0 ${unitLabel}`;
+  }
+
+  if (Math.abs(minimum - maximum) < 0.0001) {
+    return formatDoseWithUnit(minimum, unitLabel);
+  }
+
+  return `${formatDose(minimum)}-${formatDose(maximum)} ${unitLabel}`;
+};
+
+const formatList = (items) => {
+  const uniqueItems = [...new Set(items.filter(Boolean))];
+
+  if (!uniqueItems.length) {
+    return "";
+  }
+
+  if (uniqueItems.length === 1) {
+    return uniqueItems[0];
+  }
+
+  if (uniqueItems.length === 2) {
+    return `${uniqueItems[0]} and ${uniqueItems[1]}`;
+  }
+
+  return `${uniqueItems.slice(0, -1).join(", ")}, and ${uniqueItems.at(-1)}`;
+};
+
 const findOption = (id) => conversionOptions.find((item) => item.id === id);
 
 const optionMarkup = (item) =>
   `<option value="${item.id}">${item.label}</option>`;
 
 const isMethadoneOption = (option) => option?.medication === "Methadone";
-
-const getTargetOptions = (currentOption) =>
-  conversionOptions.filter((item) => {
-    if (!item.targetable) {
-      return false;
-    }
-
-    return !isMethadoneOption(item) || isMethadoneOption(currentOption);
-  });
-
-const renderTargetOptions = (preferredValue = targetDrugSelect.value) => {
-  const currentOption = findOption(currentDrugSelect.value);
-  const targetOptions = getTargetOptions(currentOption);
-  const hasOption = (id) => targetOptions.some((item) => item.id === id);
-
-  targetDrugSelect.innerHTML = targetOptions.map(optionMarkup).join("");
-
-  if (hasOption(preferredValue)) {
-    targetDrugSelect.value = preferredValue;
-    return;
-  }
-
-  if (currentOption?.id === "Methadone_Oral" && hasOption("Methadone_IV")) {
-    targetDrugSelect.value = "Methadone_IV";
-    return;
-  }
-
-  if (currentOption?.id === "Methadone_IV" && hasOption("Methadone_Oral")) {
-    targetDrugSelect.value = "Methadone_Oral";
-    return;
-  }
-
-  targetDrugSelect.value = targetOptions[0]?.id || "";
-};
+const isPatchOption = (option) => option?.doseUnit === "patch";
 
 const getUseDescription = (option) => {
   if (!option.targetable) {
@@ -486,35 +718,264 @@ const getUseDescription = (option) => {
   return "Current or target";
 };
 
-const getDoseUnitLabel = (option) => {
-  if (!option) {
-    return "mg";
-  }
-
-  return option.doseUnit === "patch" ? "patch count" : option.doseUnit;
-};
-
-const getDoseDescription = (option, dose) => {
-  if (option.doseUnit === "patch") {
-    const noun = Number(dose) === 1 ? "patch" : "patches";
-    return `${formatDose(dose)} ${noun} of ${option.route.toLowerCase()}`;
-  }
-
-  return `${formatDose(dose)} ${option.doseUnit} ${option.label.toLowerCase()}`;
-};
-
 const getReferenceDoseDescription = (option) => {
-  if (option.doseUnit === "patch") {
-    return `1 ${option.route.toLowerCase()}`;
+  if (isPatchOption(option)) {
+    return "1 patch";
   }
 
   return `${formatDose(option.referenceDose)} ${option.doseUnit}`;
 };
 
-const renderOptions = () => {
-  currentDrugSelect.innerHTML = conversionOptions.map(optionMarkup).join("");
-  currentDrugSelect.value = "Hydromorphone_IV";
-  renderTargetOptions("Oxycodone_Oral");
+const getDailyUnitLabel = (option) => {
+  if (!option) {
+    return "mg/day";
+  }
+
+  if (option.doseUnit === "patch") {
+    return "patches";
+  }
+
+  return `${option.doseUnit}/day`;
+};
+
+const getEntryDoseLabel = (option) =>
+  isPatchOption(option) ? "Patch quantity" : "Dose per administration";
+
+const getEntryDoseHint = (option) =>
+  isPatchOption(option)
+    ? "Number of active patches at the selected strength"
+    : option?.doseUnit || "mg";
+
+const getEntryFrequencyLabel = (option) =>
+  isPatchOption(option) ? "Standing 24-hour factor" : "Doses per day";
+
+const getEntryFrequencyHint = (option) =>
+  isPatchOption(option)
+    ? "Patch rows are treated as continuous 24-hour exposure"
+    : "Example: q6h = 4 doses/day";
+
+const clampReduction = (value) => Math.min(100, Math.max(0, Number(value) || 0));
+
+const syncReduction = (source) => {
+  const value = clampReduction(source.value);
+  reductionRange.value = value;
+  reductionNumber.value = value;
+};
+
+const syncMethadoneReduction = (source) => {
+  const value = clampReduction(source.value);
+  methadoneReductionRange.value = value;
+  methadoneReductionNumber.value = value;
+};
+
+const createRegimenEntry = (overrides = {}) => {
+  regimenEntryId += 1;
+
+  return {
+    key: regimenEntryId,
+    drugId: overrides.drugId || "Hydromorphone_IV",
+    dose: overrides.dose || "2",
+    dosesPerDay: overrides.dosesPerDay || "1",
+  };
+};
+
+const getCurrentOralMorphineEquivalent = (option, currentDose) =>
+  (currentDose / option.referenceDose) * option.oralMorphineEquivalent;
+
+const getIvMorphineEquivalent = (oralMorphineEquivalent) =>
+  (oralMorphineEquivalent / ORAL_MORPHINE_FOR_TEN_MG_IV_MORPHINE) * 10;
+
+const getTargetDose = (targetOption, oralMorphineEquivalent) =>
+  (oralMorphineEquivalent / targetOption.oralMorphineEquivalent) *
+  targetOption.referenceDose;
+
+const parseRegimenEntries = () =>
+  regimenEntriesState.map((entry) => {
+    const option = findOption(entry.drugId);
+    const patchOption = isPatchOption(option);
+    const doseValue = Number(entry.dose);
+    const frequencyValue = patchOption ? 1 : Number(entry.dosesPerDay);
+    const doseMissing = String(entry.dose).trim() === "";
+    const frequencyMissing =
+      !patchOption && String(entry.dosesPerDay).trim() === "";
+    const valid =
+      Boolean(option) &&
+      !doseMissing &&
+      !frequencyMissing &&
+      Number.isFinite(doseValue) &&
+      Number.isFinite(frequencyValue) &&
+      doseValue >= 0 &&
+      frequencyValue >= 0;
+    const dailyDose = valid ? (patchOption ? doseValue : doseValue * frequencyValue) : 0;
+    const oralMorphineEquivalent = valid
+      ? getCurrentOralMorphineEquivalent(option, dailyDose)
+      : 0;
+
+    return {
+      ...entry,
+      option,
+      patchOption,
+      doseValue,
+      frequencyValue,
+      valid,
+      dailyDose,
+      oralMorphineEquivalent,
+    };
+  });
+
+const getEntrySummaryText = (entry) => {
+  const option = findOption(entry.drugId);
+
+  if (!option) {
+    return "Select a drug and route for this regimen line.";
+  }
+
+  const patchOption = isPatchOption(option);
+  const doseValue = Number(entry.dose);
+  const frequencyValue = patchOption ? 1 : Number(entry.dosesPerDay);
+  const valid =
+    String(entry.dose).trim() !== "" &&
+    (patchOption || String(entry.dosesPerDay).trim() !== "") &&
+    Number.isFinite(doseValue) &&
+    Number.isFinite(frequencyValue) &&
+    doseValue >= 0 &&
+    frequencyValue >= 0;
+
+  if (!valid) {
+    return patchOption
+      ? "Enter the number of active patches for this row."
+      : "Enter both dose per administration and doses per day.";
+  }
+
+  const dailyDose = patchOption ? doseValue : doseValue * frequencyValue;
+  const oralMorphineEquivalent = getCurrentOralMorphineEquivalent(
+    option,
+    dailyDose,
+  );
+
+  if (patchOption) {
+    const patchNoun = doseValue === 1 ? "patch" : "patches";
+
+    return `${option.label}: ${formatDose(doseValue)} active ${patchNoun}; contributes ${formatDose(
+      oralMorphineEquivalent,
+    )} mg/day oral morphine equivalent.`;
+  }
+
+  return `${option.label}: ${formatDose(doseValue)} ${option.doseUnit} per dose x ${formatDose(
+    frequencyValue,
+  )}/day = ${formatDose(dailyDose)} ${option.doseUnit}/day; contributes ${formatDose(
+    oralMorphineEquivalent,
+  )} mg/day oral morphine equivalent.`;
+};
+
+const buildRegimenEntryMarkup = (entry, index) => {
+  const option = findOption(entry.drugId);
+  const patchOption = isPatchOption(option);
+  const canRemove = regimenEntriesState.length > 1;
+  const doseValue = patchOption
+    ? entry.dose || "1"
+    : entry.dose || String(option?.referenceDose || "");
+  const frequencyValue = patchOption ? "1" : entry.dosesPerDay || "1";
+
+  return `
+    <section class="regimen-entry" data-entry-key="${entry.key}">
+      <div class="entry-head">
+        <div>
+          <span class="summary-label">Drug ${index + 1}</span>
+          <h3>Regimen line ${index + 1}</h3>
+        </div>
+        <button
+          class="secondary-button entry-remove-button"
+          data-action="remove-entry"
+          type="button"
+          ${canRemove ? "" : "disabled"}
+        >
+          Remove
+        </button>
+      </div>
+
+      <div class="regimen-entry-grid">
+        <label>
+          Drug and route
+          <select data-field="drugId">
+            ${conversionOptions.map(optionMarkup).join("")}
+          </select>
+        </label>
+
+        <label>
+          ${getEntryDoseLabel(option)}
+          <input
+            data-field="dose"
+            inputmode="decimal"
+            min="0"
+            step="${patchOption ? "0.5" : "0.001"}"
+            type="number"
+            value="${doseValue}"
+          />
+          <span class="field-hint">${getEntryDoseHint(option)}</span>
+        </label>
+
+        <label>
+          ${getEntryFrequencyLabel(option)}
+          <input
+            data-field="dosesPerDay"
+            inputmode="decimal"
+            min="0"
+            step="0.25"
+            type="number"
+            value="${frequencyValue}"
+            ${patchOption ? "disabled" : ""}
+          />
+          <span class="field-hint">${getEntryFrequencyHint(option)}</span>
+        </label>
+      </div>
+
+      <p class="entry-summary">${getEntrySummaryText(entry)}</p>
+    </section>
+  `;
+};
+
+const renderTargetOptions = (preferredValue = targetDrugSelect.value) => {
+  const currentOptions = regimenEntriesState
+    .map((entry) => findOption(entry.drugId))
+    .filter(Boolean);
+  const allowMethadoneTarget =
+    currentOptions.length > 0 && currentOptions.every(isMethadoneOption);
+  const targetOptions = conversionOptions.filter((item) => {
+    if (!item.targetable) {
+      return false;
+    }
+
+    return allowMethadoneTarget || !isMethadoneOption(item);
+  });
+
+  targetDrugSelect.innerHTML = targetOptions.map(optionMarkup).join("");
+
+  if (targetOptions.some((item) => item.id === preferredValue)) {
+    targetDrugSelect.value = preferredValue;
+    return;
+  }
+
+  if (targetOptions.some((item) => item.id === "Oxycodone_Oral")) {
+    targetDrugSelect.value = "Oxycodone_Oral";
+    return;
+  }
+
+  targetDrugSelect.value = targetOptions[0]?.id || "";
+};
+
+const renderRegimenEntries = () => {
+  regimenEntriesContainer.innerHTML = regimenEntriesState
+    .map((entry, index) => buildRegimenEntryMarkup(entry, index))
+    .join("");
+
+  regimenEntriesContainer
+    .querySelectorAll('[data-field="drugId"]')
+    .forEach((selectElement, index) => {
+      selectElement.value = regimenEntriesState[index].drugId;
+    });
+
+  renderTargetOptions();
 };
 
 const renderReferenceTable = () => {
@@ -533,16 +994,36 @@ const renderReferenceTable = () => {
     .join("");
 };
 
-const renderMethadoneRatioTable = () => {
-  methadoneRatioTableBody.innerHTML = methadoneRatioTable
+const renderHepaticGuidanceTable = () => {
+  hepaticGuidanceTableBody.innerHTML = hepaticGuidanceRows
     .map(
       (item) => `
         <tr>
-          <td>${item.label}</td>
-          <td>${item.ratio}:1</td>
+          <td>${item.medication}</td>
+          <td>${item.mild.label}</td>
+          <td>${item.moderate.label}</td>
+          <td>${item.severe.label}</td>
         </tr>
       `,
     )
+    .join("");
+};
+
+const renderSourceTable = () => {
+  sourceTable.innerHTML = sourceReferences
+    .map((item) => {
+      const linkMarkup = item.url
+        ? `<a href="${item.url}" rel="noreferrer" target="_blank">Open source</a>`
+        : "Local configuration";
+
+      return `
+        <tr>
+          <td>${item.title}</td>
+          <td>${item.note}</td>
+          <td>${linkMarkup}</td>
+        </tr>
+      `;
+    })
     .join("");
 };
 
@@ -552,210 +1033,10 @@ const renderBuprenorphineOptions = () => {
     .join("");
 };
 
-const clampReduction = (value) => Math.min(75, Math.max(0, Number(value) || 0));
-
-const clampMethadoneReduction = (value) =>
-  Math.min(90, Math.max(0, Number(value) || 0));
-
-const syncReduction = (source) => {
-  const value = clampReduction(source.value);
-  reductionRange.value = value;
-  reductionNumber.value = value;
-};
-
-const syncMethadoneReduction = (source) => {
-  const value = clampMethadoneReduction(source.value);
-  methadoneReductionRange.value = value;
-  methadoneReductionNumber.value = value;
-};
-
-const getCurrentOralMorphineEquivalent = (currentOption, currentDose) =>
-  (currentDose / currentOption.referenceDose) *
-  currentOption.oralMorphineEquivalent;
-
-const getIvMorphineEquivalent = (oralMorphineEquivalent) =>
-  (oralMorphineEquivalent / ORAL_MORPHINE_FOR_TEN_MG_IV_MORPHINE) * 10;
-
-const getTargetDose = (targetOption, oralMorphineEquivalent) =>
-  (oralMorphineEquivalent / targetOption.oralMorphineEquivalent) *
-  targetOption.referenceDose;
-
-const getMethadoneBracket = (oralMorphineDaily) =>
-  methadoneRatioTable.find((item) => oralMorphineDaily <= item.max) ||
-  methadoneRatioTable[methadoneRatioTable.length - 1];
-
-const getMethadoneRoute = () => {
-  if (methadoneRouteSelect.value === "iv") {
-    return {
-      label: "IV methadone",
-      unitLabel: "mg/day IV",
-      factor: 0.5,
-      adjustmentLabel: "IV route: 50% of oral estimate",
-    };
-  }
-
-  return {
-    label: "oral methadone",
-    unitLabel: "mg/day oral",
-    factor: 1,
-    adjustmentLabel: "Oral route: no adjustment",
-  };
-};
-
 const getBuprenorphineSchedule = () =>
   buprenorphineSchedules.find(
     (item) => item.id === buprenorphineMeddRangeSelect.value,
   ) || buprenorphineSchedules[0];
-
-const setModeVisibility = () => {
-  const isMMeMode = calculationModeSelect.value === "mme";
-  targetField.classList.toggle("is-hidden", isMMeMode);
-  reductionField.classList.toggle("is-hidden", isMMeMode);
-};
-
-const updateCurrentDoseHelp = () => {
-  const currentOption = findOption(currentDrugSelect.value);
-  const unitLabel = getDoseUnitLabel(currentOption);
-
-  currentDoseLabel.textContent =
-    unitLabel === "patch count" ? "Patch quantity" : "Dose to convert";
-  currentDoseHint.textContent =
-    unitLabel === "patch count" ? "Number of patches at the selected strength" : unitLabel;
-  currentDoseInput.step = unitLabel === "patch count" ? "0.5" : "0.001";
-  currentDoseInput.min = "0";
-
-  if (unitLabel === "patch count" && Number(currentDoseInput.value) === 0) {
-    currentDoseInput.value = "1";
-  }
-};
-
-const setDefaultCurrentDose = () => {
-  const currentOption = findOption(currentDrugSelect.value);
-
-  if (!currentOption) {
-    return;
-  }
-
-  currentDoseInput.value =
-    currentOption.doseUnit === "patch" ? "1" : String(currentOption.referenceDose);
-};
-
-const showInvalidDose = (reductionPercentage) => {
-  finalDose.textContent = "0";
-  finalUnit.textContent = "mg";
-  resultTitle.textContent = "Enter a valid dose";
-  resultSentence.textContent =
-    "Dose must be a non-negative number before the conversion can run.";
-  oralMorphineEquivalentOutput.textContent = "0 mg";
-  ivMorphineEquivalentOutput.textContent = "0 mg";
-  rawTargetDoseOutput.textContent = "0 mg";
-  reductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
-};
-
-const calculate = () => {
-  setModeVisibility();
-  updateCurrentDoseHelp();
-
-  const currentOption = findOption(currentDrugSelect.value);
-  const targetOption = findOption(targetDrugSelect.value);
-  const currentDose = Number(currentDoseInput.value);
-  const reductionPercentage = clampReduction(reductionNumber.value);
-  const isMMeMode = calculationModeSelect.value === "mme";
-
-  if (
-    !currentOption ||
-    (!isMMeMode && !targetOption) ||
-    currentDoseInput.value.trim() === "" ||
-    !Number.isFinite(currentDose) ||
-    currentDose < 0
-  ) {
-    showInvalidDose(reductionPercentage);
-    return;
-  }
-
-  const oralMorphineEquivalent = getCurrentOralMorphineEquivalent(
-    currentOption,
-    currentDose,
-  );
-  const ivMorphineEquivalent = getIvMorphineEquivalent(oralMorphineEquivalent);
-
-  oralMorphineEquivalentOutput.textContent = `${formatDose(oralMorphineEquivalent)} mg`;
-  ivMorphineEquivalentOutput.textContent = `${formatDose(ivMorphineEquivalent)} mg`;
-
-  if (isMMeMode) {
-    resultTitle.textContent = "Oral morphine equivalent";
-    finalDose.textContent = formatDose(oralMorphineEquivalent);
-    finalUnit.textContent = "mg MME";
-    resultSentence.textContent =
-      `${getDoseDescription(currentOption, currentDose)} converts to ` +
-      `${formatDose(oralMorphineEquivalent)} mg oral morphine equivalent.`;
-    targetStepLabel.textContent = "Target calculation";
-    rawTargetDoseOutput.textContent = "Not applied";
-    reductionStep.classList.add("is-hidden");
-    return;
-  }
-
-  const rawTargetDose = getTargetDose(targetOption, oralMorphineEquivalent);
-  const adjustedTargetDose = rawTargetDose * (1 - reductionPercentage / 100);
-
-  resultTitle.textContent = `${targetOption.label} target dose`;
-  finalDose.textContent = formatDose(adjustedTargetDose);
-  finalUnit.textContent = targetOption.doseUnit;
-  resultSentence.textContent =
-    `Converted from ${getDoseDescription(currentOption, currentDose)} with ` +
-    `${reductionPercentage}% incomplete cross-tolerance reduction.`;
-  targetStepLabel.textContent = `Raw ${targetOption.label.toLowerCase()} dose`;
-  rawTargetDoseOutput.textContent = `${formatDose(rawTargetDose)} ${targetOption.doseUnit}`;
-  reductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
-  reductionStep.classList.remove("is-hidden");
-};
-
-const calculateMethadone = () => {
-  const oralMorphineDaily = Number(methadoneMorphineDoseInput.value);
-  const reductionPercentage = clampMethadoneReduction(
-    methadoneReductionNumber.value,
-  );
-
-  if (
-    methadoneMorphineDoseInput.value.trim() === "" ||
-    !Number.isFinite(oralMorphineDaily) ||
-    oralMorphineDaily < 0
-  ) {
-    methadoneFinalDose.textContent = "0";
-    methadoneFinalUnit.textContent = getMethadoneRoute().unitLabel;
-    methadoneSentence.textContent =
-      "Enter a non-negative 24-hour oral morphine equivalent dose.";
-    methadoneRatioOutput.textContent = "Not applied";
-    methadoneRawDoseOutput.textContent = "0 mg/day";
-    methadoneRouteAdjustmentOutput.textContent = "Not applied";
-    methadoneReductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
-    methadoneQ8DoseOutput.textContent = "0 mg/dose";
-    methadoneQ12DoseOutput.textContent = "0 mg/dose";
-    return;
-  }
-
-  const bracket = getMethadoneBracket(oralMorphineDaily);
-  const route = getMethadoneRoute();
-  const rawOralMethadoneDaily = oralMorphineDaily / bracket.ratio;
-  const reducedOralMethadoneDaily =
-    rawOralMethadoneDaily * (1 - reductionPercentage / 100);
-  const reducedMethadoneDaily = reducedOralMethadoneDaily * route.factor;
-  const q8Dose = reducedMethadoneDaily / 3;
-  const q12Dose = reducedMethadoneDaily / 2;
-
-  methadoneFinalDose.textContent = formatDose(reducedMethadoneDaily);
-  methadoneFinalUnit.textContent = route.unitLabel;
-  methadoneRatioOutput.textContent = `${bracket.ratio}:1`;
-  methadoneRawDoseOutput.textContent = `${formatDose(rawOralMethadoneDaily)} mg/day`;
-  methadoneRouteAdjustmentOutput.textContent = route.adjustmentLabel;
-  methadoneReductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
-  methadoneQ8DoseOutput.textContent = `${formatDose(q8Dose)} mg/dose`;
-  methadoneQ12DoseOutput.textContent = `${formatDose(q12Dose)} mg/dose`;
-  methadoneSentence.textContent =
-    `${formatDose(oralMorphineDaily)} mg/day oral morphine equivalent uses the ` +
-    `${bracket.ratio}:1 morphine:oral methadone ratio before the selected safety reduction` +
-    ` and ${route.label} route adjustment.`;
-};
 
 const renderBuprenorphineSchedule = () => {
   const schedule = getBuprenorphineSchedule();
@@ -787,6 +1068,596 @@ const renderBuprenorphineSchedule = () => {
     .join("");
 };
 
+const setModeVisibility = () => {
+  const isMMeMode = calculationModeSelect.value === "mme";
+  targetField.classList.toggle("is-hidden", isMMeMode);
+  reductionField.classList.toggle("is-hidden", isMMeMode);
+};
+
+const getEgfrBand = (rawValue) => {
+  const value = Number(rawValue);
+
+  if (String(rawValue).trim() === "" || !Number.isFinite(value) || value < 0) {
+    return null;
+  }
+
+  if (value > 50) {
+    return {
+      id: "over50",
+      label: "eGFR >50 mL/min",
+    };
+  }
+
+  if (value >= 30) {
+    return {
+      id: "30to50",
+      label: "eGFR 30-50 mL/min",
+    };
+  }
+
+  return {
+    id: "under30",
+    label: "eGFR <30 mL/min",
+  };
+};
+
+const updateRenalBandNote = () => {
+  const band = getEgfrBand(egfrInput.value);
+
+  if (!band) {
+    renalBandNote.textContent =
+      "Enter eGFR to apply the staging renal guidance bands.";
+    return;
+  }
+
+  if (band.id === "over50") {
+    renalBandNote.textContent =
+      "eGFR above 50 mL/min: this staging build applies no automatic renal reduction.";
+    return;
+  }
+
+  if (band.id === "30to50") {
+    renalBandNote.textContent =
+      "eGFR 30-50 mL/min: this staging build applies a 25% reduction for uncontrolled pain or a 50% reduction for well controlled pain to morphine, codeine, and meperidine.";
+    return;
+  }
+
+  renalBandNote.textContent =
+    "eGFR below 30 mL/min: this staging build marks morphine, codeine, and meperidine as avoid and highlights alternative opioid groups.";
+};
+
+const renderRegimenSummaryTable = (parsedEntries) => {
+  regimenSummaryTable.innerHTML = parsedEntries
+    .map((entry) => {
+      const option = entry.option;
+
+      if (!option) {
+        return `
+          <tr>
+            <td>Unconfigured entry</td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+        `;
+      }
+
+      const patchOption = entry.patchOption;
+      const doseText = patchOption
+        ? `${formatDose(entry.doseValue)} patch${entry.doseValue === 1 ? "" : "es"}`
+        : `${formatDose(entry.doseValue)} ${option.doseUnit}`;
+      const frequencyText = patchOption
+        ? "Standing 24-hour exposure"
+        : `${formatDose(entry.frequencyValue)}/day`;
+      const dailyDoseText = entry.valid
+        ? patchOption
+          ? `${formatDose(entry.doseValue)} active patch${entry.doseValue === 1 ? "" : "es"}`
+          : `${formatDose(entry.dailyDose)} ${option.doseUnit}/day`
+        : "Incomplete entry";
+      const oralMorphineEquivalentText = entry.valid
+        ? `${formatDose(entry.oralMorphineEquivalent)} mg/day`
+        : "--";
+
+      return `
+        <tr>
+          <td>${option.label}</td>
+          <td>${doseText}</td>
+          <td>${frequencyText}</td>
+          <td>${dailyDoseText}</td>
+          <td>${oralMorphineEquivalentText}</td>
+        </tr>
+      `;
+    })
+    .join("");
+};
+
+const getRenalAdvice = ({
+  parsedEntries,
+  targetOption,
+  isMMeMode,
+  adjustedTargetDose,
+}) => {
+  const band = getEgfrBand(egfrInput.value);
+  const painControlValue = painControlSelect.value;
+  const restrictedCurrent = parsedEntries
+    .filter(
+      (entry) =>
+        entry.option &&
+        entry.valid &&
+        renalRestrictedMedications.has(entry.option.medication),
+    )
+    .map((entry) => entry.option.label);
+  const currentNote = restrictedCurrent.length
+    ? ` Current regimen includes ${formatList(restrictedCurrent)}.`
+    : "";
+
+  if (!band) {
+    return {
+      summary: "Renal guidance off",
+      title: "No renal band selected",
+      body: "Enter eGFR to turn on the staging renal adjustment guidance.",
+    };
+  }
+
+  if (band.id === "over50") {
+    return {
+      summary: "Renal: eGFR >50 mL/min",
+      title: "eGFR >50 mL/min",
+      body:
+        "No automatic renal dose reduction is configured in this staging build above 50 mL/min." +
+        currentNote,
+    };
+  }
+
+  if (band.id === "30to50") {
+    const reductionPercentage = painControlValue === "controlled" ? 50 : 25;
+    const reductionLabel =
+      painControlValue === "controlled"
+        ? "50% reduction for well controlled pain"
+        : "25% reduction for uncontrolled pain";
+
+    if (!isMMeMode && targetOption) {
+      if (renalRestrictedMedications.has(targetOption.medication)) {
+        const renalAdjustedDose =
+          adjustedTargetDose * (1 - reductionPercentage / 100);
+
+        return {
+          summary: `Renal: ${band.label}; ${reductionLabel}`,
+          title: `${targetOption.label} is in the renal-restriction group`,
+          body:
+            `${reductionLabel} is configured here for morphine, codeine, and meperidine when eGFR is 30-50 mL/min. ` +
+            `Applied after the selected safety reduction, ${formatDoseWithUnit(
+              adjustedTargetDose,
+              getDailyUnitLabel(targetOption),
+            )} becomes about ${formatDoseWithUnit(
+              renalAdjustedDose,
+              getDailyUnitLabel(targetOption),
+            )}.` +
+            currentNote,
+        };
+      }
+
+      if (renalModerateAlternativeMedications.has(targetOption.medication)) {
+        return {
+          summary: `Renal: ${band.label}; moderate-kidney-effect alternative`,
+          title: `${targetOption.label} is a moderate-kidney-effect alternative`,
+          body:
+            "No explicit percentage reduction is auto-applied for oxycodone or hydromorphone in this staging build. Use lower starting doses and cautious titration in renal dysfunction." +
+            currentNote,
+        };
+      }
+
+      if (renalMinimalAlternativeMedications.has(targetOption.medication)) {
+        return {
+          summary: `Renal: ${band.label}; minimal-kidney-effect alternative`,
+          title: `${targetOption.label} is a lower-kidney-effect alternative`,
+          body:
+            "Methadone, fentanyl, and buprenorphine are listed here as lower-kidney-effect alternatives. No automatic percentage reduction is applied in this staging build, but monitoring and formulation review remain necessary." +
+            currentNote,
+        };
+      }
+    }
+
+    return {
+      summary: `Renal: ${band.label}; ${reductionLabel}`,
+      title: "Renal staging rule for eGFR 30-50 mL/min",
+      body:
+        `This staging build applies ${reductionLabel} to morphine, codeine, and meperidine in the 30-50 mL/min band.` +
+        currentNote,
+    };
+  }
+
+  if (!isMMeMode && targetOption) {
+    if (renalRestrictedMedications.has(targetOption.medication)) {
+      return {
+        summary: "Renal: eGFR <30 mL/min; avoid target",
+        title: `Avoid ${targetOption.label} at eGFR <30 mL/min`,
+        body:
+          "Morphine, codeine, and meperidine are marked as avoid in this staging build below 30 mL/min. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
+          currentNote,
+      };
+    }
+
+    if (renalModerateAlternativeMedications.has(targetOption.medication)) {
+      return {
+        summary: "Renal: eGFR <30 mL/min; cautious alternative",
+        title: `${targetOption.label} is a cautious alternative`,
+        body:
+          "Oxycodone and hydromorphone are listed here as moderate-kidney-effect alternatives. Start carefully, titrate slowly, and monitor for accumulation." +
+          currentNote,
+      };
+    }
+
+    if (renalMinimalAlternativeMedications.has(targetOption.medication)) {
+      return {
+        summary: "Renal: eGFR <30 mL/min; lower-kidney-effect alternative",
+        title: `${targetOption.label} is a lower-kidney-effect alternative`,
+        body:
+          "Methadone, fentanyl, and buprenorphine are highlighted here as lower-kidney-effect alternatives. No automatic percentage reduction is added in this staging build, but specialist review and close monitoring remain important." +
+          currentNote,
+      };
+    }
+  }
+
+  return {
+    summary: "Renal: eGFR <30 mL/min; avoid morphine, codeine, and meperidine",
+    title: "Renal staging rule for eGFR <30 mL/min",
+    body:
+      "Morphine, codeine, and meperidine are marked as avoid below 30 mL/min in this staging build. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
+      currentNote,
+  };
+};
+
+const getHepaticAdvice = ({
+  parsedEntries,
+  targetOption,
+  isMMeMode,
+  adjustedTargetDose,
+}) => {
+  const severity = hepaticSeveritySelect.value;
+  const severityLabel = hepaticSeverityLabels[severity] || "No class selected";
+
+  if (severity === "none") {
+    return {
+      summary: "Hepatic guidance off",
+      title: "No hepatic class selected",
+      body:
+        "Select mild, moderate, or severe hepatic impairment to show the configured liver dosing guidance for the target opioid.",
+    };
+  }
+
+  if (isMMeMode || !targetOption) {
+    const currentMedicationsWithGuidance = parsedEntries
+      .filter((entry) => entry.option && hepaticGuidanceByMedication[entry.option.medication])
+      .map((entry) => entry.option.label);
+
+    return {
+      summary: `Hepatic: ${severityLabel}`,
+      title: `${severityLabel} hepatic impairment selected`,
+      body: currentMedicationsWithGuidance.length
+        ? `Review the configured hepatic table below for ${formatList(
+            currentMedicationsWithGuidance,
+          )}. Numeric hepatic reductions are only shown here for a selected target opioid.`
+        : "Numeric hepatic reductions are only shown here for a selected target opioid. Use the hepatic reference table below and bedside assessment when reviewing the current regimen.",
+    };
+  }
+
+  const guidanceRow = hepaticGuidanceByMedication[targetOption.medication];
+
+  if (!guidanceRow) {
+    if (targetOption.medication === "Codeine") {
+      return {
+        summary: `Hepatic: ${severityLabel}; no local percent table for codeine`,
+        title: `Codeine requires extra caution in ${severityLabel.toLowerCase()} hepatic impairment`,
+        body:
+          "No local percentage reduction table is configured here for codeine. Because codeine relies on hepatic conversion to morphine, use caution and consider avoidance in significant liver dysfunction.",
+      };
+    }
+
+    return {
+      summary: `Hepatic: ${severityLabel}; no target-specific staging rule`,
+      title: `No configured hepatic percentage rule for ${targetOption.label}`,
+      body:
+        "This staging build does not apply a medication-specific hepatic percentage rule to the selected target. Use bedside assessment and the reference sources below.",
+    };
+  }
+
+  const rule = guidanceRow[severity];
+
+  if (rule.avoid) {
+    return {
+      summary: `Hepatic: ${severityLabel}; avoid ${targetOption.medication}`,
+      title: `${severityLabel} hepatic impairment: avoid ${targetOption.label}`,
+      body: `The configured hepatic guide for this staging build marks ${targetOption.label} as avoid in ${severityLabel.toLowerCase()} hepatic impairment.`,
+    };
+  }
+
+  if (rule.infoOnly) {
+    return {
+      summary: `Hepatic: ${severityLabel}; ${rule.label}`,
+      title: `${severityLabel} hepatic impairment: ${targetOption.label}`,
+      body:
+        `${rule.label}. No numeric hepatic percentage adjustment is auto-applied here for the selected target dose of ${formatDoseWithUnit(
+          adjustedTargetDose,
+          getDailyUnitLabel(targetOption),
+        )}.`,
+    };
+  }
+
+  const minimumDose = adjustedTargetDose * (1 - rule.maxReduction / 100);
+  const maximumDose = adjustedTargetDose * (1 - rule.minReduction / 100);
+  const targetRangeLabel = formatDoseRange(
+    minimumDose,
+    maximumDose,
+    getDailyUnitLabel(targetOption),
+  );
+
+  return {
+    summary: `Hepatic: ${severityLabel}; ${rule.label}`,
+    title: `${severityLabel} hepatic impairment: ${targetOption.label}`,
+    body:
+      `${rule.label}. Applied after the selected safety reduction, ${formatDoseWithUnit(
+        adjustedTargetDose,
+        getDailyUnitLabel(targetOption),
+      )} corresponds to about ${targetRangeLabel}.`,
+  };
+};
+
+const showInvalidRegimen = (parsedEntries) => {
+  renderRegimenSummaryTable(parsedEntries);
+  finalDose.textContent = "0";
+  finalUnit.textContent = "mg/day";
+  resultTitle.textContent = "Enter a valid regimen";
+  resultSentence.textContent =
+    "Each active regimen row needs a non-negative dose and, for non-patch entries, a non-negative doses-per-day value.";
+  oralMorphineEquivalentOutput.textContent = "0 mg/day";
+  ivMorphineEquivalentOutput.textContent = "0 mg/day";
+  rawTargetDoseOutput.textContent = "0 mg/day";
+  reductionAppliedOutput.textContent = `${clampReduction(reductionNumber.value)}% reduction`;
+  organGuidanceSummaryOutput.textContent = "Complete the regimen before conversion";
+  renalAdviceTitle.textContent = "Regimen incomplete";
+  renalAdviceBody.textContent =
+    "Renal advice appears after the regimen entries are complete.";
+  hepaticAdviceTitle.textContent = "Regimen incomplete";
+  hepaticAdviceBody.textContent =
+    "Hepatic advice appears after the regimen entries are complete.";
+};
+
+const calculate = () => {
+  setModeVisibility();
+  updateRenalBandNote();
+
+  const parsedEntries = parseRegimenEntries();
+  const targetOption = findOption(targetDrugSelect.value);
+  const reductionPercentage = clampReduction(reductionNumber.value);
+  const isMMeMode = calculationModeSelect.value === "mme";
+
+  renderRegimenSummaryTable(parsedEntries);
+
+  if (!parsedEntries.length || parsedEntries.some((entry) => !entry.valid)) {
+    showInvalidRegimen(parsedEntries);
+    return;
+  }
+
+  const oralMorphineEquivalent = parsedEntries.reduce(
+    (sum, entry) => sum + entry.oralMorphineEquivalent,
+    0,
+  );
+  const ivMorphineEquivalent = getIvMorphineEquivalent(oralMorphineEquivalent);
+  const includesMethadone = parsedEntries.some((entry) =>
+    isMethadoneOption(entry.option),
+  );
+
+  oralMorphineEquivalentOutput.textContent = `${formatDose(oralMorphineEquivalent)} mg/day`;
+  ivMorphineEquivalentOutput.textContent = `${formatDose(ivMorphineEquivalent)} mg/day`;
+
+  if (isMMeMode) {
+    const renalAdvice = getRenalAdvice({
+      parsedEntries,
+      targetOption: null,
+      isMMeMode: true,
+      adjustedTargetDose: 0,
+    });
+    const hepaticAdvice = getHepaticAdvice({
+      parsedEntries,
+      targetOption: null,
+      isMMeMode: true,
+      adjustedTargetDose: 0,
+    });
+
+    resultTitle.textContent = "Total oral morphine equivalent";
+    finalDose.textContent = formatDose(oralMorphineEquivalent);
+    finalUnit.textContent = "mg OME/day";
+    resultSentence.textContent =
+      `${parsedEntries.length} regimen line${parsedEntries.length === 1 ? "" : "s"} contribute ` +
+      `${formatDose(oralMorphineEquivalent)} mg/day oral morphine equivalent.` +
+      (includesMethadone
+        ? " Because methadone is included, treat the total as especially approximate."
+        : "");
+    targetStepLabel.textContent = "Target calculation";
+    rawTargetDoseOutput.textContent = "Not applied";
+    reductionStep.classList.add("is-hidden");
+    organGuidanceSummaryOutput.textContent = `${renalAdvice.summary}; ${hepaticAdvice.summary}`;
+    renalAdviceTitle.textContent = renalAdvice.title;
+    renalAdviceBody.textContent = renalAdvice.body;
+    hepaticAdviceTitle.textContent = hepaticAdvice.title;
+    hepaticAdviceBody.textContent = hepaticAdvice.body;
+    return;
+  }
+
+  if (!targetOption) {
+    showInvalidRegimen(parsedEntries);
+    return;
+  }
+
+  const rawTargetDose = getTargetDose(targetOption, oralMorphineEquivalent);
+  const adjustedTargetDose = rawTargetDose * (1 - reductionPercentage / 100);
+  const renalAdvice = getRenalAdvice({
+    parsedEntries,
+    targetOption,
+    isMMeMode: false,
+    adjustedTargetDose,
+  });
+  const hepaticAdvice = getHepaticAdvice({
+    parsedEntries,
+    targetOption,
+    isMMeMode: false,
+    adjustedTargetDose,
+  });
+
+  resultTitle.textContent = `${targetOption.label} estimated daily target dose`;
+  finalDose.textContent = formatDose(adjustedTargetDose);
+  finalUnit.textContent = getDailyUnitLabel(targetOption);
+  resultSentence.textContent =
+    `Converted from ${parsedEntries.length} current regimen line${parsedEntries.length === 1 ? "" : "s"} with ` +
+    `${reductionPercentage}% incomplete cross-tolerance / safety reduction.` +
+    (includesMethadone
+      ? " Because methadone is included in the source regimen, treat the converted total as especially approximate."
+      : "");
+  targetStepLabel.textContent = `Raw ${targetOption.label.toLowerCase()} dose`;
+  rawTargetDoseOutput.textContent = `${formatDose(rawTargetDose)} ${getDailyUnitLabel(
+    targetOption,
+  )}`;
+  reductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
+  reductionStep.classList.remove("is-hidden");
+  organGuidanceSummaryOutput.textContent = `${renalAdvice.summary}; ${hepaticAdvice.summary}`;
+  renalAdviceTitle.textContent = renalAdvice.title;
+  renalAdviceBody.textContent = renalAdvice.body;
+  hepaticAdviceTitle.textContent = hepaticAdvice.title;
+  hepaticAdviceBody.textContent = hepaticAdvice.body;
+};
+
+const getMethadoneRoute = () => {
+  if (methadoneRouteSelect.value === "iv") {
+    return {
+      label: "IV methadone",
+      unitLabel: "mg/day IV",
+      factor: 0.5,
+      adjustmentLabel: "IV route: 50% of oral methadone estimate",
+    };
+  }
+
+  return {
+    label: "oral methadone",
+    unitLabel: "mg/day oral",
+    factor: 1,
+    adjustmentLabel: "Oral route: no route adjustment",
+  };
+};
+
+const calculateMethadone = () => {
+  const oralMorphineDaily = Number(methadoneMorphineDoseInput.value);
+  const reductionPercentage = clampReduction(methadoneReductionNumber.value);
+
+  if (
+    methadoneMorphineDoseInput.value.trim() === "" ||
+    !Number.isFinite(oralMorphineDaily) ||
+    oralMorphineDaily < 0
+  ) {
+    methadoneFinalDose.textContent = "0";
+    methadoneFinalUnit.textContent = getMethadoneRoute().unitLabel;
+    methadoneSentence.textContent =
+      "Enter a non-negative 24-hour oral morphine equivalent dose.";
+    methadoneFactorOutput.textContent =
+      `1 mg oral methadone = ${METHADONE_ORAL_MORPHINE_FACTOR} mg oral morphine`;
+    methadoneRawDoseOutput.textContent = "0 mg/day";
+    methadoneConservativeStartOutput.textContent = "0 mg/day oral";
+    methadoneRouteAdjustmentOutput.textContent = "Not applied";
+    methadoneReductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
+    methadoneQ8DoseOutput.textContent = "0 mg/dose";
+    methadoneQ12DoseOutput.textContent = "0 mg/dose";
+    return;
+  }
+
+  const route = getMethadoneRoute();
+  const rawOralMethadoneDaily =
+    oralMorphineDaily / METHADONE_ORAL_MORPHINE_FACTOR;
+  const conservativeOralMethadoneDaily =
+    rawOralMethadoneDaily / METHADONE_CONSERVATIVE_DIVISOR;
+  const routeAdjustedDaily = conservativeOralMethadoneDaily * route.factor;
+  const finalDaily = routeAdjustedDaily * (1 - reductionPercentage / 100);
+  const q8Dose = finalDaily / 3;
+  const q12Dose = finalDaily / 2;
+
+  methadoneFinalDose.textContent = formatDose(finalDaily);
+  methadoneFinalUnit.textContent = route.unitLabel;
+  methadoneFactorOutput.textContent =
+    `1 mg oral methadone = ${METHADONE_ORAL_MORPHINE_FACTOR} mg oral morphine`;
+  methadoneRawDoseOutput.textContent = `${formatDose(rawOralMethadoneDaily)} mg/day`;
+  methadoneConservativeStartOutput.textContent =
+    `${formatDose(conservativeOralMethadoneDaily)} mg/day oral`;
+  methadoneRouteAdjustmentOutput.textContent = route.adjustmentLabel;
+  methadoneReductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
+  methadoneQ8DoseOutput.textContent = `${formatDose(q8Dose)} mg/dose`;
+  methadoneQ12DoseOutput.textContent = `${formatDose(q12Dose)} mg/dose`;
+  methadoneSentence.textContent =
+    `${formatDose(oralMorphineDaily)} mg/day oral morphine equivalent converts to ` +
+    `${formatDose(rawOralMethadoneDaily)} mg/day oral methadone by the configured 4.7 factor; ` +
+    `this staging build then shows one-third of that value as the conservative start before route adjustment` +
+    ` and any extra safety reduction.`;
+};
+
+const handleRegimenEntryInput = (event) => {
+  const entryElement = event.target.closest(".regimen-entry");
+
+  if (!entryElement) {
+    return;
+  }
+
+  const entryKey = Number(entryElement.dataset.entryKey);
+  const entry = regimenEntriesState.find((item) => item.key === entryKey);
+
+  if (!entry) {
+    return;
+  }
+
+  const field = event.target.dataset.field;
+
+  if (!field) {
+    return;
+  }
+
+  entry[field] = event.target.value;
+
+  if (field === "drugId") {
+    const option = findOption(entry.drugId);
+
+    if (option) {
+      entry.dose = isPatchOption(option) ? "1" : String(option.referenceDose);
+      entry.dosesPerDay = isPatchOption(option) ? "1" : "1";
+    }
+
+    renderRegimenEntries();
+  }
+
+  calculate();
+};
+
+const handleRegimenEntryClick = (event) => {
+  const removeButton = event.target.closest('[data-action="remove-entry"]');
+
+  if (!removeButton) {
+    return;
+  }
+
+  const entryElement = event.target.closest(".regimen-entry");
+
+  if (!entryElement || regimenEntriesState.length === 1) {
+    return;
+  }
+
+  const entryKey = Number(entryElement.dataset.entryKey);
+  regimenEntriesState = regimenEntriesState.filter((item) => item.key !== entryKey);
+  renderRegimenEntries();
+  calculate();
+};
+
+const setRegimenEntries = (entries) => {
+  regimenEntriesState = entries.map((entry) => createRegimenEntry(entry));
+  renderRegimenEntries();
+};
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   calculate();
@@ -802,32 +1673,43 @@ buprenorphineForm.addEventListener("submit", (event) => {
   renderBuprenorphineSchedule();
 });
 
-methadoneCalculateButton.addEventListener("click", () => {
-  calculateMethadone();
+regimenEntriesContainer.addEventListener("input", handleRegimenEntryInput);
+regimenEntriesContainer.addEventListener("change", handleRegimenEntryInput);
+regimenEntriesContainer.addEventListener("click", handleRegimenEntryClick);
+
+addRegimenEntryButton.addEventListener("click", () => {
+  regimenEntriesState.push(createRegimenEntry());
+  renderRegimenEntries();
+  calculate();
 });
 
-buprenorphineCalculateButton.addEventListener("click", () => {
-  renderBuprenorphineSchedule();
+calculationModeSelect.addEventListener("input", () => {
+  setModeVisibility();
+  calculate();
 });
 
-[
-  calculationModeSelect,
-  currentDrugSelect,
-  targetDrugSelect,
-  currentDoseInput,
-  reductionRange,
-  reductionNumber,
-].forEach((control) => {
+targetDrugSelect.addEventListener("input", () => {
+  calculate();
+});
+
+[reductionRange, reductionNumber].forEach((control) => {
   control.addEventListener("input", () => {
-    if (control === currentDrugSelect) {
-      setDefaultCurrentDose();
-      renderTargetOptions();
-    }
+    syncReduction(control);
+    calculate();
+  });
+});
 
-    if (control === reductionRange || control === reductionNumber) {
-      syncReduction(control);
-    }
+document.querySelectorAll("[data-reduction-quickset]").forEach((button) => {
+  button.addEventListener("click", () => {
+    reductionRange.value = button.dataset.reductionQuickset;
+    reductionNumber.value = button.dataset.reductionQuickset;
+    calculate();
+  });
+});
 
+[egfrInput, painControlSelect, hepaticSeveritySelect].forEach((control) => {
+  control.addEventListener("input", () => {
+    updateRenalBandNote();
     calculate();
   });
 });
@@ -850,32 +1732,73 @@ buprenorphineCalculateButton.addEventListener("click", () => {
   });
 });
 
+document.querySelectorAll("[data-methadone-quickset]").forEach((button) => {
+  button.addEventListener("click", () => {
+    methadoneReductionRange.value = button.dataset.methadoneQuickset;
+    methadoneReductionNumber.value = button.dataset.methadoneQuickset;
+    calculateMethadone();
+  });
+});
+
+methadoneCalculateButton.addEventListener("click", () => {
+  calculateMethadone();
+});
+
+buprenorphineCalculateButton.addEventListener("click", () => {
+  renderBuprenorphineSchedule();
+});
+
 buprenorphineMeddRangeSelect.addEventListener("input", () => {
   renderBuprenorphineSchedule();
 });
 
 exampleButton.addEventListener("click", () => {
   calculationModeSelect.value = "convert";
-  currentDrugSelect.value = "Hydromorphone_IV";
+  setRegimenEntries([
+    {
+      drugId: "Hydromorphone_IV",
+      dose: "1",
+      dosesPerDay: "4",
+    },
+    {
+      drugId: "Hydrocodone_Oral",
+      dose: "10",
+      dosesPerDay: "4",
+    },
+  ]);
   renderTargetOptions("Oxycodone_Oral");
-  currentDoseInput.value = "10";
+  targetDrugSelect.value = "Oxycodone_Oral";
   reductionRange.value = "25";
   reductionNumber.value = "25";
+  egfrInput.value = "";
+  painControlSelect.value = "uncontrolled";
+  hepaticSeveritySelect.value = "none";
   calculate();
 });
 
 mmeExampleButton.addEventListener("click", () => {
   calculationModeSelect.value = "mme";
-  currentDrugSelect.value = "Buprenorphine_Patch_20";
-  renderTargetOptions();
-  currentDoseInput.value = "1";
+  setRegimenEntries([
+    {
+      drugId: "Fentanyl_Patch_25",
+      dose: "1",
+      dosesPerDay: "1",
+    },
+  ]);
+  reductionRange.value = "25";
+  reductionNumber.value = "25";
+  egfrInput.value = "";
+  painControlSelect.value = "uncontrolled";
+  hepaticSeveritySelect.value = "none";
   calculate();
 });
 
-renderOptions();
 renderReferenceTable();
-renderMethadoneRatioTable();
+renderHepaticGuidanceTable();
+renderSourceTable();
 renderBuprenorphineOptions();
+setRegimenEntries([{}]);
+renderBuprenorphineSchedule();
+updateRenalBandNote();
 calculate();
 calculateMethadone();
-renderBuprenorphineSchedule();

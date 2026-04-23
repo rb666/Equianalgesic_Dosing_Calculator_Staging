@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A static equianalgesic opioid dose conversion calculator for clinical decision support."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Equianalgesic Dose Calculator | Staging</title>
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="environment-banner" role="note" aria-label="Environment notice">
+      Staging preview. This site is for review and testing and may differ from the live production calculator.
+    </div>
+    <header class="site-header">
+      <div class="header-copy">
+        <p class="eyebrow">Clinical decision support</p>
+        <h1>Equianalgesic Dose Calculator</h1>
+        <p>
+          Convert supported opioid doses or calculate oral morphine equivalent
+          using clinician-selected reference values.
+        </p>
+        <p class="environment-copy">
+          This is the GitHub Pages staging site for client review before production updates.
+        </p>
+      </div>
+      <img
+        class="header-image"
+        src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80"
+        alt="Clinician reviewing patient care in a hospital setting"
+      />
+    </header>
+
+    <main>
+      <section class="safety-banner" aria-label="Safety warning">
+        <div>
+          <strong>High-risk medication warning</strong>
+          <p>
+            This calculator is a clinical decision support tool only. It is not a
+            substitute for professional medical judgment, institutional policy,
+            pharmacist review, or patient-specific assessment.
+          </p>
+        </div>
+        <p>
+          Verify opioid tolerance, indication, organ function, sedation risk,
+          concomitant CNS depressants, formulation constraints, transdermal
+          product rules, and monitoring before prescribing.
+        </p>
+      </section>
+
+      <section class="calculator-layout" aria-label="Dose conversion tool">
+        <form class="calculator-panel" id="calculatorForm">
+          <div class="section-heading">
+            <p class="eyebrow">Inputs</p>
+            <h2>Current regimen</h2>
+          </div>
+
+          <div class="field-grid">
+            <label for="calculationMode">
+              Calculation mode
+              <select id="calculationMode" name="calculationMode">
+                <option value="convert">Convert to target opioid</option>
+                <option value="mme">Calculate MME only</option>
+              </select>
+            </label>
+
+            <label for="currentDrug">
+              Current drug and route
+              <select id="currentDrug" name="currentDrug"></select>
+            </label>
+
+            <label for="currentDose">
+              <span id="currentDoseLabel">Dose to convert</span>
+              <input
+                id="currentDose"
+                name="currentDose"
+                type="number"
+                min="0"
+                step="0.001"
+                inputmode="decimal"
+                value="10"
+                required
+              />
+              <span class="field-hint" id="currentDoseHint">mg</span>
+            </label>
+
+            <label for="targetDrug" id="targetField">
+              Target drug and route
+              <select id="targetDrug" name="targetDrug"></select>
+            </label>
+
+            <div class="slider-group" id="reductionField">
+              <div class="slider-header">
+                <label for="reductionRange">Cross-tolerance reduction</label>
+                <div class="percent-input">
+                  <input
+                    id="reductionNumber"
+                    name="reductionNumber"
+                    type="number"
+                    min="0"
+                    max="75"
+                    step="1"
+                    value="25"
+                  />
+                  <span>%</span>
+                </div>
+              </div>
+              <input
+                id="reductionRange"
+                name="reductionRange"
+                type="range"
+                min="0"
+                max="75"
+                step="1"
+                value="25"
+              />
+              <div class="range-labels" aria-hidden="true">
+                <span>0%</span>
+                <span>25%</span>
+                <span>50%</span>
+                <span>75%</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="basis-note">
+            Enter a single dose or a 24-hour total and interpret output on the
+            same basis. For MME reporting, use 24-hour totals. Patch entries use
+            the selected patch strength and number of patches.
+          </p>
+
+          <div class="button-row">
+            <button type="submit">Calculate</button>
+            <button class="secondary-button" type="button" id="exampleButton">
+              Load IV hydromorphone example
+            </button>
+            <button class="secondary-button" type="button" id="mmeExampleButton">
+              Load patch MME example
+            </button>
+          </div>
+        </form>
+
+        <section class="result-panel" aria-live="polite" aria-atomic="true">
+          <div class="section-heading">
+            <p class="eyebrow">Result</p>
+            <h2 id="resultTitle">Oral oxycodone target dose</h2>
+          </div>
+
+          <div class="dose-result">
+            <span id="finalDose">100</span>
+            <span id="finalUnit">mg</span>
+          </div>
+          <p id="resultSentence">
+            Start from the reduced calculated dose, then individualize based on
+            clinical context and available formulations.
+          </p>
+
+          <dl class="calculation-steps">
+            <div>
+              <dt>Oral morphine equivalent</dt>
+              <dd id="oralMorphineEquivalent">83.33 mg</dd>
+            </div>
+            <div>
+              <dt>IV morphine equivalent</dt>
+              <dd id="ivMorphineEquivalent">66.67 mg</dd>
+            </div>
+            <div>
+              <dt id="targetStepLabel">Raw target dose</dt>
+              <dd id="rawTargetDose">133.33 mg</dd>
+            </div>
+            <div id="reductionStep">
+              <dt>Reduction applied</dt>
+              <dd id="reductionApplied">25% reduction</dd>
+            </div>
+          </dl>
+
+          <div class="clinical-notes">
+            <h3>Before ordering</h3>
+            <ul>
+              <li>Use extra caution for older, frail, opioid-naive, or unstable patients.</li>
+              <li>Patch entries are MME estimates only; do not use this tool to initiate or titrate patches.</li>
+              <li>Meperidine, tramadol, tapentadol, fentanyl, and buprenorphine conversions vary by source and clinical setting.</li>
+              <li>Methadone entries in the main converter are for methadone-to-opioid or oral/IV methadone route conversions; use the methadone tool below when rotating a non-methadone opioid to methadone.</li>
+              <li>Reassess analgesia, respiratory rate, sedation, and adverse effects after conversion.</li>
+            </ul>
+          </div>
+        </section>
+      </section>
+
+      <details class="compact-section" aria-label="Methadone conversion tool">
+        <summary>
+          <span class="compact-title">
+            <span class="eyebrow">Methadone</span>
+            <strong>Oral morphine to methadone</strong>
+            <span>Specialized conversion with safety reduction and oral/IV route output.</span>
+          </span>
+          <span class="summary-action" aria-hidden="true"></span>
+        </summary>
+
+        <section class="methadone-layout compact-section-body">
+          <form class="calculator-panel" id="methadoneForm">
+            <div class="field-grid">
+              <label for="methadoneMorphineDose">
+                24-hour oral morphine equivalent
+                <input
+                  id="methadoneMorphineDose"
+                  name="methadoneMorphineDose"
+                  type="number"
+                  min="0"
+                  step="1"
+                  inputmode="decimal"
+                  value="100"
+                  required
+                />
+                <span class="field-hint">mg/day OME</span>
+              </label>
+
+              <label for="methadoneRoute">
+                Target methadone route
+                <select id="methadoneRoute" name="methadoneRoute">
+                  <option value="oral">Oral methadone</option>
+                  <option value="iv">IV methadone</option>
+                </select>
+                <span class="field-hint">IV methadone is calculated as 50% of the oral methadone estimate.</span>
+              </label>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="methadoneReductionRange">Methadone safety reduction</label>
+                  <div class="percent-input">
+                    <input
+                      id="methadoneReductionNumber"
+                      name="methadoneReductionNumber"
+                      type="number"
+                      min="0"
+                      max="90"
+                      step="1"
+                      value="75"
+                    />
+                    <span>%</span>
+                  </div>
+                </div>
+                <input
+                  id="methadoneReductionRange"
+                  name="methadoneReductionRange"
+                  type="range"
+                  min="0"
+                  max="90"
+                  step="1"
+                  value="75"
+                />
+                <div class="range-labels" aria-hidden="true">
+                  <span>0%</span>
+                  <span>30%</span>
+                  <span>60%</span>
+                  <span>90%</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="basis-note">
+              Use a verified 24-hour oral morphine equivalent total. This is not
+              for methadone initiation in opioid use disorder or for opioid-naive
+              patients.
+            </p>
+
+            <div class="button-row">
+              <button type="button" id="methadoneCalculateButton">
+                Calculate methadone
+              </button>
+            </div>
+          </form>
+
+          <section class="result-panel" aria-live="polite" aria-atomic="true">
+            <div class="section-heading">
+              <p class="eyebrow">Methadone result</p>
+              <h2>Conservative starting estimate</h2>
+            </div>
+
+            <div class="dose-result">
+              <span id="methadoneFinalDose">3.13</span>
+              <span id="methadoneFinalUnit">mg/day</span>
+            </div>
+            <p id="methadoneSentence">
+              Apply specialist review, QTc and interaction screening, close
+              monitoring, and local policy before ordering.
+            </p>
+
+            <dl class="calculation-steps">
+              <div>
+                <dt>Morphine:methadone ratio</dt>
+                <dd id="methadoneRatio">8:1</dd>
+              </div>
+              <div>
+                <dt>Raw oral methadone</dt>
+                <dd id="methadoneRawDose">12.5 mg/day</dd>
+              </div>
+              <div>
+                <dt>Route adjustment</dt>
+                <dd id="methadoneRouteAdjustment">Oral route</dd>
+              </div>
+              <div>
+                <dt>Reduction applied</dt>
+                <dd id="methadoneReductionApplied">75% reduction</dd>
+              </div>
+              <div>
+                <dt>If divided q8h</dt>
+                <dd id="methadoneQ8Dose">1.04 mg/dose</dd>
+              </div>
+              <div>
+                <dt>If divided q12h</dt>
+                <dd id="methadoneQ12Dose">1.56 mg/dose</dd>
+              </div>
+            </dl>
+
+            <div class="clinical-notes">
+              <h3>Methadone cautions</h3>
+              <ul>
+                <li>Use only with clinician experience or pain/palliative specialist input.</li>
+                <li>Methadone requires slow titration to the intended dose due to its long and variable half-life and risk of accumulation; if you are not comfortable or experienced with methadone, please consult a pain or palliative care specialist.</li>
+                <li>Account for long and variable half-life, delayed toxicity, QTc risk, CYP interactions, and renal/hepatic context.</li>
+                <li>No automatic rounding to tablet or liquid formulation is performed.</li>
+              </ul>
+            </div>
+          </section>
+        </section>
+      </details>
+
+      <details class="compact-section" aria-label="Buprenorphine transition tool">
+        <summary>
+          <span class="compact-title">
+            <span class="eyebrow">Buprenorphine products</span>
+            <strong>MEDD-based cross-titration schedule</strong>
+            <span>Belbuca and Suboxone schedules by current MEDD range.</span>
+          </span>
+          <span class="summary-action" aria-hidden="true"></span>
+        </summary>
+
+        <section class="buprenorphine-layout compact-section-body">
+          <form class="calculator-panel" id="buprenorphineForm">
+            <div class="field-grid">
+              <label for="buprenorphineMeddRange">
+                Current MEDD range and product
+                <select id="buprenorphineMeddRange" name="buprenorphineMeddRange"></select>
+                <span class="field-hint">Belbuca covers 30-160 mg MEDD; Suboxone covers 161-300 mg MEDD.</span>
+              </label>
+            </div>
+
+            <p class="basis-note">
+              Select the current MEDD range to view the corresponding buprenorphine
+              product schedule. Stabilize earlier if pain and withdrawal are
+              controlled.
+            </p>
+
+            <div class="button-row">
+              <button type="button" id="buprenorphineCalculateButton">
+                Show schedule
+              </button>
+            </div>
+          </form>
+
+          <section class="result-panel" aria-live="polite" aria-atomic="true">
+            <div class="section-heading">
+              <p class="eyebrow">Schedule</p>
+              <h2 id="buprenorphineResultTitle">30-59 mg MEDD</h2>
+            </div>
+
+            <div class="schedule-summary">
+              <div>
+                <span class="summary-label">Product</span>
+                <strong id="buprenorphineProduct">Belbuca (buprenorphine buccal film)</strong>
+              </div>
+              <div>
+                <span class="summary-label">Full agonist plan</span>
+                <strong id="buprenorphineContinueSummary">Continue full agonist opioids while titrating.</strong>
+              </div>
+              <div>
+                <span class="summary-label">Stop point</span>
+                <strong id="buprenorphineStopSummary">Stop full agonist opioids.</strong>
+              </div>
+              <div>
+                <span class="summary-label">Buprenorphine endpoint</span>
+                <strong id="buprenorphineEndpoint">450 mcg BID (900 mcg TDD)</strong>
+              </div>
+            </div>
+
+            <div class="table-wrap schedule-table-wrap">
+              <table class="schedule-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Day</th>
+                    <th scope="col">Full agonist opioids</th>
+                    <th scope="col">Buprenorphine product</th>
+                  </tr>
+                </thead>
+                <tbody id="buprenorphineScheduleTable"></tbody>
+              </table>
+            </div>
+
+            <div class="clinical-notes">
+              <h3>Buprenorphine transition cautions</h3>
+              <ul>
+                <li>Confirm the MEDD range, diagnosis, formulation access, and payer constraints before using this schedule.</li>
+                <li>Belbuca and Suboxone both contain buprenorphine, but they are different formulations with different dose units and administration routes.</li>
+                <li>Monitor for withdrawal, oversedation, respiratory depression, worsening pain, and adherence during cross-titration.</li>
+                <li>For MEDD above 300 mg/day or unstable patients, consult pain, palliative care, or addiction medicine.</li>
+              </ul>
+            </div>
+          </section>
+        </section>
+      </details>
+
+      <details class="compact-section" aria-label="Conversion reference">
+        <summary>
+          <span class="compact-title">
+            <span class="eyebrow">Reference</span>
+            <strong>Equianalgesic values and methadone ratios</strong>
+            <span>Open when you need to audit the configured tables.</span>
+          </span>
+          <span class="summary-action" aria-hidden="true"></span>
+        </summary>
+
+        <section class="reference-section compact-section-body">
+          <div class="section-heading">
+            <p class="eyebrow">Reference</p>
+            <h2>Equianalgesic values used</h2>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Medication</th>
+                  <th scope="col">Route</th>
+                  <th scope="col">Reference dose</th>
+                  <th scope="col">Oral morphine equivalent</th>
+                  <th scope="col">Use</th>
+                </tr>
+              </thead>
+              <tbody id="referenceTable"></tbody>
+            </table>
+          </div>
+
+          <p class="reference-copy">
+            Values reflect the local reference table configured in this tool.
+            Oral morphine is set to 25 mg per 10 mg IV morphine. For entries
+            supplied as oral morphine equivalents, IV morphine equivalent is
+            derived from that updated morphine setting. Equivalence varies by
+            patient, setting, opioid exposure, and source table. Methadone in the
+            main converter uses 10 mg oral methadone = 47 mg oral morphine
+            equivalent and 5 mg IV methadone = 10 mg oral methadone.
+          </p>
+          <div class="section-heading methadone-reference-heading">
+            <p class="eyebrow">Methadone</p>
+            <h2>Morphine:methadone ratios used</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">24-hour oral morphine equivalent</th>
+                  <th scope="col">Morphine:methadone ratio</th>
+                </tr>
+              </thead>
+              <tbody id="methadoneRatioTable"></tbody>
+            </table>
+          </div>
+          <p class="reference-copy">
+            Methadone conversion uses nonlinear oral morphine:oral methadone
+            ratios, applies the selected 0% to 90% additional reduction, and uses
+            50% of the oral methadone estimate for IV methadone.
+          </p>
+        </section>
+      </details>
+    </main>
+
+    <footer>
+      <p>
+        For clinician use only. No calculation should be used without bedside
+        review and documentation of patient-specific rationale.
+      </p>
+    </footer>
+
+    <script src="script.js?v=20260417-compact-buprenorphine-section"></script>
+  </body>
+</html>

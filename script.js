@@ -427,6 +427,12 @@ const sourceReferences = [
       "Background source for renal cautions and alternative opioid groupings; the eGFR rules in this staging build follow the client-requested configuration.",
   },
   {
+    title: "Use of the Child-Pugh Score in Liver Disease – StatPearls",
+    url: "https://www.ncbi.nlm.nih.gov/books/NBK542308/",
+    note:
+      "Background source for bilirubin, albumin, and INR severity bands. The hepatic class suggestion in this staging build is a transparent heuristic inspired by those lab bands, not a validated Child-Pugh calculator.",
+  },
+  {
     title: "Liver failure pain management – West Midlands Palliative Care",
     url:
       "https://www.westmidspallcare.co.uk/wmpcp/guide/liver-failure/liver-failure-pain-management/",
@@ -586,6 +592,14 @@ const egfrInput = document.querySelector("#egfrInput");
 const painControlSelect = document.querySelector("#painControl");
 const renalBandNote = document.querySelector("#renalBandNote");
 const hepaticSeveritySelect = document.querySelector("#hepaticSeverity");
+const astInput = document.querySelector("#astInput");
+const altInput = document.querySelector("#altInput");
+const bilirubinInput = document.querySelector("#bilirubinInput");
+const inrInput = document.querySelector("#inrInput");
+const ammoniaInput = document.querySelector("#ammoniaInput");
+const plateletInput = document.querySelector("#plateletInput");
+const albuminInput = document.querySelector("#albuminInput");
+const hepaticSuggestionNote = document.querySelector("#hepaticSuggestionNote");
 const exampleButton = document.querySelector("#exampleButton");
 const mmeExampleButton = document.querySelector("#mmeExampleButton");
 const referenceTable = document.querySelector("#referenceTable");
@@ -603,6 +617,10 @@ const targetStepLabel = document.querySelector("#targetStepLabel");
 const rawTargetDoseOutput = document.querySelector("#rawTargetDose");
 const reductionStep = document.querySelector("#reductionStep");
 const reductionAppliedOutput = document.querySelector("#reductionApplied");
+const renalAdjustmentStep = document.querySelector("#renalAdjustmentStep");
+const renalAdjustedDoseOutput = document.querySelector("#renalAdjustedDose");
+const hepaticAdjustmentStep = document.querySelector("#hepaticAdjustmentStep");
+const hepaticAdjustedDoseOutput = document.querySelector("#hepaticAdjustedDose");
 const organGuidanceSummaryOutput = document.querySelector("#organGuidanceSummary");
 const renalAdviceTitle = document.querySelector("#renalAdviceTitle");
 const renalAdviceBody = document.querySelector("#renalAdviceBody");
@@ -678,6 +696,20 @@ const formatDoseRange = (minimum, maximum, unitLabel) => {
   }
 
   return `${formatDose(minimum)}-${formatDose(maximum)} ${unitLabel}`;
+};
+
+const parseOptionalNumber = (rawValue) => {
+  if (String(rawValue).trim() === "") {
+    return null;
+  }
+
+  const numericValue = Number(rawValue);
+
+  if (!Number.isFinite(numericValue) || numericValue < 0) {
+    return null;
+  }
+
+  return numericValue;
 };
 
 const formatList = (items) => {
@@ -1101,6 +1133,168 @@ const getEgfrBand = (rawValue) => {
   };
 };
 
+const getHepaticSeveritySuggestion = () => {
+  const bilirubin = parseOptionalNumber(bilirubinInput.value);
+  const albumin = parseOptionalNumber(albuminInput.value);
+  const inr = parseOptionalNumber(inrInput.value);
+  const ast = parseOptionalNumber(astInput.value);
+  const alt = parseOptionalNumber(altInput.value);
+  const ammonia = parseOptionalNumber(ammoniaInput.value);
+  const platelets = parseOptionalNumber(plateletInput.value);
+
+  const coreFindings = [];
+  const modifierFindings = [];
+  const corePoints = [];
+  let modifierScore = 0;
+
+  if (bilirubin !== null) {
+    const points = bilirubin > 3 ? 3 : bilirubin >= 2 ? 2 : 1;
+    corePoints.push(points);
+    coreFindings.push(
+      `bilirubin ${formatDose(bilirubin)} mg/dL (${points === 1 ? "<2" : points === 2 ? "2-3" : ">3"})`,
+    );
+  }
+
+  if (albumin !== null) {
+    const points = albumin < 2.8 ? 3 : albumin <= 3.5 ? 2 : 1;
+    corePoints.push(points);
+    coreFindings.push(
+      `albumin ${formatDose(albumin)} g/dL (${points === 1 ? ">3.5" : points === 2 ? "2.8-3.5" : "<2.8"})`,
+    );
+  }
+
+  if (inr !== null) {
+    const points = inr > 2.3 ? 3 : inr >= 1.7 ? 2 : 1;
+    corePoints.push(points);
+    coreFindings.push(
+      `INR ${formatDose(inr)} (${points === 1 ? "<1.7" : points === 2 ? "1.7-2.3" : ">2.3"})`,
+    );
+  }
+
+  const highestTransaminase = Math.max(ast ?? 0, alt ?? 0);
+
+  if (highestTransaminase >= 200) {
+    modifierScore += 2;
+    modifierFindings.push(
+      `AST/ALT ${formatDose(highestTransaminase)} U/L (marked transaminitis support)`,
+    );
+  } else if (highestTransaminase >= 120) {
+    modifierScore += 1;
+    modifierFindings.push(
+      `AST/ALT ${formatDose(highestTransaminase)} U/L (moderate transaminitis support)`,
+    );
+  }
+
+  if (ammonia !== null) {
+    if (ammonia >= 100) {
+      modifierScore += 2;
+      modifierFindings.push(
+        `ammonia ${formatDose(ammonia)} umol/L (marked encephalopathy-risk support)`,
+      );
+    } else if (ammonia >= 60) {
+      modifierScore += 1;
+      modifierFindings.push(
+        `ammonia ${formatDose(ammonia)} umol/L (mild encephalopathy-risk support)`,
+      );
+    }
+  }
+
+  if (platelets !== null) {
+    if (platelets < 100) {
+      modifierScore += 2;
+      modifierFindings.push(
+        `platelets ${formatDose(platelets)} x10^9/L (marked portal-hypertension support)`,
+      );
+    } else if (platelets < 150) {
+      modifierScore += 1;
+      modifierFindings.push(
+        `platelets ${formatDose(platelets)} x10^9/L (mild portal-hypertension support)`,
+      );
+    }
+  }
+
+  if (!corePoints.length && modifierScore === 0) {
+    return null;
+  }
+
+  let severityIndex = 0;
+
+  if (corePoints.length === 3) {
+    const coreSum = corePoints.reduce((sum, value) => sum + value, 0);
+
+    if (coreSum >= 7) {
+      severityIndex = 2;
+    } else if (coreSum >= 5) {
+      severityIndex = 1;
+    }
+  } else if (corePoints.length === 2) {
+    const average = corePoints.reduce((sum, value) => sum + value, 0) / 2;
+
+    if (average > 2.25) {
+      severityIndex = 2;
+    } else if (average >= 1.5) {
+      severityIndex = 1;
+    }
+  } else if (corePoints.length === 1) {
+    severityIndex = corePoints[0] >= 2 ? 1 : 0;
+  } else if (modifierScore >= 4) {
+    severityIndex = 2;
+  } else if (modifierScore >= 2) {
+    severityIndex = 1;
+  }
+
+  if (modifierScore >= 4) {
+    severityIndex = 2;
+  } else if (modifierScore >= 2 && severityIndex < 2) {
+    severityIndex += 1;
+  }
+
+  const severity = ["mild", "moderate", "severe"][severityIndex];
+  const rationaleParts = [];
+
+  if (coreFindings.length) {
+    rationaleParts.push(`core labs: ${coreFindings.join(", ")}`);
+  }
+
+  if (modifierFindings.length) {
+    rationaleParts.push(`supportive markers: ${modifierFindings.join(", ")}`);
+  }
+
+  return {
+    severity,
+    summary: `${hepaticSeverityLabels[severity]} suggested from entered labs`,
+    detail:
+      rationaleParts.join("; ") ||
+      "Lab-derived hepatic suggestion is based on the entered values.",
+  };
+};
+
+const getActiveHepaticSeverity = () => {
+  const suggestion = getHepaticSeveritySuggestion();
+
+  if (hepaticSeveritySelect.value !== "none") {
+    return {
+      severity: hepaticSeveritySelect.value,
+      source: "manual",
+      suggestion,
+    };
+  }
+
+  if (suggestion) {
+    return {
+      severity: suggestion.severity,
+      source: "suggested",
+      suggestion,
+    };
+  }
+
+  return {
+    severity: "none",
+    source: "none",
+    suggestion: null,
+  };
+};
+
 const updateRenalBandNote = () => {
   const band = getEgfrBand(egfrInput.value);
 
@@ -1124,6 +1318,35 @@ const updateRenalBandNote = () => {
 
   renalBandNote.textContent =
     "eGFR below 30 mL/min: this staging build marks morphine, codeine, and meperidine as avoid and highlights alternative opioid groups.";
+};
+
+const updateHepaticSuggestionNote = () => {
+  const activeSeverity = getActiveHepaticSeverity();
+
+  if (activeSeverity.source === "manual" && activeSeverity.suggestion) {
+    hepaticSuggestionNote.textContent =
+      `Suggested hepatic class from entered labs: ${hepaticSeverityLabels[
+        activeSeverity.suggestion.severity
+      ]}. Manual selection is currently overriding that suggestion. ${activeSeverity.suggestion.detail}`;
+    return;
+  }
+
+  if (activeSeverity.source === "manual") {
+    hepaticSuggestionNote.textContent =
+      `Manual hepatic class selected: ${hepaticSeverityLabels[activeSeverity.severity]}. Enter bilirubin, INR, albumin, AST/ALT, ammonia, and platelets to also generate a lab-based suggestion.`;
+    return;
+  }
+
+  if (activeSeverity.source === "suggested") {
+    hepaticSuggestionNote.textContent =
+      `Suggested hepatic class from entered labs: ${hepaticSeverityLabels[
+        activeSeverity.severity
+      ]}. ${activeSeverity.suggestion.detail} This is a transparent staging heuristic, not a validated liver severity score.`;
+    return;
+  }
+
+  hepaticSuggestionNote.textContent =
+    "Enter bilirubin, INR, albumin, AST/ALT, ammonia, and platelets to generate a transparent suggested hepatic class.";
 };
 
 const renderRegimenSummaryTable = (parsedEntries) => {
@@ -1197,6 +1420,7 @@ const getRenalAdvice = ({
       summary: "Renal guidance off",
       title: "No renal band selected",
       body: "Enter eGFR to turn on the staging renal adjustment guidance.",
+      resultLabel: "Not applied",
     };
   }
 
@@ -1207,6 +1431,7 @@ const getRenalAdvice = ({
       body:
         "No automatic renal dose reduction is configured in this staging build above 50 mL/min." +
         currentNote,
+      resultLabel: "No renal reduction",
     };
   }
 
@@ -1235,6 +1460,10 @@ const getRenalAdvice = ({
               getDailyUnitLabel(targetOption),
             )}.` +
             currentNote,
+          resultLabel: formatDoseWithUnit(
+            renalAdjustedDose,
+            getDailyUnitLabel(targetOption),
+          ),
         };
       }
 
@@ -1245,6 +1474,7 @@ const getRenalAdvice = ({
           body:
             "No explicit percentage reduction is auto-applied for oxycodone or hydromorphone in this staging build. Use lower starting doses and cautious titration in renal dysfunction." +
             currentNote,
+          resultLabel: "Use caution",
         };
       }
 
@@ -1255,6 +1485,7 @@ const getRenalAdvice = ({
           body:
             "Methadone, fentanyl, and buprenorphine are listed here as lower-kidney-effect alternatives. No automatic percentage reduction is applied in this staging build, but monitoring and formulation review remain necessary." +
             currentNote,
+          resultLabel: "Preferred class",
         };
       }
     }
@@ -1265,6 +1496,7 @@ const getRenalAdvice = ({
       body:
         `This staging build applies ${reductionLabel} to morphine, codeine, and meperidine in the 30-50 mL/min band.` +
         currentNote,
+      resultLabel: "Guidance only",
     };
   }
 
@@ -1276,6 +1508,7 @@ const getRenalAdvice = ({
         body:
           "Morphine, codeine, and meperidine are marked as avoid in this staging build below 30 mL/min. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
           currentNote,
+        resultLabel: "Avoid target",
       };
     }
 
@@ -1286,6 +1519,7 @@ const getRenalAdvice = ({
         body:
           "Oxycodone and hydromorphone are listed here as moderate-kidney-effect alternatives. Start carefully, titrate slowly, and monitor for accumulation." +
           currentNote,
+        resultLabel: "Use cautious low start",
       };
     }
 
@@ -1296,6 +1530,7 @@ const getRenalAdvice = ({
         body:
           "Methadone, fentanyl, and buprenorphine are highlighted here as lower-kidney-effect alternatives. No automatic percentage reduction is added in this staging build, but specialist review and close monitoring remain important." +
           currentNote,
+        resultLabel: "Preferred class",
       };
     }
   }
@@ -1306,6 +1541,7 @@ const getRenalAdvice = ({
     body:
       "Morphine, codeine, and meperidine are marked as avoid below 30 mL/min in this staging build. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
       currentNote,
+    resultLabel: "Guidance only",
   };
 };
 
@@ -1315,8 +1551,15 @@ const getHepaticAdvice = ({
   isMMeMode,
   adjustedTargetDose,
 }) => {
-  const severity = hepaticSeveritySelect.value;
+  const activeSeverity = getActiveHepaticSeverity();
+  const severity = activeSeverity.severity;
   const severityLabel = hepaticSeverityLabels[severity] || "No class selected";
+  const sourcePrefix =
+    activeSeverity.source === "suggested"
+      ? "Suggested from entered labs"
+      : activeSeverity.source === "manual"
+        ? "Manual class selected"
+        : "No class selected";
 
   if (severity === "none") {
     return {
@@ -1324,6 +1567,7 @@ const getHepaticAdvice = ({
       title: "No hepatic class selected",
       body:
         "Select mild, moderate, or severe hepatic impairment to show the configured liver dosing guidance for the target opioid.",
+      resultLabel: "Not applied",
     };
   }
 
@@ -1333,13 +1577,14 @@ const getHepaticAdvice = ({
       .map((entry) => entry.option.label);
 
     return {
-      summary: `Hepatic: ${severityLabel}`,
-      title: `${severityLabel} hepatic impairment selected`,
+      summary: `Hepatic: ${severityLabel} (${activeSeverity.source})`,
+      title: `${severityLabel} hepatic impairment active`,
       body: currentMedicationsWithGuidance.length
-        ? `Review the configured hepatic table below for ${formatList(
+        ? `${sourcePrefix}. Review the configured hepatic table below for ${formatList(
             currentMedicationsWithGuidance,
           )}. Numeric hepatic reductions are only shown here for a selected target opioid.`
-        : "Numeric hepatic reductions are only shown here for a selected target opioid. Use the hepatic reference table below and bedside assessment when reviewing the current regimen.",
+        : `${sourcePrefix}. Numeric hepatic reductions are only shown here for a selected target opioid. Use the hepatic reference table below and bedside assessment when reviewing the current regimen.`,
+      resultLabel: "Guidance only",
     };
   }
 
@@ -1348,18 +1593,20 @@ const getHepaticAdvice = ({
   if (!guidanceRow) {
     if (targetOption.medication === "Codeine") {
       return {
-        summary: `Hepatic: ${severityLabel}; no local percent table for codeine`,
+        summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); no local percent table for codeine`,
         title: `Codeine requires extra caution in ${severityLabel.toLowerCase()} hepatic impairment`,
         body:
-          "No local percentage reduction table is configured here for codeine. Because codeine relies on hepatic conversion to morphine, use caution and consider avoidance in significant liver dysfunction.",
+          `${sourcePrefix}. No local percentage reduction table is configured here for codeine. Because codeine relies on hepatic conversion to morphine, use caution and consider avoidance in significant liver dysfunction.`,
+        resultLabel: "Use extra caution",
       };
     }
 
     return {
-      summary: `Hepatic: ${severityLabel}; no target-specific staging rule`,
+      summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); no target-specific staging rule`,
       title: `No configured hepatic percentage rule for ${targetOption.label}`,
       body:
-        "This staging build does not apply a medication-specific hepatic percentage rule to the selected target. Use bedside assessment and the reference sources below.",
+        `${sourcePrefix}. This staging build does not apply a medication-specific hepatic percentage rule to the selected target. Use bedside assessment and the reference sources below.`,
+      resultLabel: "Guidance only",
     };
   }
 
@@ -1367,21 +1614,23 @@ const getHepaticAdvice = ({
 
   if (rule.avoid) {
     return {
-      summary: `Hepatic: ${severityLabel}; avoid ${targetOption.medication}`,
+      summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); avoid ${targetOption.medication}`,
       title: `${severityLabel} hepatic impairment: avoid ${targetOption.label}`,
-      body: `The configured hepatic guide for this staging build marks ${targetOption.label} as avoid in ${severityLabel.toLowerCase()} hepatic impairment.`,
+      body: `${sourcePrefix}. The configured hepatic guide for this staging build marks ${targetOption.label} as avoid in ${severityLabel.toLowerCase()} hepatic impairment.`,
+      resultLabel: "Avoid target",
     };
   }
 
   if (rule.infoOnly) {
     return {
-      summary: `Hepatic: ${severityLabel}; ${rule.label}`,
+      summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); ${rule.label}`,
       title: `${severityLabel} hepatic impairment: ${targetOption.label}`,
       body:
-        `${rule.label}. No numeric hepatic percentage adjustment is auto-applied here for the selected target dose of ${formatDoseWithUnit(
+        `${sourcePrefix}. ${rule.label}. No numeric hepatic percentage adjustment is auto-applied here for the selected target dose of ${formatDoseWithUnit(
           adjustedTargetDose,
           getDailyUnitLabel(targetOption),
         )}.`,
+      resultLabel: rule.label,
     };
   }
 
@@ -1394,13 +1643,14 @@ const getHepaticAdvice = ({
   );
 
   return {
-    summary: `Hepatic: ${severityLabel}; ${rule.label}`,
+    summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); ${rule.label}`,
     title: `${severityLabel} hepatic impairment: ${targetOption.label}`,
     body:
-      `${rule.label}. Applied after the selected safety reduction, ${formatDoseWithUnit(
+      `${sourcePrefix}. ${rule.label}. Applied after the selected safety reduction, ${formatDoseWithUnit(
         adjustedTargetDose,
         getDailyUnitLabel(targetOption),
       )} corresponds to about ${targetRangeLabel}.`,
+    resultLabel: targetRangeLabel,
   };
 };
 
@@ -1415,6 +1665,8 @@ const showInvalidRegimen = (parsedEntries) => {
   ivMorphineEquivalentOutput.textContent = "0 mg/day";
   rawTargetDoseOutput.textContent = "0 mg/day";
   reductionAppliedOutput.textContent = `${clampReduction(reductionNumber.value)}% reduction`;
+  renalAdjustedDoseOutput.textContent = "Not applied";
+  hepaticAdjustedDoseOutput.textContent = "Not applied";
   organGuidanceSummaryOutput.textContent = "Complete the regimen before conversion";
   renalAdviceTitle.textContent = "Regimen incomplete";
   renalAdviceBody.textContent =
@@ -1427,6 +1679,7 @@ const showInvalidRegimen = (parsedEntries) => {
 const calculate = () => {
   setModeVisibility();
   updateRenalBandNote();
+  updateHepaticSuggestionNote();
 
   const parsedEntries = parseRegimenEntries();
   const targetOption = findOption(targetDrugSelect.value);
@@ -1478,6 +1731,8 @@ const calculate = () => {
     targetStepLabel.textContent = "Target calculation";
     rawTargetDoseOutput.textContent = "Not applied";
     reductionStep.classList.add("is-hidden");
+    renalAdjustedDoseOutput.textContent = renalAdvice.resultLabel || "Guidance only";
+    hepaticAdjustedDoseOutput.textContent = hepaticAdvice.resultLabel || "Guidance only";
     organGuidanceSummaryOutput.textContent = `${renalAdvice.summary}; ${hepaticAdvice.summary}`;
     renalAdviceTitle.textContent = renalAdvice.title;
     renalAdviceBody.textContent = renalAdvice.body;
@@ -1521,6 +1776,8 @@ const calculate = () => {
   )}`;
   reductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
   reductionStep.classList.remove("is-hidden");
+  renalAdjustedDoseOutput.textContent = renalAdvice.resultLabel || "Guidance only";
+  hepaticAdjustedDoseOutput.textContent = hepaticAdvice.resultLabel || "Guidance only";
   organGuidanceSummaryOutput.textContent = `${renalAdvice.summary}; ${hepaticAdvice.summary}`;
   renalAdviceTitle.textContent = renalAdvice.title;
   renalAdviceBody.textContent = renalAdvice.body;
@@ -1707,9 +1964,21 @@ document.querySelectorAll("[data-reduction-quickset]").forEach((button) => {
   });
 });
 
-[egfrInput, painControlSelect, hepaticSeveritySelect].forEach((control) => {
+[
+  egfrInput,
+  painControlSelect,
+  hepaticSeveritySelect,
+  astInput,
+  altInput,
+  bilirubinInput,
+  inrInput,
+  ammoniaInput,
+  plateletInput,
+  albuminInput,
+].forEach((control) => {
   control.addEventListener("input", () => {
     updateRenalBandNote();
+    updateHepaticSuggestionNote();
     calculate();
   });
 });
@@ -1773,6 +2042,13 @@ exampleButton.addEventListener("click", () => {
   egfrInput.value = "";
   painControlSelect.value = "uncontrolled";
   hepaticSeveritySelect.value = "none";
+  astInput.value = "";
+  altInput.value = "";
+  bilirubinInput.value = "";
+  inrInput.value = "";
+  ammoniaInput.value = "";
+  plateletInput.value = "";
+  albuminInput.value = "";
   calculate();
 });
 
@@ -1790,6 +2066,13 @@ mmeExampleButton.addEventListener("click", () => {
   egfrInput.value = "";
   painControlSelect.value = "uncontrolled";
   hepaticSeveritySelect.value = "none";
+  astInput.value = "";
+  altInput.value = "";
+  bilirubinInput.value = "";
+  inrInput.value = "";
+  ammoniaInput.value = "";
+  plateletInput.value = "";
+  albuminInput.value = "";
   calculate();
 });
 
@@ -1800,5 +2083,6 @@ renderBuprenorphineOptions();
 setRegimenEntries([{}]);
 renderBuprenorphineSchedule();
 updateRenalBandNote();
+updateHepaticSuggestionNote();
 calculate();
 calculateMethadone();

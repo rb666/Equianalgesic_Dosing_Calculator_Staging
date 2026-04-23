@@ -227,8 +227,8 @@
                     <option value="severe">Severe</option>
                   </select>
                   <span class="field-hint">
-                    Select the class clinically. No automated liver severity
-                    score is calculated in this tool.
+                    Manual selection overrides the suggested class from entered
+                    labs.
                   </span>
                 </label>
               </div>
@@ -237,10 +237,12 @@
                 <label for="astInput">
                   AST
                   <input id="astInput" name="astInput" type="number" min="0" step="1" />
+                  <span class="field-hint">U/L</span>
                 </label>
                 <label for="altInput">
                   ALT
                   <input id="altInput" name="altInput" type="number" min="0" step="1" />
+                  <span class="field-hint">U/L</span>
                 </label>
                 <label for="bilirubinInput">
                   Total bilirubin
@@ -251,10 +253,12 @@
                     min="0"
                     step="0.1"
                   />
+                  <span class="field-hint">mg/dL</span>
                 </label>
                 <label for="inrInput">
                   INR
                   <input id="inrInput" name="inrInput" type="number" min="0" step="0.1" />
+                  <span class="field-hint">unitless</span>
                 </label>
                 <label for="ammoniaInput">
                   Ammonia
@@ -265,6 +269,7 @@
                     min="0"
                     step="1"
                   />
+                  <span class="field-hint">umol/L</span>
                 </label>
                 <label for="plateletInput">
                   Platelets
@@ -275,6 +280,7 @@
                     min="0"
                     step="1"
                   />
+                  <span class="field-hint">x10^9/L</span>
                 </label>
                 <label for="albuminInput">
                   Albumin
@@ -285,8 +291,14 @@
                     min="0"
                     step="0.1"
                   />
+                  <span class="field-hint">g/dL</span>
                 </label>
               </div>
+
+              <p class="context-summary" id="hepaticSuggestionNote">
+                Enter bilirubin, INR, albumin, AST/ALT, ammonia, and platelets
+                to generate a transparent suggested hepatic class.
+              </p>
 
               <p class="basis-note">
                 Use AST/ALT, bilirubin, INR, ammonia, platelets, albumin, and
@@ -338,6 +350,14 @@
             <div id="reductionStep">
               <dt>Safety reduction applied</dt>
               <dd id="reductionApplied">25% reduction</dd>
+            </div>
+            <div id="renalAdjustmentStep">
+              <dt>Renal-adjusted target</dt>
+              <dd id="renalAdjustedDose">Not applied</dd>
+            </div>
+            <div id="hepaticAdjustmentStep">
+              <dt>Hepatic-adjusted target</dt>
+              <dd id="hepaticAdjustedDose">Not applied</dd>
             </div>
             <div>
               <dt>Organ guidance summary</dt>

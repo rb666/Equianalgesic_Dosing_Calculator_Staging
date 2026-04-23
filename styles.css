@@ -278,6 +278,21 @@ main {
   align-content: start;
 }
 
+.field-stack {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.field-stack > label {
+  align-content: start;
+}
+
+.top-grid-note {
+  display: block;
+  margin-top: 0;
+}
+
 label,
 .slider-header label {
   display: grid;

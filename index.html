@@ -69,13 +69,15 @@
               </select>
             </label>
 
-            <label for="targetDrug" id="targetField">
-              Target drug and route
-              <select id="targetDrug" name="targetDrug"></select>
-              <span class="field-hint">
+            <div class="field-stack" id="targetField">
+              <label for="targetDrug">
+                Target drug and route
+                <select id="targetDrug" name="targetDrug"></select>
+              </label>
+              <span class="field-hint top-grid-note">
                 Result is shown as an estimated total daily target dose.
               </span>
-            </label>
+            </div>
           </div>
 
           <section class="subsection" aria-label="Regimen entries">

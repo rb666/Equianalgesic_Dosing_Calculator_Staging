@@ -696,9 +696,6 @@ const buprenorphineForm = document.querySelector("#buprenorphineForm");
 const buprenorphineMeddRangeSelect = document.querySelector(
   "#buprenorphineMeddRange",
 );
-const buprenorphineCalculateButton = document.querySelector(
-  "#buprenorphineCalculateButton",
-);
 const buprenorphineResultTitle = document.querySelector("#buprenorphineResultTitle");
 const buprenorphineProduct = document.querySelector("#buprenorphineProduct");
 const buprenorphineContinueSummary = document.querySelector(
@@ -1874,10 +1871,6 @@ specialtyToolSelect.addEventListener("input", () => {
 
 methadoneCalculateButton.addEventListener("click", () => {
   calculateMethadone();
-});
-
-buprenorphineCalculateButton.addEventListener("click", () => {
-  renderBuprenorphineSchedule();
 });
 
 buprenorphineMeddRangeSelect.addEventListener("input", () => {

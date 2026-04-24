@@ -674,7 +674,6 @@ const specialtyToolSelect = document.querySelector("#specialtyTool");
 const specialtyPanels = document.querySelectorAll("[data-specialty-panel]");
 const methadoneForm = document.querySelector("#methadoneForm");
 const methadoneMorphineDoseInput = document.querySelector("#methadoneMorphineDose");
-const methadoneCalculateButton = document.querySelector("#methadoneCalculateButton");
 const methadoneFinalDose = document.querySelector("#methadoneFinalDose");
 const methadoneFinalUnit = document.querySelector("#methadoneFinalUnit");
 const methadoneSentence = document.querySelector("#methadoneSentence");
@@ -1867,10 +1866,6 @@ specialtyToolSelect.addEventListener("input", () => {
   renderSpecialtyTool();
   calculateMethadone();
   renderBuprenorphineSchedule();
-});
-
-methadoneCalculateButton.addEventListener("click", () => {
-  calculateMethadone();
 });
 
 buprenorphineMeddRangeSelect.addEventListener("input", () => {

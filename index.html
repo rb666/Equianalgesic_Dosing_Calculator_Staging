@@ -20,9 +20,8 @@
         <p class="eyebrow">Clinical decision support</p>
         <h1>Equianalgesic Dose Calculator</h1>
         <p>
-          Convert multi-drug opioid regimens into a total daily oral morphine
-          equivalent or a target opioid with explicit safety, renal, and hepatic
-          guidance.
+          Calculate total daily oral morphine equivalent, convert to a target
+          opioid, or open the specialty methadone and Suboxone tools.
         </p>
       </div>
     </header>
@@ -44,31 +43,58 @@
         </p>
       </section>
 
-      <section class="calculator-layout" aria-label="Dose conversion tool">
+      <nav class="calculator-tabs" aria-label="Calculator sections">
+        <button
+          class="calculator-tab"
+          data-calculator-tab="mme"
+          type="button"
+        >
+          <span>Total MME</span>
+          <small>Regimen total only</small>
+        </button>
+        <button
+          class="calculator-tab is-active"
+          data-calculator-tab="convert"
+          type="button"
+        >
+          <span>Conversion</span>
+          <small>Regimen to target opioid</small>
+        </button>
+        <button
+          class="calculator-tab"
+          data-calculator-tab="specialty"
+          type="button"
+        >
+          <span>Methadone / Suboxone</span>
+          <small>Specialty calculators</small>
+        </button>
+      </nav>
+
+      <section
+        class="calculator-layout"
+        id="mainCalculatorSection"
+        aria-label="MME and dose conversion tools"
+      >
         <form class="calculator-panel" id="calculatorForm">
           <div class="section-heading">
             <p class="eyebrow">Inputs</p>
-            <h2>Current regimen</h2>
+            <h2 id="mainCalculatorHeading">Conversion calculator</h2>
           </div>
 
-          <div class="field-grid compact-grid">
-            <label for="calculationMode">
-              Calculation mode
-              <select id="calculationMode" name="calculationMode">
-                <option value="convert">Convert total regimen to target opioid</option>
-                <option value="mme">Calculate total MME only</option>
-              </select>
-            </label>
+          <input id="calculationMode" name="calculationMode" type="hidden" value="convert" />
 
-            <div class="field-stack" id="targetField">
-              <label for="targetDrug">
-                Target drug and route
-                <select id="targetDrug" name="targetDrug"></select>
-              </label>
+          <p class="mode-note" id="mainCalculatorNote">
+            Enter the current regimen, then select the target opioid and route.
+          </p>
+
+          <div class="field-grid compact-grid" id="targetField">
+            <label for="targetDrug">
+              Target drug and route
+              <select id="targetDrug" name="targetDrug"></select>
               <span class="field-hint top-grid-note">
                 Result is shown as an estimated total daily target dose.
               </span>
-            </div>
+            </label>
           </div>
 
           <section class="subsection" aria-label="Regimen entries">
@@ -164,142 +190,80 @@
             </p>
           </section>
 
-          <section class="context-grid" aria-label="Renal and hepatic context">
-            <section class="context-card" aria-label="Renal context">
-              <div class="subsection-header">
-                <div>
-                  <p class="eyebrow">Renal</p>
-                  <h3>Kidney function context</h3>
+          <details class="organ-context">
+            <summary>
+              <span>
+                <span class="eyebrow">Optional adjustments</span>
+                <strong>Kidney and liver function</strong>
+              </span>
+              <span class="summary-action" aria-hidden="true"></span>
+            </summary>
+
+            <section class="context-grid" aria-label="Renal and hepatic context">
+              <section class="context-card" aria-label="Renal context">
+                <div class="subsection-header">
+                  <div>
+                    <p class="eyebrow">Renal</p>
+                    <h3>Kidney function context</h3>
+                  </div>
                 </div>
-              </div>
 
-              <div class="field-grid">
-                <label for="egfrInput">
-                  eGFR
-                  <input
-                    id="egfrInput"
-                    name="egfrInput"
-                    type="number"
-                    min="0"
-                    step="1"
-                    inputmode="decimal"
-                    placeholder="Enter mL/min"
-                  />
-                  <span class="field-hint">mL/min</span>
-                </label>
+                <div class="field-grid">
+                  <label for="egfrInput">
+                    eGFR
+                    <input
+                      id="egfrInput"
+                      name="egfrInput"
+                      type="number"
+                      min="0"
+                      step="1"
+                      inputmode="decimal"
+                      placeholder="Enter mL/min"
+                    />
+                    <span class="field-hint">mL/min</span>
+                  </label>
 
-                <label for="painControl">
-                  Pain control context
-                  <select id="painControl" name="painControl">
-                    <option value="uncontrolled">Uncontrolled pain</option>
-                    <option value="controlled">Well controlled pain</option>
-                  </select>
-                </label>
-              </div>
-
-              <p class="context-summary note-box" id="renalBandNote">
-                Enter eGFR to apply the staging renal guidance bands.
-              </p>
-            </section>
-
-            <section class="context-card" aria-label="Hepatic context">
-              <div class="subsection-header">
-                <div>
-                  <p class="eyebrow">Hepatic</p>
-                  <h3>Liver function context</h3>
+                  <label for="painControl">
+                    Pain control context
+                    <select id="painControl" name="painControl">
+                      <option value="uncontrolled">Uncontrolled pain</option>
+                      <option value="controlled">Well controlled pain</option>
+                    </select>
+                  </label>
                 </div>
-              </div>
 
-              <div class="field-grid">
-                <label for="hepaticSeverity">
-                  Hepatic impairment class
-                  <select id="hepaticSeverity" name="hepaticSeverity">
-                    <option value="none">No class selected</option>
-                    <option value="mild">Mild</option>
-                    <option value="moderate">Moderate</option>
-                    <option value="severe">Severe</option>
-                  </select>
-                  <span class="field-hint">
-                    Manual selection overrides the suggested class from entered
-                    labs.
-                  </span>
-                </label>
-              </div>
+                <p class="context-summary note-box" id="renalBandNote">
+                  Enter eGFR to apply the staging renal guidance bands.
+                </p>
+              </section>
 
-              <div class="lab-grid" aria-label="Laboratory review prompts">
-                <label for="astInput">
-                  AST
-                  <input id="astInput" name="astInput" type="number" min="0" step="1" />
-                  <span class="field-hint">U/L</span>
-                </label>
-                <label for="altInput">
-                  ALT
-                  <input id="altInput" name="altInput" type="number" min="0" step="1" />
-                  <span class="field-hint">U/L</span>
-                </label>
-                <label for="bilirubinInput">
-                  Total bilirubin
-                  <input
-                    id="bilirubinInput"
-                    name="bilirubinInput"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                  />
-                  <span class="field-hint">mg/dL</span>
-                </label>
-                <label for="inrInput">
-                  INR
-                  <input id="inrInput" name="inrInput" type="number" min="0" step="0.1" />
-                  <span class="field-hint">unitless</span>
-                </label>
-                <label for="ammoniaInput">
-                  Ammonia
-                  <input
-                    id="ammoniaInput"
-                    name="ammoniaInput"
-                    type="number"
-                    min="0"
-                    step="1"
-                  />
-                  <span class="field-hint">umol/L</span>
-                </label>
-                <label for="plateletInput">
-                  Platelets
-                  <input
-                    id="plateletInput"
-                    name="plateletInput"
-                    type="number"
-                    min="0"
-                    step="1"
-                  />
-                  <span class="field-hint">x10^9/L</span>
-                </label>
-                <label for="albuminInput">
-                  Albumin
-                  <input
-                    id="albuminInput"
-                    name="albuminInput"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                  />
-                  <span class="field-hint">g/dL</span>
-                </label>
-              </div>
+              <section class="context-card" aria-label="Hepatic context">
+                <div class="subsection-header">
+                  <div>
+                    <p class="eyebrow">Hepatic</p>
+                    <h3>Liver function context</h3>
+                  </div>
+                </div>
 
-              <p class="context-summary note-box note-box-accent" id="hepaticSuggestionNote">
-                Enter bilirubin, INR, albumin, AST/ALT, ammonia, and platelets
-                to generate a transparent suggested hepatic class.
-              </p>
-
-              <p class="basis-note">
-                Use AST/ALT, bilirubin, INR, ammonia, platelets, albumin, and
-                the bedside clinical picture to choose the mild, moderate, or
-                severe class.
-              </p>
+                <div class="field-grid">
+                  <label for="hepaticSeverity">
+                    Hepatic impairment class
+                    <select id="hepaticSeverity" name="hepaticSeverity">
+                      <option value="none">No class selected</option>
+                      <option value="mild">Mild</option>
+                      <option value="moderate">Moderate</option>
+                      <option value="severe">Severe</option>
+                    </select>
+                    <span class="field-hint">
+                      Select based on clinical judgment after reviewing AST/ALT,
+                      bilirubin, INR, ammonia, platelets, albumin, and the
+                      bedside picture.
+                    </span>
+                  </label>
+                </div>
+              </section>
             </section>
-          </section>
+          </details>
 
           <div class="button-row">
             <button type="submit">Calculate</button>
@@ -397,7 +361,7 @@
             <ul>
               <li>Multi-drug totals are intended for regimen-level review; they do not replace opioid-specific bedside assessment.</li>
               <li>Patch entries are treated as standing 24-hour exposure estimates and not as initiation or titration instructions.</li>
-              <li>Methadone totals are especially approximate; use the methadone tool below and specialist input when rotating to methadone.</li>
+              <li>Methadone totals are especially approximate; use the specialty methadone tab and specialist input when rotating to methadone.</li>
               <li>Renal and hepatic cards show staging guidance and local advisory rules; they are not validated severity scores.</li>
               <li>Reassess analgesia, respiratory rate, sedation, organ function, and adverse effects after conversion.</li>
             </ul>
@@ -405,21 +369,33 @@
         </section>
       </section>
 
-      <details class="compact-section" aria-label="Methadone conversion tool">
-        <summary>
-          <span class="compact-title">
-            <span class="eyebrow">Methadone</span>
-            <strong>Oral morphine to methadone</strong>
-            <span>
-              Fixed 4.7 factor with a conservative one-third starting estimate
-              before optional extra safety reduction.
-            </span>
-          </span>
-          <span class="summary-action" aria-hidden="true"></span>
-        </summary>
+      <section
+        class="specialty-section is-hidden"
+        id="specialtyCalculatorSection"
+        aria-label="Methadone and Suboxone calculators"
+      >
+        <div class="specialty-heading">
+          <div class="section-heading">
+            <p class="eyebrow">Specialty tab</p>
+            <h2>Methadone / Suboxone calculators</h2>
+          </div>
 
-        <section class="methadone-layout compact-section-body">
+          <label for="specialtyTool">
+            Specialty calculator
+            <select id="specialtyTool" name="specialtyTool">
+              <option value="methadone">Oral morphine to methadone</option>
+              <option value="buprenorphine">Suboxone / buprenorphine schedule</option>
+            </select>
+          </label>
+        </div>
+
+        <section class="methadone-layout specialty-tool-panel" data-specialty-panel="methadone">
           <form class="calculator-panel" id="methadoneForm">
+            <div class="section-heading">
+              <p class="eyebrow">Methadone</p>
+              <h2>Oral morphine to oral methadone</h2>
+            </div>
+
             <div class="field-grid">
               <label for="methadoneMorphineDose">
                 24-hour oral morphine equivalent
@@ -435,85 +411,12 @@
                 />
                 <span class="field-hint">mg/day OME</span>
               </label>
-
-              <label for="methadoneRoute">
-                Target methadone route
-                <select id="methadoneRoute" name="methadoneRoute">
-                  <option value="oral">Oral methadone</option>
-                  <option value="iv">IV methadone</option>
-                </select>
-                <span class="field-hint">
-                  IV methadone is calculated as 50% of the oral methadone
-                  estimate.
-                </span>
-              </label>
-
-              <div class="slider-group">
-                <div class="slider-header">
-                  <label for="methadoneReductionRange">
-                    Additional methadone safety reduction
-                  </label>
-                  <div class="percent-input">
-                    <input
-                      id="methadoneReductionNumber"
-                      name="methadoneReductionNumber"
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="1"
-                      value="0"
-                    />
-                    <span>%</span>
-                  </div>
-                </div>
-                <input
-                  id="methadoneReductionRange"
-                  name="methadoneReductionRange"
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value="0"
-                />
-                <div class="range-labels" aria-hidden="true">
-                  <span>0%</span>
-                  <span>25%</span>
-                  <span>50%</span>
-                  <span>75%</span>
-                  <span>100%</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="quick-actions" aria-label="Methadone safety presets">
-              <button
-                class="tag-button"
-                data-methadone-quickset="25"
-                type="button"
-              >
-                25% extra reduction
-              </button>
-              <button
-                class="tag-button"
-                data-methadone-quickset="50"
-                type="button"
-              >
-                50% extra reduction
-              </button>
-              <button
-                class="tag-button"
-                data-methadone-quickset="0"
-                type="button"
-              >
-                0% extra reduction
-              </button>
             </div>
 
             <p class="basis-note">
-              Configured methadone method for this staging build: oral methadone
-              equivalent = oral morphine equivalent divided by 4.7, then the
-              conservative recommended starting estimate is one-third of that
-              oral methadone value before any extra safety reduction.
+              Primary methadone output uses the client-provided morphine:methadone
+              ratio table. The panel also shows the fixed 4.7 full-dose check and
+              the conservative measurement using a 3.0 divisor.
             </p>
 
             <div class="button-row">
@@ -530,43 +433,43 @@
             </div>
 
             <div class="dose-result">
-              <span id="methadoneFinalDose">7.09</span>
+              <span id="methadoneFinalDose">4.17</span>
               <span id="methadoneFinalUnit">mg/day oral</span>
             </div>
             <p id="methadoneSentence">
-              This tool shows the configured equianalgesic oral methadone value,
-              the conservative one-third starting estimate, and the selected
-              route adjustment.
+              This tool applies the selected morphine:methadone ratio band, then
+              shows the conservative measurement separately from the fixed 4.7
+              full-dose check.
             </p>
 
             <dl class="calculation-steps">
               <div>
-                <dt>Methadone factor used</dt>
-                <dd id="methadoneFactor">1 mg oral methadone = 4.7 mg oral morphine</dd>
+                <dt>Screenshot ratio band</dt>
+                <dd id="methadoneFactor">100-299 mg OME uses 8:1</dd>
               </div>
               <div>
-                <dt>Raw oral methadone equivalent</dt>
-                <dd id="methadoneRawDose">21.28 mg/day</dd>
+                <dt>Ratio full-dose estimate</dt>
+                <dd id="methadoneRawDose">12.5 mg/day oral</dd>
               </div>
               <div>
-                <dt>Conservative one-third start</dt>
-                <dd id="methadoneConservativeStart">7.09 mg/day oral</dd>
+                <dt>Conservative measurement</dt>
+                <dd id="methadoneConservativeStart">4.17 mg/day oral</dd>
               </div>
               <div>
-                <dt>Route adjustment</dt>
-                <dd id="methadoneRouteAdjustment">Oral route: no adjustment</dd>
+                <dt>Fixed 4.7 full-dose check</dt>
+                <dd id="methadoneFixedFullDose">21.28 mg/day oral</dd>
               </div>
               <div>
-                <dt>Additional safety reduction</dt>
-                <dd id="methadoneReductionApplied">0% reduction</dd>
+                <dt>Fixed 4.7 with 3.0 conservative divisor</dt>
+                <dd id="methadoneFixedConservativeDose">7.09 mg/day oral</dd>
               </div>
               <div>
                 <dt>If divided q8h</dt>
-                <dd id="methadoneQ8Dose">2.36 mg/dose</dd>
+                <dd id="methadoneQ8Dose">1.39 mg/dose</dd>
               </div>
               <div>
                 <dt>If divided q12h</dt>
-                <dd id="methadoneQ12Dose">3.55 mg/dose</dd>
+                <dd id="methadoneQ12Dose">2.08 mg/dose</dd>
               </div>
             </dl>
 
@@ -581,20 +484,17 @@
             </div>
           </section>
         </section>
-      </details>
 
-      <details class="compact-section" aria-label="Buprenorphine transition tool">
-        <summary>
-          <span class="compact-title">
-            <span class="eyebrow">Buprenorphine products</span>
-            <strong>MEDD-based cross-titration schedule</strong>
-            <span>Belbuca and Suboxone schedules by current MEDD range.</span>
-          </span>
-          <span class="summary-action" aria-hidden="true"></span>
-        </summary>
-
-        <section class="buprenorphine-layout compact-section-body">
+        <section
+          class="buprenorphine-layout specialty-tool-panel is-hidden"
+          data-specialty-panel="buprenorphine"
+        >
           <form class="calculator-panel" id="buprenorphineForm">
+            <div class="section-heading">
+              <p class="eyebrow">Suboxone / buprenorphine</p>
+              <h2>MEDD-based transition schedule</h2>
+            </div>
+
             <div class="field-grid">
               <label for="buprenorphineMeddRange">
                 Current MEDD range and product
@@ -669,7 +569,7 @@
             </div>
           </section>
         </section>
-      </details>
+      </section>
 
       <details class="compact-section" aria-label="Conversion reference">
         <summary>
@@ -705,8 +605,8 @@
           <p class="reference-copy">
             This staging build uses a configured hybrid table: current local
             morphine and hydromorphone relationships are preserved, while
-            hydrocodone, codeine, methadone, and fentanyl patch entries are
-            updated to the requested staging values.
+            hydrocodone, codeine, oral methadone, and expanded fentanyl patch
+            entries are updated to the requested staging values.
           </p>
 
           <div class="section-heading methadone-reference-heading">
@@ -765,6 +665,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260423-multiregimen-organ-adjustments"></script>
+    <script src="script.js?v=20260424-tabs-methadone-ratios"></script>
   </body>
 </html>

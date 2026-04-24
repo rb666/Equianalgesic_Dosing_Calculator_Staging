@@ -147,6 +147,43 @@ main {
   margin: 0;
 }
 
+.calculator-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.calculator-tab {
+  display: grid;
+  gap: 3px;
+  justify-items: start;
+  min-height: 72px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 8px 24px rgba(23, 33, 27, 0.07);
+}
+
+.calculator-tab span {
+  font-weight: 850;
+}
+
+.calculator-tab small {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.calculator-tab.is-active {
+  border-color: var(--accent);
+  background: #effaf7;
+  color: var(--accent-dark);
+}
+
 .calculator-layout,
 .methadone-layout,
 .buprenorphine-layout {
@@ -234,6 +271,60 @@ main {
   margin: 0 0 24px;
 }
 
+.organ-context {
+  margin: 24px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+}
+
+.organ-context > summary {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.organ-context > summary::-webkit-details-marker {
+  display: none;
+}
+
+.organ-context > summary strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.organ-context[open] .summary-action::before {
+  content: "Hide";
+}
+
+.organ-context .context-grid {
+  padding: 0 16px 16px;
+}
+
+.specialty-section {
+  margin: 24px 0;
+}
+
+.specialty-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+.specialty-heading .section-heading {
+  margin-bottom: 0;
+}
+
+.specialty-tool-panel {
+  margin: 0;
+}
+
 .section-heading,
 .subsection-heading {
   margin-bottom: 22px;
@@ -257,6 +348,16 @@ main {
   display: grid;
   gap: 8px;
   align-content: start;
+}
+
+.mode-note {
+  margin: -8px 0 20px;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+#targetField {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .field-stack > label {
@@ -465,21 +566,6 @@ input[type="range"] {
   border-left-color: #8c6a00;
   background: #fff8df;
   color: #5e4e00;
-}
-
-.lab-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.lab-grid > label:last-child {
-  grid-column: 1 / -1;
-}
-
-.lab-grid label {
-  font-size: 0.94rem;
 }
 
 .button-row {
@@ -721,18 +807,18 @@ footer p {
 @media (max-width: 960px) {
   .compact-grid,
   .regimen-entry-grid,
-  .lab-grid {
+  .specialty-heading {
     grid-template-columns: 1fr;
   }
 
-  .regimen-entry-grid > label:first-child,
-  .lab-grid > label:last-child {
+  .regimen-entry-grid > label:first-child {
     grid-column: auto;
   }
 }
 
 @media (max-width: 850px) {
   .safety-banner,
+  .calculator-tabs,
   .calculator-layout,
   .methadone-layout,
   .buprenorphine-layout {
@@ -770,6 +856,7 @@ footer p {
   }
 
   .compact-section > summary,
+  .organ-context > summary,
   .subsection-header,
   .entry-head,
   .slider-header {

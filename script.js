@@ -2,6 +2,16 @@ const ORAL_MORPHINE_FOR_TEN_MG_IV_MORPHINE = 25;
 const METHADONE_ORAL_MORPHINE_FACTOR = 4.7;
 const METHADONE_CONSERVATIVE_DIVISOR = 3;
 
+const methadoneRatioBands = [
+  { min: 0, max: 29.999, ratio: 2, label: "<30 mg", display: "2:1" },
+  { min: 30, max: 99.999, ratio: 4, label: "30-99 mg", display: "4:1" },
+  { min: 100, max: 299.999, ratio: 8, label: "100-299 mg", display: "8:1" },
+  { min: 300, max: 499.999, ratio: 12, label: "300-499 mg", display: "12:1" },
+  { min: 500, max: 999.999, ratio: 15, label: "500-999 mg", display: "15:1" },
+  { min: 1000, max: 1200, ratio: 20, label: "1000-1200 mg", display: "20:1" },
+  { min: 1200.001, max: Infinity, ratio: null, label: ">1200 mg", display: "Consult" },
+];
+
 const conversionOptions = [
   {
     id: "Morphine_IV",
@@ -144,6 +154,16 @@ const conversionOptions = [
     targetable: false,
   },
   {
+    id: "Fentanyl_Patch_37",
+    medication: "Fentanyl",
+    route: "Patch 37 mcg/hr",
+    referenceDose: 1,
+    doseUnit: "patch",
+    oralMorphineEquivalent: 90,
+    label: "Fentanyl patch 37 mcg/hr",
+    targetable: false,
+  },
+  {
     id: "Fentanyl_Patch_50",
     medication: "Fentanyl",
     route: "Patch 50 mcg/hr",
@@ -154,6 +174,16 @@ const conversionOptions = [
     targetable: false,
   },
   {
+    id: "Fentanyl_Patch_62",
+    medication: "Fentanyl",
+    route: "Patch 62 mcg/hr",
+    referenceDose: 1,
+    doseUnit: "patch",
+    oralMorphineEquivalent: 150,
+    label: "Fentanyl patch 62 mcg/hr",
+    targetable: false,
+  },
+  {
     id: "Fentanyl_Patch_75",
     medication: "Fentanyl",
     route: "Patch 75 mcg/hr",
@@ -161,6 +191,16 @@ const conversionOptions = [
     doseUnit: "patch",
     oralMorphineEquivalent: 180,
     label: "Fentanyl patch 75 mcg/hr",
+    targetable: false,
+  },
+  {
+    id: "Fentanyl_Patch_87",
+    medication: "Fentanyl",
+    route: "Patch 87 mcg/hr",
+    referenceDose: 1,
+    doseUnit: "patch",
+    oralMorphineEquivalent: 210,
+    label: "Fentanyl patch 87 mcg/hr",
     targetable: false,
   },
   {
@@ -430,7 +470,7 @@ const sourceReferences = [
     title: "Use of the Child-Pugh Score in Liver Disease – StatPearls",
     url: "https://www.ncbi.nlm.nih.gov/books/NBK542308/",
     note:
-      "Background source for bilirubin, albumin, and INR severity bands. The hepatic class suggestion in this staging build is a transparent heuristic inspired by those lab bands, not a validated Child-Pugh calculator.",
+      "Background source for liver function markers. This staging build now leaves mild, moderate, or severe hepatic classification to clinical judgment rather than calculating a lab-derived score.",
   },
   {
     title: "Liver failure pain management – West Midlands Palliative Care",
@@ -443,7 +483,13 @@ const sourceReferences = [
     title: "Configured local staging rules",
     url: "",
     note:
-      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested methadone one-third conservative start and hepatic advisory bands.",
+      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested methadone 4.7 full-dose check, 3.0 conservative divisor, and hepatic advisory bands.",
+  },
+  {
+    title: "Client-provided methadone ratio table",
+    url: "",
+    note:
+      "Used for the specialty oral morphine to oral methadone bands: <30 mg 2:1, 30-99 mg 4:1, 100-299 mg 8:1, 300-499 mg 12:1, 500-999 mg 15:1, 1000-1200 mg 20:1, and >1200 mg consult.",
   },
 ];
 
@@ -579,6 +625,11 @@ const renalMinimalAlternativeMedications = new Set([
 let regimenEntryId = 0;
 let regimenEntriesState = [];
 
+const calculatorTabButtons = document.querySelectorAll("[data-calculator-tab]");
+const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
+const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
+const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
+const mainCalculatorNote = document.querySelector("#mainCalculatorNote");
 const form = document.querySelector("#calculatorForm");
 const calculationModeSelect = document.querySelector("#calculationMode");
 const targetDrugSelect = document.querySelector("#targetDrug");
@@ -592,14 +643,6 @@ const egfrInput = document.querySelector("#egfrInput");
 const painControlSelect = document.querySelector("#painControl");
 const renalBandNote = document.querySelector("#renalBandNote");
 const hepaticSeveritySelect = document.querySelector("#hepaticSeverity");
-const astInput = document.querySelector("#astInput");
-const altInput = document.querySelector("#altInput");
-const bilirubinInput = document.querySelector("#bilirubinInput");
-const inrInput = document.querySelector("#inrInput");
-const ammoniaInput = document.querySelector("#ammoniaInput");
-const plateletInput = document.querySelector("#plateletInput");
-const albuminInput = document.querySelector("#albuminInput");
-const hepaticSuggestionNote = document.querySelector("#hepaticSuggestionNote");
 const exampleButton = document.querySelector("#exampleButton");
 const mmeExampleButton = document.querySelector("#mmeExampleButton");
 const referenceTable = document.querySelector("#referenceTable");
@@ -627,11 +670,10 @@ const renalAdviceBody = document.querySelector("#renalAdviceBody");
 const hepaticAdviceTitle = document.querySelector("#hepaticAdviceTitle");
 const hepaticAdviceBody = document.querySelector("#hepaticAdviceBody");
 
+const specialtyToolSelect = document.querySelector("#specialtyTool");
+const specialtyPanels = document.querySelectorAll("[data-specialty-panel]");
 const methadoneForm = document.querySelector("#methadoneForm");
 const methadoneMorphineDoseInput = document.querySelector("#methadoneMorphineDose");
-const methadoneRouteSelect = document.querySelector("#methadoneRoute");
-const methadoneReductionRange = document.querySelector("#methadoneReductionRange");
-const methadoneReductionNumber = document.querySelector("#methadoneReductionNumber");
 const methadoneCalculateButton = document.querySelector("#methadoneCalculateButton");
 const methadoneFinalDose = document.querySelector("#methadoneFinalDose");
 const methadoneFinalUnit = document.querySelector("#methadoneFinalUnit");
@@ -641,11 +683,11 @@ const methadoneRawDoseOutput = document.querySelector("#methadoneRawDose");
 const methadoneConservativeStartOutput = document.querySelector(
   "#methadoneConservativeStart",
 );
-const methadoneRouteAdjustmentOutput = document.querySelector(
-  "#methadoneRouteAdjustment",
+const methadoneFixedFullDoseOutput = document.querySelector(
+  "#methadoneFixedFullDose",
 );
-const methadoneReductionAppliedOutput = document.querySelector(
-  "#methadoneReductionApplied",
+const methadoneFixedConservativeDoseOutput = document.querySelector(
+  "#methadoneFixedConservativeDose",
 );
 const methadoneQ8DoseOutput = document.querySelector("#methadoneQ8Dose");
 const methadoneQ12DoseOutput = document.querySelector("#methadoneQ12Dose");
@@ -696,20 +738,6 @@ const formatDoseRange = (minimum, maximum, unitLabel) => {
   }
 
   return `${formatDose(minimum)}-${formatDose(maximum)} ${unitLabel}`;
-};
-
-const parseOptionalNumber = (rawValue) => {
-  if (String(rawValue).trim() === "") {
-    return null;
-  }
-
-  const numericValue = Number(rawValue);
-
-  if (!Number.isFinite(numericValue) || numericValue < 0) {
-    return null;
-  }
-
-  return numericValue;
 };
 
 const formatList = (items) => {
@@ -792,12 +820,6 @@ const syncReduction = (source) => {
   const value = clampReduction(source.value);
   reductionRange.value = value;
   reductionNumber.value = value;
-};
-
-const syncMethadoneReduction = (source) => {
-  const value = clampReduction(source.value);
-  methadoneReductionRange.value = value;
-  methadoneReductionNumber.value = value;
 };
 
 const createRegimenEntry = (overrides = {}) => {
@@ -1100,10 +1122,42 @@ const renderBuprenorphineSchedule = () => {
     .join("");
 };
 
+const renderSpecialtyTool = () => {
+  const selectedTool = specialtyToolSelect.value;
+
+  specialtyPanels.forEach((panel) => {
+    panel.classList.toggle(
+      "is-hidden",
+      panel.dataset.specialtyPanel !== selectedTool,
+    );
+  });
+};
+
 const setModeVisibility = () => {
-  const isMMeMode = calculationModeSelect.value === "mme";
-  targetField.classList.toggle("is-hidden", isMMeMode);
-  reductionField.classList.toggle("is-hidden", isMMeMode);
+  const activeMode = calculationModeSelect.value;
+  const isMMeMode = activeMode === "mme";
+  const isSpecialtyMode = activeMode === "specialty";
+
+  calculatorTabButtons.forEach((button) => {
+    const isActive = button.dataset.calculatorTab === activeMode;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+
+  mainCalculatorSection.classList.toggle("is-hidden", isSpecialtyMode);
+  specialtyCalculatorSection.classList.toggle("is-hidden", !isSpecialtyMode);
+  targetField.classList.toggle("is-hidden", isMMeMode || isSpecialtyMode);
+  reductionField.classList.toggle("is-hidden", isMMeMode || isSpecialtyMode);
+
+  if (isMMeMode) {
+    mainCalculatorHeading.textContent = "Total MME calculator";
+    mainCalculatorNote.textContent =
+      "Enter one or more current opioid lines to calculate total daily oral morphine equivalent.";
+  } else {
+    mainCalculatorHeading.textContent = "Conversion calculator";
+    mainCalculatorNote.textContent =
+      "Enter the current regimen, then select the target opioid and route.";
+  }
 };
 
 const getEgfrBand = (rawValue) => {
@@ -1133,165 +1187,17 @@ const getEgfrBand = (rawValue) => {
   };
 };
 
-const getHepaticSeveritySuggestion = () => {
-  const bilirubin = parseOptionalNumber(bilirubinInput.value);
-  const albumin = parseOptionalNumber(albuminInput.value);
-  const inr = parseOptionalNumber(inrInput.value);
-  const ast = parseOptionalNumber(astInput.value);
-  const alt = parseOptionalNumber(altInput.value);
-  const ammonia = parseOptionalNumber(ammoniaInput.value);
-  const platelets = parseOptionalNumber(plateletInput.value);
-
-  const coreFindings = [];
-  const modifierFindings = [];
-  const corePoints = [];
-  let modifierScore = 0;
-
-  if (bilirubin !== null) {
-    const points = bilirubin > 3 ? 3 : bilirubin >= 2 ? 2 : 1;
-    corePoints.push(points);
-    coreFindings.push(
-      `bilirubin ${formatDose(bilirubin)} mg/dL (${points === 1 ? "<2" : points === 2 ? "2-3" : ">3"})`,
-    );
-  }
-
-  if (albumin !== null) {
-    const points = albumin < 2.8 ? 3 : albumin <= 3.5 ? 2 : 1;
-    corePoints.push(points);
-    coreFindings.push(
-      `albumin ${formatDose(albumin)} g/dL (${points === 1 ? ">3.5" : points === 2 ? "2.8-3.5" : "<2.8"})`,
-    );
-  }
-
-  if (inr !== null) {
-    const points = inr > 2.3 ? 3 : inr >= 1.7 ? 2 : 1;
-    corePoints.push(points);
-    coreFindings.push(
-      `INR ${formatDose(inr)} (${points === 1 ? "<1.7" : points === 2 ? "1.7-2.3" : ">2.3"})`,
-    );
-  }
-
-  const highestTransaminase = Math.max(ast ?? 0, alt ?? 0);
-
-  if (highestTransaminase >= 200) {
-    modifierScore += 2;
-    modifierFindings.push(
-      `AST/ALT ${formatDose(highestTransaminase)} U/L (marked transaminitis support)`,
-    );
-  } else if (highestTransaminase >= 120) {
-    modifierScore += 1;
-    modifierFindings.push(
-      `AST/ALT ${formatDose(highestTransaminase)} U/L (moderate transaminitis support)`,
-    );
-  }
-
-  if (ammonia !== null) {
-    if (ammonia >= 100) {
-      modifierScore += 2;
-      modifierFindings.push(
-        `ammonia ${formatDose(ammonia)} umol/L (marked encephalopathy-risk support)`,
-      );
-    } else if (ammonia >= 60) {
-      modifierScore += 1;
-      modifierFindings.push(
-        `ammonia ${formatDose(ammonia)} umol/L (mild encephalopathy-risk support)`,
-      );
-    }
-  }
-
-  if (platelets !== null) {
-    if (platelets < 100) {
-      modifierScore += 2;
-      modifierFindings.push(
-        `platelets ${formatDose(platelets)} x10^9/L (marked portal-hypertension support)`,
-      );
-    } else if (platelets < 150) {
-      modifierScore += 1;
-      modifierFindings.push(
-        `platelets ${formatDose(platelets)} x10^9/L (mild portal-hypertension support)`,
-      );
-    }
-  }
-
-  if (!corePoints.length && modifierScore === 0) {
-    return null;
-  }
-
-  let severityIndex = 0;
-
-  if (corePoints.length === 3) {
-    const coreSum = corePoints.reduce((sum, value) => sum + value, 0);
-
-    if (coreSum >= 7) {
-      severityIndex = 2;
-    } else if (coreSum >= 5) {
-      severityIndex = 1;
-    }
-  } else if (corePoints.length === 2) {
-    const average = corePoints.reduce((sum, value) => sum + value, 0) / 2;
-
-    if (average > 2.25) {
-      severityIndex = 2;
-    } else if (average >= 1.5) {
-      severityIndex = 1;
-    }
-  } else if (corePoints.length === 1) {
-    severityIndex = corePoints[0] >= 2 ? 1 : 0;
-  } else if (modifierScore >= 4) {
-    severityIndex = 2;
-  } else if (modifierScore >= 2) {
-    severityIndex = 1;
-  }
-
-  if (modifierScore >= 4) {
-    severityIndex = 2;
-  } else if (modifierScore >= 2 && severityIndex < 2) {
-    severityIndex += 1;
-  }
-
-  const severity = ["mild", "moderate", "severe"][severityIndex];
-  const rationaleParts = [];
-
-  if (coreFindings.length) {
-    rationaleParts.push(`core labs: ${coreFindings.join(", ")}`);
-  }
-
-  if (modifierFindings.length) {
-    rationaleParts.push(`supportive markers: ${modifierFindings.join(", ")}`);
-  }
-
-  return {
-    severity,
-    summary: `${hepaticSeverityLabels[severity]} suggested from entered labs`,
-    detail:
-      rationaleParts.join("; ") ||
-      "Lab-derived hepatic suggestion is based on the entered values.",
-  };
-};
-
 const getActiveHepaticSeverity = () => {
-  const suggestion = getHepaticSeveritySuggestion();
-
   if (hepaticSeveritySelect.value !== "none") {
     return {
       severity: hepaticSeveritySelect.value,
-      source: "manual",
-      suggestion,
-    };
-  }
-
-  if (suggestion) {
-    return {
-      severity: suggestion.severity,
-      source: "suggested",
-      suggestion,
+      source: "clinical",
     };
   }
 
   return {
     severity: "none",
     source: "none",
-    suggestion: null,
   };
 };
 
@@ -1318,35 +1224,6 @@ const updateRenalBandNote = () => {
 
   renalBandNote.textContent =
     "eGFR below 30 mL/min: this staging build marks morphine, codeine, and meperidine as avoid and highlights alternative opioid groups.";
-};
-
-const updateHepaticSuggestionNote = () => {
-  const activeSeverity = getActiveHepaticSeverity();
-
-  if (activeSeverity.source === "manual" && activeSeverity.suggestion) {
-    hepaticSuggestionNote.textContent =
-      `Suggested hepatic class from entered labs: ${hepaticSeverityLabels[
-        activeSeverity.suggestion.severity
-      ]}. Manual selection is currently overriding that suggestion. ${activeSeverity.suggestion.detail}`;
-    return;
-  }
-
-  if (activeSeverity.source === "manual") {
-    hepaticSuggestionNote.textContent =
-      `Manual hepatic class selected: ${hepaticSeverityLabels[activeSeverity.severity]}. Enter bilirubin, INR, albumin, AST/ALT, ammonia, and platelets to also generate a lab-based suggestion.`;
-    return;
-  }
-
-  if (activeSeverity.source === "suggested") {
-    hepaticSuggestionNote.textContent =
-      `Suggested hepatic class from entered labs: ${hepaticSeverityLabels[
-        activeSeverity.severity
-      ]}. ${activeSeverity.suggestion.detail} This is a transparent staging heuristic, not a validated liver severity score.`;
-    return;
-  }
-
-  hepaticSuggestionNote.textContent =
-    "Enter bilirubin, INR, albumin, AST/ALT, ammonia, and platelets to generate a transparent suggested hepatic class.";
 };
 
 const renderRegimenSummaryTable = (parsedEntries) => {
@@ -1555,11 +1432,9 @@ const getHepaticAdvice = ({
   const severity = activeSeverity.severity;
   const severityLabel = hepaticSeverityLabels[severity] || "No class selected";
   const sourcePrefix =
-    activeSeverity.source === "suggested"
-      ? "Suggested from entered labs"
-      : activeSeverity.source === "manual"
-        ? "Manual class selected"
-        : "No class selected";
+    activeSeverity.source === "clinical"
+      ? "Clinical liver class selected"
+      : "No liver class selected";
 
   if (severity === "none") {
     return {
@@ -1577,7 +1452,7 @@ const getHepaticAdvice = ({
       .map((entry) => entry.option.label);
 
     return {
-      summary: `Hepatic: ${severityLabel} (${activeSeverity.source})`,
+      summary: `Hepatic: ${severityLabel} (clinical judgment)`,
       title: `${severityLabel} hepatic impairment active`,
       body: currentMedicationsWithGuidance.length
         ? `${sourcePrefix}. Review the configured hepatic table below for ${formatList(
@@ -1593,7 +1468,7 @@ const getHepaticAdvice = ({
   if (!guidanceRow) {
     if (targetOption.medication === "Codeine") {
       return {
-        summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); no local percent table for codeine`,
+        summary: `Hepatic: ${severityLabel} (clinical judgment); no local percent table for codeine`,
         title: `Codeine requires extra caution in ${severityLabel.toLowerCase()} hepatic impairment`,
         body:
           `${sourcePrefix}. No local percentage reduction table is configured here for codeine. Because codeine relies on hepatic conversion to morphine, use caution and consider avoidance in significant liver dysfunction.`,
@@ -1602,7 +1477,7 @@ const getHepaticAdvice = ({
     }
 
     return {
-      summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); no target-specific staging rule`,
+      summary: `Hepatic: ${severityLabel} (clinical judgment); no target-specific staging rule`,
       title: `No configured hepatic percentage rule for ${targetOption.label}`,
       body:
         `${sourcePrefix}. This staging build does not apply a medication-specific hepatic percentage rule to the selected target. Use bedside assessment and the reference sources below.`,
@@ -1614,7 +1489,7 @@ const getHepaticAdvice = ({
 
   if (rule.avoid) {
     return {
-      summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); avoid ${targetOption.medication}`,
+      summary: `Hepatic: ${severityLabel} (clinical judgment); avoid ${targetOption.medication}`,
       title: `${severityLabel} hepatic impairment: avoid ${targetOption.label}`,
       body: `${sourcePrefix}. The configured hepatic guide for this staging build marks ${targetOption.label} as avoid in ${severityLabel.toLowerCase()} hepatic impairment.`,
       resultLabel: "Avoid target",
@@ -1623,7 +1498,7 @@ const getHepaticAdvice = ({
 
   if (rule.infoOnly) {
     return {
-      summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); ${rule.label}`,
+      summary: `Hepatic: ${severityLabel} (clinical judgment); ${rule.label}`,
       title: `${severityLabel} hepatic impairment: ${targetOption.label}`,
       body:
         `${sourcePrefix}. ${rule.label}. No numeric hepatic percentage adjustment is auto-applied here for the selected target dose of ${formatDoseWithUnit(
@@ -1643,7 +1518,7 @@ const getHepaticAdvice = ({
   );
 
   return {
-    summary: `Hepatic: ${severityLabel} (${activeSeverity.source}); ${rule.label}`,
+    summary: `Hepatic: ${severityLabel} (clinical judgment); ${rule.label}`,
     title: `${severityLabel} hepatic impairment: ${targetOption.label}`,
     body:
       `${sourcePrefix}. ${rule.label}. Applied after the selected safety reduction, ${formatDoseWithUnit(
@@ -1679,7 +1554,6 @@ const showInvalidRegimen = (parsedEntries) => {
 const calculate = () => {
   setModeVisibility();
   updateRenalBandNote();
-  updateHepaticSuggestionNote();
 
   const parsedEntries = parseRegimenEntries();
   const targetOption = findOption(targetDrugSelect.value);
@@ -1785,27 +1659,13 @@ const calculate = () => {
   hepaticAdviceBody.textContent = hepaticAdvice.body;
 };
 
-const getMethadoneRoute = () => {
-  if (methadoneRouteSelect.value === "iv") {
-    return {
-      label: "IV methadone",
-      unitLabel: "mg/day IV",
-      factor: 0.5,
-      adjustmentLabel: "IV route: 50% of oral methadone estimate",
-    };
-  }
-
-  return {
-    label: "oral methadone",
-    unitLabel: "mg/day oral",
-    factor: 1,
-    adjustmentLabel: "Oral route: no route adjustment",
-  };
-};
+const getMethadoneRatioBand = (oralMorphineDaily) =>
+  methadoneRatioBands.find(
+    (band) => oralMorphineDaily >= band.min && oralMorphineDaily <= band.max,
+  ) || methadoneRatioBands.at(-1);
 
 const calculateMethadone = () => {
   const oralMorphineDaily = Number(methadoneMorphineDoseInput.value);
-  const reductionPercentage = clampReduction(methadoneReductionNumber.value);
 
   if (
     methadoneMorphineDoseInput.value.trim() === "" ||
@@ -1813,46 +1673,62 @@ const calculateMethadone = () => {
     oralMorphineDaily < 0
   ) {
     methadoneFinalDose.textContent = "0";
-    methadoneFinalUnit.textContent = getMethadoneRoute().unitLabel;
+    methadoneFinalUnit.textContent = "mg/day oral";
     methadoneSentence.textContent =
       "Enter a non-negative 24-hour oral morphine equivalent dose.";
-    methadoneFactorOutput.textContent =
-      `1 mg oral methadone = ${METHADONE_ORAL_MORPHINE_FACTOR} mg oral morphine`;
-    methadoneRawDoseOutput.textContent = "0 mg/day";
+    methadoneFactorOutput.textContent = "No ratio band selected";
+    methadoneRawDoseOutput.textContent = "0 mg/day oral";
     methadoneConservativeStartOutput.textContent = "0 mg/day oral";
-    methadoneRouteAdjustmentOutput.textContent = "Not applied";
-    methadoneReductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
+    methadoneFixedFullDoseOutput.textContent = "0 mg/day oral";
+    methadoneFixedConservativeDoseOutput.textContent = "0 mg/day oral";
     methadoneQ8DoseOutput.textContent = "0 mg/dose";
     methadoneQ12DoseOutput.textContent = "0 mg/dose";
     return;
   }
 
-  const route = getMethadoneRoute();
-  const rawOralMethadoneDaily =
+  const ratioBand = getMethadoneRatioBand(oralMorphineDaily);
+  const fixedFullDose =
     oralMorphineDaily / METHADONE_ORAL_MORPHINE_FACTOR;
-  const conservativeOralMethadoneDaily =
-    rawOralMethadoneDaily / METHADONE_CONSERVATIVE_DIVISOR;
-  const routeAdjustedDaily = conservativeOralMethadoneDaily * route.factor;
-  const finalDaily = routeAdjustedDaily * (1 - reductionPercentage / 100);
-  const q8Dose = finalDaily / 3;
-  const q12Dose = finalDaily / 2;
+  const fixedConservativeDose = fixedFullDose / METHADONE_CONSERVATIVE_DIVISOR;
 
-  methadoneFinalDose.textContent = formatDose(finalDaily);
-  methadoneFinalUnit.textContent = route.unitLabel;
+  methadoneFixedFullDoseOutput.textContent =
+    `${formatDose(fixedFullDose)} mg/day oral`;
+  methadoneFixedConservativeDoseOutput.textContent =
+    `${formatDose(fixedConservativeDose)} mg/day oral`;
+
+  if (!ratioBand.ratio) {
+    methadoneFinalDose.textContent = "Consult";
+    methadoneFinalUnit.textContent = "specialist";
+    methadoneFactorOutput.textContent =
+      `${ratioBand.label} OME: ${ratioBand.display}`;
+    methadoneRawDoseOutput.textContent = "Consult";
+    methadoneConservativeStartOutput.textContent = "Consult";
+    methadoneQ8DoseOutput.textContent = "Consult";
+    methadoneQ12DoseOutput.textContent = "Consult";
+    methadoneSentence.textContent =
+      `${formatDose(oralMorphineDaily)} mg/day oral morphine equivalent falls above the configured screenshot ratio table. Specialist consultation is shown instead of a numeric methadone estimate.`;
+    return;
+  }
+
+  const ratioFullDose = oralMorphineDaily / ratioBand.ratio;
+  const conservativeDaily = ratioFullDose / METHADONE_CONSERVATIVE_DIVISOR;
+  const q8Dose = conservativeDaily / 3;
+  const q12Dose = conservativeDaily / 2;
+
+  methadoneFinalDose.textContent = formatDose(conservativeDaily);
+  methadoneFinalUnit.textContent = "mg/day oral";
   methadoneFactorOutput.textContent =
-    `1 mg oral methadone = ${METHADONE_ORAL_MORPHINE_FACTOR} mg oral morphine`;
-  methadoneRawDoseOutput.textContent = `${formatDose(rawOralMethadoneDaily)} mg/day`;
+    `${ratioBand.label} OME uses morphine:methadone ${ratioBand.display}`;
+  methadoneRawDoseOutput.textContent = `${formatDose(ratioFullDose)} mg/day oral`;
   methadoneConservativeStartOutput.textContent =
-    `${formatDose(conservativeOralMethadoneDaily)} mg/day oral`;
-  methadoneRouteAdjustmentOutput.textContent = route.adjustmentLabel;
-  methadoneReductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
+    `${formatDose(conservativeDaily)} mg/day oral`;
   methadoneQ8DoseOutput.textContent = `${formatDose(q8Dose)} mg/dose`;
   methadoneQ12DoseOutput.textContent = `${formatDose(q12Dose)} mg/dose`;
   methadoneSentence.textContent =
-    `${formatDose(oralMorphineDaily)} mg/day oral morphine equivalent converts to ` +
-    `${formatDose(rawOralMethadoneDaily)} mg/day oral methadone by the configured 4.7 factor; ` +
-    `this staging build then shows one-third of that value as the conservative start before route adjustment` +
-    ` and any extra safety reduction.`;
+    `${formatDose(oralMorphineDaily)} mg/day oral morphine equivalent uses the ` +
+    `${ratioBand.label} screenshot band (${ratioBand.display}), giving ` +
+    `${formatDose(ratioFullDose)} mg/day oral methadone before the configured 3.0 conservative divisor. ` +
+    `The fixed 4.7 full-dose check is shown separately for comparison.`;
 };
 
 const handleRegimenEntryInput = (event) => {
@@ -1940,9 +1816,20 @@ addRegimenEntryButton.addEventListener("click", () => {
   calculate();
 });
 
-calculationModeSelect.addEventListener("input", () => {
-  setModeVisibility();
-  calculate();
+calculatorTabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    calculationModeSelect.value = button.dataset.calculatorTab;
+    setModeVisibility();
+
+    if (calculationModeSelect.value === "specialty") {
+      renderSpecialtyTool();
+      calculateMethadone();
+      renderBuprenorphineSchedule();
+      return;
+    }
+
+    calculate();
+  });
 });
 
 targetDrugSelect.addEventListener("input", () => {
@@ -1968,45 +1855,21 @@ document.querySelectorAll("[data-reduction-quickset]").forEach((button) => {
   egfrInput,
   painControlSelect,
   hepaticSeveritySelect,
-  astInput,
-  altInput,
-  bilirubinInput,
-  inrInput,
-  ammoniaInput,
-  plateletInput,
-  albuminInput,
 ].forEach((control) => {
   control.addEventListener("input", () => {
     updateRenalBandNote();
-    updateHepaticSuggestionNote();
     calculate();
   });
 });
 
-[
-  methadoneMorphineDoseInput,
-  methadoneRouteSelect,
-  methadoneReductionRange,
-  methadoneReductionNumber,
-].forEach((control) => {
-  control.addEventListener("input", () => {
-    if (
-      control === methadoneReductionRange ||
-      control === methadoneReductionNumber
-    ) {
-      syncMethadoneReduction(control);
-    }
-
-    calculateMethadone();
-  });
+methadoneMorphineDoseInput.addEventListener("input", () => {
+  calculateMethadone();
 });
 
-document.querySelectorAll("[data-methadone-quickset]").forEach((button) => {
-  button.addEventListener("click", () => {
-    methadoneReductionRange.value = button.dataset.methadoneQuickset;
-    methadoneReductionNumber.value = button.dataset.methadoneQuickset;
-    calculateMethadone();
-  });
+specialtyToolSelect.addEventListener("input", () => {
+  renderSpecialtyTool();
+  calculateMethadone();
+  renderBuprenorphineSchedule();
 });
 
 methadoneCalculateButton.addEventListener("click", () => {
@@ -2042,13 +1905,6 @@ exampleButton.addEventListener("click", () => {
   egfrInput.value = "";
   painControlSelect.value = "uncontrolled";
   hepaticSeveritySelect.value = "none";
-  astInput.value = "";
-  altInput.value = "";
-  bilirubinInput.value = "";
-  inrInput.value = "";
-  ammoniaInput.value = "";
-  plateletInput.value = "";
-  albuminInput.value = "";
   calculate();
 });
 
@@ -2066,13 +1922,6 @@ mmeExampleButton.addEventListener("click", () => {
   egfrInput.value = "";
   painControlSelect.value = "uncontrolled";
   hepaticSeveritySelect.value = "none";
-  astInput.value = "";
-  altInput.value = "";
-  bilirubinInput.value = "";
-  inrInput.value = "";
-  ammoniaInput.value = "";
-  plateletInput.value = "";
-  albuminInput.value = "";
   calculate();
 });
 
@@ -2081,8 +1930,8 @@ renderHepaticGuidanceTable();
 renderSourceTable();
 renderBuprenorphineOptions();
 setRegimenEntries([{}]);
+renderSpecialtyTool();
 renderBuprenorphineSchedule();
 updateRenalBandNote();
-updateHepaticSuggestionNote();
 calculate();
 calculateMethadone();

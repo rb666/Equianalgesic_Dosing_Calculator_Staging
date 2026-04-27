@@ -630,6 +630,7 @@ const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
 const mainCalculatorNote = document.querySelector("#mainCalculatorNote");
+const organContext = document.querySelector(".organ-context");
 const form = document.querySelector("#calculatorForm");
 const calculationModeSelect = document.querySelector("#calculationMode");
 const targetDrugSelect = document.querySelector("#targetDrug");
@@ -670,7 +671,6 @@ const renalAdviceBody = document.querySelector("#renalAdviceBody");
 const hepaticAdviceTitle = document.querySelector("#hepaticAdviceTitle");
 const hepaticAdviceBody = document.querySelector("#hepaticAdviceBody");
 
-const specialtyToolSelect = document.querySelector("#specialtyTool");
 const specialtyPanels = document.querySelectorAll("[data-specialty-panel]");
 const methadoneForm = document.querySelector("#methadoneForm");
 const methadoneMorphineDoseInput = document.querySelector("#methadoneMorphineDose");
@@ -1119,7 +1119,7 @@ const renderBuprenorphineSchedule = () => {
 };
 
 const renderSpecialtyTool = () => {
-  const selectedTool = specialtyToolSelect.value;
+  const selectedTool = calculationModeSelect.value;
 
   specialtyPanels.forEach((panel) => {
     panel.classList.toggle(
@@ -1132,7 +1132,8 @@ const renderSpecialtyTool = () => {
 const setModeVisibility = () => {
   const activeMode = calculationModeSelect.value;
   const isMMeMode = activeMode === "mme";
-  const isSpecialtyMode = activeMode === "specialty";
+  const isSpecialtyMode =
+    activeMode === "methadone" || activeMode === "buprenorphine";
 
   calculatorTabButtons.forEach((button) => {
     const isActive = button.dataset.calculatorTab === activeMode;
@@ -1144,6 +1145,7 @@ const setModeVisibility = () => {
   specialtyCalculatorSection.classList.toggle("is-hidden", !isSpecialtyMode);
   targetField.classList.toggle("is-hidden", isMMeMode || isSpecialtyMode);
   reductionField.classList.toggle("is-hidden", isMMeMode || isSpecialtyMode);
+  organContext.classList.toggle("is-hidden", isMMeMode || isSpecialtyMode);
 
   if (isMMeMode) {
     mainCalculatorHeading.textContent = "Total MME calculator";
@@ -1817,7 +1819,10 @@ calculatorTabButtons.forEach((button) => {
     calculationModeSelect.value = button.dataset.calculatorTab;
     setModeVisibility();
 
-    if (calculationModeSelect.value === "specialty") {
+    if (
+      calculationModeSelect.value === "methadone" ||
+      calculationModeSelect.value === "buprenorphine"
+    ) {
       renderSpecialtyTool();
       calculateMethadone();
       renderBuprenorphineSchedule();
@@ -1860,12 +1865,6 @@ document.querySelectorAll("[data-reduction-quickset]").forEach((button) => {
 
 methadoneMorphineDoseInput.addEventListener("input", () => {
   calculateMethadone();
-});
-
-specialtyToolSelect.addEventListener("input", () => {
-  renderSpecialtyTool();
-  calculateMethadone();
-  renderBuprenorphineSchedule();
 });
 
 buprenorphineMeddRangeSelect.addEventListener("input", () => {

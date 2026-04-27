@@ -149,7 +149,7 @@ main {
 
 .calculator-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin: 24px 0;
 }
@@ -307,18 +307,6 @@ main {
 
 .specialty-section {
   margin: 24px 0;
-}
-
-.specialty-heading {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
-  gap: 18px;
-  align-items: end;
-  margin-bottom: 18px;
-}
-
-.specialty-heading .section-heading {
-  margin-bottom: 0;
 }
 
 .specialty-tool-panel {
@@ -806,8 +794,7 @@ footer p {
 
 @media (max-width: 960px) {
   .compact-grid,
-  .regimen-entry-grid,
-  .specialty-heading {
+  .regimen-entry-grid {
     grid-template-columns: 1fr;
   }
 

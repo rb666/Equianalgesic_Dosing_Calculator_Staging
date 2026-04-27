@@ -62,11 +62,19 @@
         </button>
         <button
           class="calculator-tab"
-          data-calculator-tab="specialty"
+          data-calculator-tab="methadone"
           type="button"
         >
-          <span>Methadone / Suboxone</span>
-          <small>Specialty calculators</small>
+          <span>Methadone</span>
+          <small>OME to methadone</small>
+        </button>
+        <button
+          class="calculator-tab"
+          data-calculator-tab="buprenorphine"
+          type="button"
+        >
+          <span>Suboxone</span>
+          <small>Transition schedule</small>
         </button>
       </nav>
 
@@ -291,7 +299,7 @@
             safety reduction.
           </p>
 
-          <dl class="calculation-steps">
+          <dl class="calculation-steps is-hidden">
             <div>
               <dt>Total oral morphine equivalent</dt>
               <dd id="oralMorphineEquivalent">90 mg/day</dd>
@@ -322,7 +330,7 @@
             </div>
           </dl>
 
-          <div class="advisory-grid" aria-label="Organ adjustment advice">
+          <div class="advisory-grid is-hidden" aria-label="Organ adjustment advice">
             <section class="advisory-card" id="renalAdviceCard">
               <span class="summary-label">Renal advice</span>
               <h3 id="renalAdviceTitle">No renal band selected</h3>
@@ -341,7 +349,7 @@
             </section>
           </div>
 
-          <div class="table-wrap regimen-table-wrap">
+          <div class="table-wrap regimen-table-wrap is-hidden">
             <table class="regimen-table">
               <thead>
                 <tr>
@@ -356,12 +364,12 @@
             </table>
           </div>
 
-          <div class="clinical-notes">
+          <div class="clinical-notes is-hidden">
             <h3>Before ordering</h3>
             <ul>
               <li>Multi-drug totals are intended for regimen-level review; they do not replace opioid-specific bedside assessment.</li>
               <li>Patch entries are treated as standing 24-hour exposure estimates and not as initiation or titration instructions.</li>
-              <li>Methadone totals are especially approximate; use the specialty methadone tab and specialist input when rotating to methadone.</li>
+              <li>Methadone totals are especially approximate; use the methadone tab and specialist input when rotating to methadone.</li>
               <li>Renal and hepatic cards show staging guidance and local advisory rules; they are not validated severity scores.</li>
               <li>Reassess analgesia, respiratory rate, sedation, organ function, and adverse effects after conversion.</li>
             </ul>
@@ -374,21 +382,6 @@
         id="specialtyCalculatorSection"
         aria-label="Methadone and Suboxone calculators"
       >
-        <div class="specialty-heading">
-          <div class="section-heading">
-            <p class="eyebrow">Specialty tab</p>
-            <h2>Methadone / Suboxone calculators</h2>
-          </div>
-
-          <label for="specialtyTool">
-            Specialty calculator
-            <select id="specialtyTool" name="specialtyTool">
-              <option value="methadone">Oral morphine to methadone</option>
-              <option value="buprenorphine">Suboxone / buprenorphine schedule</option>
-            </select>
-          </label>
-        </div>
-
         <section class="methadone-layout specialty-tool-panel" data-specialty-panel="methadone">
           <form class="calculator-panel" id="methadoneForm">
             <div class="section-heading">
@@ -436,7 +429,7 @@
               full-dose check.
             </p>
 
-            <dl class="calculation-steps">
+            <dl class="calculation-steps is-hidden">
               <div>
                 <dt>Screenshot ratio band</dt>
                 <dd id="methadoneFactor">100-299 mg OME uses 8:1</dd>
@@ -467,7 +460,7 @@
               </div>
             </dl>
 
-            <div class="clinical-notes">
+            <div class="clinical-notes is-hidden">
               <h3>Methadone cautions</h3>
               <ul>
                 <li>Use only with clinician experience or pain/palliative specialist input.</li>
@@ -653,6 +646,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260424-remove-redundant-buttons"></script>
+    <script src="script.js?v=20260427-four-tabs-simplified-output"></script>
   </body>
 </html>

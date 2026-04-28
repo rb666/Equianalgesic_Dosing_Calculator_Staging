@@ -395,7 +395,7 @@
           <form class="calculator-panel" id="methadoneForm">
             <div class="section-heading">
               <p class="eyebrow">Methadone</p>
-              <h2>Oral morphine to oral methadone</h2>
+              <h2>Oral morphine to methadone</h2>
             </div>
 
             <div class="field-grid">
@@ -413,12 +413,56 @@
                 />
                 <span class="field-hint">mg/day OME</span>
               </label>
+
+              <label for="methadoneRoute">
+                Target methadone route
+                <select id="methadoneRoute" name="methadoneRoute">
+                  <option value="oral">Oral methadone</option>
+                  <option value="iv">IV methadone</option>
+                </select>
+                <span class="field-hint">
+                  IV methadone is calculated as 50% of the oral methadone estimate.
+                </span>
+              </label>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="methadoneReductionRange">Methadone safety reduction</label>
+                  <div class="percent-input">
+                    <input
+                      id="methadoneReductionNumber"
+                      name="methadoneReductionNumber"
+                      type="number"
+                      min="0"
+                      max="90"
+                      step="1"
+                      value="75"
+                    />
+                    <span>%</span>
+                  </div>
+                </div>
+                <input
+                  id="methadoneReductionRange"
+                  name="methadoneReductionRange"
+                  type="range"
+                  min="0"
+                  max="90"
+                  step="1"
+                  value="75"
+                />
+                <div class="range-labels" aria-hidden="true">
+                  <span>0%</span>
+                  <span>30%</span>
+                  <span>60%</span>
+                  <span>90%</span>
+                </div>
+              </div>
             </div>
 
             <p class="basis-note">
-              Primary methadone output uses the client-provided morphine:methadone
-              ratio table. The panel also shows the fixed 4.7 full-dose check and
-              the conservative measurement using a 3.0 divisor.
+              Use a verified 24-hour oral morphine equivalent total. This is not
+              for methadone initiation in opioid use disorder or for opioid-naive
+              patients.
             </p>
           </form>
 
@@ -429,52 +473,47 @@
             </div>
 
             <div class="dose-result">
-              <span id="methadoneFinalDose">4.17</span>
-              <span id="methadoneFinalUnit">mg/day oral</span>
+              <span id="methadoneFinalDose">3.13</span>
+              <span id="methadoneFinalUnit">mg/day</span>
             </div>
             <p id="methadoneSentence">
-              This tool applies the selected morphine:methadone ratio band, then
-              shows the conservative measurement separately from the fixed 4.7
-              full-dose check.
+              Apply specialist review, QTc and interaction screening, close
+              monitoring, and local policy before ordering.
             </p>
 
-            <dl class="calculation-steps is-hidden">
+            <dl class="calculation-steps">
               <div>
-                <dt>Screenshot ratio band</dt>
-                <dd id="methadoneFactor">100-299 mg OME uses 8:1</dd>
+                <dt>Morphine:methadone ratio</dt>
+                <dd id="methadoneRatio">8:1</dd>
               </div>
               <div>
-                <dt>Ratio full-dose estimate</dt>
-                <dd id="methadoneRawDose">12.5 mg/day oral</dd>
+                <dt>Raw oral methadone</dt>
+                <dd id="methadoneRawDose">12.5 mg/day</dd>
               </div>
               <div>
-                <dt>Conservative measurement</dt>
-                <dd id="methadoneConservativeStart">4.17 mg/day oral</dd>
+                <dt>Route adjustment</dt>
+                <dd id="methadoneRouteAdjustment">Oral route</dd>
               </div>
               <div>
-                <dt>Fixed 4.7 full-dose check</dt>
-                <dd id="methadoneFixedFullDose">21.28 mg/day oral</dd>
-              </div>
-              <div>
-                <dt>Fixed 4.7 with 3.0 conservative divisor</dt>
-                <dd id="methadoneFixedConservativeDose">7.09 mg/day oral</dd>
+                <dt>Reduction applied</dt>
+                <dd id="methadoneReductionApplied">75% reduction</dd>
               </div>
               <div>
                 <dt>If divided q8h</dt>
-                <dd id="methadoneQ8Dose">1.39 mg/dose</dd>
+                <dd id="methadoneQ8Dose">1.04 mg/dose</dd>
               </div>
               <div>
                 <dt>If divided q12h</dt>
-                <dd id="methadoneQ12Dose">2.08 mg/dose</dd>
+                <dd id="methadoneQ12Dose">1.56 mg/dose</dd>
               </div>
             </dl>
 
-            <div class="clinical-notes is-hidden">
+            <div class="clinical-notes">
               <h3>Methadone cautions</h3>
               <ul>
                 <li>Use only with clinician experience or pain/palliative specialist input.</li>
-                <li>Methadone requires slow titration because of its long and variable half-life and risk of delayed accumulation.</li>
-                <li>Screen for QTc risk, CYP interactions, renal and hepatic context, and formulation access before ordering.</li>
+                <li>Methadone requires slow titration to the intended dose due to its long and variable half-life and risk of accumulation; if you are not comfortable or experienced with methadone, please consult a pain or palliative care specialist.</li>
+                <li>Account for long and variable half-life, delayed toxicity, QTc risk, CYP interactions, and renal/hepatic context.</li>
                 <li>No automatic rounding to tablet or liquid formulation is performed.</li>
               </ul>
             </div>
@@ -655,6 +694,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260427-large-conservative-methadone-output"></script>
+    <script src="script.js?v=20260427-production-methadone-tab"></script>
   </body>
 </html>

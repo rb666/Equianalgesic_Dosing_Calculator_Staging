@@ -85,7 +85,6 @@
       >
         <form class="calculator-panel" id="calculatorForm">
           <div class="section-heading">
-            <p class="eyebrow">Inputs</p>
             <h2 id="mainCalculatorHeading">Conversion calculator</h2>
           </div>
 
@@ -95,20 +94,9 @@
             Enter the current regimen, then select the target opioid and route.
           </p>
 
-          <div class="field-grid compact-grid" id="targetField">
-            <label for="targetDrug">
-              Converting to
-              <select id="targetDrug" name="targetDrug"></select>
-              <span class="field-hint top-grid-note">
-                Choose the target opioid and route for the converted daily dose.
-              </span>
-            </label>
-          </div>
-
           <section class="subsection" aria-label="Regimen entries">
             <div class="subsection-header">
               <div>
-                <p class="eyebrow">Regimen builder</p>
                 <h3 id="regimenBuilderHeading">Converting from</h3>
               </div>
               <button
@@ -126,6 +114,16 @@
             </p>
             <div class="regimen-entries" id="regimenEntries"></div>
           </section>
+
+          <div class="field-grid compact-grid target-field" id="targetField">
+            <label for="targetDrug">
+              Converting to
+              <select id="targetDrug" name="targetDrug"></select>
+              <span class="field-hint top-grid-note">
+                Choose the target opioid and route for the converted daily dose.
+              </span>
+            </label>
+          </div>
 
           <section class="subsection" aria-label="Safety reduction" id="reductionField">
             <div class="section-heading subsection-heading">
@@ -285,7 +283,6 @@
 
         <section class="result-panel" aria-live="polite" aria-atomic="true">
           <div class="section-heading">
-            <p class="eyebrow">Result</p>
             <h2 id="resultTitle">Oxycodone oral estimated daily target dose</h2>
           </div>
 
@@ -654,6 +651,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260427-methadone-conservative-mme"></script>
+    <script src="script.js?v=20260427-source-before-target"></script>
   </body>
 </html>

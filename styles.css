@@ -348,6 +348,12 @@ main {
   grid-template-columns: minmax(0, 1fr);
 }
 
+.target-field {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
 .field-stack > label {
   align-content: start;
 }

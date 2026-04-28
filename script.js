@@ -1,5 +1,6 @@
 const ORAL_MORPHINE_FOR_TEN_MG_IV_MORPHINE = 25;
 const METHADONE_ORAL_MORPHINE_FACTOR = 4.7;
+const METHADONE_CONSERVATIVE_ORAL_MORPHINE_FACTOR = 3;
 const METHADONE_CONSERVATIVE_DIVISOR = 3;
 
 const methadoneRatioBands = [
@@ -483,7 +484,7 @@ const sourceReferences = [
     title: "Configured local staging rules",
     url: "",
     note:
-      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested methadone 4.7 full-dose check, 3.0 conservative divisor, and hepatic advisory bands.",
+      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested methadone 4.7 full-dose check, 3.0 conservative methadone estimate, and hepatic advisory bands.",
   },
   {
     title: "Client-provided methadone ratio table",
@@ -656,6 +657,7 @@ const resultTitle = document.querySelector("#resultTitle");
 const finalDose = document.querySelector("#finalDose");
 const finalUnit = document.querySelector("#finalUnit");
 const resultSentence = document.querySelector("#resultSentence");
+const methadoneConservativeMme = document.querySelector("#methadoneConservativeMme");
 const oralMorphineEquivalentOutput = document.querySelector("#oralMorphineEquivalent");
 const ivMorphineEquivalentOutput = document.querySelector("#ivMorphineEquivalent");
 const targetStepLabel = document.querySelector("#targetStepLabel");
@@ -844,6 +846,17 @@ const getIvMorphineEquivalent = (oralMorphineEquivalent) =>
 const getTargetDose = (targetOption, oralMorphineEquivalent) =>
   (oralMorphineEquivalent / targetOption.oralMorphineEquivalent) *
   targetOption.referenceDose;
+
+const isOralMethadoneOnlyRegimen = (parsedEntries) =>
+  parsedEntries.length > 0 &&
+  parsedEntries.every((entry) => entry.valid && entry.option?.id === "Methadone_Oral");
+
+const getConservativeOralMethadoneMme = (parsedEntries) =>
+  parsedEntries.reduce(
+    (sum, entry) =>
+      sum + entry.dailyDose * METHADONE_CONSERVATIVE_ORAL_MORPHINE_FACTOR,
+    0,
+  );
 
 const parseRegimenEntries = () =>
   regimenEntriesState.map((entry) => {
@@ -1577,6 +1590,7 @@ const showInvalidRegimen = (parsedEntries) => {
   renderRegimenSummaryTable(parsedEntries);
   finalDose.textContent = "0";
   finalUnit.textContent = "mg/day";
+  methadoneConservativeMme.classList.add("is-hidden");
   resultTitle.textContent = "Enter a valid regimen";
   resultSentence.textContent =
     "Each active regimen row needs a non-negative dose and, for non-patch entries, a non-negative doses-per-day value.";
@@ -1605,6 +1619,7 @@ const calculate = () => {
   const isMMeMode = calculationModeSelect.value === "mme";
 
   renderRegimenSummaryTable(parsedEntries);
+  methadoneConservativeMme.classList.add("is-hidden");
 
   if (!parsedEntries.length || parsedEntries.some((entry) => !entry.valid)) {
     showInvalidRegimen(parsedEntries);
@@ -1646,6 +1661,15 @@ const calculate = () => {
       (includesMethadone
         ? " Because methadone is included, treat the total as especially approximate."
         : "");
+    if (isOralMethadoneOnlyRegimen(parsedEntries)) {
+      const conservativeMme = getConservativeOralMethadoneMme(parsedEntries);
+
+      methadoneConservativeMme.textContent =
+        `Conservative oral methadone assessment: ${formatDose(
+          conservativeMme,
+        )} mg OME/day using a 3.0 multiplier.`;
+      methadoneConservativeMme.classList.remove("is-hidden");
+    }
     targetStepLabel.textContent = "Target calculation";
     rawTargetDoseOutput.textContent = "Not applied";
     reductionStep.classList.add("is-hidden");

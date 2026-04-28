@@ -11,10 +11,11 @@ before changes are promoted to the live site.
 
 The main converter includes methadone source and route-switching entries:
 10 mg oral methadone is configured as 47 mg oral morphine equivalent, and
-5 mg IV methadone is configured as equivalent to 10 mg oral methadone. The
-specialty methadone calculator uses the client-provided morphine:methadone
-ratio bands and also shows the fixed 4.7 full-dose check with a 3.0 conservative
-divisor.
+5 mg IV methadone is configured as equivalent to 10 mg oral methadone. When
+Total MME contains only oral methadone, the calculator also shows a conservative
+3.0 multiplier estimate. The specialty methadone calculator mirrors the
+production morphine:methadone workflow with oral/IV route output and a 0-90%
+methadone safety reduction.
 
 ## Files
 

@@ -1,5 +1,9 @@
 const ORAL_MORPHINE_FOR_TEN_MG_IV_MORPHINE = 25;
+const METHADONE_ORAL_REFERENCE_DOSE = 10;
 const METHADONE_ORAL_MORPHINE_FACTOR = 4.7;
+const METHADONE_ORAL_REFERENCE_OME =
+  METHADONE_ORAL_REFERENCE_DOSE * METHADONE_ORAL_MORPHINE_FACTOR;
+const METHADONE_IV_REFERENCE_DOSE = METHADONE_ORAL_REFERENCE_DOSE / 2;
 const METHADONE_CONSERVATIVE_ORAL_MORPHINE_FACTOR = 3;
 
 const methadoneRatioTable = [
@@ -96,9 +100,9 @@ const conversionOptions = [
     id: "Methadone_Oral",
     medication: "Methadone",
     route: "Oral",
-    referenceDose: 10,
+    referenceDose: METHADONE_ORAL_REFERENCE_DOSE,
     doseUnit: "mg",
-    oralMorphineEquivalent: 47,
+    oralMorphineEquivalent: METHADONE_ORAL_REFERENCE_OME,
     label: "Methadone oral",
     targetable: true,
   },
@@ -106,9 +110,9 @@ const conversionOptions = [
     id: "Methadone_IV",
     medication: "Methadone",
     route: "IV",
-    referenceDose: 5,
+    referenceDose: METHADONE_IV_REFERENCE_DOSE,
     doseUnit: "mg",
-    oralMorphineEquivalent: 47,
+    oralMorphineEquivalent: METHADONE_ORAL_REFERENCE_OME,
     label: "Methadone IV",
     targetable: true,
   },
@@ -482,7 +486,7 @@ const sourceReferences = [
     title: "Configured local staging rules",
     url: "",
     note:
-      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested methadone 4.7 full-dose check, 3.0 conservative methadone estimate, and hepatic advisory bands.",
+      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested oral methadone 4.7 MME factor, 3.0 conservative oral methadone estimate, and hepatic advisory bands.",
   },
   {
     title: "Production methadone ratio table",

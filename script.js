@@ -1,4 +1,3 @@
-const ORAL_MORPHINE_FOR_TEN_MG_IV_MORPHINE = 25;
 const METHADONE_ORAL_REFERENCE_DOSE = 10;
 const METHADONE_ORAL_MORPHINE_FACTOR = 4.7;
 const METHADONE_ORAL_REFERENCE_OME =
@@ -663,8 +662,6 @@ const methadoneConservativeMme = document.querySelector("#methadoneConservativeM
 const methadoneConservativeMmeDose = document.querySelector(
   "#methadoneConservativeMmeDose",
 );
-const oralMorphineEquivalentOutput = document.querySelector("#oralMorphineEquivalent");
-const ivMorphineEquivalentOutput = document.querySelector("#ivMorphineEquivalent");
 const targetStepLabel = document.querySelector("#targetStepLabel");
 const rawTargetDoseOutput = document.querySelector("#rawTargetDose");
 const reductionStep = document.querySelector("#reductionStep");
@@ -852,9 +849,6 @@ const createRegimenEntry = (overrides = {}) => {
 
 const getCurrentOralMorphineEquivalent = (option, currentDose) =>
   (currentDose / option.referenceDose) * option.oralMorphineEquivalent;
-
-const getIvMorphineEquivalent = (oralMorphineEquivalent) =>
-  (oralMorphineEquivalent / ORAL_MORPHINE_FOR_TEN_MG_IV_MORPHINE) * 10;
 
 const getTargetDose = (targetOption, oralMorphineEquivalent) =>
   (oralMorphineEquivalent / targetOption.oralMorphineEquivalent) *
@@ -1607,8 +1601,6 @@ const showInvalidRegimen = (parsedEntries) => {
   resultTitle.textContent = "Enter a valid regimen";
   resultSentence.textContent =
     "Each active regimen row needs a non-negative dose and, for non-patch entries, a non-negative doses-per-day value.";
-  oralMorphineEquivalentOutput.textContent = "0 mg/day";
-  ivMorphineEquivalentOutput.textContent = "0 mg/day";
   rawTargetDoseOutput.textContent = "0 mg/day";
   reductionAppliedOutput.textContent = `${clampReduction(reductionNumber.value)}% reduction`;
   renalAdjustedDoseOutput.textContent = "Not applied";
@@ -1643,13 +1635,9 @@ const calculate = () => {
     (sum, entry) => sum + entry.oralMorphineEquivalent,
     0,
   );
-  const ivMorphineEquivalent = getIvMorphineEquivalent(oralMorphineEquivalent);
   const includesMethadone = parsedEntries.some((entry) =>
     isMethadoneOption(entry.option),
   );
-
-  oralMorphineEquivalentOutput.textContent = `${formatDose(oralMorphineEquivalent)} mg/day`;
-  ivMorphineEquivalentOutput.textContent = `${formatDose(ivMorphineEquivalent)} mg/day`;
 
   if (isMMeMode) {
     const renalAdvice = getRenalAdvice({

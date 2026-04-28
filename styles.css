@@ -609,6 +609,7 @@ button:hover {
 }
 
 #finalDose,
+#methadoneConservativeMmeDose,
 #methadoneFinalDose {
   font-size: 4.2rem;
   font-weight: 850;
@@ -616,6 +617,7 @@ button:hover {
 }
 
 #finalUnit,
+#methadoneConservativeMmeUnit,
 #methadoneFinalUnit {
   font-size: 1.45rem;
   font-weight: 800;
@@ -627,14 +629,23 @@ button:hover {
   color: var(--muted);
 }
 
-.secondary-result {
-  margin: -10px 0 22px;
-  padding: 12px 14px;
-  border-left: 4px solid var(--accent);
+.secondary-dose-card {
+  margin: 18px 0 24px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--accent);
   border-radius: 8px;
   background: #f2f7f5;
-  color: var(--ink);
-  font-weight: 750;
+}
+
+.secondary-dose-result {
+  margin: 6px 0;
+}
+
+.secondary-dose-card p {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 700;
 }
 
 .calculation-steps {
@@ -877,6 +888,7 @@ footer p {
   }
 
   #finalDose,
+  #methadoneConservativeMmeDose,
   #methadoneFinalDose {
     font-size: 3.1rem;
   }

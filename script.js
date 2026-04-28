@@ -658,6 +658,9 @@ const finalDose = document.querySelector("#finalDose");
 const finalUnit = document.querySelector("#finalUnit");
 const resultSentence = document.querySelector("#resultSentence");
 const methadoneConservativeMme = document.querySelector("#methadoneConservativeMme");
+const methadoneConservativeMmeDose = document.querySelector(
+  "#methadoneConservativeMmeDose",
+);
 const oralMorphineEquivalentOutput = document.querySelector("#oralMorphineEquivalent");
 const ivMorphineEquivalentOutput = document.querySelector("#ivMorphineEquivalent");
 const targetStepLabel = document.querySelector("#targetStepLabel");
@@ -1664,10 +1667,7 @@ const calculate = () => {
     if (isOralMethadoneOnlyRegimen(parsedEntries)) {
       const conservativeMme = getConservativeOralMethadoneMme(parsedEntries);
 
-      methadoneConservativeMme.textContent =
-        `Conservative oral methadone assessment: ${formatDose(
-          conservativeMme,
-        )} mg OME/day using a 3.0 multiplier.`;
+      methadoneConservativeMmeDose.textContent = formatDose(conservativeMme);
       methadoneConservativeMme.classList.remove("is-hidden");
     }
     targetStepLabel.textContent = "Target calculation";

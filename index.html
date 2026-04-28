@@ -294,10 +294,14 @@
             Converted from the total daily current regimen after the selected
             safety reduction.
           </p>
-          <p class="secondary-result is-hidden" id="methadoneConservativeMme">
-            Conservative oral methadone assessment: 0 mg OME/day using a 3.0
-            multiplier.
-          </p>
+          <div class="secondary-dose-card is-hidden" id="methadoneConservativeMme">
+            <span class="summary-label">Conservative oral methadone assessment</span>
+            <div class="dose-result secondary-dose-result">
+              <span id="methadoneConservativeMmeDose">0</span>
+              <span id="methadoneConservativeMmeUnit">mg OME/day</span>
+            </div>
+            <p>Uses a 3.0 multiplier for oral methadone only.</p>
+          </div>
 
           <dl class="calculation-steps" data-conversion-output>
             <div>
@@ -651,6 +655,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260427-source-before-target"></script>
+    <script src="script.js?v=20260427-large-conservative-methadone-output"></script>
   </body>
 </html>

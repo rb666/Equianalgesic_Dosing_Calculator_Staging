@@ -97,10 +97,10 @@
 
           <div class="field-grid compact-grid" id="targetField">
             <label for="targetDrug">
-              Target drug and route
+              Converting to
               <select id="targetDrug" name="targetDrug"></select>
               <span class="field-hint top-grid-note">
-                Result is shown as an estimated total daily target dose.
+                Choose the target opioid and route for the converted daily dose.
               </span>
             </label>
           </div>
@@ -109,7 +109,7 @@
             <div class="subsection-header">
               <div>
                 <p class="eyebrow">Regimen builder</p>
-                <h3>Drug lines</h3>
+                <h3 id="regimenBuilderHeading">Converting from</h3>
               </div>
               <button
                 class="secondary-button"
@@ -299,7 +299,7 @@
             safety reduction.
           </p>
 
-          <dl class="calculation-steps is-hidden">
+          <dl class="calculation-steps" data-conversion-output>
             <div>
               <dt>Total oral morphine equivalent</dt>
               <dd id="oralMorphineEquivalent">90 mg/day</dd>
@@ -324,13 +324,18 @@
               <dt>Hepatic-adjusted target</dt>
               <dd id="hepaticAdjustedDose">Not applied</dd>
             </div>
-            <div class="wrap-step">
+            <div class="wrap-step" id="organGuidanceStep">
               <dt>Organ guidance summary</dt>
               <dd id="organGuidanceSummary">No renal or hepatic class selected</dd>
             </div>
           </dl>
 
-          <div class="advisory-grid is-hidden" aria-label="Organ adjustment advice">
+          <div
+            class="advisory-grid"
+            data-conversion-output
+            data-organ-advice
+            aria-label="Organ adjustment advice"
+          >
             <section class="advisory-card" id="renalAdviceCard">
               <span class="summary-label">Renal advice</span>
               <h3 id="renalAdviceTitle">No renal band selected</h3>
@@ -349,7 +354,7 @@
             </section>
           </div>
 
-          <div class="table-wrap regimen-table-wrap is-hidden">
+          <div class="table-wrap regimen-table-wrap" data-conversion-output>
             <table class="regimen-table">
               <thead>
                 <tr>
@@ -364,7 +369,7 @@
             </table>
           </div>
 
-          <div class="clinical-notes is-hidden">
+          <div class="clinical-notes" data-conversion-output>
             <h3>Before ordering</h3>
             <ul>
               <li>Multi-drug totals are intended for regimen-level review; they do not replace opioid-specific bedside assessment.</li>
@@ -646,6 +651,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260427-four-tabs-simplified-output"></script>
+    <script src="script.js?v=20260427-conversion-output-rows"></script>
   </body>
 </html>

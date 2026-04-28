@@ -630,6 +630,7 @@ const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
 const mainCalculatorNote = document.querySelector("#mainCalculatorNote");
+const regimenBuilderHeading = document.querySelector("#regimenBuilderHeading");
 const organContext = document.querySelector(".organ-context");
 const form = document.querySelector("#calculatorForm");
 const calculationModeSelect = document.querySelector("#calculationMode");
@@ -668,8 +669,13 @@ const hepaticAdjustedDoseOutput = document.querySelector("#hepaticAdjustedDose")
 const organGuidanceSummaryOutput = document.querySelector("#organGuidanceSummary");
 const renalAdviceTitle = document.querySelector("#renalAdviceTitle");
 const renalAdviceBody = document.querySelector("#renalAdviceBody");
+const renalAdviceCard = document.querySelector("#renalAdviceCard");
 const hepaticAdviceTitle = document.querySelector("#hepaticAdviceTitle");
 const hepaticAdviceBody = document.querySelector("#hepaticAdviceBody");
+const hepaticAdviceCard = document.querySelector("#hepaticAdviceCard");
+const organGuidanceStep = document.querySelector("#organGuidanceStep");
+const organAdviceGrid = document.querySelector("[data-organ-advice]");
+const conversionOutputDetails = document.querySelectorAll("[data-conversion-output]");
 
 const specialtyPanels = document.querySelectorAll("[data-specialty-panel]");
 const methadoneForm = document.querySelector("#methadoneForm");
@@ -1129,6 +1135,42 @@ const renderSpecialtyTool = () => {
   });
 };
 
+const updateConversionOutputVisibility = () => {
+  const isConversionMode = calculationModeSelect.value === "convert";
+  const hasRenalSelection = Boolean(getEgfrBand(egfrInput.value));
+  const hasHepaticSelection = getActiveHepaticSeverity().severity !== "none";
+  const hasOrganSelection = hasRenalSelection || hasHepaticSelection;
+
+  conversionOutputDetails.forEach((section) => {
+    section.classList.toggle("is-hidden", !isConversionMode);
+  });
+
+  renalAdjustmentStep.classList.toggle(
+    "is-hidden",
+    !isConversionMode || !hasRenalSelection,
+  );
+  hepaticAdjustmentStep.classList.toggle(
+    "is-hidden",
+    !isConversionMode || !hasHepaticSelection,
+  );
+  organGuidanceStep.classList.toggle(
+    "is-hidden",
+    !isConversionMode || !hasOrganSelection,
+  );
+  organAdviceGrid.classList.toggle(
+    "is-hidden",
+    !isConversionMode || !hasOrganSelection,
+  );
+  renalAdviceCard.classList.toggle(
+    "is-hidden",
+    !isConversionMode || !hasRenalSelection,
+  );
+  hepaticAdviceCard.classList.toggle(
+    "is-hidden",
+    !isConversionMode || !hasHepaticSelection,
+  );
+};
+
 const setModeVisibility = () => {
   const activeMode = calculationModeSelect.value;
   const isMMeMode = activeMode === "mme";
@@ -1151,11 +1193,15 @@ const setModeVisibility = () => {
     mainCalculatorHeading.textContent = "Total MME calculator";
     mainCalculatorNote.textContent =
       "Enter one or more current opioid lines to calculate total daily oral morphine equivalent.";
+    regimenBuilderHeading.textContent = "Current regimen";
   } else {
     mainCalculatorHeading.textContent = "Conversion calculator";
     mainCalculatorNote.textContent =
       "Enter the current regimen, then select the target opioid and route.";
+    regimenBuilderHeading.textContent = "Converting from";
   }
+
+  updateConversionOutputVisibility();
 };
 
 const getEgfrBand = (rawValue) => {

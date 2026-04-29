@@ -160,7 +160,7 @@ main {
   justify-items: start;
   min-height: 72px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 14px 16px;
   background: var(--surface);
   color: var(--ink);
@@ -182,6 +182,22 @@ main {
   border-color: var(--accent);
   background: #effaf7;
   color: var(--accent-dark);
+}
+
+.calculator-tab:hover {
+  border-color: #8fc8bc;
+  background: #f6fbf9;
+  box-shadow: 0 10px 26px rgba(23, 33, 27, 0.09);
+  transform: translateY(-1px);
+}
+
+.calculator-tab.is-active:hover {
+  background: #eaf7f3;
+}
+
+.calculator-tab:active {
+  box-shadow: 0 6px 18px rgba(23, 33, 27, 0.08);
+  transform: translateY(0);
 }
 
 .calculator-layout,
@@ -572,16 +588,29 @@ input[type="range"] {
 button {
   min-height: 46px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--accent);
   color: white;
   cursor: pointer;
   font-weight: 800;
   padding: 10px 16px;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease,
+    transform 120ms ease;
 }
 
 button:hover {
   background: var(--accent-dark);
+  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.16);
+  transform: translateY(-1px);
+}
+
+button:active {
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.12);
+  transform: translateY(0);
 }
 
 .secondary-button {
@@ -592,11 +621,14 @@ button:hover {
 
 .secondary-button:hover {
   background: #edf4f1;
+  box-shadow: 0 6px 16px rgba(23, 33, 27, 0.08);
 }
 
 .secondary-button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
+  box-shadow: none;
+  transform: none;
 }
 
 .dose-result {

@@ -231,6 +231,14 @@ main {
   padding: 26px;
 }
 
+@media (min-width: 851px) {
+  #mainCalculatorSection > .result-panel,
+  .methadone-layout > .result-panel {
+    position: sticky;
+    top: 18px;
+  }
+}
+
 .compact-section {
   margin: 24px 0;
   border-top: 1px solid var(--line);
@@ -885,11 +893,14 @@ footer p {
 
 @media (max-width: 850px) {
   .safety-banner,
-  .calculator-tabs,
   .calculator-layout,
   .methadone-layout,
   .buprenorphine-layout {
     grid-template-columns: 1fr;
+  }
+
+  .calculator-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .site-header {
@@ -910,6 +921,10 @@ footer p {
 
   h1 {
     font-size: 1.9rem;
+  }
+
+  .calculator-tabs {
+    grid-template-columns: 1fr;
   }
 
   .calculator-panel,

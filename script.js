@@ -631,7 +631,6 @@ const calculatorTabButtons = document.querySelectorAll("[data-calculator-tab]");
 const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
-const mainCalculatorNote = document.querySelector("#mainCalculatorNote");
 const regimenBuilderHeading = document.querySelector("#regimenBuilderHeading");
 const organContext = document.querySelector(".organ-context");
 const form = document.querySelector("#calculatorForm");
@@ -657,7 +656,6 @@ const regimenSummaryTable = document.querySelector("#regimenSummaryTable");
 const resultTitle = document.querySelector("#resultTitle");
 const finalDose = document.querySelector("#finalDose");
 const finalUnit = document.querySelector("#finalUnit");
-const resultSentence = document.querySelector("#resultSentence");
 const methadoneConservativeMme = document.querySelector("#methadoneConservativeMme");
 const methadoneConservativeMmeDose = document.querySelector(
   "#methadoneConservativeMmeDose",
@@ -689,7 +687,6 @@ const methadoneReductionRange = document.querySelector("#methadoneReductionRange
 const methadoneReductionNumber = document.querySelector("#methadoneReductionNumber");
 const methadoneFinalDose = document.querySelector("#methadoneFinalDose");
 const methadoneFinalUnit = document.querySelector("#methadoneFinalUnit");
-const methadoneSentence = document.querySelector("#methadoneSentence");
 const methadoneRatioOutput = document.querySelector("#methadoneRatio");
 const methadoneRawDoseOutput = document.querySelector("#methadoneRawDose");
 const methadoneRouteAdjustmentOutput = document.querySelector(
@@ -903,7 +900,7 @@ const getEntrySummaryText = (entry) => {
   const option = findOption(entry.drugId);
 
   if (!option) {
-    return "Select a drug and route for this regimen line.";
+    return "Select a drug and route for this drug.";
   }
 
   const patchOption = isPatchOption(option);
@@ -957,8 +954,7 @@ const buildRegimenEntryMarkup = (entry, index) => {
     <section class="regimen-entry" data-entry-key="${entry.key}">
       <div class="entry-head">
         <div>
-          <span class="summary-label">Drug ${index + 1}</span>
-          <h3>Regimen line ${index + 1}</h3>
+          <h3>Drug ${index + 1}</h3>
         </div>
         <button
           class="secondary-button entry-remove-button"
@@ -1210,14 +1206,10 @@ const setModeVisibility = () => {
   organContext.classList.toggle("is-hidden", isMMeMode || isSpecialtyMode);
 
   if (isMMeMode) {
-    mainCalculatorHeading.textContent = "Total MME calculator";
-    mainCalculatorNote.textContent =
-      "Enter one or more current opioid lines to calculate total daily oral morphine equivalent.";
+    mainCalculatorHeading.textContent = "Total MME";
     regimenBuilderHeading.textContent = "Current regimen";
   } else {
     mainCalculatorHeading.textContent = "Conversion calculator";
-    mainCalculatorNote.textContent =
-      "Enter the current regimen, then select the target opioid and route.";
     regimenBuilderHeading.textContent = "Converting from";
   }
 
@@ -1599,8 +1591,6 @@ const showInvalidRegimen = (parsedEntries) => {
   finalUnit.textContent = "mg/day";
   methadoneConservativeMme.classList.add("is-hidden");
   resultTitle.textContent = "Enter a valid regimen";
-  resultSentence.textContent =
-    "Each active regimen row needs a non-negative dose and, for non-patch entries, a non-negative doses-per-day value.";
   rawTargetDoseOutput.textContent = "0 mg/day";
   reductionAppliedOutput.textContent = `${clampReduction(reductionNumber.value)}% reduction`;
   renalAdjustedDoseOutput.textContent = "Not applied";
@@ -1635,9 +1625,6 @@ const calculate = () => {
     (sum, entry) => sum + entry.oralMorphineEquivalent,
     0,
   );
-  const includesMethadone = parsedEntries.some((entry) =>
-    isMethadoneOption(entry.option),
-  );
 
   if (isMMeMode) {
     const renalAdvice = getRenalAdvice({
@@ -1653,15 +1640,9 @@ const calculate = () => {
       adjustedTargetDose: 0,
     });
 
-    resultTitle.textContent = "Total oral morphine equivalent";
+    resultTitle.textContent = "Total MME estimate";
     finalDose.textContent = formatDose(oralMorphineEquivalent);
-    finalUnit.textContent = "mg OME/day";
-    resultSentence.textContent =
-      `${parsedEntries.length} regimen line${parsedEntries.length === 1 ? "" : "s"} contribute ` +
-      `${formatDose(oralMorphineEquivalent)} mg/day oral morphine equivalent.` +
-      (includesMethadone
-        ? " Because methadone is included, treat the total as especially approximate."
-        : "");
+    finalUnit.textContent = "mg MME/day";
     if (isOralMethadoneOnlyRegimen(parsedEntries)) {
       const conservativeMme = getConservativeOralMethadoneMme(parsedEntries);
 
@@ -1704,12 +1685,6 @@ const calculate = () => {
   resultTitle.textContent = `${targetOption.label} estimated daily target dose`;
   finalDose.textContent = formatDose(adjustedTargetDose);
   finalUnit.textContent = getDailyUnitLabel(targetOption);
-  resultSentence.textContent =
-    `Converted from ${parsedEntries.length} current regimen line${parsedEntries.length === 1 ? "" : "s"} with ` +
-    `${reductionPercentage}% incomplete cross-tolerance / safety reduction.` +
-    (includesMethadone
-      ? " Because methadone is included in the source regimen, treat the converted total as especially approximate."
-      : "");
   targetStepLabel.textContent = `Raw ${targetOption.label.toLowerCase()} dose`;
   rawTargetDoseOutput.textContent = `${formatDose(rawTargetDose)} ${getDailyUnitLabel(
     targetOption,
@@ -1760,8 +1735,6 @@ const calculateMethadone = () => {
   ) {
     methadoneFinalDose.textContent = "0";
     methadoneFinalUnit.textContent = getMethadoneRoute().unitLabel;
-    methadoneSentence.textContent =
-      "Enter a non-negative 24-hour oral morphine equivalent dose.";
     methadoneRatioOutput.textContent = "Not applied";
     methadoneRawDoseOutput.textContent = "0 mg/day";
     methadoneRouteAdjustmentOutput.textContent = "Not applied";
@@ -1789,10 +1762,6 @@ const calculateMethadone = () => {
   methadoneReductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
   methadoneQ8DoseOutput.textContent = `${formatDose(q8Dose)} mg/dose`;
   methadoneQ12DoseOutput.textContent = `${formatDose(q12Dose)} mg/dose`;
-  methadoneSentence.textContent =
-    `${formatDose(oralMorphineDaily)} mg/day oral morphine equivalent uses the ` +
-    `${bracket.ratio}:1 morphine:oral methadone ratio before the selected safety reduction` +
-    ` and ${route.label} route adjustment.`;
 };
 
 const handleRegimenEntryInput = (event) => {

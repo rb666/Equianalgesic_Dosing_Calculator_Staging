@@ -9,7 +9,7 @@
     />
     <meta name="robots" content="noindex, nofollow" />
     <title>Equianalgesic Dose Calculator | Staging</title>
-    <link rel="stylesheet" href="styles.css?v=20260429-cozy-polish" />
+    <link rel="stylesheet" href="styles.css?v=20260430-client-copy-defaults" />
   </head>
   <body>
     <div class="environment-banner" role="note" aria-label="Environment notice">
@@ -90,10 +90,6 @@
 
           <input id="calculationMode" name="calculationMode" type="hidden" value="convert" />
 
-          <p class="mode-note" id="mainCalculatorNote">
-            Enter the current regimen, then select the target opioid and route.
-          </p>
-
           <section class="subsection" aria-label="Regimen entries">
             <div class="subsection-header">
               <div>
@@ -107,11 +103,6 @@
                 Add another drug
               </button>
             </div>
-            <p class="basis-note regimen-help">
-              Enter dose per administration and doses per day for each current
-              opioid. Patch rows use patch quantity and are treated as standing
-              24-hour exposure.
-            </p>
             <div class="regimen-entries" id="regimenEntries"></div>
           </section>
 
@@ -142,7 +133,7 @@
                     min="0"
                     max="100"
                     step="1"
-                    value="25"
+                    value="0"
                   />
                   <span>%</span>
                 </div>
@@ -154,7 +145,7 @@
                 min="0"
                 max="100"
                 step="1"
-                value="25"
+                value="0"
               />
               <div class="range-labels" aria-hidden="true">
                 <span>0%</span>
@@ -287,30 +278,26 @@
           </div>
 
           <div class="dose-result">
-            <span id="finalDose">67.5</span>
+            <span id="finalDose">20</span>
             <span id="finalUnit">mg/day</span>
           </div>
-          <p id="resultSentence">
-            Converted from the total daily current regimen after the selected
-            safety reduction.
-          </p>
           <div class="secondary-dose-card is-hidden" id="methadoneConservativeMme">
             <span class="summary-label">Conservative oral methadone assessment</span>
             <div class="dose-result secondary-dose-result">
               <span id="methadoneConservativeMmeDose">0</span>
-              <span id="methadoneConservativeMmeUnit">mg OME/day</span>
+              <span id="methadoneConservativeMmeUnit">mg MME/day</span>
             </div>
             <p>Uses a 3.0 multiplier for oral methadone only.</p>
           </div>
 
           <dl class="calculation-steps" data-conversion-output>
             <div>
-              <dt id="targetStepLabel">Raw target dose</dt>
-              <dd id="rawTargetDose">90 mg/day</dd>
+              <dt id="targetStepLabel">Raw oxycodone oral dose</dt>
+              <dd id="rawTargetDose">20 mg/day</dd>
             </div>
             <div id="reductionStep">
               <dt>Safety reduction applied</dt>
-              <dd id="reductionApplied">25% reduction</dd>
+              <dd id="reductionApplied">0% reduction</dd>
             </div>
             <div class="wrap-step" id="renalAdjustmentStep">
               <dt>Renal-adjusted target</dt>
@@ -428,7 +415,7 @@
                       min="0"
                       max="90"
                       step="1"
-                      value="75"
+                      value="0"
                     />
                     <span>%</span>
                   </div>
@@ -440,7 +427,7 @@
                   min="0"
                   max="90"
                   step="1"
-                  value="75"
+                  value="0"
                 />
                 <div class="range-labels" aria-hidden="true">
                   <span>0%</span>
@@ -465,13 +452,9 @@
             </div>
 
             <div class="dose-result">
-              <span id="methadoneFinalDose">3.13</span>
+              <span id="methadoneFinalDose">12.5</span>
               <span id="methadoneFinalUnit">mg/day</span>
             </div>
-            <p id="methadoneSentence">
-              Apply specialist review, QTc and interaction screening, close
-              monitoring, and local policy before ordering.
-            </p>
 
             <dl class="calculation-steps">
               <div>
@@ -488,15 +471,15 @@
               </div>
               <div>
                 <dt>Reduction applied</dt>
-                <dd id="methadoneReductionApplied">75% reduction</dd>
+                <dd id="methadoneReductionApplied">0% reduction</dd>
               </div>
               <div>
                 <dt>If divided q8h</dt>
-                <dd id="methadoneQ8Dose">1.04 mg/dose</dd>
+                <dd id="methadoneQ8Dose">4.17 mg/dose</dd>
               </div>
               <div>
                 <dt>If divided q12h</dt>
-                <dd id="methadoneQ12Dose">1.56 mg/dose</dd>
+                <dd id="methadoneQ12Dose">6.25 mg/dose</dd>
               </div>
             </dl>
 
@@ -686,6 +669,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260429-warning-copy-reverted"></script>
+    <script src="script.js?v=20260430-client-copy-defaults"></script>
   </body>
 </html>

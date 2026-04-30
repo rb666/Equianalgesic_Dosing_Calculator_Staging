@@ -383,13 +383,6 @@ main {
   align-content: start;
 }
 
-.mode-note {
-  margin: -8px 0 20px;
-  color: var(--muted);
-  font-size: 1rem;
-  font-weight: 700;
-}
-
 #targetField {
   grid-template-columns: minmax(0, 1fr);
 }
@@ -468,10 +461,6 @@ select {
   justify-content: space-between;
 }
 
-.regimen-help {
-  margin-top: 10px;
-}
-
 .regimen-entries {
   display: grid;
   gap: 16px;
@@ -494,7 +483,11 @@ select {
 }
 
 .entry-head h3 {
-  margin-top: 2px;
+  margin-top: 0;
+  color: var(--accent-dark);
+  font-size: 1.28rem;
+  font-weight: 900;
+  line-height: 1.15;
 }
 
 .entry-remove-button {
@@ -718,14 +711,6 @@ button:active {
 #methadoneFinalUnit {
   font-size: 1.5rem;
   font-weight: 800;
-}
-
-#resultSentence,
-#methadoneSentence {
-  margin: 0 0 22px;
-  color: var(--muted);
-  font-size: 1rem;
-  font-weight: 650;
 }
 
 .secondary-dose-card {

@@ -76,8 +76,31 @@ a:focus-visible {
   padding: 28px 0 10px;
 }
 
+.site-header.has-logo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+}
+
 .header-copy {
   max-width: 900px;
+}
+
+.brand-logo-card {
+  width: clamp(118px, 14vw, 172px);
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.brand-logo-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
 }
 
 .eyebrow {
@@ -936,6 +959,17 @@ footer p {
 
   .site-header {
     padding-top: 22px;
+  }
+
+  .site-header.has-logo {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .brand-logo-card {
+    justify-self: center;
+    width: clamp(104px, 30vw, 140px);
+    padding: 8px;
   }
 
   h1 {

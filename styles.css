@@ -78,8 +78,8 @@ a:focus-visible {
 
 .site-header.has-logo {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 28px;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.42fr);
+  gap: 32px;
   align-items: center;
 }
 
@@ -88,10 +88,11 @@ a:focus-visible {
 }
 
 .brand-logo-card {
-  width: clamp(118px, 14vw, 172px);
-  padding: 10px;
+  justify-self: center;
+  width: clamp(150px, 17vw, 218px);
+  padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 20px;
   background: #fff;
   box-shadow: var(--shadow-soft);
 }
@@ -968,7 +969,7 @@ footer p {
 
   .brand-logo-card {
     justify-self: center;
-    width: clamp(104px, 30vw, 140px);
+    width: clamp(122px, 34vw, 168px);
     padding: 8px;
   }
 

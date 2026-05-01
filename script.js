@@ -763,8 +763,19 @@ const formatList = (items) => {
 
 const findOption = (id) => conversionOptions.find((item) => item.id === id);
 
+const getOptionDisplayLabel = (item) =>
+  item.route === "Oral" ? `${item.medication} EO` : item.label;
+
+const sortOptionsForSelect = (options) =>
+  [...options].sort((first, second) =>
+    getOptionDisplayLabel(first).localeCompare(getOptionDisplayLabel(second), undefined, {
+      numeric: true,
+      sensitivity: "base",
+    }),
+  );
+
 const optionMarkup = (item) =>
-  `<option value="${item.id}">${item.label}</option>`;
+  `<option value="${item.id}">${getOptionDisplayLabel(item)}</option>`;
 
 const isMethadoneOption = (option) => option?.medication === "Methadone";
 const isPatchOption = (option) => option?.doseUnit === "patch";
@@ -970,7 +981,7 @@ const buildRegimenEntryMarkup = (entry, index) => {
         <label>
           Drug and route
           <select data-field="drugId">
-            ${conversionOptions.map(optionMarkup).join("")}
+            ${sortOptionsForSelect(conversionOptions).map(optionMarkup).join("")}
           </select>
         </label>
 
@@ -1013,13 +1024,15 @@ const renderTargetOptions = (preferredValue = targetDrugSelect.value) => {
     .filter(Boolean);
   const allowMethadoneTarget =
     currentOptions.length > 0 && currentOptions.every(isMethadoneOption);
-  const targetOptions = conversionOptions.filter((item) => {
-    if (!item.targetable) {
-      return false;
-    }
+  const targetOptions = sortOptionsForSelect(
+    conversionOptions.filter((item) => {
+      if (!item.targetable) {
+        return false;
+      }
 
-    return allowMethadoneTarget || !isMethadoneOption(item);
-  });
+      return allowMethadoneTarget || !isMethadoneOption(item);
+    }),
+  );
 
   targetDrugSelect.innerHTML = targetOptions.map(optionMarkup).join("");
 

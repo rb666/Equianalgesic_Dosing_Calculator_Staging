@@ -764,7 +764,7 @@ const formatList = (items) => {
 const findOption = (id) => conversionOptions.find((item) => item.id === id);
 
 const getOptionDisplayLabel = (item) =>
-  item.route === "Oral" ? `${item.medication} EO` : item.label;
+  item.route === "Oral" ? `${item.medication} PO` : item.label;
 
 const sortOptionsForSelect = (options) =>
   [...options].sort((first, second) =>

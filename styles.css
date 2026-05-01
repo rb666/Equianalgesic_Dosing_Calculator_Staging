@@ -923,6 +923,117 @@ th:last-child {
   text-align: left;
 }
 
+.result-panel .table-wrap {
+  overflow-x: visible;
+}
+
+.result-panel .regimen-table,
+.result-panel .schedule-table {
+  min-width: 0;
+  table-layout: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.result-panel .regimen-table thead,
+.result-panel .schedule-table thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.result-panel .regimen-table tbody,
+.result-panel .schedule-table tbody {
+  display: grid;
+  gap: 10px;
+}
+
+.result-panel .regimen-table tr,
+.result-panel .schedule-table tr {
+  display: grid;
+  gap: 10px 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(251, 253, 252, 0.82);
+}
+
+.result-panel .regimen-table tr {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.result-panel .schedule-table tr {
+  grid-template-columns: minmax(54px, 0.35fr) minmax(0, 1fr);
+}
+
+.result-panel .regimen-table td,
+.result-panel .schedule-table td {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.result-panel .regimen-table td::before,
+.result-panel .schedule-table td::before {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.result-panel .regimen-table td:nth-child(1) {
+  grid-column: 1 / -1;
+}
+
+.result-panel .regimen-table td:nth-child(1)::before {
+  content: "Drug";
+}
+
+.result-panel .regimen-table td:nth-child(2)::before {
+  content: "Dose";
+}
+
+.result-panel .regimen-table td:nth-child(3)::before {
+  content: "Frequency";
+}
+
+.result-panel .regimen-table td:nth-child(4)::before {
+  content: "Daily dose";
+}
+
+.result-panel .regimen-table td:nth-child(5)::before {
+  content: "OME/day";
+}
+
+.result-panel .schedule-table td:nth-child(1) {
+  grid-row: 1 / span 2;
+}
+
+.result-panel .schedule-table td:nth-child(n + 2) {
+  grid-column: 2;
+}
+
+.result-panel .schedule-table td:nth-child(1)::before {
+  content: "Day";
+}
+
+.result-panel .schedule-table td:nth-child(2)::before {
+  content: "Full agonist";
+}
+
+.result-panel .schedule-table td:nth-child(3)::before {
+  content: "Buprenorphine";
+}
+
 footer {
   border-top: 1px solid var(--line);
   background: rgba(251, 253, 252, 0.86);

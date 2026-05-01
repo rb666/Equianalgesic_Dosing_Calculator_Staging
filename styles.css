@@ -76,11 +76,12 @@ a:focus-visible {
   padding: 28px 0 10px;
 }
 
-.site-header.has-logo {
+.intro-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.42fr);
-  gap: 32px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
   align-items: center;
+  margin: 20px 0 24px;
 }
 
 .header-copy {
@@ -89,7 +90,7 @@ a:focus-visible {
 
 .brand-logo-card {
   justify-self: center;
-  width: clamp(150px, 17vw, 218px);
+  width: clamp(176px, 18vw, 240px);
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 20px;
@@ -157,10 +158,10 @@ main {
 
 .safety-banner {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.9fr);
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   align-items: center;
-  margin: 20px 0 24px;
+  margin: 0;
   padding: 22px;
   border: 1px solid rgba(150, 61, 55, 0.34);
   border-left-width: 5px;
@@ -947,6 +948,7 @@ footer p {
 }
 
 @media (max-width: 850px) {
+  .intro-layout,
   .safety-banner,
   .calculator-layout,
   .methadone-layout,
@@ -962,12 +964,8 @@ footer p {
     padding-top: 22px;
   }
 
-  .site-header.has-logo {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
   .brand-logo-card {
+    order: -1;
     justify-self: center;
     width: clamp(122px, 34vw, 168px);
     padding: 8px;

@@ -861,6 +861,69 @@ dd {
   min-width: 620px;
 }
 
+.result-panel .regimen-table,
+.result-panel .schedule-table {
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.result-panel .regimen-table th,
+.result-panel .regimen-table td,
+.result-panel .schedule-table th,
+.result-panel .schedule-table td {
+  padding: 12px 10px;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.result-panel .regimen-table th:last-child,
+.result-panel .regimen-table td:last-child,
+.result-panel .schedule-table th:last-child,
+.result-panel .schedule-table td:last-child {
+  text-align: left;
+}
+
+.result-panel .regimen-table th:nth-child(1),
+.result-panel .regimen-table td:nth-child(1) {
+  width: 36%;
+}
+
+.result-panel .regimen-table th:nth-child(2),
+.result-panel .regimen-table td:nth-child(2) {
+  width: 29%;
+}
+
+.result-panel .regimen-table th:nth-child(3),
+.result-panel .regimen-table td:nth-child(3) {
+  width: 35%;
+}
+
+.result-panel .schedule-table th:nth-child(1),
+.result-panel .schedule-table td:nth-child(1) {
+  width: 11%;
+}
+
+.result-panel .schedule-table th:nth-child(2),
+.result-panel .schedule-table td:nth-child(2) {
+  width: 35%;
+}
+
+.result-panel .schedule-table th:nth-child(3),
+.result-panel .schedule-table td:nth-child(3) {
+  width: 54%;
+}
+
+.output-stack {
+  display: grid;
+  gap: 2px;
+}
+
+.output-detail {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
 .source-table {
   min-width: 720px;
 }

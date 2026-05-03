@@ -1306,8 +1306,6 @@ const renderRegimenSummaryTable = (parsedEntries) => {
             <td>Unconfigured entry</td>
             <td>--</td>
             <td>--</td>
-            <td>--</td>
-            <td>--</td>
           </tr>
         `;
       }
@@ -1327,14 +1325,26 @@ const renderRegimenSummaryTable = (parsedEntries) => {
       const oralMorphineEquivalentText = entry.valid
         ? `${formatDose(entry.oralMorphineEquivalent)} mg/day`
         : "--";
+      const regimenText = `
+        <span class="output-stack">
+          <span>${doseText}</span>
+          <span class="output-detail">${frequencyText}</span>
+        </span>
+      `;
+      const dailyTotalsText = entry.valid
+        ? `
+          <span class="output-stack">
+            <span>${dailyDoseText}</span>
+            <span class="output-detail">OME: ${oralMorphineEquivalentText}</span>
+          </span>
+        `
+        : "Incomplete entry";
 
       return `
         <tr>
           <td>${option.label}</td>
-          <td>${doseText}</td>
-          <td>${frequencyText}</td>
-          <td>${dailyDoseText}</td>
-          <td>${oralMorphineEquivalentText}</td>
+          <td>${regimenText}</td>
+          <td>${dailyTotalsText}</td>
         </tr>
       `;
     })

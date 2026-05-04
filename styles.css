@@ -196,9 +196,9 @@ main {
   gap: 8px;
   align-items: stretch;
   justify-content: center;
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
-  margin: 26px auto;
+  margin: 26px 0;
   padding: 8px;
   border: 1px solid rgba(201, 217, 210, 0.8);
   border-radius: 22px;

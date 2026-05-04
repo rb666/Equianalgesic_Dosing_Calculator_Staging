@@ -192,7 +192,9 @@ main {
 
 .calculator-tabs {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns:
+    minmax(0, 0.94fr) minmax(0, 1.06fr) minmax(0, 1.06fr)
+    minmax(0, 0.94fr);
   width: 100%;
   margin: 26px 0;
   padding: 6px;

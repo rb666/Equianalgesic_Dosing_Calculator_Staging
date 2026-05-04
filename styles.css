@@ -102,6 +102,8 @@ a:focus-visible {
   border-radius: 20px;
   background: #fff;
   box-shadow: var(--shadow-soft);
+  transform: scale(1.15);
+  transform-origin: top right;
 }
 
 .brand-logo-card img {
@@ -1075,6 +1077,7 @@ footer p {
     justify-self: center;
     width: clamp(122px, 34vw, 168px);
     padding: 8px;
+    transform: none;
   }
 
   h1 {

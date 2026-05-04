@@ -210,7 +210,7 @@ main {
   min-height: 58px;
   border: 1px solid transparent;
   border-radius: 13px;
-  padding: 10px 20px;
+  padding: 10px 40px;
   background: transparent;
   color: var(--ink);
   cursor: pointer;

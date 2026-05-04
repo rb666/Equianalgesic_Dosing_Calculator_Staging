@@ -498,7 +498,7 @@ const sourceReferences = [
 const buprenorphineSchedules = [
   {
     id: "30_59",
-    label: "Belbuca: 30-59 mg MEDD",
+    label: "30-59 mg MEDD",
     title: "30-59 mg MEDD",
     product: "Belbuca (buprenorphine buccal film)",
     fullAgonistSummary:
@@ -514,7 +514,7 @@ const buprenorphineSchedules = [
   },
   {
     id: "60_89",
-    label: "Belbuca: 60-89 mg MEDD",
+    label: "60-89 mg MEDD",
     title: "60-89 mg MEDD",
     product: "Belbuca (buprenorphine buccal film)",
     fullAgonistSummary:
@@ -530,7 +530,7 @@ const buprenorphineSchedules = [
   },
   {
     id: "90_120",
-    label: "Belbuca: 90-120 mg MEDD",
+    label: "90-120 mg MEDD",
     title: "90-120 mg MEDD",
     product: "Belbuca (buprenorphine buccal film)",
     fullAgonistSummary:
@@ -558,7 +558,7 @@ const buprenorphineSchedules = [
   },
   {
     id: "121_160",
-    label: "Belbuca: 121-160 mg MEDD",
+    label: "121-160 mg MEDD",
     title: "121-160 mg MEDD",
     product: "Belbuca (buprenorphine buccal film)",
     fullAgonistSummary:
@@ -582,7 +582,7 @@ const buprenorphineSchedules = [
   },
   {
     id: "161_300",
-    label: "Suboxone: 161-300 mg MEDD",
+    label: "161-300 mg MEDD",
     title: "161-300 mg MEDD",
     product: "Suboxone (buprenorphine/naloxone 2 mg/0.5 mg film)",
     fullAgonistSummary:

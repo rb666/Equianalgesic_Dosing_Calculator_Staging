@@ -87,7 +87,7 @@ a:focus-visible {
 
 .hero-copy-stack {
   display: grid;
-  gap: 36px;
+  gap: 26px;
 }
 
 .header-copy {
@@ -168,9 +168,9 @@ main {
   gap: 0;
   justify-self: start;
   align-items: center;
-  width: calc(100% - 20px);
+  width: calc(100% - 40px);
   margin: 0;
-  padding: 22px;
+  padding: 12px 22px 17px;
   border: 1px solid rgba(150, 61, 55, 0.34);
   border-radius: 16px;
   background: linear-gradient(135deg, var(--warning-soft), #fffafa);

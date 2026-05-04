@@ -166,11 +166,12 @@ main {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
+  justify-self: start;
   align-items: center;
+  width: calc(100% - 10px);
   margin: 0;
   padding: 22px;
   border: 1px solid rgba(150, 61, 55, 0.34);
-  border-left-width: 5px;
   border-radius: 16px;
   background: linear-gradient(135deg, var(--warning-soft), #fffafa);
   box-shadow: var(--shadow-soft);

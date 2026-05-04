@@ -9,7 +9,7 @@
     />
     <meta name="robots" content="noindex, nofollow" />
     <title>Equianalgesic Dose Calculator | Staging</title>
-    <link rel="stylesheet" href="styles.css?v=20260504-aligned-tab-groups" />
+    <link rel="stylesheet" href="styles.css?v=20260504-segmented-mode-tabs" />
   </head>
   <body>
     <div class="environment-banner" role="note" aria-label="Environment notice">
@@ -50,42 +50,38 @@
 
     <main>
       <nav class="calculator-tabs" aria-label="Calculator sections">
-        <div class="calculator-tab-group" role="group" aria-label="Primary dose calculators">
-          <button
-            class="calculator-tab"
-            data-calculator-tab="mme"
-            type="button"
-          >
-            <span>Total MME</span>
-            <small>Regimen total only</small>
-          </button>
-          <button
-            class="calculator-tab is-active"
-            data-calculator-tab="convert"
-            type="button"
-          >
-            <span>Conversion</span>
-            <small>Regimen to target opioid</small>
-          </button>
-        </div>
-        <div class="calculator-tab-group" role="group" aria-label="Specialty calculators">
-          <button
-            class="calculator-tab"
-            data-calculator-tab="methadone"
-            type="button"
-          >
-            <span>Methadone</span>
-            <small>OME to methadone</small>
-          </button>
-          <button
-            class="calculator-tab"
-            data-calculator-tab="buprenorphine"
-            type="button"
-          >
-            <span>Suboxone</span>
-            <small>Transition schedule</small>
-          </button>
-        </div>
+        <button
+          class="calculator-tab"
+          data-calculator-tab="mme"
+          type="button"
+        >
+          <span>Total MME</span>
+          <small>Regimen total only</small>
+        </button>
+        <button
+          class="calculator-tab is-active"
+          data-calculator-tab="convert"
+          type="button"
+        >
+          <span>Conversion</span>
+          <small>Regimen to target opioid</small>
+        </button>
+        <button
+          class="calculator-tab"
+          data-calculator-tab="methadone"
+          type="button"
+        >
+          <span>Methadone</span>
+          <small>OME to methadone</small>
+        </button>
+        <button
+          class="calculator-tab"
+          data-calculator-tab="buprenorphine"
+          type="button"
+        >
+          <span>Suboxone</span>
+          <small>Transition schedule</small>
+        </button>
       </nav>
 
       <section

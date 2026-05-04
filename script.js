@@ -1459,12 +1459,12 @@ const getRenalAdvice = ({
   if (!isMMeMode && targetOption) {
     if (renalRestrictedMedications.has(targetOption.medication)) {
       return {
-        summary: "Renal: eGFR <30 mL/min; avoid target",
+        summary: "Renal: eGFR <30 mL/min; avoid selected target agent",
         title: `Avoid ${targetOption.label} at eGFR <30 mL/min`,
         body:
           "Morphine, codeine, and meperidine are marked as avoid in this staging build below 30 mL/min. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
           currentNote,
-        resultLabel: "Avoid target",
+        resultLabel: "Avoid selected target agent",
       };
     }
 

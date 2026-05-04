@@ -95,6 +95,7 @@ a:focus-visible {
 }
 
 .brand-logo-card {
+  align-self: end;
   justify-self: center;
   width: clamp(176px, 18vw, 240px);
   padding: 12px;
@@ -102,7 +103,7 @@ a:focus-visible {
   border-radius: 20px;
   background: #fff;
   box-shadow: var(--shadow-soft);
-  transform: scale(1.15);
+  transform: translateY(-15%) scale(1.15);
   transform-origin: top right;
 }
 
@@ -1074,6 +1075,7 @@ footer p {
   }
 
   .brand-logo-card {
+    align-self: auto;
     justify-self: center;
     width: clamp(122px, 34vw, 168px);
     padding: 8px;

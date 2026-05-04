@@ -450,6 +450,15 @@ main {
   align-content: start;
 }
 
+.conversion-field-title {
+  display: block;
+  color: var(--accent-dark);
+  font-size: 1.24rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
 .top-grid-note {
   display: block;
   margin-top: 0;

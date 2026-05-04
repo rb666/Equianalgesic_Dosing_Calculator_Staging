@@ -9,7 +9,7 @@
     />
     <meta name="robots" content="noindex, nofollow" />
     <title>Equianalgesic Dose Calculator | Staging</title>
-    <link rel="stylesheet" href="styles.css?v=20260504-suboxone-range-menu" />
+    <link rel="stylesheet" href="styles.css?v=20260504-conversion-field-headings" />
   </head>
   <body>
     <div class="environment-banner" role="note" aria-label="Environment notice">
@@ -99,7 +99,7 @@
           <section class="subsection" aria-label="Regimen entries">
             <div class="subsection-header">
               <div>
-                <h3 id="regimenBuilderHeading">Converting from</h3>
+                <h3 class="conversion-field-title" id="regimenBuilderHeading">Converting from</h3>
               </div>
               <button
                 class="secondary-button"
@@ -114,7 +114,7 @@
 
           <div class="field-grid compact-grid target-field" id="targetField">
             <label for="targetDrug">
-              Converting to
+              <span class="conversion-field-title">Converting to</span>
               <select id="targetDrug" name="targetDrug"></select>
               <span class="field-hint top-grid-note">
                 Choose the target opioid and route for the converted daily dose.
@@ -280,7 +280,7 @@
 
         <section class="result-panel" aria-live="polite" aria-atomic="true">
           <div class="section-heading">
-            <h2 id="resultTitle">Oxycodone oral estimated daily target dose</h2>
+            <h2 id="resultTitle">Oxycodone oral estimated daily dose</h2>
           </div>
 
           <div class="dose-result">
@@ -673,6 +673,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260504-renal-target-agent-label"></script>
+    <script src="script.js?v=20260504-conversion-field-headings"></script>
   </body>
 </html>

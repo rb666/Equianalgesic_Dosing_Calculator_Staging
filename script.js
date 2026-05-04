@@ -1705,7 +1705,7 @@ const calculate = () => {
     adjustedTargetDose,
   });
 
-  resultTitle.textContent = `${targetOption.label} estimated daily target dose`;
+  resultTitle.textContent = `${targetOption.label} estimated daily dose`;
   finalDose.textContent = formatDose(adjustedTargetDose);
   finalUnit.textContent = getDailyUnitLabel(targetOption);
   targetStepLabel.textContent = `Raw ${targetOption.label.toLowerCase()} dose`;

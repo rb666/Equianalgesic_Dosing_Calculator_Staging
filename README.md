@@ -2,7 +2,7 @@
 
 Static clinical decision support website for converting between opioid
 equianalgesic doses, calculating oral morphine equivalents, and opening
-specialty methadone or Suboxone tools. The site is designed for GitHub Pages
+specialty methadone or Suboxone tools. The site is deployed on Cloudflare Pages
 and has no build step.
 
 The main converter includes methadone source and route-switching entries:
@@ -15,14 +15,14 @@ methadone safety reduction.
 
 ## Files
 
-- `index.html` contains the calculator interface, safety warning, and reference
-  tables.
-- `styles.css` contains responsive styling.
-- `script.js` contains the conversion table and calculator logic.
+- `public/opioidcalculator.html` contains the calculator interface, safety
+  warning, and reference tables.
+- `public/styles.css` contains responsive styling.
+- `public/script.js` contains the conversion table and calculator logic.
+- `public/_redirects` redirects `/` to `/opioidcalculator`.
 
-## GitHub Pages
+## Cloudflare Pages
 
-See `PUBLISHING.md` for the exact GitHub repository creation, push, and Pages
-settings steps.
+See `CLOUDFLARE.md` for deployment notes.
 
-The site can also be opened directly from `index.html` in a browser.
+The production page is `https://calc.med/opioidcalculator`.

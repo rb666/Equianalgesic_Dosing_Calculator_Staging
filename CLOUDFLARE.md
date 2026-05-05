@@ -7,40 +7,47 @@ This repo is a static site. There is no build step.
 - GitHub repo: `https://github.com/rb666/calc-med`
 - Production branch: `main`
 - Target domain: `calc.med`
-- Cloudflare zone observed as active on May 5, 2026.
-- Local Wrangler was not authenticated in this shell.
-- Cloudflare API reads worked, but Pages/KV write calls returned authentication errors, so final Pages wiring was deferred.
+- Cloudflare zone is active.
+- Cloudflare Pages project: `calc-med`
+- Pages deployment URL: `https://calc-med.pages.dev`
+- Custom domain `calc.med` is attached to the Pages project, but remains pending until DNS points to Pages.
 
-## Preferred Cloudflare Setup
+## Deployed Setup
 
-Use Cloudflare Pages on the free tier.
+This site uses Cloudflare Pages on the free tier as a direct-upload static site.
 
-### Option A: Git Integration
+The public deployment should contain only:
 
-Use this if Cloudflare can authorize GitHub access to `rb666/calc-med`.
+- `index.html`
+- `styles.css`
+- `script.js`
+- `OpioidConversionSite.png`
+- `.nojekyll`
 
-1. Cloudflare dashboard: Workers & Pages -> Create application -> Pages -> Connect to Git.
-2. Select `rb666/calc-med`.
-3. Use:
-   - Project name: `calc-med`
-   - Production branch: `main`
-   - Framework preset: None
-   - Build command: leave blank
-   - Build output directory: `/`
-4. Add custom domain: `calc.med`.
+Repo documentation files do not need to be uploaded to Pages.
 
-### Option B: Direct Upload
+## Current DNS Work Needed
 
-Use this if Git integration is not available.
+Cloudflare imported Porkbun parking records. Replace the apex records before `https://calc.med` can serve the Pages site:
 
-1. Run:
+1. In Cloudflare DNS, delete the apex `A` records for `calc.med` that point to:
+   - `44.227.65.245`
+   - `44.227.76.166`
+2. Add this DNS record:
+   - Type: `CNAME`
+   - Name: `calc.med` or `@`
+   - Target: `calc-med.pages.dev`
+   - Proxy status: Proxied
 
-   ```powershell
-   npx wrangler login
-   npx wrangler pages project create calc-med --production-branch main
-   npx wrangler pages deploy . --project-name calc-med --branch main
-   ```
+Optional: replace `www.calc.med` and `*.calc.med` Porkbun parking records if those hostnames should also route to this site.
 
-2. In Cloudflare Pages, add custom domain `calc.med`.
+## Direct Upload Deploy
 
-Cloudflare Direct Upload projects can continue to deploy with Wrangler from this folder.
+To redeploy from this folder:
+
+```powershell
+npx wrangler login
+npx wrangler pages deploy <public-assets-folder> --project-name calc-med --branch main
+```
+
+Use a temporary public-assets folder if you want to avoid uploading repo docs.

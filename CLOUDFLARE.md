@@ -10,7 +10,8 @@ This repo is a static site. There is no build step.
 - Cloudflare zone is active.
 - Cloudflare Pages project: `calc-med`
 - Pages deployment URL: `https://calc-med.pages.dev`
-- Custom domain `calc.med` is attached to the Pages project, but remains pending until DNS points to Pages.
+- Production URL: `https://calc.med`
+- Custom domain `calc.med` is attached to the Pages project. Cloudflare may continue showing the validation status as pending for a short period after the DNS change, even while the site is already reachable.
 
 ## Deployed Setup
 
@@ -26,18 +27,14 @@ The public deployment should contain only:
 
 Repo documentation files do not need to be uploaded to Pages.
 
-## Current DNS Work Needed
+## DNS State
 
-Cloudflare imported Porkbun parking records. Replace the apex records before `https://calc.med` can serve the Pages site:
+The apex domain should point to Pages:
 
-1. In Cloudflare DNS, delete the apex `A` records for `calc.med` that point to:
-   - `44.227.65.245`
-   - `44.227.76.166`
-2. Add this DNS record:
-   - Type: `CNAME`
-   - Name: `calc.med` or `@`
-   - Target: `calc-med.pages.dev`
-   - Proxy status: Proxied
+- Type: `CNAME`
+- Name: `calc.med` or `@`
+- Target: `calc-med.pages.dev`
+- Proxy status: Proxied
 
 Optional: replace `www.calc.med` and `*.calc.med` Porkbun parking records if those hostnames should also route to this site.
 

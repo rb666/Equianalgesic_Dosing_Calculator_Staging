@@ -122,6 +122,10 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 .environment-banner {
   padding: 10px 16px;
   background: linear-gradient(90deg, var(--stage), var(--banner-end));
@@ -863,6 +867,28 @@ input[type="range"] {
   margin-top: 22px;
 }
 
+.footer-link-button {
+  min-height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent-dark);
+  cursor: pointer;
+  font-size: inherit;
+  font-weight: 800;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  box-shadow: none;
+}
+
+.footer-link-button:hover {
+  background: transparent;
+  color: var(--warning);
+  box-shadow: none;
+  transform: none;
+}
+
 button {
   min-height: 46px;
   border: 0;
@@ -1214,6 +1240,71 @@ footer {
   font-weight: 650;
 }
 
+.terms-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 20px;
+  background: rgba(6, 18, 16, 0.58);
+}
+
+.terms-dialog {
+  width: min(760px, 100%);
+  max-height: min(88vh, 820px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.28);
+}
+
+.terms-header {
+  padding: 24px 26px 18px;
+  border-bottom: 2px solid var(--line);
+}
+
+.terms-body {
+  display: grid;
+  gap: 18px;
+  padding: 22px 26px;
+}
+
+.terms-body section {
+  display: grid;
+  gap: 6px;
+}
+
+.terms-body p {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.terms-acceptance {
+  display: grid;
+  gap: 16px;
+  padding: 20px 26px 24px;
+  border-top: 2px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.terms-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.terms-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+  box-shadow: none;
+  transform: none;
+}
+
 @media (max-width: 960px) {
   .compact-grid,
   .regimen-entry-grid {
@@ -1305,6 +1396,21 @@ footer {
 
   .theme-toggle {
     width: auto;
+  }
+
+  .footer-link-button {
+    width: auto;
+  }
+
+  .terms-modal {
+    padding: 12px;
+  }
+
+  .terms-header,
+  .terms-body,
+  .terms-acceptance {
+    padding-right: 18px;
+    padding-left: 18px;
   }
 
   #finalDose,

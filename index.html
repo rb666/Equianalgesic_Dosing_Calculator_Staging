@@ -21,7 +21,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260506-single-line-footer" />
+    <link rel="stylesheet" href="styles.css?v=20260506-terms-acceptance-modal" />
   </head>
   <body>
     <div class="environment-banner">
@@ -704,9 +704,92 @@
         For clinician use only; verify every calculation with patient-specific
         rationale. <span aria-hidden="true">|</span>
         Copyright 2026 calc.med. All rights reserved.
+        <span aria-hidden="true">|</span>
+        <button class="footer-link-button" id="termsReviewButton" type="button">
+          Terms / Disclaimer
+        </button>
       </p>
     </footer>
 
-    <script src="script.js?v=20260506-regimen-input-step-one"></script>
+    <div
+      aria-labelledby="termsModalTitle"
+      aria-modal="true"
+      class="terms-modal is-hidden"
+      id="termsModal"
+      role="dialog"
+    >
+      <div class="terms-dialog">
+        <div class="terms-header">
+          <p class="eyebrow" id="termsModalEyebrow">Required acknowledgement</p>
+          <h2 id="termsModalTitle">Clinical terms and disclaimer</h2>
+        </div>
+
+        <div class="terms-body">
+          <section>
+            <h3>Professional use only</h3>
+            <p>
+              This tool is intended for use by licensed healthcare professionals
+              only. It is an educational aid and is not medical advice, a formal
+              recommendation, or a substitute for professional clinical judgment.
+            </p>
+          </section>
+
+          <section>
+            <h3>High-risk opioid conversion warning</h3>
+            <p>
+              Calculated doses are estimates only. When switching opioids,
+              clinicians should typically reduce the calculated equianalgesic dose
+              by 25% to 50% to account for incomplete cross-tolerance, individual
+              patient variability, comorbidities, organ dysfunction, concurrent
+              medications, and the bedside clinical picture.
+            </p>
+          </section>
+
+          <section>
+            <h3>No warranty or liability</h3>
+            <p>
+              While this tool was developed by medical professionals, calc.med
+              makes no warranties regarding the accuracy, completeness, or
+              suitability of the calculations. Use of this site is at your own risk.
+              The developers shall not be liable for damages arising from use or
+              misuse of this tool.
+            </p>
+          </section>
+
+          <section>
+            <h3>Privacy and PHI</h3>
+            <p>
+              This calculator does not store, transmit, or record Protected Health
+              Information (PHI). Calculations are performed locally on your device.
+              Do not enter patient names, medical record numbers, dates of birth, or
+              other identifying information.
+            </p>
+          </section>
+        </div>
+
+        <form class="terms-acceptance" id="termsAcceptanceForm">
+          <label for="termsAcceptInput">
+            Type ACCEPT to acknowledge and continue
+            <input
+              autocomplete="off"
+              id="termsAcceptInput"
+              name="termsAcceptInput"
+              spellcheck="false"
+              type="text"
+            />
+          </label>
+          <div class="terms-actions">
+            <button class="secondary-button is-hidden" id="termsCloseButton" type="button">
+              Close
+            </button>
+            <button disabled id="termsAcceptButton" type="submit">
+              Accept and continue
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="script.js?v=20260506-terms-acceptance-modal"></script>
   </body>
 </html>

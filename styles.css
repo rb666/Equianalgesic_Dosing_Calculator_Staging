@@ -1,23 +1,23 @@
 :root {
-  --page: #f8f7f3;
+  --page: #faf7ef;
   --surface: #ffffff;
-  --surface-soft: #f5f3ee;
-  --surface-warm: #fbfaf7;
+  --surface-soft: #f7f2e9;
+  --surface-warm: #fcf8f0;
   --ink: #1f2a27;
-  --muted: #6f716d;
-  --line: #e2dfd7;
+  --muted: #746f68;
+  --line: #e6dece;
   --accent: #28706a;
   --accent-dark: #1f5955;
   --accent-soft: #e8f3f2;
   --accent-border: #b7d6d2;
   --warning: #6f470d;
-  --warning-soft: #fff4d8;
+  --warning-soft: #fff1cc;
   --danger: #7f2620;
   --danger-soft: #fff2df;
   --stage: #405f59;
   --focus: #9c6b10;
-  --shadow: 0 18px 42px rgba(54, 49, 42, 0.065);
-  --shadow-soft: 0 9px 24px rgba(54, 49, 42, 0.045);
+  --shadow: 0 18px 42px rgba(66, 54, 37, 0.062);
+  --shadow-soft: 0 9px 24px rgba(66, 54, 37, 0.042);
 }
 
 * {
@@ -32,8 +32,8 @@ body {
   margin: 0;
   min-width: 320px;
   background:
-    radial-gradient(circle at 12% 0%, rgba(231, 225, 214, 0.52), transparent 34rem),
-    linear-gradient(180deg, #fdfcf9 0%, #faf8f2 52%, var(--page) 100%);
+    radial-gradient(circle at 12% 0%, rgba(238, 226, 204, 0.46), transparent 34rem),
+    linear-gradient(180deg, #fffdf8 0%, #fbf7ed 52%, var(--page) 100%);
   color: var(--ink);
   font-size: 17px;
   font-family:

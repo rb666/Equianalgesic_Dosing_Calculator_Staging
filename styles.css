@@ -527,6 +527,12 @@ select {
   border-top: 1px solid var(--line);
 }
 
+.section-heading + .subsection {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
 .subsection-header {
   display: flex;
   gap: 16px;

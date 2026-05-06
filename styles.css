@@ -527,7 +527,7 @@ select {
   border-top: 1px solid var(--line);
 }
 
-.section-heading + .subsection {
+#calculationMode + .subsection {
   margin-top: 0;
   padding-top: 0;
   border-top: 0;

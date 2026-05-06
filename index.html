@@ -21,14 +21,15 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260506-dark-mode-toggle" />
+    <link rel="stylesheet" href="styles.css?v=20260506-brand-utility-bar" />
   </head>
   <body>
-    <div class="environment-banner" role="note" aria-label="Environment notice">
-      Staging preview. This site is for review and testing and may differ from the live production calculator.
-    </div>
-    <header class="site-header">
-      <div class="theme-toggle-row">
+    <div class="environment-banner">
+      <div class="utility-bar-content">
+        <div class="utility-brand" aria-label="Opioid Conversion">
+          <strong>Opioid Conversion</strong>
+          <span>Calculate. Convert. Care.</span>
+        </div>
         <button
           aria-pressed="false"
           class="theme-toggle"
@@ -41,6 +42,8 @@
           <span id="themeToggleLabel">Dark mode</span>
         </button>
       </div>
+    </div>
+    <header class="site-header">
       <section class="intro-layout" aria-label="Safety warning and site logo">
         <div class="hero-copy-stack">
           <div class="header-copy">

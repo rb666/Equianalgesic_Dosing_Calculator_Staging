@@ -1255,15 +1255,22 @@ footer {
   width: min(760px, 100%);
   max-height: min(88vh, 820px);
   overflow: auto;
-  border: 1px solid var(--line);
+  border: 1px solid #d8e2de;
   border-radius: 12px;
-  background: var(--surface);
+  background: #ffffff;
+  color: #000000;
   box-shadow: 0 24px 72px rgba(0, 0, 0, 0.28);
 }
 
 .terms-header {
   padding: 24px 26px 18px;
-  border-bottom: 2px solid var(--line);
+  border-bottom: 2px solid #d8e2de;
+}
+
+.terms-header h2,
+.terms-body h3,
+.terms-acceptance label {
+  color: #000000;
 }
 
 .terms-body {
@@ -1279,7 +1286,7 @@ footer {
 
 .terms-body p {
   margin: 0;
-  color: var(--muted);
+  color: #000000;
   font-weight: 650;
 }
 
@@ -1287,8 +1294,23 @@ footer {
   display: grid;
   gap: 16px;
   padding: 20px 26px 24px;
-  border-top: 2px solid var(--line);
-  background: var(--surface-soft);
+  border-top: 2px solid #d8e2de;
+  background: #f7faf9;
+}
+
+.terms-acceptance input {
+  border-color: #b8c9c3;
+  background: #ffffff;
+  color: #000000;
+}
+
+.terms-acceptance.is-review-mode {
+  gap: 0;
+}
+
+.terms-acceptance.is-review-mode label,
+.terms-acceptance.is-review-mode #termsAcceptButton {
+  display: none;
 }
 
 .terms-actions {

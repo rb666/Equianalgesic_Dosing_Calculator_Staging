@@ -783,6 +783,10 @@ const setTermsModalVisible = (visible, options = {}) => {
     termsCloseButton.classList.toggle("is-hidden", !visible || !reviewMode);
   }
 
+  if (termsAcceptanceForm) {
+    termsAcceptanceForm.classList.toggle("is-review-mode", visible && reviewMode);
+  }
+
   if (visible && termsAcceptInput && termsAcceptButton) {
     termsAcceptInput.value = "";
     termsAcceptButton.disabled = true;

@@ -304,11 +304,6 @@ main {
   box-shadow: var(--shadow);
 }
 
-.result-panel {
-  border-color: #c6dcd7;
-  background: #f3faf8;
-}
-
 .calculator-panel,
 .result-panel {
   padding: 26px;

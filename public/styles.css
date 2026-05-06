@@ -1,18 +1,22 @@
 :root {
-  --page: #edf4f1;
-  --surface: #fbfdfc;
-  --surface-soft: #f3f8f6;
-  --ink: #17221d;
-  --muted: #52645d;
-  --line: #c9d9d2;
-  --accent: #2f7d71;
-  --accent-dark: #245e55;
-  --accent-soft: #e6f2ef;
-  --warning: #963d37;
-  --warning-soft: #fff5f3;
-  --focus: #b98111;
-  --shadow: 0 20px 48px rgba(20, 44, 37, 0.08);
-  --shadow-soft: 0 10px 28px rgba(20, 44, 37, 0.06);
+  --page: #f6f8f5;
+  --surface: #ffffff;
+  --surface-soft: #eef5f3;
+  --surface-warm: #fbfcfa;
+  --ink: #1f2a27;
+  --muted: #66736f;
+  --line: #dbe5e1;
+  --accent: #28706a;
+  --accent-dark: #1f5955;
+  --accent-soft: #e8f3f2;
+  --accent-border: #b7d6d2;
+  --warning: #6f470d;
+  --warning-soft: #fff6de;
+  --danger: #7f2620;
+  --danger-soft: #fff2df;
+  --focus: #9c6b10;
+  --shadow: 0 18px 42px rgba(35, 52, 48, 0.058);
+  --shadow-soft: 0 9px 24px rgba(35, 52, 48, 0.04);
 }
 
 * {
@@ -26,9 +30,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(204, 223, 216, 0.5), transparent 34rem),
-    linear-gradient(180deg, #f7fbf9 0%, #f1f7f4 52%, var(--page) 100%);
+  background: var(--page);
   color: var(--ink);
   font-size: 17px;
   font-family:
@@ -90,8 +92,8 @@ a:focus-visible {
   width: clamp(176px, 18vw, 240px);
   padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 20px;
-  background: #fff;
+  border-radius: 16px;
+  background: var(--surface);
   box-shadow: var(--shadow-soft);
   transform: translateY(-15%) scale(1.15);
   transform-origin: top right;
@@ -101,12 +103,12 @@ a:focus-visible {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
 .eyebrow {
   margin: 0 0 8px;
-  color: var(--accent-dark);
+  color: #3f625d;
   font-size: 0.86rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -164,22 +166,22 @@ main {
   width: calc(100% - 40px);
   margin: 0;
   padding: 12px 22px 17px;
-  border: 1px solid rgba(150, 61, 55, 0.34);
-  border-radius: 16px;
-  background: linear-gradient(135deg, var(--warning-soft), #fffafa);
+  border: 1px solid rgba(111, 71, 13, 0.24);
+  border-radius: 12px;
+  background: var(--warning-soft);
   box-shadow: var(--shadow-soft);
 }
 
 .safety-banner strong {
   display: block;
   margin-bottom: 6px;
-  color: var(--warning);
+  color: var(--danger);
   font-size: 1.12rem;
 }
 
 .safety-banner p {
   margin: 0;
-  color: #3d2d2b;
+  color: #3e3327;
   font-weight: 650;
 }
 
@@ -191,10 +193,10 @@ main {
   width: 100%;
   margin: 26px 0;
   padding: 6px;
-  border: 1px solid rgba(201, 217, 210, 0.9);
-  border-radius: 18px;
-  background: rgba(251, 253, 252, 0.72);
-  box-shadow: 0 8px 24px rgba(20, 44, 37, 0.05);
+  border: 1px solid rgba(194, 209, 204, 0.96);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 22px rgba(35, 52, 48, 0.036);
 }
 
 .calculator-tab {
@@ -204,7 +206,7 @@ main {
   justify-items: center;
   min-height: 58px;
   border: 1px solid transparent;
-  border-radius: 13px;
+  border-radius: 9px;
   padding: 10px 20px;
   background: transparent;
   color: var(--ink);
@@ -221,11 +223,11 @@ main {
 
 .calculator-tab:not(:first-child)::before {
   position: absolute;
-  top: 10px;
-  bottom: 10px;
+  top: 8px;
+  bottom: 8px;
   left: -1px;
-  width: 1px;
-  background: rgba(129, 153, 146, 0.5);
+  width: 2px;
+  background: rgba(129, 153, 147, 0.38);
   content: "";
 }
 
@@ -247,19 +249,21 @@ main {
 
 .calculator-tab.is-active {
   border-color: var(--accent);
-  background: linear-gradient(180deg, #eff8f5, #e4f1ec);
+  background: var(--accent-soft);
   color: var(--accent-dark);
-  box-shadow: 0 8px 20px rgba(47, 125, 113, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 6px 16px rgba(40, 112, 106, 0.08);
 }
 
 .calculator-tab:hover {
-  border-color: #a7cfc5;
-  background: rgba(248, 252, 250, 0.95);
+  border-color: #c8d6d2;
+  background: rgba(248, 252, 251, 0.98);
   box-shadow: none;
 }
 
 .calculator-tab.is-active:hover {
-  background: #edf7f4;
+  background: var(--accent-soft);
 }
 
 .calculator-tab:active {
@@ -282,8 +286,8 @@ main {
 .reference-section {
   min-width: 0;
   border: 1px solid var(--line);
-  border-radius: 16px;
-  background: linear-gradient(180deg, var(--surface), #f8fbfa);
+  border-radius: 12px;
+  background: var(--surface);
   box-shadow: var(--shadow);
 }
 
@@ -343,10 +347,10 @@ main {
 .summary-action {
   flex: 0 0 auto;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 10px;
   padding: 8px 12px;
-  background: #f8fbfa;
-  color: var(--accent-dark);
+  background: var(--surface-soft);
+  color: var(--ink);
   font-weight: 850;
 }
 
@@ -367,7 +371,7 @@ main {
 .organ-context {
   margin: 24px 0;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--surface-soft);
 }
 
@@ -408,7 +412,9 @@ main {
 
 .section-heading,
 .subsection-heading {
-  margin-bottom: 22px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
 }
 
 .field-grid {
@@ -447,7 +453,7 @@ main {
 
 .conversion-field-title {
   display: block;
-  color: var(--accent-dark);
+  color: var(--ink);
   font-size: 1.24rem;
   font-weight: 900;
   letter-spacing: 0;
@@ -483,8 +489,8 @@ input[type="number"] {
   width: 100%;
   min-height: 50px;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: #fbfdfc;
+  border-radius: 8px;
+  background: var(--surface);
   color: var(--ink);
   padding: 11px 13px;
   font-size: 1rem;
@@ -497,8 +503,8 @@ input[type="number"] {
 
 select:hover,
 input[type="number"]:hover {
-  border-color: #aebfb8;
-  background: #f8fbfa;
+  border-color: #c5d7d2;
+  background: #f8fcfb;
 }
 
 select {
@@ -509,6 +515,12 @@ select {
   margin-top: 24px;
   padding-top: 20px;
   border-top: 1px solid var(--line);
+}
+
+#calculationMode + .subsection {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .subsection-header {
@@ -527,8 +539,8 @@ select {
 .regimen-entry {
   padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 14px;
-  background: linear-gradient(180deg, var(--surface-soft), #f8fbfa);
+  border-radius: 10px;
+  background: var(--surface);
 }
 
 .entry-head {
@@ -615,8 +627,8 @@ input[type="range"] {
 .tag-button {
   min-height: 38px;
   border: 1px solid var(--line);
-  border-radius: 999px;
-  background: #fbfdfc;
+  border-radius: 10px;
+  background: var(--surface);
   color: var(--ink);
   cursor: pointer;
   font-weight: 750;
@@ -629,9 +641,9 @@ input[type="range"] {
 }
 
 .tag-button:hover {
-  border-color: #a7c7be;
-  background: #f3faf7;
-  box-shadow: 0 6px 14px rgba(20, 44, 37, 0.06);
+  border-color: #c5d7d2;
+  background: var(--surface-soft);
+  box-shadow: 0 6px 14px rgba(31, 42, 39, 0.055);
   transform: translateY(-1px);
 }
 
@@ -660,8 +672,8 @@ input[type="range"] {
 .advisory-card {
   padding: 20px;
   border: 1px solid var(--line);
-  border-radius: 14px;
-  background: linear-gradient(180deg, var(--surface-soft), #f8fbfa);
+  border-radius: 10px;
+  background: var(--surface-soft);
 }
 
 .context-card h3,
@@ -678,14 +690,14 @@ input[type="range"] {
 .note-box {
   padding: 13px 15px;
   border-left: 4px solid var(--accent);
-  border-radius: 12px;
-  background: var(--accent-soft);
+  border-radius: 8px;
+  background: #eef7f5;
 }
 
 .note-box-accent {
-  border-left-color: #8b7440;
-  background: #f8f4e8;
-  color: #51472e;
+  border-left-color: var(--warning);
+  background: var(--warning-soft);
+  color: #5e3a00;
 }
 
 .button-row {
@@ -698,14 +710,14 @@ input[type="range"] {
 button {
   min-height: 46px;
   border: 0;
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--accent);
   color: white;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 800;
   padding: 10px 16px;
-  box-shadow: 0 8px 18px rgba(47, 125, 113, 0.13);
+  box-shadow: 0 8px 18px rgba(40, 112, 106, 0.12);
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
@@ -716,26 +728,26 @@ button {
 
 button:hover {
   background: var(--accent-dark);
-  box-shadow: 0 10px 22px rgba(47, 125, 113, 0.16);
+  box-shadow: 0 10px 22px rgba(40, 112, 106, 0.15);
   transform: translateY(-1px);
 }
 
 button:active {
-  box-shadow: 0 4px 12px rgba(47, 125, 113, 0.1);
+  box-shadow: 0 4px 12px rgba(40, 112, 106, 0.09);
   transform: translateY(0);
 }
 
 .secondary-button {
   border: 1px solid var(--line);
-  background: #fbfdfc;
+  background: var(--surface);
   color: var(--ink);
-  box-shadow: 0 6px 16px rgba(20, 44, 37, 0.05);
+  box-shadow: 0 6px 16px rgba(31, 42, 39, 0.045);
 }
 
 .secondary-button:hover {
-  border-color: #a7c7be;
-  background: #f3faf7;
-  box-shadow: 0 8px 20px rgba(20, 44, 37, 0.07);
+  border-color: #c5d7d2;
+  background: var(--surface-soft);
+  box-shadow: 0 8px 20px rgba(31, 42, 39, 0.06);
 }
 
 .secondary-button:disabled {
@@ -775,8 +787,8 @@ button:active {
   padding: 18px;
   border: 1px solid var(--line);
   border-left: 5px solid var(--accent);
-  border-radius: 14px;
-  background: var(--accent-soft);
+  border-radius: 10px;
+  background: #eef7f5;
 }
 
 .secondary-dose-result {
@@ -959,12 +971,12 @@ dd {
 }
 
 .taper-action {
-  color: #655831;
+  color: var(--warning);
   font-weight: 850;
 }
 
 .stop-action {
-  color: var(--warning);
+  color: var(--danger);
   font-weight: 900;
 }
 
@@ -997,13 +1009,14 @@ td {
 }
 
 th {
-  background: #edf4f1;
+  background: var(--surface-soft);
+  border-bottom: 2px solid #c8d9d4;
   color: var(--ink);
   font-weight: 850;
 }
 
 tbody tr:nth-child(even) {
-  background: rgba(243, 248, 246, 0.72);
+  background: rgba(241, 247, 245, 0.64);
 }
 
 td:last-child,
@@ -1020,7 +1033,7 @@ th:last-child {
 
 footer {
   border-top: 1px solid var(--line);
-  background: rgba(251, 253, 252, 0.86);
+  background: rgba(255, 255, 255, 0.86);
 }
 
 footer p {

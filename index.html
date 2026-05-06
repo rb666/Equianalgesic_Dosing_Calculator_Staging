@@ -9,13 +9,38 @@
     />
     <meta name="robots" content="noindex, nofollow" />
     <title>Equianalgesic Dose Calculator | Staging</title>
-    <link rel="stylesheet" href="styles.css?v=20260506-equal-tabs-stronger-lines" />
+    <script>
+      (() => {
+        try {
+          const storedTheme = localStorage.getItem("opioid-conversion-theme");
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const theme = storedTheme || (prefersDark ? "dark" : "light");
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css?v=20260506-dark-mode-toggle" />
   </head>
   <body>
     <div class="environment-banner" role="note" aria-label="Environment notice">
       Staging preview. This site is for review and testing and may differ from the live production calculator.
     </div>
     <header class="site-header">
+      <div class="theme-toggle-row">
+        <button
+          aria-pressed="false"
+          class="theme-toggle"
+          id="themeToggle"
+          type="button"
+        >
+          <span class="theme-toggle-track" aria-hidden="true">
+            <span class="theme-toggle-thumb"></span>
+          </span>
+          <span id="themeToggleLabel">Dark mode</span>
+        </button>
+      </div>
       <section class="intro-layout" aria-label="Safety warning and site logo">
         <div class="hero-copy-stack">
           <div class="header-copy">
@@ -673,6 +698,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260504-conversion-result-estimate-title"></script>
+    <script src="script.js?v=20260506-dark-mode-toggle"></script>
   </body>
 </html>

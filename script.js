@@ -628,6 +628,8 @@ let regimenEntryId = 0;
 let regimenEntriesState = [];
 
 const calculatorTabButtons = document.querySelectorAll("[data-calculator-tab]");
+const themeToggle = document.querySelector("#themeToggle");
+const themeToggleLabel = document.querySelector("#themeToggleLabel");
 const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
@@ -712,6 +714,31 @@ const buprenorphineEndpoint = document.querySelector("#buprenorphineEndpoint");
 const buprenorphineScheduleTableBody = document.querySelector(
   "#buprenorphineScheduleTable",
 );
+
+const THEME_STORAGE_KEY = "opioid-conversion-theme";
+
+const setTheme = (theme) => {
+  const normalizedTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = normalizedTheme;
+
+  if (themeToggle) {
+    const darkModeActive = normalizedTheme === "dark";
+    themeToggle.setAttribute("aria-pressed", String(darkModeActive));
+    if (themeToggleLabel) {
+      themeToggleLabel.textContent = darkModeActive ? "Light mode" : "Dark mode";
+    }
+  }
+};
+
+const persistTheme = (theme) => {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // Dark mode still works for the current page if storage is unavailable.
+  }
+
+  setTheme(theme);
+};
 
 const formatDose = (value) => {
   if (!Number.isFinite(value)) {
@@ -1943,6 +1970,14 @@ buprenorphineMeddRangeSelect.addEventListener("input", () => {
   renderBuprenorphineSchedule();
 });
 
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const nextTheme =
+      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    persistTheme(nextTheme);
+  });
+}
+
 exampleButton.addEventListener("click", () => {
   calculationModeSelect.value = "convert";
   setRegimenEntries([
@@ -1984,6 +2019,7 @@ mmeExampleButton.addEventListener("click", () => {
   calculate();
 });
 
+setTheme(document.documentElement.dataset.theme);
 renderReferenceTable();
 renderHepaticGuidanceTable();
 renderSourceTable();

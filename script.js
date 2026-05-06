@@ -1018,7 +1018,7 @@ const buildRegimenEntryMarkup = (entry, index) => {
             data-field="dose"
             inputmode="decimal"
             min="0"
-            step="${patchOption ? "0.5" : "0.001"}"
+            step="${patchOption ? "0.5" : "1"}"
             type="number"
             value="${doseValue}"
           />
@@ -1031,7 +1031,7 @@ const buildRegimenEntryMarkup = (entry, index) => {
             data-field="dosesPerDay"
             inputmode="decimal"
             min="0"
-            step="0.25"
+            step="1"
             type="number"
             value="${frequencyValue}"
             ${patchOption ? "disabled" : ""}

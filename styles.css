@@ -1205,12 +1205,21 @@ footer {
   background: var(--footer-bg);
 }
 
-footer p {
+.footer-content {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
   padding: 18px 0;
+}
+
+footer p {
+  margin: 0;
   color: var(--muted);
   font-size: 0.95rem;
+}
+
+.copyright-notice {
+  margin-top: 6px;
+  font-size: 0.88rem;
 }
 
 @media (max-width: 960px) {
@@ -1262,7 +1271,7 @@ footer p {
 @media (max-width: 560px) {
   .site-header,
   main,
-  footer p {
+  .footer-content {
     width: min(100% - 22px, 1180px);
   }
 

@@ -628,6 +628,15 @@ let regimenEntryId = 0;
 let regimenEntriesState = [];
 
 const calculatorTabButtons = document.querySelectorAll("[data-calculator-tab]");
+const themeToggle = document.querySelector("#themeToggle");
+const themeToggleLabel = document.querySelector("#themeToggleLabel");
+const termsModal = document.querySelector("#termsModal");
+const termsModalEyebrow = document.querySelector("#termsModalEyebrow");
+const termsAcceptanceForm = document.querySelector("#termsAcceptanceForm");
+const termsAcceptInput = document.querySelector("#termsAcceptInput");
+const termsAcceptButton = document.querySelector("#termsAcceptButton");
+const termsCloseButton = document.querySelector("#termsCloseButton");
+const termsReviewButton = document.querySelector("#termsReviewButton");
 const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
@@ -712,6 +721,86 @@ const buprenorphineEndpoint = document.querySelector("#buprenorphineEndpoint");
 const buprenorphineScheduleTableBody = document.querySelector(
   "#buprenorphineScheduleTable",
 );
+
+const THEME_STORAGE_KEY = "opioid-conversion-theme";
+const TERMS_ACCEPTANCE_STORAGE_KEY = "calc-med-terms-accepted-v1";
+
+const setTheme = (theme) => {
+  const normalizedTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = normalizedTheme;
+
+  if (themeToggle) {
+    const darkModeActive = normalizedTheme === "dark";
+    themeToggle.setAttribute("aria-pressed", String(darkModeActive));
+    if (themeToggleLabel) {
+      themeToggleLabel.textContent = darkModeActive ? "Light mode" : "Dark mode";
+    }
+  }
+};
+
+const persistTheme = (theme) => {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // Dark mode still works for the current page if storage is unavailable.
+  }
+
+  setTheme(theme);
+};
+
+const getStoredTermsAcceptance = () => {
+  try {
+    return localStorage.getItem(TERMS_ACCEPTANCE_STORAGE_KEY) === "accepted";
+  } catch {
+    return false;
+  }
+};
+
+const storeTermsAcceptance = () => {
+  try {
+    localStorage.setItem(TERMS_ACCEPTANCE_STORAGE_KEY, "accepted");
+  } catch {
+    // The acknowledgement still dismisses the modal for the current session.
+  }
+};
+
+const setTermsModalVisible = (visible, options = {}) => {
+  if (!termsModal) {
+    return;
+  }
+
+  const reviewMode = Boolean(options.reviewMode);
+  termsModal.classList.toggle("is-hidden", !visible);
+  document.body.classList.toggle("modal-open", visible);
+
+  if (termsModalEyebrow) {
+    termsModalEyebrow.textContent = reviewMode
+      ? "Terms review"
+      : "Required acknowledgement";
+  }
+
+  if (termsCloseButton) {
+    termsCloseButton.classList.toggle("is-hidden", !visible || !reviewMode);
+  }
+
+  if (termsAcceptanceForm) {
+    termsAcceptanceForm.classList.toggle("is-review-mode", visible && reviewMode);
+  }
+
+  if (visible && termsAcceptInput && termsAcceptButton) {
+    termsAcceptInput.value = "";
+    termsAcceptButton.disabled = true;
+    window.setTimeout(() => termsAcceptInput.focus(), 0);
+  }
+};
+
+const updateTermsAcceptanceState = () => {
+  if (!termsAcceptInput || !termsAcceptButton) {
+    return;
+  }
+
+  termsAcceptButton.disabled = termsAcceptInput.value.trim() !== "ACCEPT";
+};
 
 const formatDose = (value) => {
   if (!Number.isFinite(value)) {
@@ -991,7 +1080,7 @@ const buildRegimenEntryMarkup = (entry, index) => {
             data-field="dose"
             inputmode="decimal"
             min="0"
-            step="${patchOption ? "0.5" : "0.001"}"
+            step="${patchOption ? "0.5" : "1"}"
             type="number"
             value="${doseValue}"
           />
@@ -1004,7 +1093,7 @@ const buildRegimenEntryMarkup = (entry, index) => {
             data-field="dosesPerDay"
             inputmode="decimal"
             min="0"
-            step="0.25"
+            step="1"
             type="number"
             value="${frequencyValue}"
             ${patchOption ? "disabled" : ""}
@@ -1943,6 +2032,43 @@ buprenorphineMeddRangeSelect.addEventListener("input", () => {
   renderBuprenorphineSchedule();
 });
 
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const nextTheme =
+      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    persistTheme(nextTheme);
+  });
+}
+
+if (termsAcceptInput) {
+  termsAcceptInput.addEventListener("input", updateTermsAcceptanceState);
+}
+
+if (termsAcceptanceForm) {
+  termsAcceptanceForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (!termsAcceptInput || termsAcceptInput.value.trim() !== "ACCEPT") {
+      return;
+    }
+
+    storeTermsAcceptance();
+    setTermsModalVisible(false);
+  });
+}
+
+if (termsCloseButton) {
+  termsCloseButton.addEventListener("click", () => {
+    setTermsModalVisible(false);
+  });
+}
+
+if (termsReviewButton) {
+  termsReviewButton.addEventListener("click", () => {
+    setTermsModalVisible(true, { reviewMode: true });
+  });
+}
+
 exampleButton.addEventListener("click", () => {
   calculationModeSelect.value = "convert";
   setRegimenEntries([
@@ -1984,6 +2110,8 @@ mmeExampleButton.addEventListener("click", () => {
   calculate();
 });
 
+setTheme(document.documentElement.dataset.theme);
+setTermsModalVisible(!getStoredTermsAcceptance());
 renderReferenceTable();
 renderHepaticGuidanceTable();
 renderSourceTable();

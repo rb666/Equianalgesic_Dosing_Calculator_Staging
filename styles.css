@@ -5,7 +5,7 @@
   --surface-warm: #fbfcfa;
   --ink: #1f2a27;
   --muted: #66736f;
-  --line: #dbe5e1;
+  --line: #cbd9d5;
   --accent: #28706a;
   --accent-dark: #1f5955;
   --accent-soft: #e8f3f2;
@@ -102,7 +102,7 @@ a:focus-visible {
   width: clamp(176px, 18vw, 240px);
   padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 14px;
   background: var(--surface);
   box-shadow: var(--shadow-soft);
   transform: translateY(-15%) scale(1.15);
@@ -113,7 +113,7 @@ a:focus-visible {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .eyebrow {
@@ -177,7 +177,7 @@ main {
   margin: 0;
   padding: 12px 22px 17px;
   border: 1px solid rgba(111, 71, 13, 0.24);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--warning-soft);
   box-shadow: var(--shadow-soft);
 }
@@ -197,14 +197,12 @@ main {
 
 .calculator-tabs {
   display: grid;
-  grid-template-columns:
-    minmax(0, 0.94fr) minmax(0, 1.06fr) minmax(0, 1.06fr)
-    minmax(0, 0.94fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   width: 100%;
   margin: 26px 0;
   padding: 6px;
   border: 1px solid rgba(194, 209, 204, 0.96);
-  border-radius: 14px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 8px 22px rgba(35, 52, 48, 0.036);
 }
@@ -213,10 +211,11 @@ main {
   position: relative;
   display: grid;
   gap: 3px;
+  align-content: center;
   justify-items: center;
   min-height: 58px;
   border: 1px solid transparent;
-  border-radius: 9px;
+  border-radius: 7px;
   padding: 10px 20px;
   background: transparent;
   color: var(--ink);
@@ -247,14 +246,18 @@ main {
 }
 
 .calculator-tab span {
+  width: 100%;
   font-size: 1rem;
   font-weight: 850;
+  text-align: center;
 }
 
 .calculator-tab small {
+  width: 100%;
   color: var(--muted);
   font-size: 0.86rem;
   font-weight: 650;
+  text-align: center;
 }
 
 .calculator-tab.is-active {
@@ -296,7 +299,7 @@ main {
 .reference-section {
   min-width: 0;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--surface);
   box-shadow: var(--shadow);
 }
@@ -316,8 +319,8 @@ main {
 
 .compact-section {
   margin: 24px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  border-top: 2px solid var(--line);
+  border-bottom: 2px solid var(--line);
 }
 
 .compact-section > summary {
@@ -357,7 +360,7 @@ main {
 .summary-action {
   flex: 0 0 auto;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 8px 12px;
   background: var(--surface-soft);
   color: var(--ink);
@@ -381,7 +384,7 @@ main {
 .organ-context {
   margin: 24px 0;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--surface-soft);
 }
 
@@ -424,7 +427,7 @@ main {
 .subsection-heading {
   margin-bottom: 20px;
   padding-bottom: 14px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
 }
 
 .field-grid {
@@ -454,7 +457,7 @@ main {
 .target-field {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid var(--line);
+  border-top: 2px solid var(--line);
 }
 
 .field-stack > label {
@@ -499,7 +502,7 @@ input[type="number"] {
   width: 100%;
   min-height: 50px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 6px;
   background: var(--surface);
   color: var(--ink);
   padding: 11px 13px;
@@ -524,7 +527,7 @@ select {
 .subsection {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid var(--line);
+  border-top: 2px solid var(--line);
 }
 
 #calculationMode + .subsection {
@@ -549,7 +552,7 @@ select {
 .regimen-entry {
   padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--surface);
 }
 
@@ -637,7 +640,7 @@ input[type="range"] {
 .tag-button {
   min-height: 38px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--surface);
   color: var(--ink);
   cursor: pointer;
@@ -682,7 +685,7 @@ input[type="range"] {
 .advisory-card {
   padding: 20px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--surface-soft);
 }
 
@@ -700,7 +703,7 @@ input[type="range"] {
 .note-box {
   padding: 13px 15px;
   border-left: 4px solid var(--accent);
-  border-radius: 8px;
+  border-radius: 6px;
   background: #eef7f5;
 }
 
@@ -720,7 +723,7 @@ input[type="range"] {
 button {
   min-height: 46px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--accent);
   color: white;
   cursor: pointer;
@@ -797,7 +800,7 @@ button:active {
   padding: 18px;
   border: 1px solid var(--line);
   border-left: 5px solid var(--accent);
-  border-radius: 10px;
+  border-radius: 8px;
   background: #eef7f5;
 }
 
@@ -824,7 +827,7 @@ button:active {
   align-items: center;
   min-height: 56px;
   padding: 10px 0;
-  border-top: 1px solid var(--line);
+  border-top: 2px solid var(--line);
 }
 
 .calculation-steps .wrap-step {
@@ -834,7 +837,7 @@ button:active {
 }
 
 .calculation-steps div:last-child {
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
 }
 
 dt {
@@ -878,12 +881,17 @@ dd {
 .schedule-summary div {
   display: grid;
   gap: 4px;
-  border-top: 1px solid var(--line);
+  border-top: 2px solid var(--line);
   padding-top: 12px;
 }
 
+.schedule-summary div:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
 .schedule-summary div:last-child {
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
   padding-bottom: 12px;
 }
 
@@ -1020,7 +1028,7 @@ td {
 
 th {
   background: var(--surface-soft);
-  border-bottom: 2px solid #c8d9d4;
+  border-bottom: 2px solid #b8cec8;
   color: var(--ink);
   font-weight: 850;
 }

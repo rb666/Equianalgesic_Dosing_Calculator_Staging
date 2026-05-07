@@ -226,6 +226,7 @@ a:focus-visible {
 }
 
 .intro-layout {
+  --warning-right-inset: 40px;
   display: grid;
   grid-template-columns: minmax(0, 780px) minmax(220px, 1fr);
   column-gap: 0;
@@ -246,13 +247,13 @@ a:focus-visible {
 .brand-logo-card {
   align-self: end;
   justify-self: center;
-  width: clamp(176px, 18vw, 240px);
+  width: clamp(194px, 19.8vw, 264px);
   padding: 12px;
   border: 1.5px solid var(--line);
   border-radius: 14px;
   background: var(--logo-card-bg);
   box-shadow: var(--shadow-soft);
-  transform: translateY(-15%) scale(1.15);
+  transform: translate(calc(var(--warning-right-inset) / -2), -15%) scale(1.15);
   transform-origin: top right;
 }
 
@@ -320,7 +321,7 @@ main {
   gap: 0;
   justify-self: start;
   align-items: center;
-  width: calc(100% - 40px);
+  width: calc(100% - var(--warning-right-inset));
   margin: 0;
   padding: 12px 22px 17px;
   border: 1.5px solid var(--warning-border);

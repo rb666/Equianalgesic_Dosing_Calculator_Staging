@@ -5,11 +5,11 @@
   --surface-warm: #fbfcfa;
   --ink: #1f2a27;
   --muted: #66736f;
-  --line: #cbd9d5;
+  --line: #b8ccc6;
   --accent: #28706a;
   --accent-dark: #1f5955;
   --accent-soft: #e8f3f2;
-  --accent-border: #b7d6d2;
+  --accent-border: #9fc9c3;
   --warning: #6f470d;
   --warning-soft: #fff6de;
   --danger: #7f2620;
@@ -21,17 +21,17 @@
   --banner-end: #46676b;
   --banner-text: #f8fbfa;
   --eyebrow: #3f625d;
-  --warning-border: rgba(111, 71, 13, 0.24);
+  --warning-border: rgba(111, 71, 13, 0.42);
   --warning-body: #000000;
-  --tabs-border: rgba(194, 209, 204, 0.96);
+  --tabs-border: #afc5be;
   --tabs-bg: rgba(255, 255, 255, 0.9);
   --tabs-shadow: rgba(35, 52, 48, 0.036);
-  --tab-separator: rgba(129, 153, 147, 0.38);
-  --tab-hover-border: #c8d6d2;
+  --tab-separator: rgba(111, 136, 130, 0.62);
+  --tab-hover-border: #a8beb7;
   --tab-hover-bg: rgba(248, 252, 251, 0.98);
   --active-tab-inset: rgba(255, 255, 255, 0.8);
   --active-tab-shadow: rgba(40, 112, 106, 0.08);
-  --control-hover-border: #c5d7d2;
+  --control-hover-border: #9bbab2;
   --control-hover-bg: #f8fcfb;
   --note-bg: #eef7f5;
   --note-warning-text: #5e3a00;
@@ -43,7 +43,7 @@
   --soft-shadow: rgba(31, 42, 39, 0.055);
   --secondary-shadow: rgba(31, 42, 39, 0.045);
   --secondary-hover-shadow: rgba(31, 42, 39, 0.06);
-  --table-header-line: #b8cec8;
+  --table-header-line: #9eb9b1;
   --table-stripe: rgba(241, 247, 245, 0.64);
   --footer-bg: rgba(255, 255, 255, 0.86);
   --logo-card-bg: #ffffff;
@@ -57,11 +57,11 @@
   --surface-warm: #1b2825;
   --ink: #dceae5;
   --muted: #a5b6b0;
-  --line: #3a514b;
+  --line: #526d65;
   --accent: #5fb7ae;
   --accent-dark: #a9ddd6;
   --accent-soft: #203f3a;
-  --accent-border: #47746d;
+  --accent-border: #64958c;
   --warning: #efc372;
   --warning-soft: #2c2618;
   --danger: #f0a29a;
@@ -73,17 +73,17 @@
   --banner-end: #1f4447;
   --banner-text: #eef9f7;
   --eyebrow: #9ad0c8;
-  --warning-border: rgba(239, 195, 114, 0.28);
+  --warning-border: rgba(239, 195, 114, 0.48);
   --warning-body: #ead8b1;
-  --tabs-border: #415a54;
+  --tabs-border: #5a766f;
   --tabs-bg: rgba(24, 35, 31, 0.94);
   --tabs-shadow: rgba(0, 0, 0, 0.2);
-  --tab-separator: rgba(116, 147, 139, 0.54);
-  --tab-hover-border: #52726b;
+  --tab-separator: rgba(147, 179, 170, 0.72);
+  --tab-hover-border: #6f9088;
   --tab-hover-bg: #1d2d29;
   --active-tab-inset: rgba(255, 255, 255, 0.04);
   --active-tab-shadow: rgba(0, 0, 0, 0.24);
-  --control-hover-border: #52746d;
+  --control-hover-border: #739990;
   --control-hover-bg: #1d2e2a;
   --note-bg: #1e322e;
   --note-warning-text: #f2d391;
@@ -95,7 +95,7 @@
   --soft-shadow: rgba(0, 0, 0, 0.22);
   --secondary-shadow: rgba(0, 0, 0, 0.18);
   --secondary-hover-shadow: rgba(0, 0, 0, 0.24);
-  --table-header-line: #58766f;
+  --table-header-line: #76968e;
   --table-stripe: rgba(32, 49, 45, 0.62);
   --footer-bg: rgba(24, 35, 31, 0.9);
   --logo-card-bg: #ffffff;
@@ -195,7 +195,7 @@ a:focus-visible {
   gap: 10px;
   align-items: center;
   min-height: 38px;
-  border: 1px solid color-mix(in srgb, var(--banner-text) 26%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--banner-text) 38%, transparent);
   background: rgba(255, 255, 255, 0.1);
   color: var(--banner-text);
   box-shadow: none;
@@ -205,7 +205,7 @@ a:focus-visible {
   position: relative;
   width: 42px;
   height: 22px;
-  border: 1px solid var(--accent-border);
+  border: 1.5px solid var(--accent-border);
   border-radius: 999px;
   background: var(--surface-soft);
 }
@@ -248,7 +248,7 @@ a:focus-visible {
   justify-self: center;
   width: clamp(176px, 18vw, 240px);
   padding: 12px;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 14px;
   background: var(--logo-card-bg);
   box-shadow: var(--shadow-soft);
@@ -323,7 +323,7 @@ main {
   width: calc(100% - 40px);
   margin: 0;
   padding: 12px 22px 17px;
-  border: 1px solid var(--warning-border);
+  border: 1.5px solid var(--warning-border);
   border-radius: 10px;
   background: var(--warning-soft);
   box-shadow: var(--shadow-soft);
@@ -353,7 +353,7 @@ main {
   width: 100%;
   margin: 26px 0;
   padding: 6px;
-  border: 1px solid var(--tabs-border);
+  border: 1.5px solid var(--tabs-border);
   border-radius: 10px;
   background: var(--tabs-bg);
   box-shadow: 0 8px 22px var(--tabs-shadow);
@@ -366,7 +366,7 @@ main {
   align-content: center;
   justify-items: center;
   min-height: 58px;
-  border: 1px solid transparent;
+  border: 1.5px solid transparent;
   border-radius: 7px;
   padding: 10px 20px;
   background: transparent;
@@ -450,7 +450,7 @@ main {
 .result-panel,
 .reference-section {
   min-width: 0;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 10px;
   background: var(--surface);
   box-shadow: var(--shadow);
@@ -511,7 +511,7 @@ main {
 
 .summary-action {
   flex: 0 0 auto;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 8px;
   padding: 8px 12px;
   background: var(--surface-soft);
@@ -535,7 +535,7 @@ main {
 
 .organ-context {
   margin: 24px 0;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 8px;
   background: var(--surface-soft);
 }
@@ -653,7 +653,7 @@ select,
 input[type="number"] {
   width: 100%;
   min-height: 50px;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 6px;
   background: var(--surface);
   color: var(--ink);
@@ -703,7 +703,7 @@ select {
 
 .regimen-entry {
   padding: 18px;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
 }
@@ -791,7 +791,7 @@ input[type="range"] {
 
 .tag-button {
   min-height: 38px;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
   color: var(--ink);
@@ -836,7 +836,7 @@ input[type="range"] {
 .context-card,
 .advisory-card {
   padding: 20px;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 8px;
   background: var(--surface-soft);
 }
@@ -925,7 +925,7 @@ button:active {
 }
 
 .secondary-button {
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   background: var(--surface);
   color: var(--ink);
   box-shadow: 0 6px 16px var(--secondary-shadow);
@@ -980,7 +980,7 @@ button:active {
 .secondary-dose-card {
   margin: 18px 0 24px;
   padding: 18px;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-left: 5px solid var(--accent);
   border-radius: 8px;
   background: var(--note-bg);
@@ -1260,7 +1260,7 @@ footer {
   width: min(760px, 100%);
   max-height: min(88vh, 820px);
   overflow: auto;
-  border: 1px solid #d8e2de;
+  border: 1.5px solid #b8c9c3;
   border-radius: 12px;
   background: #ffffff;
   color: #000000;

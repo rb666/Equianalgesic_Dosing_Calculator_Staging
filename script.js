@@ -2111,7 +2111,7 @@ mmeExampleButton.addEventListener("click", () => {
 });
 
 setTheme(document.documentElement.dataset.theme);
-setTermsModalVisible(!getStoredTermsAcceptance());
+setTermsModalVisible(false);
 renderReferenceTable();
 renderHepaticGuidanceTable();
 renderSourceTable();

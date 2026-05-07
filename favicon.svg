@@ -7,12 +7,12 @@
   </defs>
   <rect width="512" height="512" rx="80" fill="url(#bg)"/>
 
-  <!-- Heart: shifted right +50px total (now at x=321), scaled 2.75 -->
+  <!-- Heart: +15% scale (now 3.1625), moved right +50px (x=371) -->
   <path d="M 245 140 C 245 120, 280 120, 280 140 C 280 165, 245 185, 245 185 C 245 185, 210 165, 210 140 C 210 120, 245 120, 245 140 Z"
         fill="#FF7043"
-        transform="translate(321,110) scale(2.75) translate(-245,-152.5)"/>
+        transform="translate(371,110) scale(3.1625) translate(-245,-152.5)"/>
 
-  <!-- Pulse: unchanged (down 50px from earlier, wide and tall) -->
-  <path d="M 50 330 L 122 330 L 159 200 L 195 430 L 231 200 L 267 430 L 303 270 L 400 270"
-        fill="none" stroke="#FFFFFF" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Pulse: unchanged - wider & taller layout, bold stroke -->
+  <path d="M -33 332.25 L 71 332.25 L 123 182.75 L 175 447.25 L 227 182.75 L 279 447.25 L 331 263.25 L 513 263.25"
+        fill="none" stroke="#FFFFFF" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

@@ -733,7 +733,7 @@ const setTheme = (theme) => {
     const darkModeActive = normalizedTheme === "dark";
     themeToggle.setAttribute("aria-pressed", String(darkModeActive));
     if (themeToggleLabel) {
-      themeToggleLabel.textContent = darkModeActive ? "Light mode" : "Dark mode";
+      themeToggleLabel.textContent = darkModeActive ? "Theme: Dark" : "Theme: Light";
     }
   }
 };

@@ -22,7 +22,7 @@
   --banner-text: #f8fbfa;
   --eyebrow: #3f625d;
   --warning-border: rgba(111, 71, 13, 0.24);
-  --warning-body: #3e3327;
+  --warning-body: #000000;
   --tabs-border: rgba(194, 209, 204, 0.96);
   --tabs-bg: rgba(255, 255, 255, 0.9);
   --tabs-shadow: rgba(35, 52, 48, 0.036);
@@ -338,7 +338,7 @@ main {
 
 .safety-banner p {
   margin: 0;
-  color: #000000;
+  color: var(--warning-body);
   font-size: calc(1rem - 1.333px);
   font-weight: 650;
 }

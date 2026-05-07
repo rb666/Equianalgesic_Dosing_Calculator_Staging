@@ -87,34 +87,59 @@
     </header>
 
     <main>
-      <nav class="calculator-tabs" aria-label="Calculator sections">
+      <nav
+        aria-label="Calculator sections"
+        aria-orientation="horizontal"
+        class="calculator-tabs"
+        role="tablist"
+      >
         <button
+          aria-controls="mainCalculatorSection"
+          aria-selected="false"
           class="calculator-tab"
           data-calculator-tab="mme"
+          id="calculatorTabMme"
+          role="tab"
+          tabindex="-1"
           type="button"
         >
           <span>Total MME</span>
           <small>Regimen total only</small>
         </button>
         <button
+          aria-controls="mainCalculatorSection"
+          aria-selected="true"
           class="calculator-tab is-active"
           data-calculator-tab="convert"
+          id="calculatorTabConvert"
+          role="tab"
+          tabindex="0"
           type="button"
         >
           <span>Conversion</span>
           <small>Regimen to target opioid</small>
         </button>
         <button
+          aria-controls="methadonePanel"
+          aria-selected="false"
           class="calculator-tab"
           data-calculator-tab="methadone"
+          id="calculatorTabMethadone"
+          role="tab"
+          tabindex="-1"
           type="button"
         >
           <span>Methadone</span>
           <small>OME to methadone</small>
         </button>
         <button
+          aria-controls="buprenorphinePanel"
+          aria-selected="false"
           class="calculator-tab"
           data-calculator-tab="buprenorphine"
+          id="calculatorTabBuprenorphine"
+          role="tab"
+          tabindex="-1"
           type="button"
         >
           <span>Suboxone</span>
@@ -126,6 +151,8 @@
         class="calculator-layout"
         id="mainCalculatorSection"
         aria-label="MME and dose conversion tools"
+        aria-labelledby="calculatorTabConvert"
+        role="tabpanel"
       >
         <form class="calculator-panel" id="calculatorForm">
           <div class="section-heading">
@@ -409,10 +436,18 @@
 
       <section
         class="specialty-section is-hidden"
+        hidden
         id="specialtyCalculatorSection"
         aria-label="Methadone and Suboxone calculators"
       >
-        <section class="methadone-layout specialty-tool-panel" data-specialty-panel="methadone">
+        <section
+          aria-labelledby="calculatorTabMethadone"
+          class="methadone-layout specialty-tool-panel"
+          data-specialty-panel="methadone"
+          hidden
+          id="methadonePanel"
+          role="tabpanel"
+        >
           <form class="calculator-panel" id="methadoneForm">
             <div class="section-heading">
               <p class="eyebrow">Methadone</p>
@@ -538,8 +573,12 @@
         </section>
 
         <section
+          aria-labelledby="calculatorTabBuprenorphine"
           class="buprenorphine-layout specialty-tool-panel is-hidden"
           data-specialty-panel="buprenorphine"
+          hidden
+          id="buprenorphinePanel"
+          role="tabpanel"
         >
           <form class="calculator-panel" id="buprenorphineForm">
             <div class="section-heading">
@@ -795,6 +834,6 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260506-theme-state-label"></script>
+    <script src="script.js?v=20260506-tab-accessibility"></script>
   </body>
 </html>

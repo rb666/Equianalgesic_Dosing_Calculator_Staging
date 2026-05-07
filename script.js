@@ -628,6 +628,7 @@ let regimenEntryId = 0;
 let regimenEntriesState = [];
 
 const calculatorTabButtons = document.querySelectorAll("[data-calculator-tab]");
+const calculatorTabs = Array.from(calculatorTabButtons);
 const themeToggle = document.querySelector("#themeToggle");
 const themeToggleLabel = document.querySelector("#themeToggleLabel");
 const termsModal = document.querySelector("#termsModal");
@@ -800,6 +801,18 @@ const updateTermsAcceptanceState = () => {
   }
 
   termsAcceptButton.disabled = termsAcceptInput.value.trim() !== "ACCEPT";
+};
+
+const getCalculatorTabButton = (mode) =>
+  calculatorTabs.find((button) => button.dataset.calculatorTab === mode);
+
+const setHiddenState = (element, shouldHide) => {
+  if (!element) {
+    return;
+  }
+
+  element.classList.toggle("is-hidden", shouldHide);
+  element.hidden = shouldHide;
 };
 
 const formatDose = (value) => {
@@ -1244,12 +1257,15 @@ const renderBuprenorphineSchedule = () => {
 
 const renderSpecialtyTool = () => {
   const selectedTool = calculationModeSelect.value;
+  const selectedTab = getCalculatorTabButton(selectedTool);
 
   specialtyPanels.forEach((panel) => {
-    panel.classList.toggle(
-      "is-hidden",
-      panel.dataset.specialtyPanel !== selectedTool,
-    );
+    const shouldHide = panel.dataset.specialtyPanel !== selectedTool;
+    setHiddenState(panel, shouldHide);
+
+    if (!shouldHide && selectedTab?.id) {
+      panel.setAttribute("aria-labelledby", selectedTab.id);
+    }
   });
 };
 
@@ -1295,14 +1311,21 @@ const setModeVisibility = () => {
   const isSpecialtyMode =
     activeMode === "methadone" || activeMode === "buprenorphine";
 
-  calculatorTabButtons.forEach((button) => {
+  calculatorTabs.forEach((button) => {
     const isActive = button.dataset.calculatorTab === activeMode;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-selected", String(isActive));
+    button.tabIndex = isActive ? 0 : -1;
   });
 
-  mainCalculatorSection.classList.toggle("is-hidden", isSpecialtyMode);
-  specialtyCalculatorSection.classList.toggle("is-hidden", !isSpecialtyMode);
+  const activeTab = getCalculatorTabButton(activeMode);
+
+  if (!isSpecialtyMode && activeTab?.id) {
+    mainCalculatorSection.setAttribute("aria-labelledby", activeTab.id);
+  }
+
+  setHiddenState(mainCalculatorSection, isSpecialtyMode);
+  setHiddenState(specialtyCalculatorSection, !isSpecialtyMode);
   targetField.classList.toggle("is-hidden", isMMeMode || isSpecialtyMode);
   reductionField.classList.toggle("is-hidden", isMMeMode || isSpecialtyMode);
   organContext.classList.toggle("is-hidden", isMMeMode || isSpecialtyMode);
@@ -1961,22 +1984,47 @@ addRegimenEntryButton.addEventListener("click", () => {
   calculate();
 });
 
-calculatorTabButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    calculationModeSelect.value = button.dataset.calculatorTab;
-    setModeVisibility();
+const activateCalculatorMode = (mode) => {
+  calculationModeSelect.value = mode;
+  setModeVisibility();
 
-    if (
-      calculationModeSelect.value === "methadone" ||
-      calculationModeSelect.value === "buprenorphine"
-    ) {
-      renderSpecialtyTool();
-      calculateMethadone();
-      renderBuprenorphineSchedule();
+  if (mode === "methadone" || mode === "buprenorphine") {
+    renderSpecialtyTool();
+    calculateMethadone();
+    renderBuprenorphineSchedule();
+    return;
+  }
+
+  calculate();
+};
+
+calculatorTabs.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    activateCalculatorMode(button.dataset.calculatorTab);
+  });
+
+  button.addEventListener("keydown", (event) => {
+    const lastIndex = calculatorTabs.length - 1;
+    let nextIndex = null;
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      nextIndex = index === lastIndex ? 0 : index + 1;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      nextIndex = index === 0 ? lastIndex : index - 1;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = lastIndex;
+    }
+
+    if (nextIndex === null) {
       return;
     }
 
-    calculate();
+    event.preventDefault();
+    const nextButton = calculatorTabs[nextIndex];
+    nextButton.focus();
+    activateCalculatorMode(nextButton.dataset.calculatorTab);
   });
 });
 

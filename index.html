@@ -14,8 +14,7 @@
       (() => {
         try {
           const storedTheme = localStorage.getItem("opioid-conversion-theme");
-          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          const theme = storedTheme || (prefersDark ? "dark" : "light");
+          const theme = storedTheme || "light";
           document.documentElement.dataset.theme = theme;
         } catch {
           document.documentElement.dataset.theme = "light";

@@ -342,6 +342,10 @@ main {
   font-weight: 650;
 }
 
+.safety-banner p + p {
+  margin-top: 8px;
+}
+
 .calculator-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

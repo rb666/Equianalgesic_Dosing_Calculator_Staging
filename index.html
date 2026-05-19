@@ -21,7 +21,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260519-pharmacokinetics-modal" />
+    <link rel="stylesheet" href="styles.css?v=20260519-selectable-pk-graphs" />
   </head>
   <body>
     <div class="environment-banner">
@@ -802,7 +802,14 @@
               and half-life values. They are intended to characterize relative onset,
               peak, and offset behavior, not predict patient-specific concentrations.
             </p>
-            <div class="pk-graph-grid" id="pharmacokineticsGraphGrid"></div>
+            <div class="pk-interactive-layout">
+              <div class="pk-graph-grid" id="pharmacokineticsGraphGrid"></div>
+              <section
+                aria-live="polite"
+                class="pk-selected-detail"
+                id="pharmacokineticsSelectedDetail"
+              ></section>
+            </div>
           </section>
 
           <section class="pk-reference-block">
@@ -923,6 +930,6 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260519-pharmacokinetics-modal"></script>
+    <script src="script.js?v=20260519-selectable-pk-graphs"></script>
   </body>
 </html>

@@ -906,6 +906,7 @@ const renalMinimalAlternativeMedications = new Set([
 
 let regimenEntryId = 0;
 let regimenEntriesState = [];
+let selectedPharmacokineticsIndex = 0;
 
 const calculatorTabButtons = document.querySelectorAll("[data-calculator-tab]");
 const calculatorTabs = Array.from(calculatorTabButtons);
@@ -948,6 +949,9 @@ const hepaticGuidanceTableBody = document.querySelector("#hepaticGuidanceTable")
 const sourceTable = document.querySelector("#sourceTable");
 const pharmacokineticsTable = document.querySelector("#pharmacokineticsTable");
 const pharmacokineticsGraphGrid = document.querySelector("#pharmacokineticsGraphGrid");
+const pharmacokineticsSelectedDetail = document.querySelector(
+  "#pharmacokineticsSelectedDetail",
+);
 const regimenSummaryTable = document.querySelector("#regimenSummaryTable");
 
 const resultTitle = document.querySelector("#resultTitle");
@@ -1614,14 +1618,26 @@ const buildPharmacokineticsGraphSvg = (profile) => {
   `;
 };
 
+const getPharmacokineticsSourceMarkup = (item) =>
+  item.sources
+    .map(
+      (source) =>
+        `<a href="${source.url}" rel="noreferrer" target="_blank">${source.title}</a>`,
+    )
+    .join("");
+
+const getSelectedPharmacokineticsRow = () =>
+  pharmacokineticsRows[selectedPharmacokineticsIndex] || pharmacokineticsRows[0];
+
 const renderPharmacokineticsGraphs = () => {
   if (!pharmacokineticsGraphGrid) {
     return;
   }
 
   pharmacokineticsGraphGrid.innerHTML = pharmacokineticsRows
-    .map((item) => {
+    .map((item, index) => {
       const profile = item.profile;
+      const isSelected = index === selectedPharmacokineticsIndex;
       const peakLabel =
         profile.type === "patch"
           ? `Steady/peak: ~${formatGraphTime(profile.peakHours)}`
@@ -1632,7 +1648,12 @@ const renderPharmacokineticsGraphs = () => {
           : `Half-life: ~${formatGraphTime(profile.halfLifeHours)}`;
 
       return `
-        <article class="pk-graph-card">
+        <button
+          aria-pressed="${isSelected}"
+          class="pk-graph-card${isSelected ? " is-selected" : ""}"
+          data-pk-index="${index}"
+          type="button"
+        >
           <div class="pk-graph-card-head">
             <strong>${item.name}</strong>
             <span>${item.route}</span>
@@ -1642,10 +1663,48 @@ const renderPharmacokineticsGraphs = () => {
             <span>${peakLabel}</span>
             <span>${offsetLabel}</span>
           </div>
-        </article>
+        </button>
       `;
     })
     .join("");
+};
+
+const renderSelectedPharmacokineticsDetail = () => {
+  if (!pharmacokineticsSelectedDetail) {
+    return;
+  }
+
+  const selectedItem = getSelectedPharmacokineticsRow();
+
+  pharmacokineticsSelectedDetail.innerHTML = `
+    <div class="pk-selected-detail-head">
+      <span class="eyebrow">Selected profile</span>
+      <h4>${selectedItem.name}</h4>
+      <span>${selectedItem.route}</span>
+    </div>
+    <dl class="pk-selected-detail-grid">
+      <div>
+        <dt>Timing</dt>
+        <dd>${selectedItem.timing}</dd>
+      </div>
+      <div>
+        <dt>Half-life / offset</dt>
+        <dd>${selectedItem.halfLife}</dd>
+      </div>
+      <div>
+        <dt>Metabolism / elimination</dt>
+        <dd>${selectedItem.metabolism}</dd>
+      </div>
+      <div>
+        <dt>Behavior notes</dt>
+        <dd>${selectedItem.behavior}</dd>
+      </div>
+      <div>
+        <dt>Source</dt>
+        <dd class="source-link-stack">${getPharmacokineticsSourceMarkup(selectedItem)}</dd>
+      </div>
+    </dl>
+  `;
 };
 
 const renderPharmacokineticsTable = () => {
@@ -1654,16 +1713,12 @@ const renderPharmacokineticsTable = () => {
   }
 
   pharmacokineticsTable.innerHTML = pharmacokineticsRows
-    .map((item) => {
-      const sourceMarkup = item.sources
-        .map(
-          (source) =>
-            `<a href="${source.url}" rel="noreferrer" target="_blank">${source.title}</a>`,
-        )
-        .join("");
+    .map((item, index) => {
+      const sourceMarkup = getPharmacokineticsSourceMarkup(item);
+      const isSelected = index === selectedPharmacokineticsIndex;
 
       return `
-        <tr>
+        <tr class="${isSelected ? "is-selected-reference-row" : ""}">
           <td>
             <strong>${item.name}</strong>
             <span class="table-subtext">${item.route}</span>
@@ -1677,6 +1732,12 @@ const renderPharmacokineticsTable = () => {
       `;
     })
     .join("");
+};
+
+const renderPharmacokineticsReference = () => {
+  renderPharmacokineticsGraphs();
+  renderSelectedPharmacokineticsDetail();
+  renderPharmacokineticsTable();
 };
 
 const renderBuprenorphineOptions = () => {
@@ -2602,6 +2663,19 @@ if (pharmacokineticsModal) {
   });
 }
 
+if (pharmacokineticsGraphGrid) {
+  pharmacokineticsGraphGrid.addEventListener("click", (event) => {
+    const selectedCard = event.target.closest("[data-pk-index]");
+
+    if (!selectedCard) {
+      return;
+    }
+
+    selectedPharmacokineticsIndex = Number(selectedCard.dataset.pkIndex);
+    renderPharmacokineticsReference();
+  });
+}
+
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") {
     return;
@@ -2663,8 +2737,7 @@ setTermsModalVisible(false);
 renderReferenceTable();
 renderHepaticGuidanceTable();
 renderSourceTable();
-renderPharmacokineticsGraphs();
-renderPharmacokineticsTable();
+renderPharmacokineticsReference();
 renderBuprenorphineOptions();
 setRegimenEntries([{}]);
 renderSpecialtyTool();

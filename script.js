@@ -1727,7 +1727,7 @@ const renderPharmacokineticsTable = () => {
           <td>${item.halfLife}</td>
           <td>${item.metabolism}</td>
           <td>${item.behavior}</td>
-          <td class="source-link-stack">${sourceMarkup}</td>
+          <td><div class="source-link-stack">${sourceMarkup}</div></td>
         </tr>
       `;
     })

@@ -499,6 +499,7 @@ const pharmacokineticsRows = [
   {
     name: "Buprenorphine patch",
     route: "Transdermal",
+    profile: { type: "patch", peakHours: 72, wearHours: 168, halfLifeHours: 26 },
     timing:
       "Quantifiable concentrations at about 17 hours; steady state by day 3; system is worn for 7 days.",
     halfLife:
@@ -518,6 +519,7 @@ const pharmacokineticsRows = [
   {
     name: "Codeine IV",
     route: "Requested IV / injection caution",
+    profile: { type: "absorptive", peakHours: 0.5, halfLifeHours: 3, scaleHours: 12 },
     timing:
       "No current IV label basis was identified in this pass. The accessible codeine injection product reference is for intramuscular use only; IM peak is about 30 minutes.",
     halfLife:
@@ -541,6 +543,7 @@ const pharmacokineticsRows = [
   {
     name: "Codeine PO",
     route: "Oral",
+    profile: { type: "absorptive", peakHours: 1, halfLifeHours: 3, scaleHours: 14 },
     timing:
       "Maximum plasma concentration occurs about 60 minutes after administration; steady state reported within 48 hours with q4h dosing.",
     halfLife: "Codeine and metabolite plasma half-lives are reported at about 3 hours.",
@@ -559,6 +562,7 @@ const pharmacokineticsRows = [
   {
     name: "Fentanyl IV",
     route: "IV",
+    profile: { type: "absorptive", peakHours: 0.08, halfLifeHours: 3.65, scaleHours: 12 },
     timing:
       "Onset is almost immediate IV; maximum analgesic effect may take several minutes; single-dose analgesic duration is usually 30-60 minutes.",
     halfLife:
@@ -578,6 +582,7 @@ const pharmacokineticsRows = [
   {
     name: "Fentanyl patch",
     route: "Transdermal",
+    profile: { type: "patch", peakHours: 32, wearHours: 72, halfLifeHours: 24 },
     timing:
       "Time to maximal concentration after first 72-hour application is about 29-36 hours depending on patch strength.",
     halfLife:
@@ -597,6 +602,7 @@ const pharmacokineticsRows = [
   {
     name: "Hydrocodone PO",
     route: "Oral",
+    profile: { type: "absorptive", peakHours: 1.3, halfLifeHours: 3.8, scaleHours: 16 },
     timing: "After a 10 mg oral dose, maximum serum levels occur at 1.3 +/- 0.3 hours.",
     halfLife: "Plasma half-life is 3.8 +/- 0.3 hours in the referenced label.",
     metabolism:
@@ -614,6 +620,7 @@ const pharmacokineticsRows = [
   {
     name: "Hydromorphone IV",
     route: "IV",
+    profile: { type: "absorptive", peakHours: 0.08, halfLifeHours: 2.3, scaleHours: 10 },
     timing:
       "Direct systemic delivery with rapid opioid effect; IV PK is described with large volume of distribution.",
     halfLife: "Terminal elimination half-life after an IV dose is about 2.3 hours.",
@@ -632,6 +639,7 @@ const pharmacokineticsRows = [
   {
     name: "Hydromorphone PO",
     route: "Oral",
+    profile: { type: "absorptive", peakHours: 0.75, halfLifeHours: 2.7, scaleHours: 12 },
     timing:
       "Rapid oral absorption; peak plasma concentrations generally occur within 0.5-1 hour. Oral bioavailability is about 24%.",
     halfLife:
@@ -651,6 +659,7 @@ const pharmacokineticsRows = [
   {
     name: "Morphine IV",
     route: "IV",
+    profile: { type: "absorptive", peakHours: 0.08, halfLifeHours: 2, scaleHours: 10 },
     timing:
       "Direct systemic route; apparent volume of distribution after IV dosing ranges from 1.0-4.7 L/kg.",
     halfLife:
@@ -670,6 +679,7 @@ const pharmacokineticsRows = [
   {
     name: "Morphine PO",
     route: "Oral",
+    profile: { type: "absorptive", peakHours: 1, halfLifeHours: 2, scaleHours: 10 },
     timing:
       "About two-thirds absorbed from the GI tract; maximum analgesic effect occurs about 60 minutes after administration.",
     halfLife:
@@ -689,6 +699,7 @@ const pharmacokineticsRows = [
   {
     name: "Oxycodone PO",
     route: "Oral",
+    profile: { type: "absorptive", peakHours: 1.5, halfLifeHours: 3.7, scaleHours: 16 },
     timing:
       "Immediate-release products commonly reach Tmax around 1.4-1.9 hours; steady-state occurs in about 18-24 hours.",
     halfLife: "Apparent elimination half-life is about 3.5-4 hours.",
@@ -707,6 +718,7 @@ const pharmacokineticsRows = [
   {
     name: "Tapentadol PO",
     route: "Oral",
+    profile: { type: "absorptive", peakHours: 1.25, halfLifeHours: 4, scaleHours: 16 },
     timing:
       "Maximum serum concentrations are typically observed around 1.25 hours after dosing.",
     halfLife: "Terminal half-life averages about 4 hours after oral administration.",
@@ -725,6 +737,7 @@ const pharmacokineticsRows = [
   {
     name: "Tramadol IV",
     route: "IV / injection",
+    profile: { type: "absorptive", peakHours: 0.75, halfLifeHours: 6, scaleHours: 24 },
     timing:
       "Injection product may be given slow IV, IM, SC, or infusion; the referenced SmPC reports rapid and complete IM absorption with Cmax at about 45 minutes.",
     halfLife:
@@ -743,6 +756,7 @@ const pharmacokineticsRows = [
   {
     name: "Tramadol PO",
     route: "Oral",
+    profile: { type: "absorptive", peakHours: 2, halfLifeHours: 6.3, scaleHours: 24 },
     timing:
       "Mean oral bioavailability is about 75%; peak tramadol and M1 concentrations occur at about 2 and 3 hours.",
     halfLife:
@@ -904,6 +918,11 @@ const termsAcceptInput = document.querySelector("#termsAcceptInput");
 const termsAcceptButton = document.querySelector("#termsAcceptButton");
 const termsCloseButton = document.querySelector("#termsCloseButton");
 const termsReviewButton = document.querySelector("#termsReviewButton");
+const pharmacokineticsOpenButton = document.querySelector("#pharmacokineticsOpenButton");
+const pharmacokineticsModal = document.querySelector("#pharmacokineticsModal");
+const pharmacokineticsCloseButton = document.querySelector(
+  "#pharmacokineticsCloseButton",
+);
 const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
@@ -928,6 +947,7 @@ const referenceTable = document.querySelector("#referenceTable");
 const hepaticGuidanceTableBody = document.querySelector("#hepaticGuidanceTable");
 const sourceTable = document.querySelector("#sourceTable");
 const pharmacokineticsTable = document.querySelector("#pharmacokineticsTable");
+const pharmacokineticsGraphGrid = document.querySelector("#pharmacokineticsGraphGrid");
 const regimenSummaryTable = document.querySelector("#regimenSummaryTable");
 
 const resultTitle = document.querySelector("#resultTitle");
@@ -1032,6 +1052,16 @@ const storeTermsAcceptance = () => {
   }
 };
 
+const isModalVisible = (modalElement) =>
+  Boolean(modalElement && !modalElement.classList.contains("is-hidden"));
+
+const updateModalOpenState = () => {
+  document.body.classList.toggle(
+    "modal-open",
+    isModalVisible(termsModal) || isModalVisible(pharmacokineticsModal),
+  );
+};
+
 const setTermsModalVisible = (visible, options = {}) => {
   if (!termsModal) {
     return;
@@ -1039,7 +1069,7 @@ const setTermsModalVisible = (visible, options = {}) => {
 
   const reviewMode = Boolean(options.reviewMode);
   termsModal.classList.toggle("is-hidden", !visible);
-  document.body.classList.toggle("modal-open", visible);
+  updateModalOpenState();
 
   if (termsModalEyebrow) {
     termsModalEyebrow.textContent = reviewMode
@@ -1059,6 +1089,20 @@ const setTermsModalVisible = (visible, options = {}) => {
     termsAcceptInput.value = "";
     termsAcceptButton.disabled = true;
     window.setTimeout(() => termsAcceptInput.focus(), 0);
+  }
+};
+
+const setPharmacokineticsModalVisible = (visible) => {
+  if (!pharmacokineticsModal) {
+    return;
+  }
+
+  pharmacokineticsModal.classList.toggle("is-hidden", !visible);
+  pharmacokineticsOpenButton?.setAttribute("aria-expanded", String(visible));
+  updateModalOpenState();
+
+  if (visible && pharmacokineticsCloseButton) {
+    window.setTimeout(() => pharmacokineticsCloseButton.focus(), 0);
   }
 };
 
@@ -1476,6 +1520,129 @@ const renderSourceTable = () => {
           <td>${item.note}</td>
           <td>${linkMarkup}</td>
         </tr>
+      `;
+    })
+    .join("");
+};
+
+const formatGraphTime = (hours) => {
+  if (hours >= 48) {
+    return `${formatDose(hours / 24)} d`;
+  }
+
+  if (hours < 1) {
+    return `${formatDose(hours * 60)} min`;
+  }
+
+  return `${formatDose(hours)} h`;
+};
+
+const getGraphValue = (profile, hour) => {
+  if (profile.type === "patch") {
+    if (hour <= profile.peakHours) {
+      return Math.min(1, hour / profile.peakHours);
+    }
+
+    if (hour <= profile.wearHours) {
+      return 1;
+    }
+
+    return Math.exp((-Math.LN2 * (hour - profile.wearHours)) / profile.halfLifeHours);
+  }
+
+  if (hour <= profile.peakHours) {
+    return Math.pow(hour / profile.peakHours, 0.72);
+  }
+
+  return Math.exp((-Math.LN2 * (hour - profile.peakHours)) / profile.halfLifeHours);
+};
+
+const getGraphScaleHours = (profile) => {
+  if (profile.type === "patch") {
+    return profile.wearHours + profile.halfLifeHours * 2;
+  }
+
+  return profile.scaleHours || profile.peakHours + profile.halfLifeHours * 4;
+};
+
+const buildPharmacokineticsGraphSvg = (profile) => {
+  const width = 270;
+  const height = 96;
+  const xInset = 12;
+  const yTop = 10;
+  const yBottom = 76;
+  const xMax = getGraphScaleHours(profile);
+  const xPosition = (hour) => xInset + (hour / xMax) * (width - xInset - 8);
+  const yPosition = (value) => yTop + (1 - value) * (yBottom - yTop);
+  const graphHours = Array.from({ length: 61 }, (_, index) => (xMax * index) / 60);
+
+  graphHours.push(profile.peakHours);
+
+  if (profile.type === "patch") {
+    graphHours.push(profile.wearHours);
+  }
+
+  const points = [...new Set(graphHours)]
+    .sort((left, right) => left - right)
+    .map((hour) => {
+      const value = Math.max(0, Math.min(1, getGraphValue(profile, hour)));
+      return `${formatDose(xPosition(hour))},${formatDose(yPosition(value))}`;
+    });
+
+  const peakX = xPosition(profile.peakHours);
+  const offsetX = profile.type === "patch" ? xPosition(profile.wearHours) : null;
+
+  return `
+    <svg
+      aria-hidden="true"
+      class="pk-profile-svg"
+      focusable="false"
+      viewBox="0 0 ${width} ${height}"
+    >
+      <line class="pk-axis" x1="${xInset}" y1="${yBottom}" x2="${width - 8}" y2="${yBottom}" />
+      <line class="pk-axis" x1="${xInset}" y1="${yTop}" x2="${xInset}" y2="${yBottom}" />
+      <line class="pk-marker" x1="${formatDose(peakX)}" y1="${yTop}" x2="${formatDose(peakX)}" y2="${yBottom}" />
+      ${
+        offsetX
+          ? `<line class="pk-marker pk-marker-offset" x1="${formatDose(offsetX)}" y1="${yTop}" x2="${formatDose(offsetX)}" y2="${yBottom}" />`
+          : ""
+      }
+      <polyline class="pk-profile-line" points="${points.join(" ")}" />
+      <text class="pk-axis-label" x="${xInset}" y="91">0</text>
+      <text class="pk-axis-label" x="${width - 54}" y="91">${formatGraphTime(xMax)}</text>
+    </svg>
+  `;
+};
+
+const renderPharmacokineticsGraphs = () => {
+  if (!pharmacokineticsGraphGrid) {
+    return;
+  }
+
+  pharmacokineticsGraphGrid.innerHTML = pharmacokineticsRows
+    .map((item) => {
+      const profile = item.profile;
+      const peakLabel =
+        profile.type === "patch"
+          ? `Steady/peak: ~${formatGraphTime(profile.peakHours)}`
+          : `Peak: ~${formatGraphTime(profile.peakHours)}`;
+      const offsetLabel =
+        profile.type === "patch"
+          ? `Patch wear: ${formatGraphTime(profile.wearHours)}`
+          : `Half-life: ~${formatGraphTime(profile.halfLifeHours)}`;
+
+      return `
+        <article class="pk-graph-card">
+          <div class="pk-graph-card-head">
+            <strong>${item.name}</strong>
+            <span>${item.route}</span>
+          </div>
+          ${buildPharmacokineticsGraphSvg(profile)}
+          <div class="pk-graph-meta">
+            <span>${peakLabel}</span>
+            <span>${offsetLabel}</span>
+          </div>
+        </article>
       `;
     })
     .join("");
@@ -2415,6 +2582,41 @@ if (termsReviewButton) {
   });
 }
 
+if (pharmacokineticsOpenButton) {
+  pharmacokineticsOpenButton.addEventListener("click", () => {
+    setPharmacokineticsModalVisible(true);
+  });
+}
+
+if (pharmacokineticsCloseButton) {
+  pharmacokineticsCloseButton.addEventListener("click", () => {
+    setPharmacokineticsModalVisible(false);
+  });
+}
+
+if (pharmacokineticsModal) {
+  pharmacokineticsModal.addEventListener("click", (event) => {
+    if (event.target === pharmacokineticsModal) {
+      setPharmacokineticsModalVisible(false);
+    }
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") {
+    return;
+  }
+
+  if (isModalVisible(pharmacokineticsModal)) {
+    setPharmacokineticsModalVisible(false);
+    return;
+  }
+
+  if (isModalVisible(termsModal)) {
+    setTermsModalVisible(false);
+  }
+});
+
 exampleButton.addEventListener("click", () => {
   calculationModeSelect.value = "convert";
   setRegimenEntries([
@@ -2461,6 +2663,7 @@ setTermsModalVisible(false);
 renderReferenceTable();
 renderHepaticGuidanceTable();
 renderSourceTable();
+renderPharmacokineticsGraphs();
 renderPharmacokineticsTable();
 renderBuprenorphineOptions();
 setRegimenEntries([{}]);

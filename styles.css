@@ -162,6 +162,14 @@ body.modal-open {
   font-weight: 700;
 }
 
+.utility-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 a {
   color: var(--accent-dark);
 }
@@ -199,6 +207,22 @@ a:focus-visible {
   background: rgba(255, 255, 255, 0.1);
   color: var(--banner-text);
   box-shadow: none;
+}
+
+.topbar-reference-button {
+  min-height: 38px;
+  border: 1.5px solid color-mix(in srgb, var(--banner-text) 48%, transparent);
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--banner-text);
+  box-shadow: none;
+}
+
+.topbar-reference-button:hover {
+  border-color: color-mix(in srgb, var(--banner-text) 62%, transparent);
+  background: rgba(255, 255, 255, 0.24);
+  color: var(--banner-text);
+  box-shadow: none;
+  transform: none;
 }
 
 .theme-toggle-track {
@@ -1171,6 +1195,87 @@ dd {
   table-layout: fixed;
 }
 
+.pk-reference-block {
+  display: grid;
+  gap: 14px;
+}
+
+.pk-graph-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.pk-graph-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  background: var(--surface-soft);
+}
+
+.pk-graph-card-head {
+  display: grid;
+  gap: 2px;
+}
+
+.pk-graph-card-head strong {
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.pk-graph-card-head span,
+.pk-graph-meta {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.pk-profile-svg {
+  width: 100%;
+  min-height: 96px;
+  overflow: visible;
+}
+
+.pk-axis {
+  stroke: var(--table-header-line);
+  stroke-width: 1.5;
+}
+
+.pk-marker {
+  stroke: color-mix(in srgb, var(--accent) 42%, transparent);
+  stroke-dasharray: 4 4;
+  stroke-width: 1.4;
+}
+
+.pk-marker-offset {
+  stroke: color-mix(in srgb, var(--warning) 48%, transparent);
+}
+
+.pk-profile-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4;
+}
+
+.pk-axis-label {
+  fill: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.pk-graph-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  justify-content: space-between;
+}
+
 .pharmacokinetics-table th:nth-child(1),
 .pharmacokinetics-table td:nth-child(1) {
   width: 15%;
@@ -1322,6 +1427,17 @@ footer {
   background: rgba(6, 18, 16, 0.58);
 }
 
+.reference-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 20px;
+  background: rgba(6, 18, 16, 0.58);
+}
+
 .terms-dialog {
   width: min(760px, 100%);
   max-height: min(88vh, 820px);
@@ -1331,6 +1447,56 @@ footer {
   background: #ffffff;
   color: #000000;
   box-shadow: 0 24px 72px rgba(0, 0, 0, 0.28);
+}
+
+.reference-dialog {
+  width: min(1180px, 100%);
+  max-height: min(90vh, 900px);
+  overflow: auto;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.28);
+}
+
+.reference-modal-header {
+  display: flex;
+  gap: 18px;
+  align-items: start;
+  justify-content: space-between;
+  padding: 22px 24px 18px;
+  border-bottom: 2px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.reference-modal-header h2,
+.reference-modal-header p {
+  margin: 0;
+}
+
+.reference-modal-header > div {
+  display: grid;
+  gap: 6px;
+}
+
+.reference-modal-header .eyebrow {
+  margin: 0;
+}
+
+.reference-modal-header p:not(.eyebrow) {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.modal-close-button {
+  flex: 0 0 auto;
+}
+
+.reference-modal-body {
+  display: grid;
+  gap: 28px;
+  padding: 24px;
 }
 
 .terms-header {
@@ -1491,19 +1657,30 @@ footer {
     width: auto;
   }
 
+  .topbar-reference-button {
+    width: auto;
+  }
+
   .footer-link-button {
     width: auto;
   }
 
+  .reference-modal,
   .terms-modal {
     padding: 12px;
   }
 
+  .reference-modal-header,
+  .reference-modal-body,
   .terms-header,
   .terms-body,
   .terms-acceptance {
     padding-right: 18px;
     padding-left: 18px;
+  }
+
+  .reference-modal-header {
+    display: grid;
   }
 
   #finalDose,

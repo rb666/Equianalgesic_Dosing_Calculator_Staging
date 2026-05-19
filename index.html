@@ -21,7 +21,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260519-pharmacokinetics-reference" />
+    <link rel="stylesheet" href="styles.css?v=20260519-pharmacokinetics-modal" />
   </head>
   <body>
     <div class="environment-banner">
@@ -30,17 +30,28 @@
           <strong>Opioid Conversion</strong>
           <span>Calculate. Convert. Care.</span>
         </div>
-        <button
-          aria-pressed="false"
-          class="theme-toggle"
-          id="themeToggle"
-          type="button"
-        >
-          <span class="theme-toggle-track" aria-hidden="true">
-            <span class="theme-toggle-thumb"></span>
-          </span>
-          <span id="themeToggleLabel">Theme: Light</span>
-        </button>
+        <div class="utility-actions">
+          <button
+            aria-controls="pharmacokineticsModal"
+            aria-expanded="false"
+            class="topbar-reference-button"
+            id="pharmacokineticsOpenButton"
+            type="button"
+          >
+            PK reference
+          </button>
+          <button
+            aria-pressed="false"
+            class="theme-toggle"
+            id="themeToggle"
+            type="button"
+          >
+            <span class="theme-toggle-track" aria-hidden="true">
+              <span class="theme-toggle-thumb"></span>
+            </span>
+            <span id="themeToggleLabel">Theme: Light</span>
+          </button>
+        </div>
       </div>
     </div>
     <header class="site-header">
@@ -741,54 +752,6 @@
         </section>
       </details>
 
-      <details class="compact-section" aria-label="Pharmacokinetics reference">
-        <summary>
-          <span class="compact-title">
-            <span class="eyebrow">Reference</span>
-            <strong>Pharmacokinetics quick reference</strong>
-            <span>Open for route behavior, timing, metabolism, and source notes.</span>
-          </span>
-          <span class="summary-action" aria-hidden="true"></span>
-        </summary>
-
-        <section class="reference-section compact-section-body">
-          <div class="section-heading">
-            <p class="eyebrow">Pharmacokinetics</p>
-            <h2>Route behavior and monitoring considerations</h2>
-          </div>
-
-          <p class="reference-copy">
-            This chart is a clinical reference aid, not a dosing algorithm. Values
-            are approximate label- or reference-derived pharmacokinetic summaries
-            and should be reconciled with patient-specific organ function,
-            formulation, interacting medications, and institutional policy.
-          </p>
-
-          <div class="table-wrap pharmacokinetics-table-wrap">
-            <table class="pharmacokinetics-table">
-              <thead>
-                <tr>
-                  <th scope="col">Medication / route</th>
-                  <th scope="col">Timing</th>
-                  <th scope="col">Half-life / offset</th>
-                  <th scope="col">Metabolism / elimination</th>
-                  <th scope="col">Behavior notes</th>
-                  <th scope="col">Source</th>
-                </tr>
-              </thead>
-              <tbody id="pharmacokineticsTable"></tbody>
-            </table>
-          </div>
-
-          <div class="clinical-notes pharmacokinetics-notes">
-            <h3>Reference notes</h3>
-            <ul>
-              <li>Methadone IV and PO are intentionally omitted from this table for a separate, more detailed review due to highly variable and nonlinear pharmacokinetics.</li>
-              <li>Codeine IV is included as a requested caution row. The accessible injection reference located for this pass is intramuscular-only, so IV use should not be inferred from that product reference.</li>
-            </ul>
-          </div>
-        </section>
-      </details>
     </main>
 
     <footer>
@@ -802,6 +765,84 @@
         </button>
       </p>
     </footer>
+
+    <div
+      aria-labelledby="pharmacokineticsModalTitle"
+      aria-modal="true"
+      class="reference-modal is-hidden"
+      id="pharmacokineticsModal"
+      role="dialog"
+    >
+      <div class="reference-dialog">
+        <div class="reference-modal-header">
+          <div>
+            <p class="eyebrow">Pharmacokinetics</p>
+            <h2 id="pharmacokineticsModalTitle">Pharmacokinetics reference</h2>
+            <p>
+              Visual profile graphs, timing behavior, metabolism, and source notes.
+            </p>
+          </div>
+          <button
+            class="secondary-button modal-close-button"
+            id="pharmacokineticsCloseButton"
+            type="button"
+          >
+            Close
+          </button>
+        </div>
+
+        <div class="reference-modal-body">
+          <section class="pk-reference-block">
+            <div class="section-heading">
+              <p class="eyebrow">Graphs</p>
+              <h3>Normalized pharmacokinetic profiles</h3>
+            </div>
+            <p class="reference-copy">
+              Graphs are simplified, normalized visual aids based on listed timing
+              and half-life values. They are intended to characterize relative onset,
+              peak, and offset behavior, not predict patient-specific concentrations.
+            </p>
+            <div class="pk-graph-grid" id="pharmacokineticsGraphGrid"></div>
+          </section>
+
+          <section class="pk-reference-block">
+            <div class="section-heading">
+              <p class="eyebrow">Chart</p>
+              <h3>Route behavior and monitoring considerations</h3>
+            </div>
+            <p class="reference-copy">
+              Values are approximate label- or reference-derived pharmacokinetic
+              summaries and should be reconciled with patient-specific organ
+              function, formulation, interacting medications, and institutional policy.
+            </p>
+
+            <div class="table-wrap pharmacokinetics-table-wrap">
+              <table class="pharmacokinetics-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Medication / route</th>
+                    <th scope="col">Timing</th>
+                    <th scope="col">Half-life / offset</th>
+                    <th scope="col">Metabolism / elimination</th>
+                    <th scope="col">Behavior notes</th>
+                    <th scope="col">Source</th>
+                  </tr>
+                </thead>
+                <tbody id="pharmacokineticsTable"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <div class="clinical-notes pharmacokinetics-notes">
+            <h3>Reference notes</h3>
+            <ul>
+              <li>Methadone IV and PO are intentionally omitted from this table for a separate, more detailed review due to highly variable and nonlinear pharmacokinetics.</li>
+              <li>Codeine IV is included as a requested caution row. The accessible injection reference located for this pass is intramuscular-only, so IV use should not be inferred from that product reference.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div
       aria-labelledby="termsModalTitle"
@@ -882,6 +923,6 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260519-pharmacokinetics-reference"></script>
+    <script src="script.js?v=20260519-pharmacokinetics-modal"></script>
   </body>
 </html>

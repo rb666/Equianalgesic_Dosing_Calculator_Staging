@@ -1202,8 +1202,8 @@ dd {
 
 .pk-interactive-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.42fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(430px, 0.55fr);
+  gap: 18px;
   align-items: start;
 }
 
@@ -1527,7 +1527,7 @@ footer {
   display: grid;
   align-items: center;
   justify-items: center;
-  padding: 20px;
+  padding: 14px;
   background: rgba(6, 18, 16, 0.58);
 }
 
@@ -1543,7 +1543,7 @@ footer {
 }
 
 .reference-dialog {
-  width: min(1180px, 100%);
+  width: min(1480px, 100%);
   max-height: min(90vh, 900px);
   overflow: auto;
   border: 1.5px solid var(--line);

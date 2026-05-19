@@ -21,7 +21,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260519-staging-client-notes" />
+    <link rel="stylesheet" href="styles.css?v=20260519-wider-pk-reference" />
   </head>
   <body>
     <div class="environment-banner">
@@ -62,8 +62,7 @@
             <h1>Equianalgesic Dose Calculator</h1>
             <p>
               Calculate total daily oral morphine equivalent, convert to a target
-              opioid, open specialty methadone and Suboxone tools, or estimate
-              benzodiazepine equivalents.
+              opioid, or open the specialty methadone and Suboxone tools.
             </p>
           </div>
           <section class="safety-banner" aria-label="Clinical warning and disclaimer">
@@ -167,7 +166,7 @@
           type="button"
         >
           <span>Benzodiazepines</span>
-          <small>Diazepam equivalent</small>
+          <small>Equivalence calculator</small>
         </button>
       </nav>
 
@@ -690,15 +689,16 @@
           <form class="calculator-panel" id="benzoForm">
             <div class="section-heading">
               <p class="eyebrow">Benzodiazepines</p>
-              <h2>Diazepam-equivalent conversion</h2>
+              <h2>GABA-A equivalence calculator</h2>
             </div>
 
             <div class="field-grid">
               <label for="benzoSourceDrug">
-                Converting from
-                <select id="benzoSourceDrug" name="benzoSourceDrug"></select>
+                Source Benzodiazepine
+                <select id="benzoSourceDrug" name="benzoSourceDrug">
+                </select>
                 <span class="field-hint">
-                  Select the current benzodiazepine.
+                  Select the source benzodiazepine to convert from.
                 </span>
               </label>
 
@@ -718,16 +718,17 @@
               </label>
 
               <label for="benzoTargetDrug">
-                Converting to
-                <select id="benzoTargetDrug" name="benzoTargetDrug"></select>
+                Target Benzodiazepine
+                <select id="benzoTargetDrug" name="benzoTargetDrug">
+                </select>
                 <span class="field-hint">
-                  Select the target benzodiazepine.
+                  Select the target benzodiazepine to convert to.
                 </span>
               </label>
 
               <div class="slider-group">
                 <div class="slider-header">
-                  <label for="benzoReductionRange">Safety reduction</label>
+                  <label for="benzoReductionRange">Cross-tolerance safety reduction</label>
                   <div class="percent-input">
                     <input
                       id="benzoReductionNumber"
@@ -760,16 +761,14 @@
             </div>
 
             <p class="basis-note">
-              Calculates approximate benzodiazepine equivalents using diazepam
-              10 mg/day as the shared reference point. This does not convert
-              between opioids and benzodiazepines.
+              Calculates equivalents using Diazepam 10 mg as the standard base reference. Cross-class conversion between opioids and benzodiazepines is clinically unsafe and not supported.
             </p>
           </form>
 
           <section class="result-panel" aria-live="polite" aria-atomic="true">
             <div class="section-heading">
               <p class="eyebrow">Benzodiazepine result</p>
-              <h2>Equivalent daily estimate</h2>
+              <h2>Equivalent starting estimate</h2>
             </div>
 
             <div class="dose-result">
@@ -779,26 +778,26 @@
 
             <dl class="calculation-steps">
               <div>
-                <dt>Source diazepam equivalent</dt>
-                <dd id="benzoRawDiazepamEquiv">0 mg/day</dd>
+                <dt>Source Diazepam equivalent (unreduced)</dt>
+                <dd id="benzoRawDiazepamEquiv">0 mg Diazepam/day</dd>
               </div>
               <div>
-                <dt>Reduced diazepam equivalent</dt>
-                <dd id="benzoReducedDiazepamEquiv">0 mg/day</dd>
+                <dt>Reduced Diazepam equivalent</dt>
+                <dd id="benzoReducedDiazepamEquiv">0 mg Diazepam/day</dd>
               </div>
               <div>
-                <dt>Reduction applied</dt>
+                <dt>Safety reduction applied</dt>
                 <dd id="benzoReductionApplied">0% reduction</dd>
               </div>
             </dl>
 
             <div class="clinical-notes">
-              <h3>Benzodiazepine cautions</h3>
+              <h3 style="color: var(--danger, #7f2620);">CRITICAL CLINICAL CAUTIONS</h3>
               <ul>
-                <li>Never abruptly discontinue chronic benzodiazepines; withdrawal can cause seizures, delirium, and autonomic instability.</li>
-                <li>Equivalent doses are approximate and are not taper schedules.</li>
-                <li>Age, hepatic function, active metabolites, half-life, alcohol, opioids, and other CNS depressants can materially change clinical risk.</li>
-                <li>Use conservative reductions and individualized tapering when switching agents.</li>
+                <li style="font-weight: bold;">NEVER abruptly discontinue benzodiazepines. Abrupt cessation carries a high risk of severe withdrawal symptoms, including life-threatening seizures, delirium, and severe autonomic instability. Always use a gradual, clinical taper.</li>
+                <li>Combining Benzodiazepines with Opioids dramatically increases the risk of profound sedation, respiratory depression, coma, and death. Use extreme caution when co-prescribing.</li>
+                <li>Equivalent doses are approximate. Patient-specific factors such as half-life (e.g., active metabolites in diazepam/chlordiazepoxide vs. short-acting alprazolam/triazolam), age, and liver function heavily influence clinical effects.</li>
+                <li>Start conservatively and titrate based on individual clinical response and tolerability.</li>
               </ul>
             </div>
           </section>
@@ -982,7 +981,7 @@
           <div class="clinical-notes pharmacokinetics-notes">
             <h3>Reference notes</h3>
             <ul>
-              <li>Methadone IV and PO are intentionally omitted from this table for a separate, more detailed review due to highly variable and nonlinear pharmacokinetics.</li>
+              <li>Methadone IV is intentionally omitted from this table for a separate, more detailed review due to highly variable and nonlinear pharmacokinetics. Methadone PO is included in this reference to detail its highly variable half-life, multi-receptor mechanism, and high accumulation risks. Use extreme caution when titrating.</li>
               <li>Codeine IV is included as a requested caution row. The accessible injection reference located for this pass is intramuscular-only, so IV use should not be inferred from that product reference.</li>
             </ul>
           </div>
@@ -1069,6 +1068,6 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260519-staging-client-notes"></script>
+    <script src="script.js?v=20260519-wider-pk-reference"></script>
   </body>
 </html>

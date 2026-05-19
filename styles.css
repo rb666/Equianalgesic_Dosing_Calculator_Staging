@@ -990,7 +990,8 @@ button:active {
 
 #finalDose,
 #methadoneConservativeMmeDose,
-#methadoneFinalDose {
+#methadoneFinalDose,
+#benzoFinalDose {
   font-size: 4.35rem;
   font-weight: 850;
   line-height: 1;
@@ -998,7 +999,8 @@ button:active {
 
 #finalUnit,
 #methadoneConservativeMmeUnit,
-#methadoneFinalUnit {
+#methadoneFinalUnit,
+#benzoFinalUnit {
   font-size: 1.5rem;
   font-weight: 800;
 }
@@ -1392,12 +1394,12 @@ dd {
 
 .pharmacokinetics-table th:nth-child(5),
 .pharmacokinetics-table td:nth-child(5) {
-  width: 21%;
+  width: 16%;
 }
 
 .pharmacokinetics-table th:nth-child(6),
 .pharmacokinetics-table td:nth-child(6) {
-  width: 10%;
+  width: 15%;
 }
 
 .pharmacokinetics-table td,
@@ -1793,7 +1795,8 @@ footer {
 
   #finalDose,
   #methadoneConservativeMmeDose,
-  #methadoneFinalDose {
+  #methadoneFinalDose,
+  #benzoFinalDose {
     font-size: 3.1rem;
   }
 

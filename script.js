@@ -15,15 +15,15 @@ const methadoneRatioTable = [
 ];
 
 const benzoConversionOptions = [
-  { id: "alprazolam", medication: "Alprazolam", diazepam10Equivalent: 0.5 },
-  { id: "chlordiazepoxide", medication: "Chlordiazepoxide", diazepam10Equivalent: 25 },
-  { id: "clonazepam", medication: "Clonazepam", diazepam10Equivalent: 0.5 },
-  { id: "clorazepate", medication: "Clorazepate", diazepam10Equivalent: 15 },
-  { id: "diazepam", medication: "Diazepam", diazepam10Equivalent: 10 },
-  { id: "lorazepam", medication: "Lorazepam", diazepam10Equivalent: 1 },
-  { id: "oxazepam", medication: "Oxazepam", diazepam10Equivalent: 20 },
-  { id: "temazepam", medication: "Temazepam", diazepam10Equivalent: 20 },
-  { id: "triazolam", medication: "Triazolam", diazepam10Equivalent: 0.5 },
+  { id: "alprazolam", medication: "Alprazolam", equiv: 0.5, doseUnit: "mg" },
+  { id: "chlordiazepoxide", medication: "Chlordiazepoxide", equiv: 25, doseUnit: "mg" },
+  { id: "clonazepam", medication: "Clonazepam", equiv: 0.5, doseUnit: "mg" },
+  { id: "clorazepate", medication: "Clorazepate", equiv: 15, doseUnit: "mg" },
+  { id: "diazepam", medication: "Diazepam", equiv: 10, doseUnit: "mg" },
+  { id: "lorazepam", medication: "Lorazepam", equiv: 1, doseUnit: "mg" },
+  { id: "oxazepam", medication: "Oxazepam", equiv: 20, doseUnit: "mg" },
+  { id: "temazepam", medication: "Temazepam", equiv: 20, doseUnit: "mg" },
+  { id: "triazolam", medication: "Triazolam", equiv: 0.25, doseUnit: "mg" }
 ];
 
 const conversionOptions = [
@@ -40,21 +40,21 @@ const conversionOptions = [
   {
     id: "Morphine_Oral",
     medication: "Morphine",
-    route: "Oral",
+    route: "Oral (IR)",
     referenceDose: 25,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Morphine oral",
+    label: "Morphine oral (IR)",
     targetable: true,
   },
   {
     id: "Morphine_Oral_ER",
     medication: "Morphine",
-    route: "Oral ER",
+    route: "Oral (ER)",
     referenceDose: 25,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Morphine oral ER",
+    label: "Morphine oral (ER)",
     targetable: true,
   },
   {
@@ -70,51 +70,51 @@ const conversionOptions = [
   {
     id: "Codeine_Oral",
     medication: "Codeine",
-    route: "Oral",
+    route: "Oral (IR)",
     referenceDose: 10,
     doseUnit: "mg",
     oralMorphineEquivalent: 1.5,
-    label: "Codeine oral",
+    label: "Codeine oral (IR)",
     targetable: true,
   },
   {
     id: "Hydrocodone_Oral",
     medication: "Hydrocodone",
-    route: "Oral",
+    route: "Oral (IR)",
     referenceDose: 25,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Hydrocodone oral",
+    label: "Hydrocodone oral (IR)",
     targetable: true,
   },
   {
     id: "Hydrocodone_Oral_ER",
     medication: "Hydrocodone",
-    route: "Oral ER",
+    route: "Oral (ER)",
     referenceDose: 25,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Hydrocodone oral ER",
+    label: "Hydrocodone oral (ER)",
     targetable: true,
   },
   {
     id: "Oxycodone_Oral",
     medication: "Oxycodone",
-    route: "Oral",
+    route: "Oral (IR)",
     referenceDose: 20,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Oxycodone oral",
+    label: "Oxycodone oral (IR)",
     targetable: true,
   },
   {
     id: "Oxycodone_Oral_ER",
     medication: "Oxycodone",
-    route: "Oral ER",
+    route: "Oral (ER)",
     referenceDose: 20,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Oxycodone oral ER",
+    label: "Oxycodone oral (ER)",
     targetable: true,
   },
   {
@@ -130,21 +130,21 @@ const conversionOptions = [
   {
     id: "Hydromorphone_Oral",
     medication: "Hydromorphone",
-    route: "Oral",
+    route: "Oral (IR)",
     referenceDose: 5,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Hydromorphone oral",
+    label: "Hydromorphone oral (IR)",
     targetable: true,
   },
   {
     id: "Hydromorphone_Oral_ER",
     medication: "Hydromorphone",
-    route: "Oral ER",
+    route: "Oral (ER)",
     referenceDose: 5,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Hydromorphone oral ER",
+    label: "Hydromorphone oral (ER)",
     targetable: true,
   },
   {
@@ -180,11 +180,11 @@ const conversionOptions = [
   {
     id: "Meperidine_Oral",
     medication: "Meperidine",
-    route: "Oral",
+    route: "Oral (IR)",
     referenceDose: 300,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Meperidine oral",
+    label: "Meperidine oral (IR)",
     targetable: true,
   },
   {
@@ -290,41 +290,41 @@ const conversionOptions = [
   {
     id: "Tramadol_Oral",
     medication: "Tramadol",
-    route: "Oral",
+    route: "Oral (IR)",
     referenceDose: 120,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Tramadol oral",
+    label: "Tramadol oral (IR)",
     targetable: true,
   },
   {
     id: "Tramadol_Oral_ER",
     medication: "Tramadol",
-    route: "Oral ER",
+    route: "Oral (ER)",
     referenceDose: 120,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Tramadol oral ER",
+    label: "Tramadol oral (ER)",
     targetable: true,
   },
   {
     id: "Tapentadol_Oral",
     medication: "Tapentadol",
-    route: "Oral",
+    route: "Oral (IR)",
     referenceDose: 100,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Tapentadol oral",
+    label: "Tapentadol oral (IR)",
     targetable: true,
   },
   {
     id: "Tapentadol_Oral_ER",
     medication: "Tapentadol",
-    route: "Oral ER",
+    route: "Oral (ER)",
     referenceDose: 100,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Tapentadol oral ER",
+    label: "Tapentadol oral (ER)",
     targetable: true,
   },
   {
@@ -340,21 +340,21 @@ const conversionOptions = [
   {
     id: "Oxymorphone_Oral",
     medication: "Oxymorphone",
-    route: "Oral",
+    route: "Oral (IR)",
     referenceDose: 10,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Oxymorphone oral",
+    label: "Oxymorphone oral (IR)",
     targetable: true,
   },
   {
     id: "Oxymorphone_Oral_ER",
     medication: "Oxymorphone",
-    route: "Oral ER",
+    route: "Oral (ER)",
     referenceDose: 10,
     doseUnit: "mg",
     oralMorphineEquivalent: 25,
-    label: "Oxymorphone oral ER",
+    label: "Oxymorphone oral (ER)",
     targetable: true,
   },
   {
@@ -564,29 +564,16 @@ const sourceReferences = [
       "Background source for hepatic caution language; the mild/moderate/severe percentage ranges are the client-requested staging rules.",
   },
   {
-    title: "Choosing equivalent doses of oral benzodiazepines – NHS Specialist Pharmacy Service",
-    url:
-      "https://www.sps.nhs.uk/articles/choosing-equivalent-doses-of-oral-benzodiazepines/",
-    note:
-      "Reference for approximate oral benzodiazepine diazepam-equivalent values used by the benzodiazepine calculator.",
-  },
-  {
-    title: "Benzodiazepine equivalence table – Ashton Manual",
-    url: "https://www.benzo.org.uk/bzequiv.htm",
-    note:
-      "Supplemental reference for benzodiazepine equivalence values and tapering context. Equivalence remains approximate and patient-specific.",
-  },
-  {
     title: "Configured local staging rules",
     url: "",
     note:
-      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested oral methadone 4.7 MME factor, 3.0 conservative oral methadone estimate, hepatic advisory bands, ER opioid variants, and benzodiazepine equivalence calculator.",
+      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested oral methadone 4.7 MME factor, 3.0 conservative oral methadone estimate, and hepatic advisory bands.",
   },
   {
-    title: "Configured methadone ratio table",
+    title: "Production methadone ratio table",
     url: "",
     note:
-      "Local staging configuration for specialty morphine:methadone bands: 0-30 mg 2:1, 31-99 mg 4:1, 100-299 mg 8:1, 300-499 mg 12:1, 500-999 mg 15:1, and 1000 mg/day or more 20:1.",
+      "Cloned from the production methadone tool for the specialty morphine:methadone bands: 0-30 mg 2:1, 31-99 mg 4:1, 100-299 mg 8:1, 300-499 mg 12:1, 500-999 mg 15:1, and 1000 mg/day or more 20:1.",
   },
 ];
 
@@ -600,13 +587,13 @@ const pharmacokineticsRows = [
     halfLife:
       "After removal, concentrations decrease about 50% within 10-24 hours, then decline with an apparent terminal half-life of about 26 hours.",
     metabolism:
-      "Primary metabolism is CYP3A4 N-dealkylation to norbuprenorphine. Buprenorphine and norbuprenorphine then undergo glucuronidation, mainly through UGT1A1 and UGT2B7, to support elimination. Elimination is mostly biliary/fecal with a smaller urinary component.",
+      "Primarily CYP3A4 N-dealkylation to norbuprenorphine. Both buprenorphine and norbuprenorphine then undergo phase II UGT glucuronidation (mainly via UGT1A1 and UGT2B7) for elimination. Mostly excreted in bile/feces, with a smaller amount in urine.",
     mechanism:
-      "Partial agonist at the mu-opioid receptor (MOR), antagonist at the kappa-opioid receptor (KOR), and weak or partial activity at DOR and ORL-1/NOP receptors. It has very high receptor affinity with slow dissociation.",
+      "Partial agonist at the mu-opioid receptor (MOR) with very high affinity and slow dissociation; antagonist at the kappa-opioid receptor (KOR); weak/partial activity at delta-opioid (DOR) and ORL-1 (NOP) receptors.",
     behavior:
-      "Blood levels rise gradually with transdermal delivery. Full therapeutic effect generally takes 2-3 days, patches are changed every 7 days, and the effective half-life after patch removal is relatively long.",
+      "Slow dermal delivery leads to gradual rise in blood levels, taking 2-3 days to reach therapeutic effects. Patches are switched every 7 days. Long effective half-life after removal due to a persistent skin depot.",
     interactions:
-      "Strong CYP3A4 inhibitors such as ketoconazole, clarithromycin, some HIV medications, and grapefruit juice can increase levels. CYP3A4 inducers such as rifampin, carbamazepine, and phenytoin can reduce effectiveness. Liver impairment can significantly increase exposure.",
+      "Strong CYP3A4 inhibitors (e.g., ketoconazole, clarithromycin, grapefruit juice) can increase buprenorphine levels. Strong CYP3A4 inducers (e.g., rifampin, carbamazepine, phenytoin) can lower levels and reduce efficacy. Hepatic impairment significantly affects clearance and drug exposure.",
     sources: [
       {
         title: "DailyMed buprenorphine transdermal system",
@@ -617,20 +604,20 @@ const pharmacokineticsRows = [
   },
   {
     name: "Codeine IV",
-    route: "Requested IV / injection caution",
+    route: "IV",
     profile: { type: "absorptive", peakHours: 0.5, halfLifeHours: 3, scaleHours: 12 },
     timing:
-      "No current IV label basis was identified in this pass. The accessible codeine injection product reference is for intramuscular use only; IM peak is about 30 minutes.",
+      "No current IV label basis; accessible reference is for IM use (peak ~30 mins). IV onset is rapid.",
     halfLife:
-      "Injection reference lists about 3 hours after IM dosing; an IV PK study in healthy volunteers reported about 4 hours.",
+      "Terminal half-life is approximately 3 to 4 hours.",
     metabolism:
-      "Glucuronidation to codeine-6-glucuronide, CYP2D6 conversion to morphine, and CYP3A4 conversion to norcodeine; primarily renal excretion.",
+      "Demethylation to active morphine via CYP2D6 (critical for analgesia) and norcodeine via CYP3A4, plus extensive phase II conjugation to codeine-6-glucuronide (C6G). Excreted renally.",
     mechanism:
-      "Weak MOR activity as parent drug; clinically meaningful analgesia depends substantially on CYP2D6 conversion to morphine.",
+      "Prodrug with very weak affinity for mu-opioid receptors (MOR) itself; analgesic effect is primarily mediated by its active metabolite, morphine.",
     behavior:
-      "Treat as a caution row. Do not infer routine IV suitability from the located injection reference; follow institutional policy and pharmacist review.",
+      "Extremely high clinical caution row. Codeine phosphate injection is typically IM/SC; IV injection is rarely used and has high risk of severe hypotension and histamine release. Avoid routine IV use.",
     interactions:
-      "CYP2D6 inhibitors can reduce conversion to morphine and reduce analgesia, while ultra-rapid metabolizers may have toxicity risk. CNS depressants increase sedation and respiratory risk.",
+      "CYP2D6 inhibitors (e.g., paroxetine, fluoxetine) block conversion to morphine, rendering it ineffective. Ultra-rapid CYP2D6 metabolizers face life-threatening toxicity/respiratory depression. Additive CNS/respiratory depression with other depressants.",
     sources: [
       {
         title: "MHRA codeine phosphate injection PAR",
@@ -644,20 +631,20 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Codeine PO",
+    name: "Codeine oral (IR)",
     route: "Oral",
     profile: { type: "absorptive", peakHours: 1, halfLifeHours: 3, scaleHours: 14 },
     timing:
       "Maximum plasma concentration occurs about 60 minutes after administration; steady state reported within 48 hours with q4h dosing.",
     halfLife: "Codeine and metabolite plasma half-lives are reported at about 3 hours.",
     metabolism:
-      "About 70-80% glucuronidation to C6G, 5-10% CYP2D6 conversion to morphine, and about 10% CYP3A4 conversion to norcodeine.",
+      "About 70-80% phase II glucuronidation to C6G, 5-10% CYP2D6 conversion to active morphine, and 10% CYP3A4 conversion to inactive norcodeine.",
     mechanism:
-      "Weak parent-drug MOR effect; functions clinically as a CYP2D6-dependent prodrug to morphine.",
+      "Weak MOR affinity; functions as a prodrug that must be converted by CYP2D6 to morphine to provide significant analgesia.",
     behavior:
-      "Prodrug behavior creates high CYP2D6 variability; poor metabolizers may have reduced effect and ultra-rapid metabolizers may have toxicity risk.",
+      "Highly variable therapeutic response due to CYP2D6 genetic polymorphism. Poor metabolizers derive no benefit; ultra-rapid metabolizers are at risk of severe toxicity even with standard doses.",
     interactions:
-      "CYP2D6 inhibitors can reduce effect. Ultra-rapid CYP2D6 metabolism, CYP3A4 interactions, renal impairment, and CNS depressants increase risk.",
+      "CYP2D6 inhibitors (e.g., fluoxetine, paroxetine, bupropion) prevent analgesic conversion. Strong CYP3A4 inhibitors or inducers alter alternate pathways. Additive risk with concurrent CNS depressants.",
     sources: [
       {
         title: "DailyMed codeine sulfate tablets",
@@ -671,17 +658,17 @@ const pharmacokineticsRows = [
     route: "IV",
     profile: { type: "absorptive", peakHours: 0.08, halfLifeHours: 3.65, scaleHours: 12 },
     timing:
-      "Onset is almost immediate IV; maximum analgesic effect may take several minutes; single-dose analgesic duration is usually 30-60 minutes.",
+      "Onset is almost immediate; maximum analgesic effect takes several minutes; single-dose analgesic duration is usually 30-60 minutes.",
     halfLife:
-      "Terminal elimination half-life is 219 minutes. Respiratory depressant effect can outlast analgesia.",
+      "Terminal elimination half-life is approximately 3-4 hours (219 minutes). Respiratory depressant effect can outlast analgesia.",
     metabolism:
-      "The primary enzyme is CYP3A4. Fentanyl is converted mainly to norfentanyl, which is largely inactive. Additional minor inactive metabolites are formed hepatically, and elimination occurs primarily in urine as metabolites with little unchanged drug.",
+      "Extensively metabolized by CYP3A4 to norfentanyl (which is largely inactive) and other minor inactive metabolites. Elimination occurs primarily through the urine as metabolites, with only a small amount (<10%) excreted unchanged.",
     mechanism:
-      "Full agonist at the mu-opioid receptor (MOR), with minimal clinically significant KOR or DOR activity.",
+      "Highly potent full agonist at the mu-opioid receptor (MOR); minimal clinically significant activity at KOR or DOR.",
     behavior:
-      "Highly lipophilic with rapid onset and short initial duration. Repeated dosing or continuous infusion can redistribute drug into fat and tissues, prolonging effects, especially in critically ill or obese patients.",
+      "Highly lipophilic with three-compartment kinetics. While onset is rapid, repeated dosing or continuous infusion leads to redistribution into fat and tissues, dramatically prolonging effects, especially in critically ill or obese patients.",
     interactions:
-      "Strong CYP3A4 inhibitors such as clarithromycin, ketoconazole, or ritonavir can increase fentanyl levels and respiratory depression risk. CYP3A4 inducers can reduce analgesia. Hepatic impairment and concurrent CNS depressants increase sedation and respiratory risk.",
+      "Strong CYP3A4 inhibitors (e.g., clarithromycin, ketoconazole, ritonavir) can significantly increase fentanyl levels and risk of profound respiratory depression. Strong CYP3A4 inducers (e.g., rifampin, carbamazepine, phenytoin) reduce efficacy. Hepatic impairment clearances prolong sedation. Concurrent CNS depressants (e.g., benzodiazepines, alcohol) substantially increase risks.",
     sources: [
       {
         title: "DailyMed fentanyl citrate injection",
@@ -699,13 +686,13 @@ const pharmacokineticsRows = [
     halfLife:
       "After removal, serum concentration falls about 50% in approximately 20-27 hours because fentanyl continues absorbing from skin.",
     metabolism:
-      "The primary enzyme is CYP3A4. Fentanyl is converted mainly to norfentanyl, which is largely inactive, with urinary elimination primarily as metabolites and only small unchanged-drug excretion.",
+      "Primarily metabolized by CYP3A4 in the liver to norfentanyl (inactive). Excreted primarily in urine as metabolites; less than 10% excreted unchanged.",
     mechanism:
-      "Full agonist at the mu-opioid receptor (MOR), with minimal clinically significant KOR or DOR activity.",
+      "Highly potent full agonist at the mu-opioid receptor (MOR); minimal clinically significant activity at KOR or DOR.",
     behavior:
-      "Slow transdermal delivery produces a gradual serum rise, large skin depot effect, and continued absorption for many hours after patch removal.",
+      "Because of slow transdermal delivery and high lipophilicity, serum concentrations rise gradually over many hours, creating a large skin depot. Fentanyl continues to be absorbed for many hours even after patch removal.",
     interactions:
-      "Strong CYP3A4 inhibitors can significantly increase fentanyl exposure and respiratory depression risk. CYP3A4 inducers can reduce analgesia. Hepatic impairment, heat exposure, and concurrent CNS depressants materially increase risk.",
+      "Strong CYP3A4 inhibitors (e.g., clarithromycin, ketoconazole, ritonavir) significantly increase fentanyl exposure and toxicity risk. CYP3A4 inducers reduce analgesic effect. Hepatic impairment impairs clearance. Concurrent CNS depressants (benzodiazepines, alcohol) substantially increase overdose risk. External heat sources on the patch can dangerously accelerate absorption.",
     sources: [
       {
         title: "DailyMed fentanyl transdermal system",
@@ -715,19 +702,19 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Hydrocodone PO",
+    name: "Hydrocodone oral (IR)",
     route: "Oral",
     profile: { type: "absorptive", peakHours: 1.3, halfLifeHours: 3.8, scaleHours: 16 },
     timing: "After a 10 mg oral dose, maximum serum levels occur at 1.3 +/- 0.3 hours.",
     halfLife: "Plasma half-life is 3.8 +/- 0.3 hours in the referenced label.",
     metabolism:
-      "Primary enzymes are CYP3A4 and CYP2D6. CYP3A4 converts hydrocodone to less-active norhydrocodone, while CYP2D6 converts a portion to the more potent active metabolite hydromorphone. Additional glucuronidation occurs, with renal elimination of metabolites and some unchanged drug.",
+      "Metabolized primarily by CYP3A4 to norhydrocodone (less active) and converted by CYP2D6 into hydromorphone (a highly potent active metabolite). Additional metabolism includes glucuronidation. Renally excreted as metabolites.",
     mechanism:
-      "Primarily a full agonist at the mu-opioid receptor (MOR), with limited clinically relevant KOR or DOR activity.",
+      "Primarily a full agonist at the mu-opioid receptor (MOR) with limited clinically relevant KOR/DOR activity.",
     behavior:
-      "Oral hydrocodone undergoes first-pass hepatic metabolism. Immediate-release oral products are commonly combined with acetaminophen, so total daily acetaminophen exposure matters.",
+      "Taken orally, it undergoes first-pass hepatic metabolism. Immediate-release formulations are frequently combined with Acetaminophen, requiring strict monitoring of total daily acetaminophen dose to avoid hepatotoxicity.",
     interactions:
-      "CYP3A4 inhibitors can increase levels and respiratory depression risk, while CYP3A4 inducers can reduce effect. CYP2D6 inhibitors such as fluoxetine, paroxetine, or bupropion may reduce hydromorphone formation. Hepatic impairment and CNS depressants increase risk.",
+      "Strong CYP3A4 inhibitors (clarithromycin, azole antifungals, ritonavir, grapefruit juice) increase hydrocodone levels and respiratory depression risk. Strong CYP3A4 inducers reduce effectiveness. CYP2D6 inhibitors (fluoxetine, paroxetine, bupropion) reduce conversion to active hydromorphone, altering response. Hepatic impairment prolongs effects. Concurrent CNS depressants (benzodiazepines, alcohol) significantly increase overdose risk.",
     sources: [
       {
         title: "DailyMed hydrocodone/APAP tablets",
@@ -737,25 +724,23 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Hydrocodone PO ER",
-    route: "Oral ER",
-    profile: { type: "absorptive", peakHours: 8, halfLifeHours: 12, scaleHours: 30 },
-    timing:
-      "Extended-release hydrocodone is designed for slow continuous absorption with delayed peak levels, typically over several hours depending on formulation.",
-    halfLife:
-      "Effective duration is prolonged compared with immediate-release hydrocodone, supporting chronic scheduled dosing rather than breakthrough use.",
+    name: "Hydrocodone oral (ER)",
+    route: "Oral",
+    profile: { type: "absorptive", peakHours: 6, halfLifeHours: 12, scaleHours: 30 },
+    timing: "Extended-release formulations provide slow, continuous absorption; peak levels are typically delayed to 6-12 hours depending on formulation.",
+    halfLife: "Effective elimination half-life is prolonged, commonly ranging from 7 to 12 hours.",
     metabolism:
-      "Primary pathways remain CYP3A4 to norhydrocodone and CYP2D6 to hydromorphone, with renal elimination of metabolites.",
+      "Primarily metabolized by CYP3A4 to norhydrocodone (less active) and converted by CYP2D6 to hydromorphone (potent). Renally excreted as metabolites.",
     mechanism:
-      "Primarily a full mu-opioid receptor agonist.",
+      "Full agonist at the mu-opioid receptor (MOR) with limited KOR/DOR activity.",
     behavior:
-      "Provides steadier baseline exposure and reduced peak-trough fluctuation compared with immediate-release products. ER products are not appropriate for acute or breakthrough pain.",
+      "Provides more stable plasma concentrations over an extended period (typically dosed q12h or q24h) without peak-trough fluctuations. Designed for chronic pain; not appropriate for acute breakthrough pain due to slow onset. Formulations are typically pure hydrocodone (without acetaminophen).",
     interactions:
-      "Same high-risk interaction pattern as hydrocodone IR: CYP3A4 inhibitors or inducers, CYP2D6 inhibitors, hepatic impairment, and concurrent CNS depressants require caution.",
+      "Identical to IR: Strong CYP3A4 inhibitors increase levels; CYP3A4 inducers decrease levels; CYP2D6 inhibitors block hydromorphone activation. Hepatic impairment clearance is reduced. Concurrent CNS depressants (benzodiazepines, alcohol) carry extreme risk of fatal overdose.",
     sources: [
       {
-        title: "DailyMed hydrocodone extended-release search",
-        url: "https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=hydrocodone%20extended%20release",
+        title: "DailyMed Hysingla ER tablets",
+        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e8cf650b-47e2-45e3-85f9-cb53d6ebef4b",
       },
     ],
   },
@@ -764,16 +749,16 @@ const pharmacokineticsRows = [
     route: "IV",
     profile: { type: "absorptive", peakHours: 0.08, halfLifeHours: 2.3, scaleHours: 10 },
     timing:
-      "Direct systemic delivery with rapid opioid effect; IV PK is described with large volume of distribution.",
+      "Direct systemic delivery with almost immediate onset; peak CNS effects occur rapidly (within 5-15 minutes).",
     halfLife: "Terminal elimination half-life after an IV dose is about 2.3 hours.",
     metabolism:
-      "Primary metabolism is hepatic glucuronidation, mainly via UGT2B7, to hydromorphone-3-glucuronide (H3G). H3G is not analgesic and may accumulate in renal impairment with neuroexcitatory effects. CYP450 metabolism is minimal.",
+      "Extensive hepatic glucuronidation, primarily via UGT2B7, to hydromorphone-3-glucuronide (H3G), which is not analgesic but is neuroexcitatory. Minimized CYP450 involvement. Excreted renally.",
     mechanism:
-      "Full mu-opioid receptor agonist with minimal significant KOR or DOR activity.",
+      "Potent full agonist at the mu-opioid receptor (MOR) with minimal clinically significant activity at KOR or DOR.",
     behavior:
-      "IV hydromorphone is rapidly delivered with quick CNS effect. Repeated dosing or infusions can lead to metabolite accumulation, especially with renal or hepatic dysfunction.",
+      "Water-soluble and rapidly delivered. Because clearance relies on renal excretion of the glucuronide metabolite, renal impairment leads to significant accumulation of H3G, which can cause neuroexcitatory adverse effects (agitation, myoclonus, confusion, seizures).",
     interactions:
-      "CYP-mediated interactions are limited. Renal impairment can substantially increase H3G accumulation and adverse effects. Hepatic impairment may reduce clearance. CNS depressants increase respiratory depression risk.",
+      "CYP-mediated drug interactions are minimal compared to fentanyl or hydrocodone. Renal impairment represents a critical factor due to toxic H3G accumulation. Hepatic impairment reduces clearance. Additive CNS/respiratory depression with concurrent benzodiazepines, alcohol, or other sedatives.",
     sources: [
       {
         title: "DailyMed hydromorphone injection",
@@ -783,21 +768,21 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Hydromorphone PO",
+    name: "Hydromorphone oral (IR)",
     route: "Oral",
     profile: { type: "absorptive", peakHours: 0.75, halfLifeHours: 2.7, scaleHours: 12 },
     timing:
-      "Rapid oral absorption; peak plasma concentrations generally occur within 0.5-1 hour. Oral bioavailability is about 24%.",
+      "Rapid oral absorption; peak plasma concentrations occur within 0.5-1 hour. Oral bioavailability is low (~24%).",
     halfLife:
-      "Immediate-release tablet and liquid half-life is about 2.6-2.8 hours in the referenced label.",
+      "Immediate-release oral formulation half-life is approximately 2.6-2.8 hours.",
     metabolism:
-      "Primary metabolism is hepatic glucuronidation, mainly via UGT2B7, to hydromorphone-3-glucuronide (H3G). H3G is not analgesic and can accumulate in renal impairment with agitation, myoclonus, or confusion.",
+      "Extensive pre-systemic hepatic glucuronidation (mainly via UGT2B7) to the inactive but neurotoxic metabolite hydromorphone-3-glucuronide (H3G), excreted renally.",
     mechanism:
-      "Full mu-opioid receptor agonist with minimal significant KOR or DOR activity.",
+      "Potent full agonist at the mu-opioid receptor (MOR) with minimal clinically significant activity at KOR or DOR.",
     behavior:
-      "Oral hydromorphone undergoes substantial first-pass metabolism and has rapid immediate-release onset with relatively short duration.",
+      "Undergoes substantial first-pass hepatic metabolism. Provides rapid onset but short duration (~3-4 hours), requiring frequent dosing if used for continuous pain.",
     interactions:
-      "CYP-mediated drug interactions are limited. Renal impairment can substantially increase H3G accumulation and adverse effects. Hepatic impairment may reduce clearance. CNS depressants increase overdose risk.",
+      "Minimal CYP450 drug interactions. Renal impairment represents a major risk due to H3G metabolite accumulation (myoclonus, confusion). Hepatic impairment decreases clearance. Combining with benzodiazepines, alcohol, or other CNS depressants markedly increases respiratory depression risk.",
     sources: [
       {
         title: "DailyMed hydromorphone tablets",
@@ -807,25 +792,44 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Hydromorphone PO ER",
-    route: "Oral ER",
+    name: "Hydromorphone oral (ER)",
+    route: "Oral",
     profile: { type: "absorptive", peakHours: 12, halfLifeHours: 15, scaleHours: 48 },
-    timing:
-      "Extended-release hydromorphone provides slow continuous absorption with delayed peak levels that vary by formulation.",
-    halfLife:
-      "Apparent half-life is prolonged compared with immediate-release hydromorphone because absorption continues over many hours.",
+    timing: "Slow, continuous release; peak plasma concentrations occur around 12-16 hours (e.g., Exalgo) or 6 hours depending on formulation.",
+    halfLife: "Apparent half-life is highly prolonged, often 15-18 hours due to flip-flop kinetics of continuous absorption.",
     metabolism:
-      "Metabolism remains primarily UGT2B7 glucuronidation to H3G, with renal excretion of metabolites.",
+      "Extensive hepatic glucuronidation via UGT2B7 to hydromorphone-3-glucuronide (H3G). Excreted renally.",
     mechanism:
-      "Full mu-opioid receptor agonist.",
+      "Potent full agonist at the mu-opioid receptor (MOR) with minimal clinically significant activity at KOR or DOR.",
     behavior:
-      "Designed for continuous opioid-tolerant chronic pain treatment. Crushing or chewing ER products can cause dangerous dose dumping.",
+      "Designed to provide stable, flat plasma concentrations over 24 hours. Indicated for opioid-tolerant patients requiring continuous analgesia; contraindicated for acute or breakthrough pain. Avoid crushing or chewing, which causes rapid, fatal dose-dumping.",
     interactions:
-      "Renal impairment, hepatic impairment, alcohol exposure for some ER formulations, and concurrent CNS depressants increase risk.",
+      "Minimal CYP-mediated drug interactions. Renal impairment results in severe H3G metabolite accumulation (neurotoxicity, myoclonus). Hepatic impairment increases exposure. Concomitant use with alcohol can cause rapid dose-dumping of some ER formulations. Concurrent CNS depressants pose severe respiratory depression risks.",
     sources: [
       {
-        title: "DailyMed hydromorphone extended-release search",
-        url: "https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=hydromorphone%20extended%20release",
+        title: "DailyMed Exalgo extended-release tablets",
+        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=98c9f53e-5264-4e4b-b230-671e35f3dfd6",
+      },
+    ],
+  },
+  {
+    name: "Methadone oral",
+    route: "Oral",
+    profile: { type: "absorptive", peakHours: 4, halfLifeHours: 30, scaleHours: 72 },
+    timing: "Oral onset is 30-60 minutes; peak analgesic effect occurs in 2-4 hours. Takes 3-5 days to reach steady-state concentration.",
+    halfLife: "Highly variable and prolonged elimination half-life, ranging from 8 to 59 hours (mean ~24-36 hours or more).",
+    metabolism:
+      "Metabolized through multiple hepatic CYP450 pathways, primarily CYP3A4 and CYP2B6, and to a lesser extent CYP2D6, CYP2C19, and CYP2C9. Converted to inactive metabolites (EDDP and EMDP). Highly variable metabolism between patients. Excreted in feces and urine; renal clearance increases with urine acidification.",
+    mechanism:
+      "Dual mechanism: R-methadone is a potent agonist at mu (MOR) and delta (DOR) opioid receptors; S-methadone functions as an NMDA receptor antagonist and a serotonin and norepinephrine reuptake inhibitor. NMDA antagonism provides distinct advantages in treating severe, chronic neuropathic pain.",
+    behavior:
+      "Highly lipophilic with a very long, variable half-life. It acts as a short-acting analgesic (pain relief wears off in 4-8 hours) but has a long-acting presence in the body (remains in system for 24-36+ hours). This mismatch poses a high risk of dangerous accumulation and delayed respiratory depression during titration. Requires slow, careful dose adjustments.",
+    interactions:
+      "Extremely high interaction potential. Strong CYP3A4/CYP2B6 inhibitors (e.g., clarithromycin, ketoconazole, fluvoxamine, ritonavir) can dramatically increase methadone levels and risk of fatal overdose. Strong enzyme inducers (e.g., rifampin, carbamazepine, phenytoin, St. John's wort) can severely lower levels, causing withdrawal. Prolongs the QT interval; extreme risk of Torsades de Pointes when combined with other QT-prolonging drugs. Hepatic impairment clearance is reduced. Concurrent CNS depressants (benzodiazepines, alcohol) markedly increase overdose risk.",
+    sources: [
+      {
+        title: "DailyMed methadone hydrochloride tablets",
+        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=29b9e115-46aa-430b-a010-8b1b86b864a7",
       },
     ],
   },
@@ -834,17 +838,17 @@ const pharmacokineticsRows = [
     route: "IV",
     profile: { type: "absorptive", peakHours: 0.08, halfLifeHours: 2, scaleHours: 10 },
     timing:
-      "Direct systemic route; apparent volume of distribution after IV dosing ranges from 1.0-4.7 L/kg.",
+      "Apparent rapid onset within 5-10 minutes after IV dosing; peak analgesic effects occur within 20 minutes.",
     halfLife:
-      "Terminal half-life commonly ranges 1.5-4.5 hours; accepted elimination half-life in normal subjects is 1.5-2 hours.",
+      "Terminal half-life commonly ranges 1.5-2 hours. Apparent duration is short.",
     metabolism:
-      "Morphine is primarily metabolized in the liver by phase II glucuronidation, mainly UGT2B7 and to a lesser extent UGT1A1. It forms active morphine-6-glucuronide (M6G) and non-analgesic morphine-3-glucuronide (M3G), with primarily renal elimination.",
+      "Primary clearance pathway is hepatic phase II glucuronidation, mainly via UGT2B7 (and UGT1A1). Converted to active metabolite morphine-6-glucuronide (M6G, highly potent analgesic) and inactive metabolite morphine-3-glucuronide (M3G, inactive for pain but neurotoxic). Primarily excreted renally.",
     mechanism:
-      "Full agonist at the mu-opioid receptor (MOR), with KOR activity contributing to spinal analgesia and dysphoria and weak DOR activity.",
+      "Full agonist at the mu-opioid receptor (MOR) (primary driver of analgesia, respiratory depression, constipation); agonist at the kappa-opioid receptor (KOR) (spinal analgesia/dysphoria); weak activity at the delta-opioid receptor (DOR).",
     behavior:
-      "IV administration produces high initial plasma concentrations followed by redistribution into tissues. Renal dysfunction can lead to M6G and M3G accumulation with prolonged sedation, respiratory depression, or neuroexcitation.",
+      "Direct systemic delivery bypasses first-pass effect, producing high initial plasma concentrations followed by rapid tissue redistribution (brain to muscle/fat). Apparent volume of distribution ranges from 1.0-4.7 L/kg.",
     interactions:
-      "Additive CNS and respiratory depression occurs with benzodiazepines, alcohol, sedative-hypnotics, and other opioids. MAO inhibitors can cause unpredictable severe reactions. Anticholinergics increase constipation and urinary retention risk.",
+      "Significant renal dysfunction leads to severe accumulation of active M6G and neurotoxic M3G, exponentially increasing sedation, respiratory depression, and neuroexcitatory effects (myoclonus, agitation). Unpredictable, severe reactions with MAO inhibitors (MAOIs). Increased risk of urinary retention and constipation with anticholinergics. Additive CNS/respiratory depression with benzodiazepines, alcohol, or other opioids.",
     sources: [
       {
         title: "DailyMed morphine sulfate injection",
@@ -854,21 +858,21 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Morphine IR PO",
+    name: "Morphine oral (IR)",
     route: "Oral",
     profile: { type: "absorptive", peakHours: 1, halfLifeHours: 2, scaleHours: 10 },
     timing:
-      "About two-thirds absorbed from the GI tract; maximum analgesic effect occurs about 60 minutes after administration.",
+      "Onset typically ~20-60 minutes; peak analgesic effect occurs at ~60-90 minutes. Short duration of about 3-4 hours.",
     halfLife:
-      "Effective terminal half-life after IV administration is about 2 hours; some longer-sampling studies report longer terminal values.",
+      "Effective elimination half-life is about 2 hours, though terminal phase can be longer.",
     metabolism:
-      "Morphine is primarily metabolized by hepatic glucuronidation through UGT2B7 and UGT1A1 to M6G and M3G. Elimination is primarily renal, so renal impairment increases metabolite accumulation risk.",
+      "Low oral bioavailability (<40%) due to extensive first-pass hepatic metabolism. Conjugated by UGT2B7 to active morphine-6-glucuronide (M6G) and inactive, neurotoxic morphine-3-glucuronide (M3G). Renally excreted.",
     mechanism:
-      "Full MOR agonist with KOR activity and weak DOR activity.",
+      "Full agonist at MOR (analgesia, sedation, constipation); agonist at KOR (dysphoria/spinal analgesia); weak DOR activity.",
     behavior:
-      "Immediate-release oral morphine has onset around 20-60 minutes, peak effect around 60-90 minutes, and short duration of about 3-4 hours. Food may slightly delay absorption without meaningfully changing exposure.",
+      "Because this is immediate-release, it produces rapid absorption and quick onset, but requires dosing every 3 to 4 hours for sustained analgesia. Absorption is reliable; food may slightly delay peak concentration but does not change overall drug exposure.",
     interactions:
-      "Additive respiratory depression with benzodiazepines, alcohol, sedative-hypnotics, and other opioids. MAO inhibitors, anticholinergics, mixed agonist/antagonist opioids, and renal dysfunction require caution.",
+      "Renal dysfunction is a major clinical risk, leading to rapid accumulation of active M6G (toxicity, profound respiratory depression) and M3G. MAO inhibitors are contraindicated due to risk of severe hemodynamic instability. Anticholinergics worsen constipation/retention. Additive risks with concurrent CNS depressants (benzodiazepines, alcohol).",
     sources: [
       {
         title: "DailyMed morphine sulfate tablets",
@@ -878,43 +882,41 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Morphine ER PO",
-    route: "Oral ER",
+    name: "Morphine oral (ER)",
+    route: "Oral",
     profile: { type: "absorptive", peakHours: 4, halfLifeHours: 8, scaleHours: 24 },
-    timing:
-      "Extended-release oral morphine is designed for slow continuous release over an extended period with delayed peak effect.",
-    halfLife:
-      "Clinical duration is typically 8-12 hours or longer, though some patients may require three-times-daily dosing if effect lasts closer to 8 hours.",
+    timing: "Slow, continuous release over an extended period. Onset is delayed (~1.5-2 hours or more); peak levels occur at ~4-6 hours.",
+    halfLife: "Effective half-life is prolonged due to slow absorption, usually 8-12 hours.",
     metabolism:
-      "Metabolism remains primarily phase II glucuronidation to active M6G and non-analgesic M3G, with renal elimination.",
+      "Extensive pre-systemic glucuronidation via UGT2B7 to active M6G and inactive M3G. Excreted primarily through the urine.",
     mechanism:
-      "Full MOR agonist with KOR activity and weak DOR activity.",
+      "Full agonist at MOR (analgesia, sedation, constipation); agonist at KOR; weak DOR activity.",
     behavior:
-      "Produces more stable plasma concentrations and less peak-trough fluctuation than IR morphine. It takes time to reach steady state and is not appropriate for acute or breakthrough pain.",
+      "Designed to provide slow, continuous release, producing stable plasma concentrations with reduced peak-trough fluctuations. Indicated for chronic pain; typical duration is 8-12 hours or longer. Dosing three times per day is sometimes required. Not appropriate for acute, breakthrough pain.",
     interactions:
-      "Renal dysfunction remains a major risk because M6G and M3G accumulate. MAO inhibitors, anticholinergics, mixed agonist/antagonist opioids, and CNS depressants require caution.",
+      "Renal impairment leads to highly dangerous accumulation of active M6G and inactive M3G (neurotoxicity). Avoid MAOIs due to severe, unpredictable interactions. Worsened anticholinergic effects. Extreme risk of respiratory depression and death when combined with concurrent CNS depressants like benzodiazepines or alcohol.",
     sources: [
       {
-        title: "DailyMed morphine sulfate extended-release search",
-        url: "https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=morphine%20sulfate%20extended%20release",
+        title: "DailyMed MS Contin tablets",
+        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=a73bc701-d007-44f2-959c-7756fdf10953",
       },
     ],
   },
   {
-    name: "Oxycodone IR PO",
+    name: "Oxycodone oral (IR)",
     route: "Oral",
     profile: { type: "absorptive", peakHours: 1.5, halfLifeHours: 3.7, scaleHours: 16 },
     timing:
-      "Immediate-release products commonly reach Tmax around 1.4-1.9 hours; steady-state occurs in about 18-24 hours.",
+      "Rapid absorption; onset typically ~10-30 minutes, peak effect occurs at ~1-2 hours. Duration is ~3-6 hours.",
     halfLife: "Apparent elimination half-life is about 3.5-4 hours.",
     metabolism:
-      "Oxycodone is primarily metabolized by CYP3A4 to noroxycodone and by CYP2D6 to oxymorphone. The parent drug contributes most clinical effect, with renal elimination of metabolites and some unchanged drug.",
+      "Metabolized primarily in the liver via the CYP450 system: CYP3A4 converts oxycodone to noroxycodone (weak activity), and CYP2D6 converts a small amount to oxymorphone (highly potent active metabolite). The parent drug contributes most of the clinical effect. Excreted renally.",
     mechanism:
-      "Primarily a full agonist at the mu-opioid receptor (MOR), with weak KOR activity and minimal clinically relevant DOR activity.",
+      "Primarily a full agonist at the mu-opioid receptor (MOR) (mediates analgesia, euphoria, respiratory depression); weak activity at KOR; minimal clinically relevant DOR activity.",
     behavior:
-      "Immediate-release oral oxycodone has onset around 10-30 minutes, peak effect around 1-2 hours, and duration around 3-6 hours. It produces a faster rise than ER formulations.",
+      "High oral bioavailability (60-87%). IR formulation produces a faster rise in plasma concentration and a stronger perceived analgesic 'kick' compared to ER. Absorption is reliable; food may slightly delay peak but does not affect overall exposure.",
     interactions:
-      "CYP3A4 inhibitors can substantially increase levels and respiratory depression risk; CYP3A4 inducers can reduce analgesia. CYP2D6 inhibitors may reduce oxymorphone formation. Hepatic impairment and CNS depressants increase risk.",
+      "Strong CYP3A4 inhibitors (clarithromycin, ketoconazole, ritonavir, grapefruit juice) block clearance, significantly increasing oxycodone levels and respiratory depression risks. Strong CYP3A4 inducers (rifampin, carbamazepine, phenytoin) decrease levels, reducing analgesia. CYP2D6 inhibitors (fluoxetine, paroxetine, bupropion) reduce conversion to oxymorphone, though clinical impact is variable. Caution in hepatic impairment. Additive CNS depression with benzodiazepines, alcohol, or other sedatives.",
     sources: [
       {
         title: "DailyMed oxycodone hydrochloride tablets",
@@ -924,44 +926,41 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Oxycodone ER PO",
-    route: "Oral ER",
+    name: "Oxycodone oral (ER)",
+    route: "Oral",
     profile: { type: "absorptive", peakHours: 5, halfLifeHours: 8, scaleHours: 24 },
-    timing:
-      "Extended-release oral oxycodone has delayed peak effect, often around 4-6 hours depending on product.",
-    halfLife:
-      "Effective duration is typically about 10-12 hours, with repeated dosing needed to reach steady state.",
+    timing: "Delayed onset with slow continuous absorption; peak plasma concentrations occur around 4-6 hours.",
+    halfLife: "Effective elimination half-life is prolonged, typically averaging 8-12 hours depending on formulation.",
     metabolism:
-      "Metabolism remains CYP3A4 to noroxycodone and CYP2D6 to oxymorphone, with the parent drug providing most effect.",
+      "Metabolized primarily in the liver by CYP3A4 (noroxycodone) and CYP2D6 (oxymorphone). Parent drug mediates most effect. Excreted renally.",
     mechanism:
-      "Primarily a full MOR agonist.",
+      "Primarily a full agonist at the mu-opioid receptor (MOR); weak activity at KOR; minimal clinically relevant DOR activity.",
     behavior:
-      "Provides a flatter peak-trough profile and baseline analgesia. It is not appropriate for breakthrough pain because onset is delayed.",
+      "Provides flat peak-trough profiles, improving baseline analgesia and reducing dosing frequency (typically dosed every 12 hours). Takes time to reach steady-state levels (18-24 hours). Indicated for chronic pain; not appropriate for acute breakthrough pain due to delayed onset.",
     interactions:
-      "CYP3A4 inhibitors or inducers, CYP2D6 inhibitors, hepatic impairment, alcohol, and CNS depressants can materially change risk.",
+      "CYP3A4 inhibitors (clarithromycin, ketoconazole, ritonavir) can cause highly dangerous, delayed increases in drug levels and respiratory depression. CYP3A4 inducers reduce efficacy. CYP2D6 inhibitors reduce oxymorphone formation. Extreme caution in hepatic impairment. Concomitant use with alcohol or CNS depressants (benzodiazepines) carries a high risk of profound sedation, coma, and death.",
     sources: [
       {
-        title: "DailyMed OxyContin extended-release tablets",
-        url:
-          "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=bfdfe235-d717-4855-a3c8-a13d26dadede",
+        title: "DailyMed OxyContin tablets",
+        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=29b9e115-46aa-430b-a010-8b1b86b864a7",
       },
     ],
   },
   {
-    name: "Tapentadol IR PO",
+    name: "Tapentadol oral (IR)",
     route: "Oral",
     profile: { type: "absorptive", peakHours: 1.25, halfLifeHours: 4, scaleHours: 16 },
     timing:
-      "Maximum serum concentrations are typically observed around 1.25 hours after dosing.",
-    halfLife: "Terminal half-life averages about 4 hours after oral administration.",
+      "Rapid absorption; onset is relatively rapid (~30-60 minutes). Peak effect occurs around ~1.5-3 hours. Duration is ~4-6 hours.",
+    halfLife: "Terminal elimination half-life averages about 4 hours.",
     metabolism:
-      "Tapentadol undergoes mostly phase II glucuronidation, mainly UGT1A9 and UGT2B7, with minimal CYP involvement. It has no clinically significant active analgesic metabolites and is primarily renally eliminated as inactive conjugates.",
+      "Undergoes limited phase II hepatic metabolism, primarily via glucuronidation (UGT enzymes, mainly UGT1A9 and UGT2B7). Minimal CYP450 involvement. No active metabolites contribute to analgesia. Excreted primarily renally as inactive conjugates.",
     mechanism:
-      "Dual mechanism: mu-opioid receptor agonism plus norepinephrine reuptake inhibition.",
+      "Dual mechanism of action: Mu-opioid receptor (MOR) agonist providing opioid-mediated analgesia, and Norepinephrine Reuptake Inhibitor (NRI) enhancing descending inhibitory pain pathways in the spinal cord. Compared to classic opioids, has less reliance on active metabolites and more contribution from non-opioid pain pathways.",
     behavior:
-      "Oral tapentadol has relatively rapid onset around 30-60 minutes, peak around 1.5-3 hours, and IR duration around 4-6 hours.",
+      "Taken orally, it provides predictable drug levels across patients due to non-CYP metabolism. Dosing is typically every 4 to 6 hours. Has fewer serotonergic side effects than tramadol, but still provides effective monoaminergic pain modulation.",
     interactions:
-      "CNS depressants increase sedation and respiratory risk. MAO inhibitors and other norepinephrine-enhancing drugs require caution. CYP-mediated interactions are fewer than with oxycodone or tramadol, but renal and hepatic impairment still matter.",
+      "Avoid or use extreme caution with MAO inhibitors (MAOIs) due to risk of severe serotonergic/noradrenergic hypertensive or CNS crises. Caution with other norepinephrine-enhancing drugs (SNRIs, TCAs, stimulants) due to risk of hypertension and tachycardia. Fewer CYP-mediated drug interactions. Renal impairment raises inactive metabolite levels. Additive CNS/respiratory depression with benzodiazepines, alcohol, or other opioids.",
     sources: [
       {
         title: "DailyMed Nucynta tablets",
@@ -971,25 +970,23 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Tapentadol ER PO",
-    route: "Oral ER",
+    name: "Tapentadol oral (ER)",
+    route: "Oral",
     profile: { type: "absorptive", peakHours: 5, halfLifeHours: 8, scaleHours: 24 },
-    timing:
-      "Extended-release tapentadol produces slower absorption with peak effect generally later than IR products.",
-    halfLife:
-      "ER dosing is generally designed for about 12-hour coverage depending on formulation and patient context.",
+    timing: "Slow release; peak plasma concentrations occur around 5-6 hours after administration.",
+    halfLife: "Effective elimination half-life is prolonged, averaging about 5-6 hours, with dosing recommended every 12 hours.",
     metabolism:
-      "Metabolism remains primarily UGT-mediated glucuronidation with minimal CYP involvement and inactive metabolites.",
+      "Primarily metabolized via phase II glucuronidation (UGT1A9, UGT2B7) into inactive conjugates, with minimal CYP450 involvement. Excreted renally.",
     mechanism:
-      "Dual mechanism: MOR agonism and norepinephrine reuptake inhibition.",
+      "Dual mechanism: Mu-opioid receptor (MOR) agonist & Norepinephrine Reuptake Inhibitor (NRI).",
     behavior:
-      "Produces smoother baseline analgesia than IR tapentadol and is used for scheduled chronic pain rather than breakthrough pain.",
+      "Provides smooth, continuous analgesia over 12 hours with reduced peak-trough fluctuations. Indicated for chronic pain, including neuropathic pain associated with diabetic peripheral neuropathy (DPN).",
     interactions:
-      "CNS depressants, MAO inhibitors, norepinephrine-enhancing drugs, renal impairment, and hepatic impairment require caution.",
+      "Identical to IR: Contraindicated with MAOIs (hypertensive/serotonergic risk). Caution with SNRIs, TCAs, and stimulants. Low CYP-mediated interaction potential. Additive CNS depression with alcohol, benzodiazepines, or other opioids. Avoid crushing or chewing.",
     sources: [
       {
-        title: "DailyMed tapentadol extended-release search",
-        url: "https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=tapentadol%20extended%20release",
+        title: "DailyMed Nucynta ER tablets",
+        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=7997e6da-7e98-4520-9d1b-0b8341bac64a",
       },
     ],
   },
@@ -1000,11 +997,15 @@ const pharmacokineticsRows = [
     timing:
       "Injection product may be given slow IV, IM, SC, or infusion; the referenced SmPC reports rapid and complete IM absorption with Cmax at about 45 minutes.",
     halfLife:
-      "Elimination half-life is about 6 hours regardless of route; active O-desmethyltramadol half-life is about 7.9 hours.",
+      "Elimination half-life is about 6 hours regardless of route; active O-desmethyltramadol (M1) metabolite half-life is about 7.9 hours.",
     metabolism:
-      "CYP2D6 and CYP3A4 metabolism plus conjugation; active O-desmethyltramadol formation is CYP2D6 dependent; renal excretion predominates.",
+      "Metabolized in the liver: CYP2D6 converts tramadol to O-desmethyltramadol (M1, significantly more potent mu-opioid agonist than parent), and CYP3A4/CYP2B6 convert it to N-desmethyltramadol (M2, inactive/weak). Phase II metabolism via glucuronidation and sulfation. Primarily excreted renally.",
+    mechanism:
+      "Combined dual mechanism: Parent drug is a weak partial agonist at MOR, while the M1 metabolite is a much stronger MOR agonist; both parent and metabolite inhibit serotonin and norepinephrine reuptake, activating descending inhibitory pathways.",
     behavior:
-      "Serotonin/norepinephrine effects and seizure risk matter. Renal or hepatic dysfunction can prolong parent drug and active metabolite.",
+      "Avoids first-pass metabolism for the parent drug, producing higher initial plasma concentrations which can increase early adverse effects (nausea, dizziness). However, formation of active M1 still depends on hepatic CYP2D6. Response varies heavily based on CYP2D6 phenotype: poor metabolizers experience little relief; ultra-rapid metabolizers face high toxicity risks.",
+    interactions:
+      "Serotonergic drugs (SSRIs, SNRIs, MAOIs, TCAs, triptans, linezolid) increase risk of life-threatening serotonin syndrome. CYP2D6 inhibitors (e.g., fluoxetine, paroxetine, bupropion) prevent active M1 formation, reducing analgesia. Strong CYP3A4 inhibitors/inducers alter pathways. Seizure risk is dose-dependent and increased with antipsychotics, TCAs, SSRIs, or alcohol withdrawal. Additive CNS depression with benzodiazepines, alcohol, or other opioids.",
     sources: [
       {
         title: "eMC tramadol injection SmPC",
@@ -1013,7 +1014,7 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Tramadol IR PO",
+    name: "Tramadol oral (IR)",
     route: "Oral",
     profile: { type: "absorptive", peakHours: 2, halfLifeHours: 6.3, scaleHours: 24 },
     timing:
@@ -1021,13 +1022,13 @@ const pharmacokineticsRows = [
     halfLife:
       "Mean terminal half-lives are 6.3 +/- 1.4 hours for racemic tramadol and 7.4 +/- 1.4 hours for M1.",
     metabolism:
-      "Tramadol is metabolized through CYP2D6 to active O-desmethyltramadol (M1), through CYP3A4 and CYP2B6 to weaker N-desmethyltramadol (M2), and through phase II conjugation. Renal elimination predominates.",
+      "CYP2D6 and CYP3A4 metabolism plus conjugation; active M1 formation is CYP2D6 dependent; metabolites are primarily renally eliminated.",
     mechanism:
-      "Weak MOR activity from parent drug, stronger MOR activity from M1, and serotonin/norepinephrine reuptake inhibition.",
+      "Dual mechanism: Weak MOR partial agonism (parent drug) & stronger MOR agonism (M1 metabolite), combined with serotonin and norepinephrine reuptake inhibition.",
     behavior:
-      "Oral tramadol effect varies substantially with CYP2D6 status. It combines opioid and monoaminergic analgesic mechanisms and has seizure and serotonin-syndrome considerations.",
+      "Highly dependent on hepatic CYP2D6 status for clinical effect. Dosed every 4 to 6 hours for immediate release.",
     interactions:
-      "SSRIs, SNRIs, MAOIs, TCAs, linezolid, and triptans increase serotonin-syndrome risk. CYP2D6 inhibitors reduce M1 formation. CYP3A4 modulators, seizure-threshold-lowering drugs, alcohol, benzodiazepines, and other CNS depressants require caution.",
+      "Serotonin syndrome risk with serotonergic drugs (SSRIs, SNRIs, MAOIs). CYP2D6 inhibitors block analgesic conversion. CYP3A4 modulators alter exposure. Elevated seizure risk with TCAs, SSRIs, antipsychotics. Concurrent CNS depressants (benzodiazepines, alcohol) increase overdose risk.",
     sources: [
       {
         title: "DailyMed tramadol hydrochloride tablets",
@@ -1037,25 +1038,23 @@ const pharmacokineticsRows = [
     ],
   },
   {
-    name: "Tramadol ER PO",
-    route: "Oral ER",
+    name: "Tramadol oral (ER)",
+    route: "Oral",
     profile: { type: "absorptive", peakHours: 6, halfLifeHours: 12, scaleHours: 36 },
-    timing:
-      "Extended-release tramadol has slower absorption and delayed peak concentration compared with IR tramadol.",
-    halfLife:
-      "Effective coverage is prolonged for scheduled dosing, while active M1 metabolite exposure still depends on CYP2D6.",
+    timing: "Slow release; peak concentrations are delayed, typically occurring around 12 hours after administration.",
+    halfLife: "Effective elimination half-life is highly prolonged, averaging about 7.9 to 9 hours, allowing for once-daily dosing.",
     metabolism:
-      "Metabolism remains CYP2D6-dependent for M1 formation, with CYP3A4/CYP2B6 and conjugation pathways also involved.",
+      "Extensive pre-systemic metabolism. CYP2D6 forms the potent active M1 metabolite; CYP3A4 forms inactive M2. Excreted renally.",
     mechanism:
-      "Weak MOR activity from parent drug, stronger MOR activity from M1, and serotonin/norepinephrine reuptake inhibition.",
+      "Dual mechanism: MOR agonism (M1) and monoaminergic reuptake inhibition (5-HT & NE).",
     behavior:
-      "Provides steadier exposure for chronic scheduled dosing but retains CYP2D6 variability, serotonergic risk, and seizure risk.",
+      "Provides stable, continuous drug exposure over 24 hours, reducing peak-trough fluctuations. Indicated for chronic pain requiring long-term treatment. Crushing or chewing the tablet destroys the release mechanism and can cause fatal dose-dumping.",
     interactions:
-      "Same interaction concerns as IR tramadol, with additional caution not to crush or chew ER formulations.",
+      "Same as IR: high risk of serotonin syndrome with SSRIs/SNRIs/MAOIs; CYP2D6 inhibitors block active M1 conversion; increased seizure risk. Avoid alcohol (dose-dumping hazard). High hazard with concurrent CNS depressants like benzodiazepines.",
     sources: [
       {
-        title: "DailyMed tramadol extended-release search",
-        url: "https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=tramadol%20extended%20release",
+        title: "DailyMed Ultram ER tablets",
+        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=d55ad58f-2877-4df3-a12e-fb2cc8a4f933",
       },
     ],
   },
@@ -1299,6 +1298,7 @@ const buprenorphineEndpoint = document.querySelector("#buprenorphineEndpoint");
 const buprenorphineScheduleTableBody = document.querySelector(
   "#buprenorphineScheduleTable",
 );
+
 const benzoForm = document.querySelector("#benzoForm");
 const benzoSourceDrugSelect = document.querySelector("#benzoSourceDrug");
 const benzoSourceDoseInput = document.querySelector("#benzoSourceDose");
@@ -1308,9 +1308,7 @@ const benzoReductionNumber = document.querySelector("#benzoReductionNumber");
 const benzoFinalDose = document.querySelector("#benzoFinalDose");
 const benzoFinalUnit = document.querySelector("#benzoFinalUnit");
 const benzoRawDiazepamEquiv = document.querySelector("#benzoRawDiazepamEquiv");
-const benzoReducedDiazepamEquiv = document.querySelector(
-  "#benzoReducedDiazepamEquiv",
-);
+const benzoReducedDiazepamEquiv = document.querySelector("#benzoReducedDiazepamEquiv");
 const benzoReductionApplied = document.querySelector("#benzoReductionApplied");
 
 const THEME_STORAGE_KEY = "opioid-conversion-theme";
@@ -1480,14 +1478,9 @@ const formatList = (items) => {
 const findOption = (id) => conversionOptions.find((item) => item.id === id);
 
 const getOptionDisplayLabel = (item) => {
-  if (item.route === "Oral") {
-    return `${item.medication} PO`;
-  }
-
-  if (item.route === "Oral ER") {
-    return `${item.medication} PO ER`;
-  }
-
+  if (item.route === "Oral (IR)") return `${item.medication} PO (IR)`;
+  if (item.route === "Oral (ER)") return `${item.medication} PO (ER)`;
+  if (item.route === "Oral") return `${item.medication} PO`;
   return item.label;
 };
 
@@ -2005,11 +1998,11 @@ const renderSelectedPharmacokineticsDetail = () => {
       </div>
       <div>
         <dt>Mechanism of action</dt>
-        <dd>${selectedItem.mechanism || "Not separately specified in the current client notes for this profile."}</dd>
+        <dd>${selectedItem.mechanism}</dd>
       </div>
       <div>
         <dt>Important interactions</dt>
-        <dd>${selectedItem.interactions || "Review additive CNS depressants, organ function, formulation constraints, and institutional policy before use."}</dd>
+        <dd>${selectedItem.interactions}</dd>
       </div>
       <div>
         <dt>Behavior notes</dt>
@@ -2151,9 +2144,7 @@ const setModeVisibility = () => {
   const activeMode = calculationModeSelect.value;
   const isMMeMode = activeMode === "mme";
   const isSpecialtyMode =
-    activeMode === "methadone" ||
-    activeMode === "buprenorphine" ||
-    activeMode === "benzo";
+    activeMode === "methadone" || activeMode === "buprenorphine" || activeMode === "benzo";
 
   calculatorTabs.forEach((button) => {
     const isActive = button.dataset.calculatorTab === activeMode;
@@ -2743,65 +2734,48 @@ const calculateMethadone = () => {
   methadoneQ12DoseOutput.textContent = `${formatDose(q12Dose)} mg/dose`;
 };
 
-const getBenzoOption = (id) =>
-  benzoConversionOptions.find((item) => item.id === id);
-
 const populateBenzoSelects = () => {
-  if (!benzoSourceDrugSelect || !benzoTargetDrugSelect) {
-    return;
-  }
-
+  if (!benzoSourceDrugSelect || !benzoTargetDrugSelect) return;
+  
   const markup = benzoConversionOptions
-    .map((item) => `<option value="${item.id}">${item.medication}</option>`)
+    .map(item => `<option value="${item.id}">${item.medication}</option>`)
     .join("");
 
   benzoSourceDrugSelect.innerHTML = markup;
   benzoTargetDrugSelect.innerHTML = markup;
+  
+  // Set default values
   benzoSourceDrugSelect.value = "alprazolam";
   benzoTargetDrugSelect.value = "diazepam";
 };
 
-const syncBenzoReduction = (sourceControl) => {
-  const reduction = Math.min(50, Math.max(0, Number(sourceControl.value) || 0));
-  benzoReductionRange.value = String(reduction);
-  benzoReductionNumber.value = String(reduction);
-};
-
 const calculateBenzo = () => {
-  if (!benzoSourceDrugSelect || !benzoTargetDrugSelect) {
-    return;
-  }
-
-  const sourceBenzo = getBenzoOption(benzoSourceDrugSelect.value);
-  const targetBenzo = getBenzoOption(benzoTargetDrugSelect.value);
+  if (!benzoSourceDrugSelect || !benzoTargetDrugSelect) return;
+  const sourceId = benzoSourceDrugSelect.value;
+  const targetId = benzoTargetDrugSelect.value;
   const sourceDose = Number(benzoSourceDoseInput.value);
-  const reductionPercentage = Math.min(
-    50,
-    Math.max(0, Number(benzoReductionNumber.value) || 0),
-  );
+  const reductionPercentage = Number(benzoReductionNumber.value) || 0;
 
-  if (!sourceBenzo || !targetBenzo || !Number.isFinite(sourceDose) || sourceDose < 0) {
+  const sourceBenzo = benzoConversionOptions.find(b => b.id === sourceId);
+  const targetBenzo = benzoConversionOptions.find(b => b.id === targetId);
+
+  if (!sourceBenzo || !targetBenzo || isNaN(sourceDose) || sourceDose <= 0) {
     benzoFinalDose.textContent = "0";
     benzoFinalUnit.textContent = "mg/day";
-    benzoRawDiazepamEquiv.textContent = "0 mg/day";
-    benzoReducedDiazepamEquiv.textContent = "0 mg/day";
-    benzoReductionApplied.textContent = `${reductionPercentage}% reduction`;
+    benzoRawDiazepamEquiv.textContent = "0 mg Diazepam/day";
+    benzoReducedDiazepamEquiv.textContent = "0 mg Diazepam/day";
+    benzoReductionApplied.textContent = "0% reduction";
     return;
   }
 
-  const rawDiazepamEquivalent =
-    (sourceDose / sourceBenzo.diazepam10Equivalent) * 10;
-  const reducedDiazepamEquivalent =
-    rawDiazepamEquivalent * (1 - reductionPercentage / 100);
-  const targetDose =
-    (reducedDiazepamEquivalent / 10) * targetBenzo.diazepam10Equivalent;
+  const rawDiazepamEquiv = (sourceDose / sourceBenzo.equiv) * 10;
+  const reducedDiazepamEquiv = rawDiazepamEquiv * (1 - reductionPercentage / 100);
+  const targetDose = (reducedDiazepamEquiv / 10) * targetBenzo.equiv;
 
   benzoFinalDose.textContent = formatDose(targetDose);
-  benzoFinalUnit.textContent = "mg/day";
-  benzoRawDiazepamEquiv.textContent =
-    `${formatDose(rawDiazepamEquivalent)} mg/day`;
-  benzoReducedDiazepamEquiv.textContent =
-    `${formatDose(reducedDiazepamEquivalent)} mg/day`;
+  benzoFinalUnit.textContent = `${targetBenzo.doseUnit}/day`;
+  benzoRawDiazepamEquiv.textContent = `${formatDose(rawDiazepamEquiv)} mg Diazepam/day`;
+  benzoReducedDiazepamEquiv.textContent = `${formatDose(reducedDiazepamEquiv)} mg Diazepam/day`;
   benzoReductionApplied.textContent = `${reductionPercentage}% reduction`;
 };
 
@@ -2879,13 +2853,6 @@ buprenorphineForm.addEventListener("submit", (event) => {
   event.preventDefault();
   renderBuprenorphineSchedule();
 });
-
-if (benzoForm) {
-  benzoForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    calculateBenzo();
-  });
-}
 
 regimenEntriesContainer.addEventListener("input", handleRegimenEntryInput);
 regimenEntriesContainer.addEventListener("change", handleRegimenEntryInput);
@@ -2994,6 +2961,12 @@ buprenorphineMeddRangeSelect.addEventListener("input", () => {
   renderBuprenorphineSchedule();
 });
 
+const syncBenzoReduction = (source) => {
+  const val = Math.max(0, Math.min(50, Math.round(Number(source.value) || 0)));
+  benzoReductionRange.value = val;
+  benzoReductionNumber.value = val;
+};
+
 [
   benzoSourceDrugSelect,
   benzoSourceDoseInput,
@@ -3001,18 +2974,28 @@ buprenorphineMeddRangeSelect.addEventListener("input", () => {
   benzoReductionRange,
   benzoReductionNumber,
 ].forEach((control) => {
-  if (!control) {
-    return;
+  if (control) {
+    control.addEventListener("input", () => {
+      if (
+        control === benzoReductionRange ||
+        control === benzoReductionNumber
+      ) {
+        syncBenzoReduction(control);
+      }
+      calculateBenzo();
+    });
+    control.addEventListener("change", () => {
+      calculateBenzo();
+    });
   }
+});
 
-  control.addEventListener("input", () => {
-    if (control === benzoReductionRange || control === benzoReductionNumber) {
-      syncBenzoReduction(control);
-    }
-
+if (benzoForm) {
+  benzoForm.addEventListener("submit", (event) => {
+    event.preventDefault();
     calculateBenzo();
   });
-});
+}
 
 if (themeToggle) {
   themeToggle.addEventListener("click", () => {
@@ -3147,11 +3130,11 @@ renderHepaticGuidanceTable();
 renderSourceTable();
 renderPharmacokineticsReference();
 renderBuprenorphineOptions();
-populateBenzoSelects();
 setRegimenEntries([{}]);
 renderSpecialtyTool();
 renderBuprenorphineSchedule();
 updateRenalBandNote();
 calculate();
 calculateMethadone();
+populateBenzoSelects();
 calculateBenzo();

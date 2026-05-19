@@ -98,7 +98,7 @@
   --table-header-line: #708982;
   --table-stripe: rgba(37, 44, 40, 0.68);
   --footer-bg: rgba(28, 35, 32, 0.9);
-  --logo-card-bg: #ffffff;
+  --logo-card-bg: #151b1a;
 }
 
 * {
@@ -286,6 +286,17 @@ a:focus-visible {
   width: 100%;
   height: auto;
   border-radius: 8px;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+:root[data-theme="dark"] .brand-logo-card img {
+  filter: brightness(0.72) contrast(1.02) saturate(0.88);
+  opacity: 0.88;
+}
+
+:root[data-theme="dark"] .brand-logo-card img:hover {
+  filter: brightness(1) contrast(1) saturate(1);
+  opacity: 1;
 }
 
 .eyebrow {

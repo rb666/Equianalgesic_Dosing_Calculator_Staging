@@ -1166,6 +1166,69 @@ dd {
   min-width: 720px;
 }
 
+.pharmacokinetics-table {
+  min-width: 1060px;
+  table-layout: fixed;
+}
+
+.pharmacokinetics-table th:nth-child(1),
+.pharmacokinetics-table td:nth-child(1) {
+  width: 15%;
+}
+
+.pharmacokinetics-table th:nth-child(2),
+.pharmacokinetics-table td:nth-child(2) {
+  width: 17%;
+}
+
+.pharmacokinetics-table th:nth-child(3),
+.pharmacokinetics-table td:nth-child(3) {
+  width: 17%;
+}
+
+.pharmacokinetics-table th:nth-child(4),
+.pharmacokinetics-table td:nth-child(4) {
+  width: 20%;
+}
+
+.pharmacokinetics-table th:nth-child(5),
+.pharmacokinetics-table td:nth-child(5) {
+  width: 21%;
+}
+
+.pharmacokinetics-table th:nth-child(6),
+.pharmacokinetics-table td:nth-child(6) {
+  width: 10%;
+}
+
+.pharmacokinetics-table td,
+.pharmacokinetics-table th {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.table-subtext,
+.source-link-stack {
+  display: grid;
+  gap: 6px;
+}
+
+.table-subtext {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.source-link-stack {
+  font-weight: 800;
+}
+
+.pharmacokinetics-notes {
+  padding-top: 2px;
+}
+
 .continue-action {
   color: var(--accent-dark);
   font-weight: 850;
@@ -1227,6 +1290,8 @@ th:last-child {
 
 .source-table td:last-child,
 .source-table th:last-child,
+.pharmacokinetics-table td:last-child,
+.pharmacokinetics-table th:last-child,
 .schedule-table td:last-child,
 .schedule-table th:last-child {
   text-align: left;

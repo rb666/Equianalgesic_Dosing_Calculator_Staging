@@ -495,6 +495,272 @@ const sourceReferences = [
   },
 ];
 
+const pharmacokineticsRows = [
+  {
+    name: "Buprenorphine patch",
+    route: "Transdermal",
+    timing:
+      "Quantifiable concentrations at about 17 hours; steady state by day 3; system is worn for 7 days.",
+    halfLife:
+      "After removal, concentrations decrease about 50% within 10-24 hours, then decline with an apparent terminal half-life of about 26 hours.",
+    metabolism:
+      "Primarily CYP3A4 N-dealkylation and UGT glucuronidation; eliminated through hepatic metabolism with biliary and renal excretion.",
+    behavior:
+      "Slow onset and slow offset. Heat can increase exposure; patch absorption should be treated as a depot-like process after removal.",
+    sources: [
+      {
+        title: "DailyMed buprenorphine transdermal system",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c7d079fb-507f-436f-b794-2171b7d97067",
+      },
+    ],
+  },
+  {
+    name: "Codeine IV",
+    route: "Requested IV / injection caution",
+    timing:
+      "No current IV label basis was identified in this pass. The accessible codeine injection product reference is for intramuscular use only; IM peak is about 30 minutes.",
+    halfLife:
+      "Injection reference lists about 3 hours after IM dosing; an IV PK study in healthy volunteers reported about 4 hours.",
+    metabolism:
+      "Glucuronidation to codeine-6-glucuronide, CYP2D6 conversion to morphine, and CYP3A4 conversion to norcodeine; primarily renal excretion.",
+    behavior:
+      "Treat as a caution row. Do not infer routine IV suitability from the located injection reference; follow institutional policy and pharmacist review.",
+    sources: [
+      {
+        title: "MHRA codeine phosphate injection PAR",
+        url:
+          "https://mhraproducts4853.blob.core.windows.net/docs/0858170bda543fc8bb09f20876ba508aa199d95d",
+      },
+      {
+        title: "PubMed IV codeine PK study",
+        url: "https://pubmed.ncbi.nlm.nih.gov/3335120/",
+      },
+    ],
+  },
+  {
+    name: "Codeine PO",
+    route: "Oral",
+    timing:
+      "Maximum plasma concentration occurs about 60 minutes after administration; steady state reported within 48 hours with q4h dosing.",
+    halfLife: "Codeine and metabolite plasma half-lives are reported at about 3 hours.",
+    metabolism:
+      "About 70-80% glucuronidation to C6G, 5-10% CYP2D6 conversion to morphine, and about 10% CYP3A4 conversion to norcodeine.",
+    behavior:
+      "Prodrug behavior creates high CYP2D6 variability; poor metabolizers may have reduced effect and ultra-rapid metabolizers may have toxicity risk.",
+    sources: [
+      {
+        title: "DailyMed codeine sulfate tablets",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f317cd06-2851-4a52-86d3-6efde3a4c243",
+      },
+    ],
+  },
+  {
+    name: "Fentanyl IV",
+    route: "IV",
+    timing:
+      "Onset is almost immediate IV; maximum analgesic effect may take several minutes; single-dose analgesic duration is usually 30-60 minutes.",
+    halfLife:
+      "Terminal elimination half-life is 219 minutes. Respiratory depressant effect can outlast analgesia.",
+    metabolism:
+      "Three-compartment kinetics with muscle and fat redistribution; primarily hepatic metabolism with urine excretion mostly as metabolites.",
+    behavior:
+      "Highly lipophilic and redistribution-dependent; CYP3A4 inhibitors or inducer changes can substantially alter exposure.",
+    sources: [
+      {
+        title: "DailyMed fentanyl citrate injection",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1ed25b2c-334e-4021-ada1-3396f07630dc",
+      },
+    ],
+  },
+  {
+    name: "Fentanyl patch",
+    route: "Transdermal",
+    timing:
+      "Time to maximal concentration after first 72-hour application is about 29-36 hours depending on patch strength.",
+    halfLife:
+      "After removal, serum concentration falls about 50% in approximately 20-27 hours because fentanyl continues absorbing from skin.",
+    metabolism:
+      "Primarily hepatic metabolism with urinary excretion mostly as metabolites and less than 10% unchanged drug.",
+    behavior:
+      "Slow onset and slow offset. External heat can markedly increase exposure; removal does not immediately stop systemic absorption.",
+    sources: [
+      {
+        title: "DailyMed fentanyl transdermal system",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=242759ef-cb6d-4e3e-9f8d-5e31efa1f289",
+      },
+    ],
+  },
+  {
+    name: "Hydrocodone PO",
+    route: "Oral",
+    timing: "After a 10 mg oral dose, maximum serum levels occur at 1.3 +/- 0.3 hours.",
+    halfLife: "Plasma half-life is 3.8 +/- 0.3 hours in the referenced label.",
+    metabolism:
+      "CYP3A4 N-demethylation to norhydrocodone is primary; CYP2D6 O-demethylation to hydromorphone may contribute to analgesic effect.",
+    behavior:
+      "CYP3A4 and CYP2D6 interactions can change exposure or active metabolite formation; renal elimination of metabolites matters clinically.",
+    sources: [
+      {
+        title: "DailyMed hydrocodone/APAP tablets",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=0cc8836b-f0af-42e0-bd77-53fd1dd1aca7&version=11",
+      },
+    ],
+  },
+  {
+    name: "Hydromorphone IV",
+    route: "IV",
+    timing:
+      "Direct systemic delivery with rapid opioid effect; IV PK is described with large volume of distribution.",
+    halfLife: "Terminal elimination half-life after an IV dose is about 2.3 hours.",
+    metabolism:
+      "Extensive hepatic glucuronidation, mainly to hydromorphone-3-glucuronide, with renal excretion of metabolites.",
+    behavior:
+      "Minimal CYP metabolism, but renal impairment can substantially prolong exposure to hydromorphone/metabolites.",
+    sources: [
+      {
+        title: "DailyMed hydromorphone injection",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c729424e-e483-4bf8-b86c-ce56636dcffa",
+      },
+    ],
+  },
+  {
+    name: "Hydromorphone PO",
+    route: "Oral",
+    timing:
+      "Rapid oral absorption; peak plasma concentrations generally occur within 0.5-1 hour. Oral bioavailability is about 24%.",
+    halfLife:
+      "Immediate-release tablet and liquid half-life is about 2.6-2.8 hours in the referenced label.",
+    metabolism:
+      "Extensive hepatic glucuronidation, mainly to hydromorphone-3-glucuronide; small unchanged fraction in urine.",
+    behavior:
+      "First-pass effect is clinically meaningful. Moderate hepatic or renal impairment can increase exposure and requires caution.",
+    sources: [
+      {
+        title: "DailyMed hydromorphone tablets",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2427814c-f32b-8ac5-99b8-5e886fd2d001",
+      },
+    ],
+  },
+  {
+    name: "Morphine IV",
+    route: "IV",
+    timing:
+      "Direct systemic route; apparent volume of distribution after IV dosing ranges from 1.0-4.7 L/kg.",
+    halfLife:
+      "Terminal half-life commonly ranges 1.5-4.5 hours; accepted elimination half-life in normal subjects is 1.5-2 hours.",
+    metabolism:
+      "Major clearance pathway is hepatic glucuronidation to M3G, with M6G also clinically relevant; renal excretion is important.",
+    behavior:
+      "Metabolites can accumulate in renal failure; clearance and half-life are altered in cirrhosis and renal failure.",
+    sources: [
+      {
+        title: "DailyMed morphine sulfate injection",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=1f53de80-efc8-4930-b3e3-fba0d026af05&version=7",
+      },
+    ],
+  },
+  {
+    name: "Morphine PO",
+    route: "Oral",
+    timing:
+      "About two-thirds absorbed from the GI tract; maximum analgesic effect occurs about 60 minutes after administration.",
+    halfLife:
+      "Effective terminal half-life after IV administration is about 2 hours; some longer-sampling studies report longer terminal values.",
+    metabolism:
+      "Oral bioavailability is less than 40% due to extensive pre-systemic metabolism; hepatic glucuronidation forms M3G and M6G.",
+    behavior:
+      "Large interindividual variability; renal impairment can increase M3G/M6G exposure, so accumulation risk is clinically important.",
+    sources: [
+      {
+        title: "DailyMed morphine sulfate tablets",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=67b3273e-af71-4dac-8e49-8bc134d4c591",
+      },
+    ],
+  },
+  {
+    name: "Oxycodone PO",
+    route: "Oral",
+    timing:
+      "Immediate-release products commonly reach Tmax around 1.4-1.9 hours; steady-state occurs in about 18-24 hours.",
+    halfLife: "Apparent elimination half-life is about 3.5-4 hours.",
+    metabolism:
+      "CYP3A4 forms noroxycodone and CYP2D6 forms oxymorphone; metabolites and parent drug are primarily renally excreted.",
+    behavior:
+      "Oral bioavailability is high for an opioid, about 60-87%; CYP interactions and hepatic/renal context can affect exposure.",
+    sources: [
+      {
+        title: "DailyMed oxycodone hydrochloride tablets",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=92614a3a-331d-16ad-e053-2a95a90a47cc",
+      },
+    ],
+  },
+  {
+    name: "Tapentadol PO",
+    route: "Oral",
+    timing:
+      "Maximum serum concentrations are typically observed around 1.25 hours after dosing.",
+    halfLife: "Terminal half-life averages about 4 hours after oral administration.",
+    metabolism:
+      "Mainly phase 2 glucuronidation; minor CYP2C9, CYP2C19, and CYP2D6 pathways. Metabolites are not analgesically active.",
+    behavior:
+      "Mu-opioid agonism plus norepinephrine reuptake inhibition. CYP interactions are less central, but hepatic impairment raises exposure.",
+    sources: [
+      {
+        title: "DailyMed Nucynta tablets",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7997e6da-7e98-4520-9d1b-0b8341bac64a",
+      },
+    ],
+  },
+  {
+    name: "Tramadol IV",
+    route: "IV / injection",
+    timing:
+      "Injection product may be given slow IV, IM, SC, or infusion; the referenced SmPC reports rapid and complete IM absorption with Cmax at about 45 minutes.",
+    halfLife:
+      "Elimination half-life is about 6 hours regardless of route; active O-desmethyltramadol half-life is about 7.9 hours.",
+    metabolism:
+      "CYP2D6 and CYP3A4 metabolism plus conjugation; active O-desmethyltramadol formation is CYP2D6 dependent; renal excretion predominates.",
+    behavior:
+      "Serotonin/norepinephrine effects and seizure risk matter. Renal or hepatic dysfunction can prolong parent drug and active metabolite.",
+    sources: [
+      {
+        title: "eMC tramadol injection SmPC",
+        url: "https://www.medicines.org.uk/emc/product/13177/smpc",
+      },
+    ],
+  },
+  {
+    name: "Tramadol PO",
+    route: "Oral",
+    timing:
+      "Mean oral bioavailability is about 75%; peak tramadol and M1 concentrations occur at about 2 and 3 hours.",
+    halfLife:
+      "Mean terminal half-lives are 6.3 +/- 1.4 hours for racemic tramadol and 7.4 +/- 1.4 hours for M1.",
+    metabolism:
+      "CYP2D6 and CYP3A4 metabolism plus conjugation; active M1 formation is CYP2D6 dependent; metabolites are primarily renally eliminated.",
+    behavior:
+      "SNRI-like plus opioid activity; CYP2D6 status changes M1 exposure, and serotonergic drug combinations or seizure history need caution.",
+    sources: [
+      {
+        title: "DailyMed tramadol hydrochloride tablets",
+        url:
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=58b802cb-2443-4f5b-9718-7d54c6d50cb4",
+      },
+    ],
+  },
+];
+
 const buprenorphineSchedules = [
   {
     id: "30_59",
@@ -661,6 +927,7 @@ const mmeExampleButton = document.querySelector("#mmeExampleButton");
 const referenceTable = document.querySelector("#referenceTable");
 const hepaticGuidanceTableBody = document.querySelector("#hepaticGuidanceTable");
 const sourceTable = document.querySelector("#sourceTable");
+const pharmacokineticsTable = document.querySelector("#pharmacokineticsTable");
 const regimenSummaryTable = document.querySelector("#regimenSummaryTable");
 
 const resultTitle = document.querySelector("#resultTitle");
@@ -1208,6 +1475,37 @@ const renderSourceTable = () => {
           <td>${item.title}</td>
           <td>${item.note}</td>
           <td>${linkMarkup}</td>
+        </tr>
+      `;
+    })
+    .join("");
+};
+
+const renderPharmacokineticsTable = () => {
+  if (!pharmacokineticsTable) {
+    return;
+  }
+
+  pharmacokineticsTable.innerHTML = pharmacokineticsRows
+    .map((item) => {
+      const sourceMarkup = item.sources
+        .map(
+          (source) =>
+            `<a href="${source.url}" rel="noreferrer" target="_blank">${source.title}</a>`,
+        )
+        .join("");
+
+      return `
+        <tr>
+          <td>
+            <strong>${item.name}</strong>
+            <span class="table-subtext">${item.route}</span>
+          </td>
+          <td>${item.timing}</td>
+          <td>${item.halfLife}</td>
+          <td>${item.metabolism}</td>
+          <td>${item.behavior}</td>
+          <td class="source-link-stack">${sourceMarkup}</td>
         </tr>
       `;
     })
@@ -2163,6 +2461,7 @@ setTermsModalVisible(false);
 renderReferenceTable();
 renderHepaticGuidanceTable();
 renderSourceTable();
+renderPharmacokineticsTable();
 renderBuprenorphineOptions();
 setRegimenEntries([{}]);
 renderSpecialtyTool();

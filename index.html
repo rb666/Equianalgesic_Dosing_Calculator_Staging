@@ -14,14 +14,18 @@
       (() => {
         try {
           const storedTheme = localStorage.getItem("opioid-conversion-theme");
+          const storedReferenceTheme = localStorage.getItem("opioid-conversion-reference-theme");
           const theme = storedTheme || "light";
           document.documentElement.dataset.theme = theme;
+          document.documentElement.dataset.referenceTheme =
+            storedReferenceTheme || "bronze";
         } catch {
           document.documentElement.dataset.theme = "light";
+          document.documentElement.dataset.referenceTheme = "bronze";
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260521-reference-contrast" />
+    <link rel="stylesheet" href="styles.css?v=20260521-reference-sampler" />
   </head>
   <body>
     <div class="environment-banner">
@@ -104,6 +108,30 @@
             width="1254"
             height="1254"
           />
+        </div>
+      </section>
+      <section class="reference-theme-sampler" aria-label="Temporary reference color sampler">
+        <div>
+          <span class="eyebrow">Temporary sampler</span>
+          <strong>Reference color</strong>
+          <span>Pick a theme to preview the PK / UDS control in context.</span>
+        </div>
+        <div class="reference-theme-options" role="group" aria-label="Reference color options">
+          <button class="reference-theme-option is-active" data-reference-theme="bronze" type="button">
+            Bronze
+          </button>
+          <button class="reference-theme-option" data-reference-theme="slate" type="button">
+            Slate
+          </button>
+          <button class="reference-theme-option" data-reference-theme="plum" type="button">
+            Plum
+          </button>
+          <button class="reference-theme-option" data-reference-theme="charcoal" type="button">
+            Charcoal
+          </button>
+          <button class="reference-theme-option" data-reference-theme="bluegray" type="button">
+            Blue-gray
+          </button>
         </div>
       </section>
     </header>
@@ -1329,6 +1357,6 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260521-reference-contrast"></script>
+    <script src="script.js?v=20260521-reference-sampler"></script>
   </body>
 </html>

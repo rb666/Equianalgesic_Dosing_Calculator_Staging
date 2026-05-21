@@ -902,6 +902,25 @@ input[type="range"] {
   color: var(--note-warning-text);
 }
 
+.note-box h4 {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 1.03rem;
+  font-weight: 850;
+}
+
+.note-box p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.93rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.note-box p + p {
+  margin-top: 8px;
+}
+
 .button-row {
   display: flex;
   flex-wrap: wrap;
@@ -1568,11 +1587,38 @@ th:last-child {
 
 .source-table td:last-child,
 .source-table th:last-child,
+.uds-table td:last-child,
+.uds-table th:last-child,
 .pharmacokinetics-table td:last-child,
 .pharmacokinetics-table th:last-child,
 .schedule-table td:last-child,
 .schedule-table th:last-child {
   text-align: left;
+}
+
+.uds-table {
+  table-layout: fixed;
+}
+
+.uds-table th:nth-child(1),
+.uds-table td:nth-child(1) {
+  width: 25%;
+}
+
+.uds-table th:nth-child(2),
+.uds-table td:nth-child(2) {
+  width: 32%;
+}
+
+.uds-table th:nth-child(3),
+.uds-table td:nth-child(3) {
+  width: 43%;
+}
+
+.uds-note-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
 }
 
 footer {

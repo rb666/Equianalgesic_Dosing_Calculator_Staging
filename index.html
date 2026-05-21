@@ -21,7 +21,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260521-uds-reference-merged" />
+    <link rel="stylesheet" href="styles.css?v=20260521-reference-pill-group" />
   </head>
   <body>
     <div class="environment-banner">
@@ -31,24 +31,27 @@
           <span>Calculate. Convert. Care.</span>
         </div>
         <div class="utility-actions">
-          <button
-            aria-controls="pharmacokineticsModal"
-            aria-expanded="false"
-            class="topbar-reference-button"
-            id="pharmacokineticsOpenButton"
-            type="button"
-          >
-            PK reference
-          </button>
-          <button
-            aria-controls="udsModal"
-            aria-expanded="false"
-            class="topbar-reference-button"
-            id="udsOpenButton"
-            type="button"
-          >
-            UDS reference
-          </button>
+          <div class="reference-control-group" aria-label="Clinical references">
+            <span class="reference-control-label">Reference</span>
+            <button
+              aria-controls="pharmacokineticsModal"
+              aria-expanded="false"
+              class="topbar-reference-button"
+              id="pharmacokineticsOpenButton"
+              type="button"
+            >
+              PK
+            </button>
+            <button
+              aria-controls="udsModal"
+              aria-expanded="false"
+              class="topbar-reference-button"
+              id="udsOpenButton"
+              type="button"
+            >
+              UDS
+            </button>
+          </div>
           <button
             aria-pressed="false"
             class="theme-toggle"
@@ -1326,6 +1329,6 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260521-uds-reference-merged"></script>
+    <script src="script.js?v=20260521-reference-pill-group"></script>
   </body>
 </html>

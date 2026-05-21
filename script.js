@@ -1324,9 +1324,6 @@ const termsAcceptInput = document.querySelector("#termsAcceptInput");
 const termsAcceptButton = document.querySelector("#termsAcceptButton");
 const termsCloseButton = document.querySelector("#termsCloseButton");
 const termsReviewButton = document.querySelector("#termsReviewButton");
-const referenceThemeOptions = document.querySelectorAll(
-  ".reference-theme-option[data-reference-theme]"
-);
 const pharmacokineticsOpenButton = document.querySelector("#pharmacokineticsOpenButton");
 const pharmacokineticsModal = document.querySelector("#pharmacokineticsModal");
 const pharmacokineticsCloseButton = document.querySelector(
@@ -1438,7 +1435,6 @@ const benzoReducedDiazepamEquiv = document.querySelector("#benzoReducedDiazepamE
 const benzoReductionApplied = document.querySelector("#benzoReductionApplied");
 
 const THEME_STORAGE_KEY = "opioid-conversion-theme";
-const REFERENCE_THEME_STORAGE_KEY = "opioid-conversion-reference-theme-v2";
 const TERMS_ACCEPTANCE_STORAGE_KEY = "calc-med-terms-accepted-v1";
 
 const setTheme = (theme) => {
@@ -1466,29 +1462,6 @@ const persistTheme = (theme) => {
   }
 
   setTheme(theme);
-};
-
-const setReferenceTheme = (theme) => {
-  const allowedThemes = ["bronze", "slate", "plum", "charcoal", "bluegray"];
-  const normalizedTheme = allowedThemes.includes(theme) ? theme : "charcoal";
-
-  document.documentElement.dataset.referenceTheme = normalizedTheme;
-
-  referenceThemeOptions.forEach((button) => {
-    const isActive = button.dataset.referenceTheme === normalizedTheme;
-    button.classList.toggle("is-active", isActive);
-    button.setAttribute("aria-pressed", String(isActive));
-  });
-};
-
-const persistReferenceTheme = (theme) => {
-  try {
-    localStorage.setItem(REFERENCE_THEME_STORAGE_KEY, theme);
-  } catch {
-    // The sampler still works for the current page if storage is unavailable.
-  }
-
-  setReferenceTheme(theme);
 };
 
 const getStoredTermsAcceptance = () => {
@@ -3182,12 +3155,6 @@ if (themeToggle) {
   });
 }
 
-referenceThemeOptions.forEach((button) => {
-  button.addEventListener("click", () => {
-    persistReferenceTheme(button.dataset.referenceTheme);
-  });
-});
-
 if (termsAcceptInput) {
   termsAcceptInput.addEventListener("input", updateTermsAcceptanceState);
 }
@@ -3332,7 +3299,6 @@ mmeExampleButton.addEventListener("click", () => {
 });
 
 setTheme(document.documentElement.dataset.theme);
-setReferenceTheme(document.documentElement.dataset.referenceTheme);
 setTermsModalVisible(false);
 renderReferenceTable();
 renderHepaticGuidanceTable();

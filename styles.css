@@ -1346,9 +1346,17 @@ dd {
   font-size: 1.25rem;
 }
 
-.pk-selected-detail-head span:last-child {
+.pk-selected-detail-head .pk-selected-route {
   color: var(--muted);
   font-weight: 750;
+}
+
+.pk-selected-detail-head p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .pk-selected-detail-grid {
@@ -1381,6 +1389,56 @@ dd {
 
 .is-selected-reference-row {
   background: color-mix(in srgb, var(--accent-soft) 72%, var(--surface)) !important;
+}
+
+.pk-comparison-details {
+  border-top: 2px solid var(--line);
+  border-bottom: 2px solid var(--line);
+}
+
+.pk-comparison-details > summary {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.pk-comparison-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.pk-comparison-details > summary > span:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.pk-comparison-details > summary strong {
+  color: var(--ink);
+  font-size: 1.12rem;
+  line-height: 1.2;
+}
+
+.pk-comparison-details > summary span:last-child:not(.summary-action) {
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 650;
+}
+
+.pk-comparison-details[open] .summary-action::before {
+  content: "Hide";
+}
+
+.pk-comparison-body {
+  display: grid;
+  gap: 14px;
+  padding: 0 0 18px;
+}
+
+.pk-comparison-body .reference-copy {
+  margin-top: 0;
 }
 
 .pharmacokinetics-table th:nth-child(1),

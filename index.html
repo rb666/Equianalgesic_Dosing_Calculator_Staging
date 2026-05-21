@@ -21,7 +21,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260520-uds-benzo-updates" />
+    <link rel="stylesheet" href="styles.css?v=20260520-pk-sidebar-reference" />
   </head>
   <body>
     <div class="environment-banner">
@@ -961,33 +961,40 @@
             </div>
           </section>
 
-          <section class="pk-reference-block">
-            <div class="section-heading">
-              <p class="eyebrow">Chart</p>
-              <h3>Route behavior and monitoring considerations</h3>
-            </div>
-            <p class="reference-copy">
-              Values are approximate label- or reference-derived pharmacokinetic
-              summaries and should be reconciled with patient-specific organ
-              function, formulation, interacting medications, and institutional policy.
-            </p>
+          <details class="pk-comparison-details">
+            <summary>
+              <span>
+                <span class="eyebrow">Audit table</span>
+                <strong>Compare all route behavior rows</strong>
+                <span>Optional full table for side-by-side source review.</span>
+              </span>
+              <span class="summary-action" aria-hidden="true"></span>
+            </summary>
 
-            <div class="table-wrap pharmacokinetics-table-wrap">
-              <table class="pharmacokinetics-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Medication / route</th>
-                    <th scope="col">Timing</th>
-                    <th scope="col">Half-life / offset</th>
-                    <th scope="col">Metabolism / elimination</th>
-                    <th scope="col">Behavior notes</th>
-                    <th scope="col">Source</th>
-                  </tr>
-                </thead>
-                <tbody id="pharmacokineticsTable"></tbody>
-              </table>
+            <div class="pk-comparison-body">
+              <p class="reference-copy">
+                Values are approximate label- or reference-derived pharmacokinetic
+                summaries and should be reconciled with patient-specific organ
+                function, formulation, interacting medications, and institutional policy.
+              </p>
+
+              <div class="table-wrap pharmacokinetics-table-wrap">
+                <table class="pharmacokinetics-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Medication / route</th>
+                      <th scope="col">Timing</th>
+                      <th scope="col">Half-life / offset</th>
+                      <th scope="col">Metabolism / elimination</th>
+                      <th scope="col">Behavior notes</th>
+                      <th scope="col">Source</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pharmacokineticsTable"></tbody>
+                </table>
+              </div>
             </div>
-          </section>
+          </details>
 
           <div class="clinical-notes pharmacokinetics-notes">
             <h3>Reference notes</h3>
@@ -1189,6 +1196,6 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260520-uds-benzo-updates"></script>
+    <script src="script.js?v=20260520-pk-sidebar-reference"></script>
   </body>
 </html>

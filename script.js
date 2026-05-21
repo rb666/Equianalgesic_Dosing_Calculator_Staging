@@ -2120,7 +2120,11 @@ const renderSelectedPharmacokineticsDetail = () => {
     <div class="pk-selected-detail-head">
       <span class="eyebrow">Selected profile</span>
       <h4>${selectedItem.name}</h4>
-      <span>${selectedItem.route}</span>
+      <span class="pk-selected-route">${selectedItem.route}</span>
+      <p>
+        Route behavior and monitoring details are shown here by default so the
+        selected chart and clinical notes stay together.
+      </p>
     </div>
     <dl class="pk-selected-detail-grid">
       <div>
@@ -2140,12 +2144,12 @@ const renderSelectedPharmacokineticsDetail = () => {
         <dd>${selectedItem.mechanism}</dd>
       </div>
       <div>
-        <dt>Important interactions</dt>
-        <dd>${selectedItem.interactions}</dd>
+        <dt>Route behavior</dt>
+        <dd>${selectedItem.behavior}</dd>
       </div>
       <div>
-        <dt>Behavior notes</dt>
-        <dd>${selectedItem.behavior}</dd>
+        <dt>Monitoring considerations</dt>
+        <dd>${selectedItem.interactions}</dd>
       </div>
       <div>
         <dt>Source</dt>

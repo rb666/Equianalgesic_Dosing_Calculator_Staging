@@ -21,7 +21,8 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260521-remove-sampler-toggle" />
+    <link rel="stylesheet" href="styles.css?v=20260521-uds-tool-integration" />
+    <link rel="stylesheet" href="uds-tool.css?v=20260521-uds-tool-integration" />
   </head>
   <body>
     <div class="environment-banner">
@@ -1036,215 +1037,130 @@
           </button>
         </div>
 
-        <div class="reference-modal-body">
-          <section class="pk-reference-block">
-            <div class="section-heading">
-              <p class="eyebrow">Interpretation</p>
-              <h3>Core UDS cautions</h3>
-            </div>
-            <div class="clinical-notes">
-              <ul>
-                <li>Initial immunoassay results are presumptive. Confirm unexpected positives or negatives with definitive testing such as LC-MS/MS or GC-MS before changing care.</li>
-                <li>Standard opiate immunoassays primarily detect morphine-like compounds and may miss oxycodone, fentanyl, methadone, buprenorphine, tramadol, tapentadol, and other synthetic or semisynthetic agents unless specifically ordered.</li>
-                <li>Benzodiazepine immunoassays can miss agents such as lorazepam, clonazepam, and alprazolam depending on assay cross-reactivity and metabolites.</li>
-                <li>Detection windows vary by dose, chronicity, cutoff, assay, renal/hepatic function, urine concentration, and timing since last dose.</li>
-              </ul>
-            </div>
-          </section>
-
-          <section class="pk-reference-block">
-            <div class="section-heading">
-              <p class="eyebrow">Detection windows</p>
-              <h3>Expected urine detection times</h3>
-            </div>
-            <p class="reference-copy">
-              These are approximate clinical windows. Local assay cutoff,
-              specimen concentration, chronicity, body composition, and organ
-              function can materially change detection.
-            </p>
-            <div class="table-wrap">
-              <table class="uds-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Drug category</th>
-                    <th scope="col">Approximate urine window</th>
-                    <th scope="col">Clinical notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>Short-acting benzodiazepines</strong><span class="table-subtext">Alprazolam, lorazepam, triazolam, midazolam</span></td>
-                    <td>Typically 1-3 days</td>
-                    <td>Shorter apparent windows are common, especially with intermittent use or higher assay cutoffs.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Long-acting benzodiazepines</strong><span class="table-subtext">Diazepam, clonazepam, chlordiazepoxide, clorazepate</span></td>
-                    <td>Several days to weeks</td>
-                    <td>Chronic use can prolong detection because active metabolites may accumulate.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Standard opiates</strong><span class="table-subtext">Morphine, codeine, heroin metabolite</span></td>
-                    <td>Usually 2-4 days</td>
-                    <td>Routine opiate screens are most sensitive for morphine-like compounds; 6-MAM is specific for recent heroin exposure when detected.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Hydrocodone / hydromorphone</strong></td>
-                    <td>Usually 2-4 days</td>
-                    <td>Immunoassay sensitivity varies. Parent/metabolite pattern is best interpreted with definitive testing when clinically important.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Oxycodone / oxymorphone</strong></td>
-                    <td>Usually 2-4 days</td>
-                    <td>Often missed by a generic opiate screen unless an oxycodone-specific assay or definitive panel is ordered.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Fentanyl</strong></td>
-                    <td>Often 1-3 days; longer with chronic exposure</td>
-                    <td>Highly lipophilic. Chronic or high-dose exposure may create prolonged detection through tissue redistribution.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Methadone</strong></td>
-                    <td>Often 3-10 days</td>
-                    <td>Requires methadone-specific screening or definitive testing; EDDP helps support methadone exposure.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Buprenorphine</strong></td>
-                    <td>Often 2-7 days</td>
-                    <td>Requires buprenorphine-specific screening or definitive testing; norbuprenorphine supports metabolism/exposure.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="pk-reference-block">
-            <div class="section-heading">
-              <p class="eyebrow">Metabolites</p>
-              <h3>Expected findings and ordering notes</h3>
-            </div>
-            <div class="table-wrap">
-              <table class="uds-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Medication / class</th>
-                    <th scope="col">Expected urine findings</th>
-                    <th scope="col">Screening limitation</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Morphine / codeine / heroin</td>
-                    <td>Morphine may reflect morphine, codeine, or heroin exposure; 6-MAM is specific for recent heroin exposure when detected.</td>
-                    <td>Opiate screen is most reliable for morphine-like compounds.</td>
-                  </tr>
-                  <tr>
-                    <td>Hydrocodone / hydromorphone</td>
-                    <td>Hydrocodone may produce hydromorphone; hydromorphone may also appear after morphine or hydrocodone exposure.</td>
-                    <td>Interpret parent and metabolite patterns together.</td>
-                  </tr>
-                  <tr>
-                    <td>Oxycodone / oxymorphone</td>
-                    <td>Oxycodone may produce oxymorphone and noroxycodone.</td>
-                    <td>Often requires an oxycodone-specific assay or definitive panel.</td>
-                  </tr>
-                  <tr>
-                    <td>Tramadol / tapentadol</td>
-                    <td>Parent drug and route-specific metabolites may be present depending on the panel.</td>
-                    <td>Not reliably detected by routine opiate immunoassay; order specific or definitive testing when needed.</td>
-                  </tr>
-                  <tr>
-                    <td>Fentanyl</td>
-                    <td>Fentanyl and norfentanyl.</td>
-                    <td>Not detected by a routine opiate screen; order fentanyl testing specifically.</td>
-                  </tr>
-                  <tr>
-                    <td>Methadone</td>
-                    <td>Methadone and EDDP.</td>
-                    <td>Requires methadone-specific screening or definitive testing.</td>
-                  </tr>
-                  <tr>
-                    <td>Buprenorphine</td>
-                    <td>Buprenorphine and norbuprenorphine.</td>
-                    <td>Requires buprenorphine-specific screening or definitive testing.</td>
-                  </tr>
-                  <tr>
-                    <td>Diazepam / chlordiazepoxide / clorazepate</td>
-                    <td>Nordiazepam, temazepam, and oxazepam patterns may appear.</td>
-                    <td>Long-acting metabolites can remain detectable longer than short-acting agents.</td>
-                  </tr>
-                  <tr>
-                    <td>Lorazepam / clonazepam / alprazolam</td>
-                    <td>Lorazepam-glucuronide, 7-aminoclonazepam, or alpha-hydroxyalprazolam may be expected depending on agent.</td>
-                    <td>Some immunoassays miss these; confirm when clinical decisions depend on the result.</td>
-                  </tr>
-                  <tr>
-                    <td>Midazolam</td>
-                    <td>Alpha-hydroxymidazolam metabolites may be expected after recent exposure.</td>
-                    <td>Short detection window and assay limitations make definitive testing preferable when important.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="pk-reference-block">
-            <div class="section-heading">
-              <p class="eyebrow">Immunoassay limits</p>
-              <h3>False-positive triggers and cross-reactivity</h3>
-            </div>
-            <p class="reference-copy">
-              Immunoassays are vulnerable to cross-reactivity and false negatives.
-              Patterns vary by manufacturer, cutoff, and ordered panel, so use
-              definitive testing when results do not fit the clinical picture.
-            </p>
-            <div class="uds-note-grid">
-              <div class="note-box note-box-accent">
-                <h4>Opiates immunoassay</h4>
-                <p><strong>Possible false-positive triggers:</strong> quinolone antibiotics, rifampin, and poppy seed exposure.</p>
-                <p>Usually targets morphine-like compounds and may miss fentanyl, methadone, buprenorphine, oxycodone, tramadol, and tapentadol unless separate assays are ordered.</p>
+        <div class="reference-modal-body uds-modal-body">
+          <section class="uds-tool" aria-label="Interactive urine drug screen reference tool">
+            <div class="uds-toolbar">
+              <div class="uds-search-block">
+                <label for="udsSearchInput">Search drug, metabolite, brand, finding, or class</label>
+                <div class="uds-search-wrap">
+                  <input
+                    autocomplete="off"
+                    id="udsSearchInput"
+                    placeholder="Try Dilaudid, Xanax, EDDP, THC-COOH, benzoylecgonine..."
+                    type="search"
+                  />
+                  <button class="secondary-button uds-search-clear" id="udsSearchClear" type="button">
+                    Clear
+                  </button>
+                  <div class="uds-search-results is-hidden" id="udsSearchResults"></div>
+                </div>
               </div>
-
-              <div class="note-box note-box-accent">
-                <h4>Benzodiazepines immunoassay</h4>
-                <p><strong>Possible false-positive triggers:</strong> sertraline, efavirenz, and oxaprozin have been reported with some assays.</p>
-                <p>Some common screens have limited sensitivity for lorazepam, clonazepam, and alprazolam metabolites, creating clinically important false negatives.</p>
-              </div>
-
-              <div class="note-box note-box-accent">
-                <h4>Fentanyl testing</h4>
-                <p><strong>Clinical limitation:</strong> fentanyl is not detected by routine opiate screens.</p>
-                <p>Order fentanyl-specific testing or definitive testing when fentanyl exposure, adherence, diversion, or toxicity is part of the clinical question.</p>
-              </div>
-
-              <div class="note-box note-box-accent">
-                <h4>Methadone testing</h4>
-                <p><strong>Clinical limitation:</strong> methadone and EDDP require methadone-specific screening or definitive testing.</p>
-                <p>Unexpected methadone findings should be interpreted with medication history, timing, and confirmatory testing.</p>
+              <div class="uds-controls">
+                <div class="uds-mode-toggle" aria-label="UDS tool mode">
+                  <button class="is-active" data-uds-mode="lookup" type="button">Lookup</button>
+                  <button data-uds-mode="pattern" type="button">Pattern Check</button>
+                </div>
+                <label class="uds-method-label" for="udsMethodSelect">
+                  Method
+                  <select id="udsMethodSelect">
+                    <option value="any">Any</option>
+                    <option value="immunoassay">Immunoassay screen</option>
+                    <option value="definitive">Definitive LC/GC-MS</option>
+                  </select>
+                </label>
+                <button class="secondary-button" id="udsStartButton" type="button">Start page</button>
               </div>
             </div>
-          </section>
 
-          <div class="clinical-notes pharmacokinetics-notes">
-            <h3>Clinical interpretation guidelines</h3>
-            <ul>
-              <li><strong>Order the right panel:</strong> A generic "opiate" screen is not a comprehensive opioid screen. Use specific assays or definitive testing for fentanyl, oxycodone, methadone, buprenorphine, tramadol, and tapentadol when those drugs matter clinically.</li>
-              <li><strong>Confirm before acting:</strong> Unexpected positives, unexpected negatives, suspected diversion, adherence concerns, or high-stakes prescribing decisions should be confirmed with LC-MS/MS or GC-MS.</li>
-              <li><strong>Interpret negatives carefully:</strong> A negative result can reflect no exposure, a concentration below cutoff, timing outside the detection window, assay insensitivity, dilution, substitution, adulteration, or a drug not included in the ordered panel.</li>
-              <li><strong>Use patient context:</strong> Medication list, last dose timing, renal/hepatic function, urine creatinine/specific gravity, route, chronicity, and formulation all affect interpretation.</li>
-            </ul>
-          </div>
-
-          <section class="pk-reference-block">
-            <div class="section-heading">
-              <p class="eyebrow">Sources</p>
-              <h3>UDS references used</h3>
+            <div class="uds-caution-strip">
+              <span>Immunoassay screens are presumptive.</span>
+              <span>Unexpected results need definitive confirmation.</span>
+              <span>Interpret against the ordered panel, cutoff, timing, and patient context.</span>
             </div>
-            <p class="reference-copy">
-              Background references include
-              <a href="https://www.aafp.org/pubs/afp/issues/2019/0101/p33.html" rel="noreferrer" target="_blank">AAFP urine drug test interpretation</a>
-              and
-              <a href="https://www.arupconsult.com/content/drug-testing" rel="noreferrer" target="_blank">ARUP Consult drug testing guidance</a>.
-            </p>
+
+            <div class="uds-view" id="udsLookupView">
+              <section class="uds-panel uds-focus-panel">
+                <div class="uds-panel-head">
+                  <div>
+                    <p class="eyebrow">Lookup</p>
+                    <h3 id="udsLookupTitle">Start with a common item or search</h3>
+                  </div>
+                  <button class="secondary-button" id="udsCopyLookupButton" type="button">
+                    Copy summary
+                  </button>
+                </div>
+                <div id="udsLookupContent"></div>
+              </section>
+
+              <aside class="uds-panel uds-relations-panel">
+                <div class="uds-panel-head">
+                  <div>
+                    <p class="eyebrow">Relationships</p>
+                    <h3>Navigator</h3>
+                  </div>
+                </div>
+                <div id="udsRelationsContent"></div>
+              </aside>
+            </div>
+
+            <div class="uds-view uds-pattern-view is-hidden" id="udsPatternView">
+              <section class="uds-panel">
+                <div class="uds-panel-head">
+                  <div>
+                    <p class="eyebrow">Pattern Check</p>
+                    <h3>Compare expected medications with detected findings</h3>
+                  </div>
+                  <button class="secondary-button" id="udsCopyPatternButton" type="button">
+                    Copy summary
+                  </button>
+                </div>
+
+                <datalist id="udsItemOptions"></datalist>
+                <div class="uds-pattern-grid">
+                  <div class="uds-chip-input" data-uds-chip-group="expected">
+                    <label for="udsExpectedInput">Prescribed / expected</label>
+                    <div class="uds-add-row">
+                      <input id="udsExpectedInput" list="udsItemOptions" placeholder="Search and add expected drug" />
+                      <button class="secondary-button" data-uds-add="expected" type="button">Add</button>
+                    </div>
+                    <div class="uds-chip-list" id="udsExpectedChips"></div>
+                  </div>
+
+                  <div class="uds-chip-input" data-uds-chip-group="detected">
+                    <label for="udsDetectedInput">Detected findings</label>
+                    <div class="uds-add-row">
+                      <input id="udsDetectedInput" list="udsItemOptions" placeholder="Search and add detected analyte" />
+                      <button class="secondary-button" data-uds-add="detected" type="button">Add</button>
+                    </div>
+                    <div class="uds-chip-list" id="udsDetectedChips"></div>
+                  </div>
+
+                  <div class="uds-chip-input" data-uds-chip-group="absent">
+                    <label for="udsAbsentInput">Absent, optional</label>
+                    <div class="uds-add-row">
+                      <input id="udsAbsentInput" list="udsItemOptions" placeholder="Search and add absent analyte" />
+                      <button class="secondary-button" data-uds-add="absent" type="button">Add</button>
+                    </div>
+                    <div class="uds-chip-list" id="udsAbsentChips"></div>
+                  </div>
+                </div>
+
+                <div class="uds-pattern-actions">
+                  <button id="udsAnalyzeButton" type="button">Analyze pattern</button>
+                  <button class="secondary-button" id="udsClearPatternButton" type="button">Clear pattern</button>
+                </div>
+              </section>
+
+              <section class="uds-panel">
+                <div class="uds-panel-head">
+                  <div>
+                    <p class="eyebrow">Interpretation</p>
+                    <h3>Pattern output</h3>
+                  </div>
+                </div>
+                <div id="udsPatternOutput"></div>
+              </section>
+            </div>
           </section>
         </div>
       </div>
@@ -1329,6 +1245,7 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260521-remove-sampler-toggle"></script>
+    <script src="script.js?v=20260521-uds-tool-integration"></script>
+    <script src="uds-tool.js?v=20260521-uds-tool-integration"></script>
   </body>
 </html>

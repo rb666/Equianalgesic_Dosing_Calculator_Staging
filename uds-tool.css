@@ -135,24 +135,6 @@
   transform: none;
 }
 
-.uds-caution-strip {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.uds-caution-strip span {
-  min-height: 52px;
-  padding: 10px 12px;
-  border: 1.5px solid var(--warning-border);
-  border-radius: 8px;
-  background: var(--warning-soft);
-  color: var(--warning-body);
-  font-size: 0.92rem;
-  font-weight: 850;
-  line-height: 1.35;
-}
-
 .uds-view {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
@@ -447,8 +429,7 @@
   .uds-toolbar,
   .uds-view,
   .uds-pattern-view,
-  .uds-grid,
-  .uds-caution-strip {
+  .uds-grid {
     grid-template-columns: 1fr;
   }
 

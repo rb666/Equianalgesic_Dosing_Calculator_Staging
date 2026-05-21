@@ -15,15 +15,110 @@ const methadoneRatioTable = [
 ];
 
 const benzoConversionOptions = [
-  { id: "alprazolam", medication: "Alprazolam", equiv: 0.5, doseUnit: "mg" },
-  { id: "chlordiazepoxide", medication: "Chlordiazepoxide", equiv: 25, doseUnit: "mg" },
-  { id: "clonazepam", medication: "Clonazepam", equiv: 0.5, doseUnit: "mg" },
-  { id: "clorazepate", medication: "Clorazepate", equiv: 15, doseUnit: "mg" },
-  { id: "diazepam", medication: "Diazepam", equiv: 10, doseUnit: "mg" },
-  { id: "lorazepam", medication: "Lorazepam", equiv: 1, doseUnit: "mg" },
-  { id: "oxazepam", medication: "Oxazepam", equiv: 20, doseUnit: "mg" },
-  { id: "temazepam", medication: "Temazepam", equiv: 20, doseUnit: "mg" },
-  { id: "triazolam", medication: "Triazolam", equiv: 0.25, doseUnit: "mg" }
+  {
+    id: "alprazolam_po",
+    medication: "Alprazolam",
+    brand: "Xanax",
+    route: "PO",
+    equiv: 1,
+    doseUnit: "mg",
+  },
+  {
+    id: "chlordiazepoxide_po",
+    medication: "Chlordiazepoxide",
+    brand: "Librium",
+    route: "PO",
+    equiv: 25,
+    doseUnit: "mg",
+  },
+  {
+    id: "clonazepam_po",
+    medication: "Clonazepam",
+    brand: "Klonopin",
+    route: "PO",
+    equiv: 1,
+    doseUnit: "mg",
+  },
+  {
+    id: "clorazepate_po",
+    medication: "Clorazepate",
+    brand: "Tranxene",
+    route: "PO",
+    equiv: 15,
+    doseUnit: "mg",
+  },
+  {
+    id: "diazepam_po",
+    medication: "Diazepam",
+    brand: "Valium",
+    route: "PO",
+    equiv: 10,
+    doseUnit: "mg",
+  },
+  {
+    id: "diazepam_iv",
+    medication: "Diazepam",
+    brand: "Valium",
+    route: "IV",
+    equiv: 10,
+    doseUnit: "mg",
+  },
+  {
+    id: "lorazepam_po",
+    medication: "Lorazepam",
+    brand: "Ativan",
+    route: "PO",
+    equiv: 2,
+    doseUnit: "mg",
+  },
+  {
+    id: "lorazepam_iv",
+    medication: "Lorazepam",
+    brand: "Ativan",
+    route: "IV",
+    equiv: 2,
+    doseUnit: "mg",
+  },
+  {
+    id: "midazolam_po",
+    medication: "Midazolam",
+    brand: "Versed",
+    route: "PO",
+    equiv: 12,
+    doseUnit: "mg",
+  },
+  {
+    id: "midazolam_iv",
+    medication: "Midazolam",
+    brand: "Versed",
+    route: "IV",
+    equiv: 4,
+    doseUnit: "mg",
+  },
+  {
+    id: "oxazepam_po",
+    medication: "Oxazepam",
+    brand: "Serax",
+    route: "PO",
+    equiv: 30,
+    doseUnit: "mg",
+  },
+  {
+    id: "temazepam_po",
+    medication: "Temazepam",
+    brand: "Restoril",
+    route: "PO",
+    equiv: 15,
+    doseUnit: "mg",
+  },
+  {
+    id: "triazolam_po",
+    medication: "Triazolam",
+    brand: "Halcion",
+    route: "PO",
+    equiv: 0.25,
+    doseUnit: "mg",
+  },
 ];
 
 const conversionOptions = [
@@ -101,9 +196,9 @@ const conversionOptions = [
     id: "Oxycodone_Oral",
     medication: "Oxycodone",
     route: "Oral (IR)",
-    referenceDose: 20,
+    referenceDose: 10,
     doseUnit: "mg",
-    oralMorphineEquivalent: 25,
+    oralMorphineEquivalent: 15,
     label: "Oxycodone oral (IR)",
     targetable: true,
   },
@@ -111,9 +206,9 @@ const conversionOptions = [
     id: "Oxycodone_Oral_ER",
     medication: "Oxycodone",
     route: "Oral (ER)",
-    referenceDose: 20,
+    referenceDose: 10,
     doseUnit: "mg",
-    oralMorphineEquivalent: 25,
+    oralMorphineEquivalent: 15,
     label: "Oxycodone oral (ER)",
     targetable: true,
   },
@@ -521,7 +616,7 @@ const sourceReferences = [
       "CDC Clinical Practice Guideline for Prescribing Opioids for Pain — United States, 2022",
     url: "https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm",
     note:
-      "Background source for hydrocodone, oral codeine, fentanyl transdermal, methadone, morphine, oxycodone, oxymorphone, tapentadol, and tramadol conversion factors.",
+      "Background source for hydrocodone, oral codeine, fentanyl transdermal, methadone, morphine, oxycodone 1.5 MME factor, oxymorphone, tapentadol, and tramadol conversion factors.",
   },
   {
     title: "Calculation of Oral Morphine Equivalents (OME) | Pain Management Education at UCSF",
@@ -564,16 +659,41 @@ const sourceReferences = [
       "Background source for hepatic caution language; the mild/moderate/severe percentage ranges are the client-requested staging rules.",
   },
   {
+    title: "Choosing equivalent doses of oral benzodiazepines – NHS Specialist Pharmacy Service",
+    url:
+      "https://www.sps.nhs.uk/articles/choosing-equivalent-doses-of-oral-benzodiazepines/",
+    note:
+      "Reference for oral benzodiazepine equivalence values using diazepam as the comparison baseline.",
+  },
+  {
+    title: "Benzodiazepine equivalence table – Ashton Manual",
+    url: "https://www.benzo.org.uk/bzequiv.htm",
+    note:
+      "Supplemental reference for benzodiazepine equivalence values and tapering context. This staging build applies the client's reviewed benzodiazepine ratios.",
+  },
+  {
+    title: "Urine Drug Tests: Ordering and Interpretation – American Family Physician",
+    url: "https://www.aafp.org/pubs/afp/issues/2019/0101/p33.html",
+    note:
+      "Reference for UDS immunoassay limitations, unexpected results, opioid and benzodiazepine interpretation issues, and confirmation principles.",
+  },
+  {
+    title: "Drug Testing – ARUP Consult",
+    url: "https://www.arupconsult.com/content/drug-testing",
+    note:
+      "Reference for UDS test selection, confirmatory testing, and limitations of opiate, oxycodone, benzodiazepine, and synthetic opioid immunoassays.",
+  },
+  {
     title: "Configured local staging rules",
     url: "",
     note:
       "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested oral methadone 4.7 MME factor, 3.0 conservative oral methadone estimate, and hepatic advisory bands.",
   },
   {
-    title: "Production methadone ratio table",
+    title: "Configured methadone ratio table",
     url: "",
     note:
-      "Cloned from the production methadone tool for the specialty morphine:methadone bands: 0-30 mg 2:1, 31-99 mg 4:1, 100-299 mg 8:1, 300-499 mg 12:1, 500-999 mg 15:1, and 1000 mg/day or more 20:1.",
+      "Local staging configuration for the specialty morphine:methadone bands: 0-30 mg 2:1, 31-99 mg 4:1, 100-299 mg 8:1, 300-499 mg 12:1, 500-999 mg 15:1, and 1000 mg/day or more 20:1.",
   },
 ];
 
@@ -942,7 +1062,7 @@ const pharmacokineticsRows = [
     sources: [
       {
         title: "DailyMed OxyContin tablets",
-        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=29b9e115-46aa-430b-a010-8b1b86b864a7",
+        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=bfdfe235-d717-4855-a3c8-a13d26dadede",
       },
     ],
   },
@@ -1209,6 +1329,9 @@ const pharmacokineticsModal = document.querySelector("#pharmacokineticsModal");
 const pharmacokineticsCloseButton = document.querySelector(
   "#pharmacokineticsCloseButton",
 );
+const udsOpenButton = document.querySelector("#udsOpenButton");
+const udsModal = document.querySelector("#udsModal");
+const udsCloseButton = document.querySelector("#udsCloseButton");
 const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
@@ -1359,7 +1482,9 @@ const isModalVisible = (modalElement) =>
 const updateModalOpenState = () => {
   document.body.classList.toggle(
     "modal-open",
-    isModalVisible(termsModal) || isModalVisible(pharmacokineticsModal),
+    isModalVisible(termsModal) ||
+      isModalVisible(pharmacokineticsModal) ||
+      isModalVisible(udsModal),
   );
 };
 
@@ -1404,6 +1529,20 @@ const setPharmacokineticsModalVisible = (visible) => {
 
   if (visible && pharmacokineticsCloseButton) {
     window.setTimeout(() => pharmacokineticsCloseButton.focus(), 0);
+  }
+};
+
+const setUdsModalVisible = (visible) => {
+  if (!udsModal) {
+    return;
+  }
+
+  udsModal.classList.toggle("is-hidden", !visible);
+  udsOpenButton?.setAttribute("aria-expanded", String(visible));
+  updateModalOpenState();
+
+  if (visible && udsCloseButton) {
+    window.setTimeout(() => udsCloseButton.focus(), 0);
   }
 };
 
@@ -2736,17 +2875,20 @@ const calculateMethadone = () => {
 
 const populateBenzoSelects = () => {
   if (!benzoSourceDrugSelect || !benzoTargetDrugSelect) return;
-  
+
   const markup = benzoConversionOptions
-    .map(item => `<option value="${item.id}">${item.medication}</option>`)
+    .map(
+      (item) =>
+        `<option value="${item.id}">${item.medication} (${item.brand}) ${item.route}</option>`,
+    )
     .join("");
 
   benzoSourceDrugSelect.innerHTML = markup;
   benzoTargetDrugSelect.innerHTML = markup;
-  
+
   // Set default values
-  benzoSourceDrugSelect.value = "alprazolam";
-  benzoTargetDrugSelect.value = "diazepam";
+  benzoSourceDrugSelect.value = "alprazolam_po";
+  benzoTargetDrugSelect.value = "diazepam_po";
 };
 
 const calculateBenzo = () => {
@@ -3054,6 +3196,26 @@ if (pharmacokineticsModal) {
   });
 }
 
+if (udsOpenButton) {
+  udsOpenButton.addEventListener("click", () => {
+    setUdsModalVisible(true);
+  });
+}
+
+if (udsCloseButton) {
+  udsCloseButton.addEventListener("click", () => {
+    setUdsModalVisible(false);
+  });
+}
+
+if (udsModal) {
+  udsModal.addEventListener("click", (event) => {
+    if (event.target === udsModal) {
+      setUdsModalVisible(false);
+    }
+  });
+}
+
 if (pharmacokineticsGraphGrid) {
   pharmacokineticsGraphGrid.addEventListener("click", (event) => {
     const selectedCard = event.target.closest("[data-pk-index]");
@@ -3074,6 +3236,11 @@ document.addEventListener("keydown", (event) => {
 
   if (isModalVisible(pharmacokineticsModal)) {
     setPharmacokineticsModalVisible(false);
+    return;
+  }
+
+  if (isModalVisible(udsModal)) {
+    setUdsModalVisible(false);
     return;
   }
 

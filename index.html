@@ -9,7 +9,7 @@
     />
     <meta name="robots" content="noindex, nofollow" />
     <title>Equianalgesic Dose Calculator | Staging</title>
-    <link rel="icon" href="favicon.svg?v=20260506-production" type="image/svg+xml" />
+    <link rel="icon" href="favicon.svg?v=20260520-staging" type="image/svg+xml" />
     <script>
       (() => {
         try {
@@ -21,7 +21,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260519-wider-pk-reference" />
+    <link rel="stylesheet" href="styles.css?v=20260520-uds-benzo-updates" />
   </head>
   <body>
     <div class="environment-banner">
@@ -39,6 +39,15 @@
             type="button"
           >
             PK reference
+          </button>
+          <button
+            aria-controls="udsModal"
+            aria-expanded="false"
+            class="topbar-reference-button"
+            id="udsOpenButton"
+            type="button"
+          >
+            UDS reference
           </button>
           <button
             aria-pressed="false"
@@ -709,7 +718,7 @@
                   name="benzoSourceDose"
                   type="number"
                   min="0"
-                  step="0.01"
+                  step="0.1"
                   inputmode="decimal"
                   value="1"
                   required
@@ -796,6 +805,8 @@
               <ul>
                 <li style="font-weight: bold;">NEVER abruptly discontinue benzodiazepines. Abrupt cessation carries a high risk of severe withdrawal symptoms, including life-threatening seizures, delirium, and severe autonomic instability. Always use a gradual, clinical taper.</li>
                 <li>Combining Benzodiazepines with Opioids dramatically increases the risk of profound sedation, respiratory depression, coma, and death. Use extreme caution when co-prescribing.</li>
+                <li>Midazolam (Versed) is included because it is commonly used in ICU settings; oral and IV midazolam are not 1:1.</li>
+                <li>Clonazepam, alprazolam, chlordiazepoxide, and oxazepam are shown as oral-only options because they do not have routine IV formulations.</li>
                 <li>Equivalent doses are approximate. Patient-specific factors such as half-life (e.g., active metabolites in diazepam/chlordiazepoxide vs. short-acting alprazolam/triazolam), age, and liver function heavily influence clinical effects.</li>
                 <li>Start conservatively and titrate based on individual clinical response and tolerability.</li>
               </ul>
@@ -990,6 +1001,116 @@
     </div>
 
     <div
+      aria-labelledby="udsModalTitle"
+      aria-modal="true"
+      class="reference-modal is-hidden"
+      id="udsModal"
+      role="dialog"
+    >
+      <div class="reference-dialog">
+        <div class="reference-modal-header">
+          <div>
+            <p class="eyebrow">UDS</p>
+            <h2 id="udsModalTitle">Urine drug screen reference</h2>
+            <p>
+              Practical interpretation notes for presumptive screens,
+              confirmatory testing, expected metabolites, and common misses.
+            </p>
+          </div>
+          <button
+            class="secondary-button modal-close-button"
+            id="udsCloseButton"
+            type="button"
+          >
+            Close
+          </button>
+        </div>
+
+        <div class="reference-modal-body">
+          <section class="pk-reference-block">
+            <div class="section-heading">
+              <p class="eyebrow">Interpretation</p>
+              <h3>Core UDS cautions</h3>
+            </div>
+            <div class="clinical-notes">
+              <ul>
+                <li>Initial immunoassay results are presumptive. Confirm unexpected positives or negatives with definitive testing such as LC-MS/MS or GC-MS before changing care.</li>
+                <li>Standard opiate immunoassays primarily detect morphine-like compounds and may miss oxycodone, fentanyl, methadone, buprenorphine, tramadol, tapentadol, and other synthetic or semisynthetic agents unless specifically ordered.</li>
+                <li>Benzodiazepine immunoassays can miss agents such as lorazepam, clonazepam, and alprazolam depending on assay cross-reactivity and metabolites.</li>
+                <li>Detection windows vary by dose, chronicity, cutoff, assay, renal/hepatic function, urine concentration, and timing since last dose.</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="pk-reference-block">
+            <div class="section-heading">
+              <p class="eyebrow">Chart</p>
+              <h3>Expected metabolites and ordering notes</h3>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Medication / class</th>
+                    <th scope="col">Expected urine findings</th>
+                    <th scope="col">Screening limitation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Morphine / codeine / heroin</td>
+                    <td>Morphine may reflect morphine, codeine, or heroin exposure; 6-MAM is specific for recent heroin exposure when detected.</td>
+                    <td>Opiate screen is most reliable for morphine-like compounds.</td>
+                  </tr>
+                  <tr>
+                    <td>Hydrocodone / hydromorphone</td>
+                    <td>Hydrocodone may produce hydromorphone; hydromorphone may also appear after morphine or hydrocodone exposure.</td>
+                    <td>Interpret parent and metabolite patterns together.</td>
+                  </tr>
+                  <tr>
+                    <td>Oxycodone / oxymorphone</td>
+                    <td>Oxycodone may produce oxymorphone and noroxycodone.</td>
+                    <td>Often requires an oxycodone-specific assay or definitive panel.</td>
+                  </tr>
+                  <tr>
+                    <td>Fentanyl</td>
+                    <td>Fentanyl and norfentanyl.</td>
+                    <td>Not detected by a routine opiate screen; order fentanyl testing specifically.</td>
+                  </tr>
+                  <tr>
+                    <td>Methadone</td>
+                    <td>Methadone and EDDP.</td>
+                    <td>Requires methadone-specific screening or definitive testing.</td>
+                  </tr>
+                  <tr>
+                    <td>Buprenorphine</td>
+                    <td>Buprenorphine and norbuprenorphine.</td>
+                    <td>Requires buprenorphine-specific screening or definitive testing.</td>
+                  </tr>
+                  <tr>
+                    <td>Diazepam / chlordiazepoxide / clorazepate</td>
+                    <td>Nordiazepam, temazepam, and oxazepam patterns may appear.</td>
+                    <td>Long-acting metabolites can remain detectable longer than short-acting agents.</td>
+                  </tr>
+                  <tr>
+                    <td>Lorazepam / clonazepam / alprazolam</td>
+                    <td>Lorazepam-glucuronide, 7-aminoclonazepam, or alpha-hydroxyalprazolam may be expected depending on agent.</td>
+                    <td>Some immunoassays miss these; confirm when clinical decisions depend on the result.</td>
+                  </tr>
+                  <tr>
+                    <td>Midazolam</td>
+                    <td>Alpha-hydroxymidazolam metabolites may be expected after recent exposure.</td>
+                    <td>Short detection window and assay limitations make definitive testing preferable when important.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div
       aria-labelledby="termsModalTitle"
       aria-modal="true"
       class="terms-modal is-hidden"
@@ -1068,6 +1189,6 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260519-wider-pk-reference"></script>
+    <script src="script.js?v=20260520-uds-benzo-updates"></script>
   </body>
 </html>

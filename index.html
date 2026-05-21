@@ -14,18 +14,18 @@
       (() => {
         try {
           const storedTheme = localStorage.getItem("opioid-conversion-theme");
-          const storedReferenceTheme = localStorage.getItem("opioid-conversion-reference-theme");
+          const storedReferenceTheme = localStorage.getItem("opioid-conversion-reference-theme-v2");
           const theme = storedTheme || "light";
           document.documentElement.dataset.theme = theme;
           document.documentElement.dataset.referenceTheme =
-            storedReferenceTheme || "bronze";
+            storedReferenceTheme || "charcoal";
         } catch {
           document.documentElement.dataset.theme = "light";
-          document.documentElement.dataset.referenceTheme = "bronze";
+          document.documentElement.dataset.referenceTheme = "charcoal";
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260521-reference-sampler" />
+    <link rel="stylesheet" href="styles.css?v=20260521-charcoal-reference-default" />
   </head>
   <body>
     <div class="environment-banner">
@@ -117,7 +117,7 @@
           <span>Pick a theme to preview the PK / UDS control in context.</span>
         </div>
         <div class="reference-theme-options" role="group" aria-label="Reference color options">
-          <button class="reference-theme-option is-active" data-reference-theme="bronze" type="button">
+          <button class="reference-theme-option" data-reference-theme="bronze" type="button">
             Bronze
           </button>
           <button class="reference-theme-option" data-reference-theme="slate" type="button">
@@ -126,7 +126,7 @@
           <button class="reference-theme-option" data-reference-theme="plum" type="button">
             Plum
           </button>
-          <button class="reference-theme-option" data-reference-theme="charcoal" type="button">
+          <button class="reference-theme-option is-active" data-reference-theme="charcoal" type="button">
             Charcoal
           </button>
           <button class="reference-theme-option" data-reference-theme="bluegray" type="button">
@@ -1357,6 +1357,6 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260521-reference-sampler"></script>
+    <script src="script.js?v=20260521-charcoal-reference-default"></script>
   </body>
 </html>

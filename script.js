@@ -1438,7 +1438,7 @@ const benzoReducedDiazepamEquiv = document.querySelector("#benzoReducedDiazepamE
 const benzoReductionApplied = document.querySelector("#benzoReductionApplied");
 
 const THEME_STORAGE_KEY = "opioid-conversion-theme";
-const REFERENCE_THEME_STORAGE_KEY = "opioid-conversion-reference-theme";
+const REFERENCE_THEME_STORAGE_KEY = "opioid-conversion-reference-theme-v2";
 const TERMS_ACCEPTANCE_STORAGE_KEY = "calc-med-terms-accepted-v1";
 
 const setTheme = (theme) => {
@@ -1466,7 +1466,7 @@ const persistTheme = (theme) => {
 
 const setReferenceTheme = (theme) => {
   const allowedThemes = ["bronze", "slate", "plum", "charcoal", "bluegray"];
-  const normalizedTheme = allowedThemes.includes(theme) ? theme : "bronze";
+  const normalizedTheme = allowedThemes.includes(theme) ? theme : "charcoal";
 
   document.documentElement.dataset.referenceTheme = normalizedTheme;
 

@@ -1453,7 +1453,7 @@ const setTheme = (theme) => {
       darkModeActive ? "Theme: Dark" : "Theme: Light"
     );
     if (themeToggleLabel) {
-      themeToggleLabel.textContent = darkModeActive ? "Dark" : "Light";
+      themeToggleLabel.textContent = darkModeActive ? "Theme: Dark" : "Theme: Light";
     }
   }
 };

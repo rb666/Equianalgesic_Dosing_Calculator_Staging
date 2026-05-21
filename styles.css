@@ -318,7 +318,7 @@ a:focus-visible {
   gap: 8px;
   align-items: center;
   justify-content: center;
-  width: 136px;
+  width: 148px;
   min-height: 38px;
   padding: 0 10px;
   border: 1.5px solid rgba(255, 255, 255, 0.86);
@@ -328,7 +328,7 @@ a:focus-visible {
   box-shadow:
     inset 0 0 0 1px rgba(40, 112, 106, 0.1),
     0 5px 14px rgba(11, 24, 26, 0.16);
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 900;
   letter-spacing: 0.01em;
   white-space: nowrap;

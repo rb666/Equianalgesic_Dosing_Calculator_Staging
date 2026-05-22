@@ -1,9 +1,13 @@
 (() => {
+  "use strict";
+
   const root = document.querySelector("#udsModal");
 
   if (!root) {
     return;
   }
+
+  console.info("UDS tool loaded");
 
   const sources = {
     mayoOpiates: {
@@ -675,14 +679,11 @@
     state.lastLookupSummary = buildLookupSummary(entry, primaryRows, secondaryRows, caveats, sourcesForEntry);
 
     elements.lookupContent.innerHTML = `
-      <article class="uds-lookup-result">
-        ${renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats)}
-        ${renderCollapsedLookupDetails(entry, primaryRows, secondaryRows, caveats, sourcesForEntry)}
-        ${renderRelatedFindingsPanel(entry, primaryRows, secondaryRows)}
-      </article>
+      ${renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats)}
+      ${renderCollapsedLookupDetails(entry, primaryRows, secondaryRows, caveats, sourcesForEntry)}
     `;
 
-    renderRelationsPane(entry, outgoing, incoming, caveats);
+    renderLookupContextRail(entry, outgoing, incoming, caveats);
   }
 
   function renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats) {
@@ -761,10 +762,13 @@
 
   function renderCollapsedLookupDetails(entry, primaryRows, secondaryRows, caveats, sourcesForEntry) {
     return `
-      ${renderDetailsSection("Assay details", renderAssayCaveats(caveats))}
-      ${renderDetailsSection("Detection window", renderDetectionWindow(entry))}
-      ${renderDetailsSection("Interpretation cautions", renderDoNotConclude(entry))}
-      ${renderDetailsSection("References", renderSources(sourcesForEntry))}
+      <div class="uds-details-stack">
+        ${renderDetailsSection("Related findings", renderRelationshipList(primaryRows, secondaryRows, entry.id))}
+        ${renderDetailsSection("Assay details", renderAssayCaveats(caveats))}
+        ${renderDetailsSection("Detection window", renderDetectionWindow(entry))}
+        ${renderDetailsSection("Interpretation cautions", renderDoNotConclude(entry))}
+        ${renderDetailsSection("References", renderSources(sourcesForEntry))}
+      </div>
     `;
   }
 
@@ -810,21 +814,6 @@
     }
 
     return `<div class="uds-grid">${sections.join("")}</div>`;
-  }
-
-  function renderRelatedFindingsPanel(entry, primaryRows, secondaryRows) {
-    if (!primaryRows.length && !secondaryRows.length) {
-      return "";
-    }
-
-    return `
-      <details class="uds-details uds-related-panel">
-        <summary>Related findings</summary>
-        <div class="uds-details-body">
-          ${renderRelationshipList(primaryRows, secondaryRows, entry.id)}
-        </div>
-      </details>
-    `;
   }
 
   function renderDetectionWindow(entry) {
@@ -888,6 +877,10 @@
       return critical.text;
     }
 
+    if (entry.note) {
+      return entry.note;
+    }
+
     const relatedNames = primaryRows
       .slice(0, 3)
       .map((row) => labelFor(row.to === entry.id ? row.from : row.to))
@@ -899,10 +892,6 @@
 
     if (relatedNames.length) {
       return `${entry.name} may be explained by ${relatedNames.join(", ")}. Interpret with the full medication list and metabolite pattern.`;
-    }
-
-    if (entry.note) {
-      return entry.note;
     }
 
     return `${entry.name} interpretation depends on assay method, timing, panel contents, and medication history.`;
@@ -925,10 +914,16 @@
     if (critical) {
       return critical.text;
     }
+    if (entry.commonPitfall) {
+      return entry.commonPitfall;
+    }
     return "Do not overinterpret a urine result without the ordered panel, cutoff, timing, assay method, and medication list.";
   }
 
   function buildNextStep(entry, caveats) {
+    if (entry.nextStep) {
+      return entry.nextStep;
+    }
     if (caveats.some((caveatEntry) => caveatEntry.method === "immunoassay")) {
       return "Use definitive testing or a targeted assay when the result conflicts with the medication list or clinical question.";
     }
@@ -939,23 +934,42 @@
     return `Do not conclude exact dose, timing, impairment, diversion, or adherence certainty from ${entry.name} urine detection alone.`;
   }
 
-  function renderRelationsPane(entry, outgoing, incoming, caveats) {
+  function renderLookupContextRail(entry, outgoing, incoming, caveats) {
+    const keyCaveat = caveats.find((caveatEntry) => caveatEntry.severity === "critical" || caveatEntry.severity === "important");
+
     elements.relationsContent.innerHTML = `
-      <div class="uds-empty">
-        Open "Related findings" below the clinical answer to review parent drugs, metabolites, and relationship context.
+      <aside class="uds-context-rail" aria-label="Lookup context">
+        <h3 class="uds-context-title">Context</h3>
+        ${renderContextBlock("Method", getMethodLabel(state.method))}
+        ${keyCaveat ? renderContextBlock("Key method note", keyCaveat.text) : ""}
+        ${renderContextBlock(
+          "Available details",
+          "Open the sections under the answer card for related findings, assay details, detection window, interpretation cautions, and references.",
+        )}
+      </aside>
+    `;
+  }
+
+  function getMethodLabel(method) {
+    if (method === "immunoassay") {
+      return "Immunoassay screen";
+    }
+    if (method === "definitive") {
+      return "Definitive LC/GC-MS";
+    }
+    return "Any method";
+  }
+
+  function renderContextBlock(label, value) {
+    if (!value) {
+      return "";
+    }
+
+    return `
+      <div class="uds-context-block">
+        <div class="uds-context-label">${escapeHtml(label)}</div>
+        <div class="uds-context-value">${escapeHtml(value)}</div>
       </div>
-      ${
-        caveats.length
-          ? `
-            <section class="uds-section">
-              <h4>Method note</h4>
-              <div class="uds-relation-list">
-                <div class="uds-note">${escapeHtml(caveats[0].text)}</div>
-              </div>
-            </section>
-          `
-          : ""
-      }
     `;
   }
 

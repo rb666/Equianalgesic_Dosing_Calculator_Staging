@@ -22,7 +22,7 @@
       })();
     </script>
     <link rel="stylesheet" href="styles.css?v=20260522-uds-screen" />
-    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-related-back" />
+    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-pattern-flow" />
   </head>
   <body>
     <div class="environment-banner">
@@ -1100,8 +1100,11 @@
               <section class="uds-panel">
                 <div class="uds-panel-head">
                   <div>
-                    <p class="eyebrow">Pattern Check</p>
-                    <h3>Compare expected medications with detected findings</h3>
+                    <p class="eyebrow">UDS reconciliation</p>
+                    <h3>Can this UDS result be explained?</h3>
+                    <p class="uds-panel-intro">
+                      Add the expected medication list, then add what the urine drug screen detected.
+                    </p>
                   </div>
                   <button class="secondary-button" id="udsCopyPatternButton" type="button">
                     Copy summary
@@ -1109,32 +1112,47 @@
                 </div>
 
                 <datalist id="udsItemOptions"></datalist>
+                <div class="uds-workflow-callout">
+                  <strong>Use this when reconciling a report.</strong>
+                  <span>The output answers whether the detected findings are compatible, context-dependent, or unexpected.</span>
+                </div>
                 <div class="uds-pattern-grid">
-                  <div class="uds-chip-input" data-uds-chip-group="expected">
-                    <label for="udsExpectedInput">Prescribed / expected</label>
+                  <div class="uds-chip-input uds-workflow-step" data-uds-chip-group="expected">
+                    <div class="uds-step-heading">
+                      <span class="uds-step-number">1</span>
+                      <label for="udsExpectedInput">Expected medications</label>
+                    </div>
+                    <p class="uds-field-help">What is prescribed, reported, or otherwise expected?</p>
                     <div class="uds-add-row">
-                      <input id="udsExpectedInput" list="udsItemOptions" placeholder="Search and add expected drug" />
+                      <input id="udsExpectedInput" list="udsItemOptions" placeholder="Example: oxycodone, clonazepam, fentanyl" />
                       <button class="secondary-button" data-uds-add="expected" type="button">Add</button>
                     </div>
                     <div class="uds-chip-list" id="udsExpectedChips"></div>
                   </div>
 
-                  <div class="uds-chip-input" data-uds-chip-group="detected">
-                    <label for="udsDetectedInput">Detected findings</label>
+                  <div class="uds-chip-input uds-workflow-step" data-uds-chip-group="detected">
+                    <div class="uds-step-heading">
+                      <span class="uds-step-number">2</span>
+                      <label for="udsDetectedInput">Detected on UDS</label>
+                    </div>
+                    <p class="uds-field-help">What did the report list as present or positive?</p>
                     <div class="uds-add-row">
-                      <input id="udsDetectedInput" list="udsItemOptions" placeholder="Search and add detected analyte" />
+                      <input id="udsDetectedInput" list="udsItemOptions" placeholder="Example: oxymorphone, norfentanyl, EDDP" />
                       <button class="secondary-button" data-uds-add="detected" type="button">Add</button>
                     </div>
                     <div class="uds-chip-list" id="udsDetectedChips"></div>
                   </div>
 
-                  <div class="uds-chip-input" data-uds-chip-group="absent">
-                    <label for="udsAbsentInput">Absent findings, if known to be tested</label>
+                  <div class="uds-chip-input uds-workflow-step" data-uds-chip-group="absent">
+                    <div class="uds-step-heading">
+                      <span class="uds-step-number">3</span>
+                      <label for="udsAbsentInput">Tested but absent</label>
+                    </div>
                     <p class="uds-field-help">
                       Only add absent findings if the analyte was included in the ordered panel and reported as absent.
                     </p>
                     <div class="uds-add-row">
-                      <input id="udsAbsentInput" list="udsItemOptions" placeholder="Search and add absent analyte" />
+                      <input id="udsAbsentInput" list="udsItemOptions" placeholder="Example: norfentanyl, 7-aminoclonazepam" />
                       <button class="secondary-button" data-uds-add="absent" type="button">Add</button>
                     </div>
                     <div class="uds-chip-list" id="udsAbsentChips"></div>
@@ -1244,6 +1262,6 @@
     </div>
 
     <script src="script.js?v=20260522-uds-screen"></script>
-    <script src="uds-tool.js?v=20260522-uds-related-back"></script>
+    <script src="uds-tool.js?v=20260522-uds-pattern-flow"></script>
   </body>
 </html>

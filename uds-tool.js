@@ -1378,8 +1378,8 @@
     elements.patternScenarios.innerHTML = `
       <div class="uds-scenario-header">
         <div>
-          <h4>Common scenarios</h4>
-          <p>Load a typical reconciliation pattern, then adjust the findings to match the report.</p>
+          <h4>Start with an example</h4>
+          <p>Load a common UDS pattern to see how reconciliation works, then adjust the chips to match the report.</p>
         </div>
       </div>
       <div class="uds-scenario-list">

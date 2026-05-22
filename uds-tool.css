@@ -16,6 +16,10 @@
   --uds-pill-warm-bg: hsl(40 96% 88%);
   --uds-pill-warm-border: hsl(34 72% 39%);
   --uds-pill-warm-text: hsl(34 84% 20%);
+  --uds-context-bg: hsl(39 86% 96%);
+  --uds-context-border: hsl(36 48% 60%);
+  --uds-context-surface: hsl(39 72% 98%);
+  --uds-context-text: hsl(31 58% 27%);
   --uds-selectable-bg: #ffffff;
   --uds-selectable-border: hsl(209 35% 64%);
   --uds-selectable-hover: hsl(209 72% 95%);
@@ -40,6 +44,10 @@
   --uds-pill-warm-bg: hsl(35 52% 22%);
   --uds-pill-warm-border: hsl(38 70% 62%);
   --uds-pill-warm-text: hsl(40 92% 86%);
+  --uds-context-bg: hsl(34 34% 18%);
+  --uds-context-border: hsl(38 54% 53%);
+  --uds-context-surface: hsl(34 28% 15%);
+  --uds-context-text: hsl(39 90% 84%);
   --uds-selectable-bg: hsl(209 16% 14%);
   --uds-selectable-border: hsl(209 22% 47%);
   --uds-selectable-hover: hsl(209 24% 19%);
@@ -581,15 +589,15 @@
   align-items: baseline;
   margin-top: 12px;
   padding: 10px 12px;
-  border: 2px solid var(--uds-selectable-border);
+  border: 2px solid var(--uds-context-border);
   border-radius: 9px;
-  background: var(--uds-selectable-bg);
+  background: var(--uds-context-surface);
   box-shadow: 0 4px 12px var(--uds-selectable-shadow);
 }
 
 .uds-compact-label {
   min-width: 130px;
-  color: var(--muted);
+  color: var(--uds-context-text);
   font-size: 0.82rem;
   font-weight: 950;
   letter-spacing: 0.08em;
@@ -640,9 +648,9 @@
   display: grid;
   gap: 12px;
   padding: 14px;
-  border: 2px solid var(--uds-section-border);
+  border: 2px solid var(--uds-context-border);
   border-radius: 10px;
-  background: var(--uds-section-bg);
+  background: var(--uds-context-bg);
 }
 
 .uds-context-title {
@@ -654,15 +662,15 @@
 
 .uds-context-block {
   padding: 11px 12px;
-  border: 2px solid var(--uds-selectable-border);
+  border: 2px solid color-mix(in srgb, var(--uds-context-border) 72%, var(--uds-selectable-border));
   border-radius: 9px;
-  background: var(--uds-selectable-bg);
+  background: var(--uds-context-surface);
   box-shadow: 0 4px 12px var(--uds-selectable-shadow);
 }
 
 .uds-context-label {
   margin-bottom: 5px;
-  color: var(--uds-action-text);
+  color: var(--uds-context-text);
   font-size: 0.76rem;
   font-weight: 950;
   letter-spacing: 0.08em;

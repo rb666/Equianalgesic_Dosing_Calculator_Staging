@@ -1063,7 +1063,26 @@
 
   function renderRelationshipTag(relationship) {
     const tag = relationship.clinicalTag || formatStrength(relationship.strength);
-    return `<span class="uds-relation-tag">${escapeHtml(tag)}</span>`;
+    const tagClass = getRelationshipTagClass(tag);
+    return `<span class="uds-relation-tag ${escapeAttribute(tagClass)}">${escapeHtml(tag)}</span>`;
+  }
+
+  function getRelationshipTagClass(tag) {
+    const tagClassMap = {
+      "Expected metabolite": "uds-relation-tag--expected",
+      "Supportive metabolite": "uds-relation-tag--supportive",
+      "Possible minor metabolite": "uds-relation-tag--minor",
+      "Possible parent drug": "uds-relation-tag--parent",
+      "Shared metabolite": "uds-relation-tag--shared",
+      "Not source-specific": "uds-relation-tag--shared",
+      "Assay limitation": "uds-relation-tag--assay",
+      "Exposure marker": "uds-relation-tag--exposure",
+      "Requires quantitative context": "uds-relation-tag--context",
+      "Requires timing context": "uds-relation-tag--context",
+      "Requires panel context": "uds-relation-tag--context",
+    };
+
+    return tagClassMap[tag] || "uds-relation-tag--context";
   }
 
   function renderSources(sourceList) {

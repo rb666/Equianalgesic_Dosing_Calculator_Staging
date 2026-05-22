@@ -24,6 +24,27 @@
   --uds-selectable-border: hsl(209 35% 64%);
   --uds-selectable-hover: hsl(209 72% 95%);
   --uds-selectable-shadow: rgba(31, 42, 39, 0.065);
+  --uds-tag-supportive-bg: hsl(154 58% 88%);
+  --uds-tag-supportive-border: hsl(154 50% 29%);
+  --uds-tag-supportive-text: hsl(154 60% 18%);
+  --uds-tag-expected-bg: hsl(209 78% 92%);
+  --uds-tag-expected-border: hsl(209 62% 38%);
+  --uds-tag-expected-text: hsl(209 72% 22%);
+  --uds-tag-minor-bg: hsl(42 52% 93%);
+  --uds-tag-minor-border: hsl(36 34% 50%);
+  --uds-tag-minor-text: hsl(34 42% 28%);
+  --uds-tag-context-bg: hsl(267 40% 94%);
+  --uds-tag-context-border: hsl(266 36% 48%);
+  --uds-tag-context-text: hsl(266 44% 28%);
+  --uds-tag-shared-bg: hsl(205 18% 94%);
+  --uds-tag-shared-border: hsl(205 16% 45%);
+  --uds-tag-shared-text: hsl(205 20% 25%);
+  --uds-tag-assay-bg: hsl(358 70% 94%);
+  --uds-tag-assay-border: hsl(358 52% 42%);
+  --uds-tag-assay-text: hsl(358 58% 28%);
+  --uds-tag-exposure-bg: hsl(187 64% 91%);
+  --uds-tag-exposure-border: hsl(187 48% 36%);
+  --uds-tag-exposure-text: hsl(187 60% 22%);
 }
 
 :root[data-theme="dark"] .uds-tool {
@@ -52,6 +73,27 @@
   --uds-selectable-border: hsl(209 22% 47%);
   --uds-selectable-hover: hsl(209 24% 19%);
   --uds-selectable-shadow: rgba(0, 0, 0, 0.26);
+  --uds-tag-supportive-bg: hsl(154 30% 23%);
+  --uds-tag-supportive-border: hsl(154 48% 62%);
+  --uds-tag-supportive-text: hsl(154 74% 88%);
+  --uds-tag-expected-bg: hsl(209 30% 23%);
+  --uds-tag-expected-border: hsl(209 56% 66%);
+  --uds-tag-expected-text: hsl(209 82% 90%);
+  --uds-tag-minor-bg: hsl(39 24% 20%);
+  --uds-tag-minor-border: hsl(38 34% 52%);
+  --uds-tag-minor-text: hsl(40 62% 82%);
+  --uds-tag-context-bg: hsl(267 25% 23%);
+  --uds-tag-context-border: hsl(266 45% 68%);
+  --uds-tag-context-text: hsl(266 74% 90%);
+  --uds-tag-shared-bg: hsl(205 15% 22%);
+  --uds-tag-shared-border: hsl(205 18% 58%);
+  --uds-tag-shared-text: hsl(205 34% 84%);
+  --uds-tag-assay-bg: hsl(358 34% 23%);
+  --uds-tag-assay-border: hsl(358 58% 68%);
+  --uds-tag-assay-text: hsl(358 82% 91%);
+  --uds-tag-exposure-bg: hsl(187 28% 22%);
+  --uds-tag-exposure-border: hsl(187 50% 64%);
+  --uds-tag-exposure-text: hsl(187 78% 88%);
 }
 
 .uds-modal-body {
@@ -401,8 +443,7 @@
   color: var(--uds-pill-alt-text);
 }
 
-.uds-badge:nth-child(3),
-.uds-relation-tag {
+.uds-badge:nth-child(3) {
   border-color: var(--uds-pill-warm-border);
   background: var(--uds-pill-warm-bg);
   color: var(--uds-pill-warm-text);
@@ -547,10 +588,55 @@
   width: fit-content;
   margin-top: 7px;
   padding: 5px 8px;
-  border: 2px solid var(--uds-pill-warm-border);
+  border: 2px solid var(--uds-tag-context-border);
   border-radius: 999px;
+  background: var(--uds-tag-context-bg);
+  color: var(--uds-tag-context-text);
   font-size: 0.72rem;
   font-weight: 950;
+}
+
+.uds-relation-tag--supportive {
+  border-color: var(--uds-tag-supportive-border);
+  background: var(--uds-tag-supportive-bg);
+  color: var(--uds-tag-supportive-text);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--uds-tag-supportive-border) 18%, transparent);
+}
+
+.uds-relation-tag--expected {
+  border-color: var(--uds-tag-expected-border);
+  background: var(--uds-tag-expected-bg);
+  color: var(--uds-tag-expected-text);
+}
+
+.uds-relation-tag--minor {
+  border-color: var(--uds-tag-minor-border);
+  background: var(--uds-tag-minor-bg);
+  color: var(--uds-tag-minor-text);
+}
+
+.uds-relation-tag--parent {
+  border-color: var(--uds-tag-context-border);
+  background: var(--uds-tag-context-bg);
+  color: var(--uds-tag-context-text);
+}
+
+.uds-relation-tag--shared {
+  border-color: var(--uds-tag-shared-border);
+  background: var(--uds-tag-shared-bg);
+  color: var(--uds-tag-shared-text);
+}
+
+.uds-relation-tag--assay {
+  border-color: var(--uds-tag-assay-border);
+  background: var(--uds-tag-assay-bg);
+  color: var(--uds-tag-assay-text);
+}
+
+.uds-relation-tag--exposure {
+  border-color: var(--uds-tag-exposure-border);
+  background: var(--uds-tag-exposure-bg);
+  color: var(--uds-tag-exposure-text);
 }
 
 .uds-empty {

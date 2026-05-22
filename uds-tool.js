@@ -655,7 +655,9 @@
 
   function render() {
     elements.modeButtons.forEach((button) => {
-      button.classList.toggle("is-active", button.dataset.udsMode === state.mode);
+      const isActive = button.dataset.udsMode === state.mode;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
     });
 
     elements.lookupView.classList.toggle("is-hidden", state.mode !== "lookup");

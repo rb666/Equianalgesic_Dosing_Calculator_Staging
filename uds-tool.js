@@ -680,7 +680,6 @@
     detectedChips: root.querySelector("#udsDetectedChips"),
     absentChips: root.querySelector("#udsAbsentChips"),
     addButtons: [...root.querySelectorAll("[data-uds-add]")],
-    analyzeButton: root.querySelector("#udsAnalyzeButton"),
     clearPatternButton: root.querySelector("#udsClearPatternButton"),
     copyPatternButton: root.querySelector("#udsCopyPatternButton"),
     patternScenarios: root.querySelector("#udsPatternScenarios"),
@@ -2000,8 +1999,6 @@
       input.value = "";
     });
   });
-
-  elements.analyzeButton.addEventListener("click", renderPatternOutput);
 
   elements.clearPatternButton.addEventListener("click", () => {
     state.expected = [];

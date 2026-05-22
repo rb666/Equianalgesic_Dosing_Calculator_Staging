@@ -680,7 +680,12 @@
 
     elements.lookupContent.innerHTML = `
       ${renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats)}
-      ${renderCollapsedLookupDetails(entry, primaryRows, secondaryRows, caveats, sourcesForEntry)}
+      ${renderRelatedFindingsInline(entry, primaryRows, secondaryRows)}
+      ${renderAssayDetailsInline(caveats)}
+      ${caveats.length > 2 ? renderDetailsSection("Additional assay caveats", renderAssayCaveats(caveats.slice(2))) : ""}
+      ${renderDetectionWindowInline(entry)}
+      ${renderDetailsSection("Interpretation cautions", renderDoNotConclude(entry))}
+      ${renderDetailsSection("References", renderSources(sourcesForEntry))}
     `;
 
     renderLookupContextRail(entry, outgoing, incoming, caveats);
@@ -704,7 +709,6 @@
           <div class="uds-badge-row">
             <span class="uds-badge">${escapeHtml(entry.group)}</span>
             <span class="uds-badge">${escapeHtml(formatType(entry.type))}</span>
-            <span class="uds-badge">${escapeHtml(entry.window)}</span>
           </div>
         </div>
         ${renderMethodContext()}
@@ -760,18 +764,6 @@
     return cleanA.includes(cleanB) || cleanB.includes(cleanA);
   }
 
-  function renderCollapsedLookupDetails(entry, primaryRows, secondaryRows, caveats, sourcesForEntry) {
-    return `
-      <div class="uds-details-stack">
-        ${renderDetailsSection("Related findings", renderRelationshipList(primaryRows, secondaryRows, entry.id))}
-        ${renderDetailsSection("Assay details", renderAssayCaveats(caveats))}
-        ${renderDetailsSection("Detection window", renderDetectionWindow(entry))}
-        ${renderDetailsSection("Interpretation cautions", renderDoNotConclude(entry))}
-        ${renderDetailsSection("References", renderSources(sourcesForEntry))}
-      </div>
-    `;
-  }
-
   function renderDetailsSection(title, bodyHtml) {
     if (!bodyHtml) {
       return "";
@@ -784,6 +776,40 @@
           ${bodyHtml}
         </div>
       </details>
+    `;
+  }
+
+  function renderRelatedFindingsInline(entry, primaryRows, secondaryRows) {
+    const relationshipHtml = renderRelationshipList(primaryRows, secondaryRows, entry.id);
+    if (!relationshipHtml) {
+      return "";
+    }
+
+    return `
+      <section class="uds-inline-section uds-related-findings">
+        <h4>Related findings</h4>
+        ${relationshipHtml}
+      </section>
+    `;
+  }
+
+  function renderAssayDetailsInline(caveats) {
+    if (!caveats.length) {
+      return "";
+    }
+
+    return `
+      <section class="uds-inline-section uds-assay-details">
+        <h4>Assay details</h4>
+        <div class="uds-note-list">
+          ${caveats.slice(0, 2).map((caveatEntry) => `
+            <div class="uds-assay-note">
+              <strong>${escapeHtml(caveatEntry.title)}</strong>
+              <div>${escapeHtml(caveatEntry.text)}</div>
+            </div>
+          `).join("")}
+        </div>
+      </section>
     `;
   }
 
@@ -816,8 +842,17 @@
     return `<div class="uds-grid">${sections.join("")}</div>`;
   }
 
-  function renderDetectionWindow(entry) {
-    return `<div class="uds-note"><strong>${escapeHtml(entry.name)}:</strong> ${escapeHtml(entry.window || "Panel and timing dependent.")}</div>`;
+  function renderDetectionWindowInline(entry) {
+    if (!entry.window) {
+      return "";
+    }
+
+    return `
+      <div class="uds-compact-row uds-detection-window">
+        <span class="uds-compact-label">Detection window</span>
+        <span class="uds-compact-value">${escapeHtml(entry.window)}</span>
+      </div>
+    `;
   }
 
   function renderAssayCaveats(caveats) {
@@ -936,15 +971,19 @@
 
   function renderLookupContextRail(entry, outgoing, incoming, caveats) {
     const keyCaveat = caveats.find((caveatEntry) => caveatEntry.severity === "critical" || caveatEntry.severity === "important");
+    const sourceCount = getSourcesForItem(entry.id).length;
 
     elements.relationsContent.innerHTML = `
       <aside class="uds-context-rail" aria-label="Lookup context">
-        <h3 class="uds-context-title">Context</h3>
+        <h3 class="uds-context-title">At a glance</h3>
         ${renderContextBlock("Method", getMethodLabel(state.method))}
-        ${keyCaveat ? renderContextBlock("Key method note", keyCaveat.text) : ""}
+        ${renderContextBlock("Class", entry.group)}
+        ${renderContextBlock("Type", formatType(entry.type))}
+        ${entry.window ? renderContextBlock("Window", entry.window) : ""}
+        ${keyCaveat ? renderContextBlock("Key caution", keyCaveat.text) : ""}
         ${renderContextBlock(
-          "Available details",
-          "Open the sections under the answer card for related findings, assay details, detection window, interpretation cautions, and references.",
+          "References",
+          sourceCount ? `${sourceCount} configured source${sourceCount === 1 ? "" : "s"}` : "No source configured",
         )}
       </aside>
     `;

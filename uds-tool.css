@@ -702,13 +702,17 @@
 }
 
 :root:not([data-theme="dark"]) #udsLookupView .uds-answer-card {
-  border-color: hsl(166 24% 56%);
-  background: hsl(154 28% 97%);
+  border-color: hsl(209 28% 66%);
+  background: hsl(209 42% 98%);
 }
 
 :root:not([data-theme="dark"]) #udsLookupView .uds-answer-line {
-  border-color: color-mix(in srgb, hsl(166 24% 56%) 68%, var(--uds-selectable-border));
-  background: hsl(154 26% 98%);
+  border-color: color-mix(in srgb, hsl(209 28% 66%) 72%, var(--uds-selectable-border));
+  background: hsl(209 32% 99%);
+}
+
+:root:not([data-theme="dark"]) #udsLookupView .uds-answer-label {
+  color: hsl(209 34% 28%);
 }
 
 .uds-chip,

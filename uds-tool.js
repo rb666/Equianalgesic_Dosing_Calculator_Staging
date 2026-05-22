@@ -1037,6 +1037,7 @@
 
     elements.lookupContent.innerHTML = `
       ${renderLookupBackNav()}
+      ${renderLookupNameList(entry)}
       ${renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats)}
       ${renderDetailsSection("References", renderSources(sourcesForEntry))}
     `;
@@ -1065,7 +1066,6 @@
           </div>
         </div>
         ${renderMethodContext()}
-        ${renderLookupNameList(entry)}
         ${renderInterpretationFlags(entry)}
         ${renderCurationStatus(entry)}
         ${renderAnswerLine("Bottom line", bottomLine)}

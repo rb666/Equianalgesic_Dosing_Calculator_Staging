@@ -350,6 +350,13 @@
   background: color-mix(in srgb, var(--uds-action-bg) 46%, var(--surface));
 }
 
+.uds-panel-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 .uds-panel-head h3,
 .uds-panel-head p {
   margin: 0;
@@ -483,6 +490,37 @@
   font-size: 0.88rem;
   font-weight: 720;
   line-height: 1.35;
+}
+
+.uds-pattern-guide {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 2px solid var(--uds-action-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--uds-action-bg) 34%, var(--surface));
+  color: var(--ink);
+}
+
+.uds-pattern-guide h4,
+.uds-pattern-guide p {
+  margin: 0;
+}
+
+.uds-pattern-guide h4 {
+  color: var(--uds-action-text);
+  font-size: 0.84rem;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.uds-pattern-guide p {
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 720;
+  line-height: 1.45;
 }
 
 .uds-badge-row,

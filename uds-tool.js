@@ -671,6 +671,8 @@
     relationsContent: root.querySelector("#udsRelationsContent"),
     copyLookupButton: root.querySelector("#udsCopyLookupButton"),
     itemOptions: root.querySelector("#udsItemOptions"),
+    patternGuide: root.querySelector("#udsPatternGuide"),
+    patternGuideButton: root.querySelector("#udsPatternGuideButton"),
     expectedInput: root.querySelector("#udsExpectedInput"),
     detectedInput: root.querySelector("#udsDetectedInput"),
     absentInput: root.querySelector("#udsAbsentInput"),
@@ -1970,6 +1972,11 @@
 
   elements.copyLookupButton.addEventListener("click", () => {
     copyText(state.lastLookupSummary);
+  });
+
+  elements.patternGuideButton.addEventListener("click", () => {
+    const isHidden = elements.patternGuide.classList.toggle("is-hidden");
+    elements.patternGuideButton.setAttribute("aria-expanded", String(!isHidden));
   });
 
   elements.addButtons.forEach((button) => {

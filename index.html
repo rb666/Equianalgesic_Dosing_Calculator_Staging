@@ -22,7 +22,7 @@
       })();
     </script>
     <link rel="stylesheet" href="styles.css?v=20260522-uds-screen" />
-    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-pattern-flow" />
+    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-pattern-guide" />
   </head>
   <body>
     <div class="environment-banner">
@@ -1106,12 +1106,36 @@
                       Add the expected medication list, then add what the urine drug screen detected.
                     </p>
                   </div>
-                  <button class="secondary-button" id="udsCopyPatternButton" type="button">
-                    Copy summary
-                  </button>
+                  <div class="uds-panel-head-actions">
+                    <button
+                      aria-controls="udsPatternGuide"
+                      aria-expanded="false"
+                      class="secondary-button"
+                      id="udsPatternGuideButton"
+                      type="button"
+                    >
+                      Quick guide
+                    </button>
+                    <button class="secondary-button" id="udsCopyPatternButton" type="button">
+                      Copy summary
+                    </button>
+                  </div>
                 </div>
 
                 <datalist id="udsItemOptions"></datalist>
+                <section class="uds-pattern-guide is-hidden" id="udsPatternGuide">
+                  <h4>Why use Pattern Check?</h4>
+                  <p>
+                    Standard UDS review requires manual cross-checking of the medication list,
+                    expected metabolites, assay limits, panel coverage, and unexpected findings.
+                    Pattern Check turns that into one reconciliation workflow.
+                  </p>
+                  <p>
+                    Add expected medications, detected analytes, and only confirmed absent analytes.
+                    The tool then flags what is compatible, what needs context, and what is unresolved,
+                    with a copyable next-step summary.
+                  </p>
+                </section>
                 <div class="uds-workflow-callout">
                   <strong>Use this when reconciling a report.</strong>
                   <span>The output answers whether the detected findings are compatible, context-dependent, or unexpected.</span>
@@ -1262,6 +1286,6 @@
     </div>
 
     <script src="script.js?v=20260522-uds-screen"></script>
-    <script src="uds-tool.js?v=20260522-uds-pattern-flow"></script>
+    <script src="uds-tool.js?v=20260522-uds-pattern-guide"></script>
   </body>
 </html>

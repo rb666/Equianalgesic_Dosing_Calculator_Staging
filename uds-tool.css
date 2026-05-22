@@ -114,6 +114,16 @@
   --uds-tag-exposure-text: hsl(187 78% 88%);
 }
 
+:root[data-theme="dark"] .uds-detail-rail {
+  --uds-context-bg: hsl(209 15% 17%);
+  --uds-context-border: hsl(209 20% 47%);
+  --uds-context-surface: hsl(209 13% 14%);
+  --uds-context-text: hsl(205 32% 84%);
+  --uds-tag-context-bg: hsl(205 15% 22%);
+  --uds-tag-context-border: hsl(205 18% 58%);
+  --uds-tag-context-text: hsl(205 34% 84%);
+}
+
 .uds-modal-body {
   gap: 18px;
 }

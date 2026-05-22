@@ -50,6 +50,31 @@
       url: "https://dig.pharmacy.uic.edu/faqs/2021-2/may-2021-faqs/what-drugs-are-likely-to-interfere-with-urine-drug-screens/",
       type: "drug information review",
     },
+    arupExpandedPanel: {
+      title: "ARUP Laboratories - Expanded Targeted LC-MS/MS Urine Drug Panel",
+      url: "https://ltd.aruplab.com/Tests/Pub/3005060",
+      type: "expanded lab panel",
+    },
+    mayoControlledPanel: {
+      title: "Mayo Clinic Laboratories - Controlled Substance Monitoring Panel, Urine",
+      url: "https://www.mayocliniclabs.com/test-catalog/overview/610271",
+      type: "lab panel",
+    },
+    mayoAddictionPanel: {
+      title: "Mayo Clinic Laboratories - Addiction Medicine Profile, Urine",
+      url: "https://www.mayocliniclabs.com/test-catalog/overview/615908",
+      type: "lab panel",
+    },
+    arupZolpidem: {
+      title: "ARUP Laboratories - Zolpidem, Urine Quantitative",
+      url: "https://ltd.aruplab.com/Tests/Pub/2012319",
+      type: "lab reference",
+    },
+    arupGabapentin: {
+      title: "ARUP Laboratories - Gabapentin, Urine",
+      url: "https://ltd.aruplab.com/Tests/Pub/2012227",
+      type: "lab reference",
+    },
   };
 
   const items = [
@@ -81,6 +106,18 @@
     item("6beta_naltrexol", "6-beta-naltrexol", "Opioids", "finding", ["naltrexone metabolite"], "Panel dependent", "Supportive naltrexone metabolite.", ["arupDrugTesting"]),
     item("meperidine", "Meperidine", "Opioids", "drug", ["Demerol"], "Panel dependent", "Optional pain/addiction coverage; requires specific testing.", ["arupDrugTesting"]),
     item("normeperidine", "Normeperidine", "Opioids", "finding", [], "Panel dependent", "Supportive meperidine metabolite.", ["arupDrugTesting"]),
+    item("propoxyphene", "Propoxyphene", "Opioids", "drug", ["Darvon", "Darvocet"], "Panel dependent", "Expanded-panel opioid; interpret with norpropoxyphene when included.", ["arupExpandedPanel"]),
+    item("norpropoxyphene", "Norpropoxyphene", "Opioids", "finding", [], "Panel dependent", "Supportive propoxyphene metabolite when included.", ["arupExpandedPanel"]),
+    item("sufentanil", "Sufentanil", "Opioids", "drug", ["Sufenta"], "Panel dependent", "Expanded-panel synthetic opioid; requires specific/definitive testing.", ["arupExpandedPanel"]),
+    item("norsufentanil", "Norsufentanil", "Opioids", "finding", [], "Panel dependent", "Supportive sufentanil metabolite when included.", ["arupExpandedPanel"]),
+    item("alfentanil", "Alfentanil", "Opioids", "drug", ["Alfenta"], "Panel dependent", "Expanded-panel synthetic opioid; requires specific/definitive testing.", ["arupExpandedPanel"]),
+    item("noralfentanil", "Noralfentanil", "Opioids", "finding", [], "Panel dependent", "Supportive alfentanil metabolite when included.", ["arupExpandedPanel"]),
+    item("remifentanil", "Remifentanil", "Opioids", "drug", ["Ultiva"], "Panel dependent", "Expanded-panel synthetic opioid; requires specific/definitive testing.", ["arupExpandedPanel"]),
+    item("carfentanil", "Carfentanil", "Opioids", "drug", [], "Panel dependent", "Expanded-panel fentanyl analog; requires specific/definitive testing.", ["arupExpandedPanel"]),
+    item("loperamide", "Loperamide", "Opioids", "drug", ["Imodium"], "Panel dependent", "Expanded-panel opioid agonist; interpret with desmethylloperamide when included.", ["arupExpandedPanel"]),
+    item("desmethylloperamide", "Desmethylloperamide", "Opioids", "finding", [], "Panel dependent", "Supportive loperamide metabolite when included.", ["arupExpandedPanel"]),
+    item("levorphanol", "Levorphanol", "Opioids", "drug", [], "Panel dependent", "Expanded-panel opioid; requires specific/definitive testing.", ["arupExpandedPanel"]),
+    item("tapentadol_glucuronide", "Tapentadol glucuronide", "Opioids", "finding", ["tapentadol conjugate"], "Panel dependent", "Supportive tapentadol conjugate/metabolite when included.", ["arupExpandedPanel"]),
 
     item("diazepam", "Diazepam", "Benzodiazepines", "drug", ["Valium"], "Long-acting; days to weeks possible", "Shares nordiazepam/temazepam/oxazepam pathway.", ["arupBenzodiazepines", "arupDetectionWindows"]),
     item("nordiazepam", "Nordiazepam", "Benzodiazepines", "finding", ["desmethyldiazepam"], "Long-acting metabolite", "Shared metabolite from diazepam-type benzodiazepines.", ["arupBenzodiazepines"]),
@@ -103,6 +140,16 @@
     item("estazolam", "Estazolam", "Benzodiazepines", "drug", ["Prosom"], "Intermediate acting", "Usually interpreted as parent/specific analyte when included.", ["arupBenzodiazepines"]),
     item("flunitrazepam", "Flunitrazepam", "Benzodiazepines", "drug", ["Rohypnol"], "Panel dependent", "7-aminoflunitrazepam supports flunitrazepam exposure.", ["arupBenzodiazepines"]),
     item("aminoflunitrazepam7", "7-aminoflunitrazepam", "Benzodiazepines", "finding", [], "Panel dependent", "Supportive flunitrazepam metabolite.", ["arupBenzodiazepines"]),
+    item("bromazepam", "Bromazepam", "Benzodiazepines", "drug", [], "Panel dependent", "Expanded-panel benzodiazepine; interpret with 3-hydroxybromazepam when included.", ["arupExpandedPanel", "arupBenzodiazepines"]),
+    item("hydroxybromazepam3", "3-hydroxybromazepam", "Benzodiazepines", "finding", ["3-OH-bromazepam"], "Panel dependent", "Supportive bromazepam metabolite when included.", ["arupExpandedPanel", "arupBenzodiazepines"]),
+    item("etizolam", "Etizolam", "Benzodiazepines", "drug", [], "Panel dependent", "Thienodiazepine/benzodiazepine-class exposure; interpret with alpha-hydroxyetizolam when included.", ["arupExpandedPanel"]),
+    item("alpha_hydroxyetizolam", "Alpha-hydroxyetizolam", "Benzodiazepines", "finding", ["etizolam metabolite"], "Panel dependent", "Supportive etizolam metabolite when included.", ["arupExpandedPanel"]),
+    item("bromazolam", "Bromazolam", "Benzodiazepines", "drug", [], "Panel dependent", "Novel benzodiazepine exposure; interpret with alpha-hydroxybromazolam when included.", ["arupExpandedPanel"]),
+    item("alpha_hydroxybromazolam", "Alpha-hydroxybromazolam", "Benzodiazepines", "finding", ["bromazolam metabolite"], "Panel dependent", "Supportive bromazolam metabolite when included.", ["arupExpandedPanel"]),
+    item("flualprazolam", "Flualprazolam", "Benzodiazepines", "drug", [], "Panel dependent", "Novel benzodiazepine exposure; interpret with alpha-hydroxyflualprazolam when included.", ["arupExpandedPanel"]),
+    item("alpha_hydroxyflualprazolam", "Alpha-hydroxyflualprazolam", "Benzodiazepines", "finding", ["flualprazolam metabolite"], "Panel dependent", "Supportive flualprazolam metabolite when included.", ["arupExpandedPanel"]),
+    item("clobazam", "Clobazam", "Benzodiazepines", "drug", ["Onfi"], "Panel dependent", "Benzodiazepine exposure; norclobazam supports clobazam when included.", ["arupExpandedPanel", "arupBenzodiazepines"]),
+    item("norclobazam", "Norclobazam", "Benzodiazepines", "finding", [], "Panel dependent", "Supportive clobazam metabolite when included.", ["arupExpandedPanel", "arupBenzodiazepines"]),
 
     item("amphetamine", "Amphetamine", "Stimulants", "drug_or_finding", ["Adderall component", "amphetamine salts"], "Often 1-3 days", "Can be parent drug or metabolite.", ["arupDetectionWindows", "uic"]),
     item("methamphetamine", "Methamphetamine", "Stimulants", "drug", ["Desoxyn"], "Often 1-4 days", "Can produce amphetamine; source may require d/l isomer testing.", ["arupDetectionWindows"]),
@@ -119,12 +166,15 @@
     item("ritalinic_acid", "Ritalinic acid", "Stimulants", "finding", [], "Panel dependent", "Supportive methylphenidate metabolite.", ["arupDrugTesting"]),
     item("pseudoephedrine", "Pseudoephedrine", "Stimulants", "drug_or_context", ["Sudafed"], "Context dependent", "More relevant to assay/source context than definitive amphetamine confirmation.", ["uic"]),
     item("ephedrine", "Ephedrine", "Stimulants", "drug_or_context", [], "Context dependent", "More relevant to assay/source context than definitive amphetamine confirmation.", ["uic"]),
+    item("mephedrone", "Mephedrone", "Stimulants", "drug", ["4-MMC"], "Panel dependent", "Expanded-panel stimulant/synthetic cathinone; requires specific/definitive testing.", ["arupExpandedPanel"]),
+    item("methcathinone", "Methcathinone", "Stimulants", "drug_or_finding", [], "Panel dependent", "Expanded-panel stimulant/cathinone finding; interpret with definitive panel context.", ["arupExpandedPanel"]),
 
     item("cocaine", "Cocaine", "Cocaine", "drug", [], "Parent is short window; metabolites longer", "Benzoylecgonine is the common primary urine metabolite.", ["arupDetectionWindows"]),
     item("benzoylecgonine", "Benzoylecgonine", "Cocaine", "finding", ["BE"], "Often 2-4 days; longer with heavy use", "Supports cocaine exposure.", ["arupDetectionWindows"]),
     item("ecgonine_methyl_ester", "Ecgonine methyl ester", "Cocaine", "finding", [], "Panel dependent", "Supportive cocaine metabolite when included.", ["arupDrugTesting"]),
     item("cocaethylene", "Cocaethylene", "Cocaine", "finding", [], "Panel dependent", "Suggests cocaine plus ethanol exposure.", ["arupDrugTesting"]),
     item("norcocaine", "Norcocaine", "Cocaine", "finding", [], "Panel dependent", "Minor cocaine metabolite when included.", ["arupDrugTesting"]),
+    item("anhydroecgonine_methyl_ester", "Anhydroecgonine methyl ester", "Cocaine", "finding", ["AEME"], "Panel dependent", "May support smoked cocaine exposure when included.", ["arupExpandedPanel"]),
 
     item("delta9_thc", "Delta-9-THC", "Cannabinoids", "drug", ["THC", "cannabis", "marijuana"], "Highly variable", "Parent cannabinoid; urine interpretation usually relies on metabolites.", ["arupDetectionWindows"]),
     item("hydroxy11_thc", "11-hydroxy-THC", "Cannabinoids", "finding", [], "Panel dependent", "Intermediate active metabolite.", ["arupDrugTesting"]),
@@ -132,6 +182,7 @@
     item("thc_cooh_glucuronide", "THC-COOH-glucuronide", "Cannabinoids", "finding", [], "Panel dependent", "Conjugated THC-COOH metabolite.", ["arupDrugTesting"]),
     item("delta8_thc", "Delta-8-THC", "Cannabinoids", "drug", [], "Method dependent", "Delta-8 interpretation depends on assay specificity.", ["arupDrugTesting"]),
     item("delta8_thc_cooh", "Delta-8-THC-COOH", "Cannabinoids", "finding", [], "Method dependent", "Supports delta-8 cannabinoid exposure when assay is specific.", ["arupDrugTesting"]),
+    item("synthetic_cannabinoids", "Synthetic cannabinoids", "Cannabinoids", "drug_or_context", ["K2", "Spice"], "Panel dependent", "Usually requires specialized testing; routine THC screens do not reliably detect synthetic cannabinoids.", ["arupExpandedPanel", "arupDrugTesting"]),
     item("cbd", "CBD", "Cannabinoids", "drug_or_context", ["cannabidiol"], "Context dependent", "CBD products may complicate THC interpretation if contamination is possible.", ["arupDrugTesting"]),
     item("creatinine_normalized_thc_cooh", "Creatinine-normalized THC-COOH", "Cannabinoids", "context", [], "Serial interpretation", "Serial normalized values are more useful than a single raw value for reuse vs residual excretion.", ["arupDrugTesting"]),
 
@@ -144,6 +195,51 @@
     item("zolpidem_carboxylic_acid", "Zolpidem phenyl-4-carboxylic acid", "Sedative-hypnotics", "finding", ["zolpidem metabolite"], "Panel dependent", "Supportive zolpidem metabolite.", ["arupDrugTesting"]),
     item("carisoprodol", "Carisoprodol", "Sedative-hypnotics", "drug", ["Soma"], "Panel dependent", "Meprobamate supports carisoprodol exposure.", ["arupDrugTesting"]),
     item("meprobamate", "Meprobamate", "Sedative-hypnotics", "drug_or_finding", [], "Panel dependent", "May reflect meprobamate exposure or carisoprodol metabolism.", ["arupDrugTesting"]),
+    item("zaleplon", "Zaleplon", "Sedative-hypnotics", "drug", ["Sonata"], "Panel dependent", "Non-benzodiazepine hypnotic; interpret with 5-oxo-zaleplon when included.", ["arupExpandedPanel"]),
+    item("oxo_zaleplon_5", "5-oxo-zaleplon", "Sedative-hypnotics", "finding", ["zaleplon metabolite"], "Panel dependent", "Supportive zaleplon metabolite when included.", ["arupExpandedPanel"]),
+    item("eszopiclone", "Eszopiclone", "Sedative-hypnotics", "drug", ["Lunesta"], "Panel dependent", "Non-benzodiazepine hypnotic; interpret with zopiclone N-oxide when included.", ["arupExpandedPanel"]),
+    item("zopiclone_n_oxide", "Zopiclone N-oxide", "Sedative-hypnotics", "finding", ["eszopiclone metabolite", "zopiclone metabolite"], "Panel dependent", "Supportive zopiclone/eszopiclone metabolite when included.", ["arupExpandedPanel"]),
+
+    item("amobarbital", "Amobarbital", "Barbiturates", "drug", [], "Panel dependent", "Barbiturate exposure; interpret with barbiturate-specific or definitive testing.", ["arupExpandedPanel"]),
+    item("butalbital", "Butalbital", "Barbiturates", "drug", ["Fioricet component", "Fiorinal component"], "Panel dependent", "Barbiturate exposure; interpret with medication history and panel specificity.", ["arupExpandedPanel"]),
+    item("pentobarbital", "Pentobarbital", "Barbiturates", "drug", ["Nembutal"], "Panel dependent", "Barbiturate exposure; interpret with barbiturate-specific or definitive testing.", ["arupExpandedPanel"]),
+    item("phenobarbital", "Phenobarbital", "Barbiturates", "drug", [], "Longer acting; panel dependent", "Long-acting barbiturate; urine detection can persist longer than many sedatives.", ["arupExpandedPanel", "arupDetectionWindows"]),
+    item("secobarbital", "Secobarbital", "Barbiturates", "drug", ["Seconal"], "Panel dependent", "Barbiturate exposure; interpret with barbiturate-specific or definitive testing.", ["arupExpandedPanel"]),
+
+    item("gabapentin", "Gabapentin", "Gabapentinoids", "drug", ["Neurontin"], "Panel dependent", "Usually requires specific/expanded-panel testing; not part of routine drug screens.", ["arupGabapentin", "arupExpandedPanel"]),
+    item("pregabalin", "Pregabalin", "Gabapentinoids", "drug", ["Lyrica"], "Panel dependent", "Usually requires specific/expanded-panel testing; not part of routine drug screens.", ["arupExpandedPanel"]),
+
+    item("ketamine", "Ketamine", "Dissociatives", "drug", ["Ketalar"], "Panel dependent", "Dissociative anesthetic; norketamine supports exposure when included.", ["arupExpandedPanel"]),
+    item("norketamine", "Norketamine", "Dissociatives", "finding", [], "Panel dependent", "Supportive ketamine metabolite when included.", ["arupExpandedPanel"]),
+    item("dehydronorketamine", "Dehydronorketamine", "Dissociatives", "finding", [], "Panel dependent", "Ketamine-pathway metabolite when included.", ["arupExpandedPanel"]),
+    item("pcp", "PCP", "Dissociatives", "drug_or_finding", ["phencyclidine"], "Panel dependent", "PCP screen interpretation is assay-dependent and can have medication-related false-positive context.", ["uic", "arupExpandedPanel"]),
+
+    item("amitriptyline", "Amitriptyline", "Antidepressants / TCA", "drug", ["Elavil"], "Panel dependent", "TCA exposure; nortriptyline supports amitriptyline but can also be prescribed directly.", ["arupExpandedPanel"]),
+    item("nortriptyline", "Nortriptyline", "Antidepressants / TCA", "drug_or_finding", ["Pamelor"], "Panel dependent", "May reflect prescribed nortriptyline or amitriptyline metabolism.", ["arupExpandedPanel"]),
+    item("imipramine", "Imipramine", "Antidepressants / TCA", "drug", ["Tofranil"], "Panel dependent", "TCA exposure; desipramine supports imipramine but can also be prescribed directly.", ["arupExpandedPanel"]),
+    item("desipramine", "Desipramine", "Antidepressants / TCA", "drug_or_finding", ["Norpramin"], "Panel dependent", "May reflect prescribed desipramine or imipramine metabolism.", ["arupExpandedPanel"]),
+    item("doxepin", "Doxepin", "Antidepressants / TCA", "drug", ["Silenor"], "Panel dependent", "TCA exposure; nordoxepin supports doxepin when included.", ["arupExpandedPanel"]),
+    item("nordoxepin", "Nordoxepin", "Antidepressants / TCA", "finding", [], "Panel dependent", "Supportive doxepin metabolite when included.", ["arupExpandedPanel"]),
+
+    item("bupropion", "Bupropion", "Assay caveats", "drug_or_context", ["Wellbutrin", "Zyban"], "Context dependent", "Medication context for unexpected amphetamine immunoassay positives depending on assay.", ["uic"]),
+    item("sertraline", "Sertraline", "Assay caveats", "drug_or_context", ["Zoloft"], "Context dependent", "Medication context for unexpected benzodiazepine immunoassay positives depending on assay.", ["uic"]),
+    item("venlafaxine", "Venlafaxine", "Assay caveats", "drug_or_context", ["Effexor"], "Context dependent", "Medication context for unexpected PCP immunoassay positives depending on assay.", ["uic"]),
+    item("quetiapine", "Quetiapine", "Assay caveats", "drug_or_context", ["Seroquel"], "Context dependent", "Medication context for unexpected TCA immunoassay positives depending on assay.", ["uic"]),
+    item("dextromethorphan", "Dextromethorphan", "Assay caveats", "drug_or_context", ["DXM"], "Context dependent", "Medication context for unexpected PCP/opioid screen findings depending on assay.", ["uic"]),
+    item("diphenhydramine", "Diphenhydramine", "Assay caveats", "drug_or_context", ["Benadryl"], "Context dependent", "Medication context for unexpected PCP/TCA screen findings depending on assay.", ["uic"]),
+    item("benzodiazepine_immunoassay", "Benzodiazepine immunoassay", "Assay caveats", "context", ["benzo screen", "benzodiazepine screen"], "Assay dependent", "Class-level benzodiazepine screen limitation; sensitivity varies by drug/metabolite.", ["uic", "arupBenzodiazepines"]),
+    item("opiate_immunoassay", "Opiate immunoassay", "Assay caveats", "context", ["opiate screen", "generic opiate screen"], "Assay dependent", "Class-level opiate screen limitation; many semisynthetic/synthetic opioids may be missed.", ["aafp", "arupDrugTesting"]),
+    item("amphetamine_immunoassay", "Amphetamine immunoassay", "Assay caveats", "context", ["amphetamine screen", "stimulant screen"], "Assay dependent", "Class-level stimulant screen caveat; false positives and source ambiguity require confirmation.", ["uic", "aafp"]),
+
+    item("nicotine", "Nicotine", "Nicotine markers", "drug_or_context", [], "Panel dependent", "Nicotine exposure; cotinine is often the more useful urine marker.", ["mayoAddictionPanel", "arupExpandedPanel"]),
+    item("cotinine", "Cotinine", "Nicotine markers", "finding", [], "Panel dependent", "Supportive nicotine metabolite when included.", ["mayoAddictionPanel", "arupExpandedPanel"]),
+    item("hydroxycotinine3", "trans-3-hydroxycotinine", "Nicotine markers", "finding", ["3-hydroxycotinine"], "Panel dependent", "Nicotine-pathway metabolite when included.", ["mayoAddictionPanel", "arupExpandedPanel"]),
+    item("anabasine", "Anabasine", "Nicotine markers", "finding", [], "Panel dependent", "Tobacco alkaloid marker that may support tobacco-source context when included.", ["mayoAddictionPanel", "arupExpandedPanel"]),
+
+    item("mitragynine", "Mitragynine", "Kratom", "drug_or_finding", ["kratom"], "Panel dependent", "Kratom alkaloid; 7-hydroxymitragynine supports pathway interpretation when included.", ["arupExpandedPanel"]),
+    item("hydroxymitragynine7", "7-hydroxymitragynine", "Kratom", "finding", ["7-OH-mitragynine"], "Panel dependent", "Supportive mitragynine/kratom-related finding when included.", ["arupExpandedPanel"]),
+
+    item("cyclobenzaprine", "Cyclobenzaprine", "Muscle relaxants", "drug_or_context", ["Flexeril"], "Panel dependent", "Muscle relaxant structurally related to TCAs; may be relevant to TCA screen context.", ["uic", "arupExpandedPanel"]),
   ];
 
   const relationships = [
@@ -167,8 +263,13 @@
     rel("methadone", "eddp", "supportive metabolite", "primary", "EDDP supports methadone ingestion/metabolism.", ["arupDrugTesting"]),
     rel("tramadol", "odesmethyltramadol", "supportive metabolite", "primary", "O-desmethyltramadol supports tramadol exposure.", ["arupDrugTesting"]),
     rel("tapentadol", "ndesmethyltapentadol", "supportive metabolite", "primary", "N-desmethyltapentadol supports tapentadol exposure when included.", ["arupDrugTesting"]),
+    rel("tapentadol", "tapentadol_glucuronide", "supportive metabolite", "secondary", "Tapentadol glucuronide can support tapentadol exposure when included.", ["arupExpandedPanel"]),
     rel("naltrexone", "6beta_naltrexol", "supportive metabolite", "primary", "6-beta-naltrexol supports naltrexone exposure.", ["arupDrugTesting"]),
     rel("meperidine", "normeperidine", "supportive metabolite", "primary", "Normeperidine supports meperidine exposure.", ["arupDrugTesting"]),
+    rel("propoxyphene", "norpropoxyphene", "supportive metabolite", "primary", "Norpropoxyphene supports propoxyphene exposure when included.", ["arupExpandedPanel"]),
+    rel("sufentanil", "norsufentanil", "supportive metabolite", "primary", "Norsufentanil supports sufentanil exposure when included.", ["arupExpandedPanel"]),
+    rel("alfentanil", "noralfentanil", "supportive metabolite", "primary", "Noralfentanil supports alfentanil exposure when included.", ["arupExpandedPanel"]),
+    rel("loperamide", "desmethylloperamide", "supportive metabolite", "primary", "Desmethylloperamide supports loperamide exposure when included.", ["arupExpandedPanel"]),
 
     rel("diazepam", "nordiazepam", "metabolite", "primary", "Nordiazepam supports diazepam-type exposure but is not source-specific.", ["arupBenzodiazepines"]),
     rel("diazepam", "temazepam", "metabolite", "primary", "Temazepam can be part of diazepam pathway or prescribed directly.", ["arupBenzodiazepines"]),
@@ -178,16 +279,25 @@
     rel("chlordiazepoxide", "nordiazepam", "metabolite", "primary", "Chlordiazepoxide can produce nordiazepam.", ["arupBenzodiazepines"]),
     rel("chlordiazepoxide", "oxazepam", "terminal metabolite", "primary", "Chlordiazepoxide can contribute to oxazepam patterns.", ["arupBenzodiazepines"]),
     rel("clorazepate", "nordiazepam", "metabolite", "primary", "Clorazepate rapidly enters nordiazepam pathway.", ["arupBenzodiazepines"]),
+    rel("clorazepate", "oxazepam", "terminal metabolite", "secondary", "Clorazepate can contribute to downstream oxazepam patterns through the diazepam-type pathway.", ["arupBenzodiazepines"]),
     rel("alprazolam", "alpha_hydroxyalprazolam", "supportive metabolite", "primary", "Alpha-hydroxyalprazolam supports alprazolam exposure.", ["arupBenzodiazepines"]),
     rel("clonazepam", "aminoclonazepam7", "supportive metabolite", "primary", "7-aminoclonazepam supports clonazepam exposure.", ["arupBenzodiazepines"]),
     rel("lorazepam", "lorazepam_glucuronide", "supportive metabolite", "primary", "Lorazepam-glucuronide supports lorazepam exposure; assay sensitivity varies.", ["arupBenzodiazepines"]),
     rel("midazolam", "alpha_hydroxymidazolam", "supportive metabolite", "primary", "Alpha-hydroxymidazolam supports recent midazolam exposure.", ["arupBenzodiazepines"]),
     rel("triazolam", "alpha_hydroxytriazolam", "supportive metabolite", "primary", "Alpha-hydroxytriazolam supports triazolam exposure.", ["arupBenzodiazepines"]),
     rel("flurazepam", "hydroxyethylflurazepam", "supportive metabolite", "primary", "Hydroxyethylflurazepam supports flurazepam exposure.", ["arupBenzodiazepines"]),
+    rel("flurazepam", "nordiazepam", "metabolite", "secondary", "Nordiazepam can fit flurazepam exposure but is not source-specific.", ["arupBenzodiazepines"]),
+    rel("flurazepam", "oxazepam", "metabolite", "secondary", "Oxazepam can fit flurazepam exposure but is not source-specific.", ["arupBenzodiazepines"]),
     rel("flunitrazepam", "aminoflunitrazepam7", "supportive metabolite", "primary", "7-aminoflunitrazepam supports flunitrazepam exposure.", ["arupBenzodiazepines"]),
+    rel("bromazepam", "hydroxybromazepam3", "supportive metabolite", "primary", "3-hydroxybromazepam supports bromazepam exposure when included.", ["arupBenzodiazepines", "arupExpandedPanel"]),
+    rel("etizolam", "alpha_hydroxyetizolam", "supportive metabolite", "primary", "Alpha-hydroxyetizolam supports etizolam exposure when included.", ["arupExpandedPanel"]),
+    rel("bromazolam", "alpha_hydroxybromazolam", "supportive metabolite", "primary", "Alpha-hydroxybromazolam supports bromazolam exposure when included.", ["arupExpandedPanel"]),
+    rel("flualprazolam", "alpha_hydroxyflualprazolam", "supportive metabolite", "primary", "Alpha-hydroxyflualprazolam supports flualprazolam exposure when included.", ["arupExpandedPanel"]),
+    rel("clobazam", "norclobazam", "supportive metabolite", "primary", "Norclobazam supports clobazam exposure when included.", ["arupExpandedPanel", "arupBenzodiazepines"]),
 
     rel("methamphetamine", "amphetamine", "metabolite", "primary", "Methamphetamine with amphetamine may support methamphetamine exposure.", ["arupDrugTesting"]),
     rel("methamphetamine", "d_methamphetamine", "isomer", "context", "d/l isomer testing may help distinguish source.", ["arupDrugTesting"]),
+    rel("selegiline", "methamphetamine", "source clue", "context", "Selegiline can explain l-methamphetamine patterns; source interpretation requires isomer and medication context.", ["arupDrugTesting"]),
     rel("selegiline", "l_methamphetamine", "metabolite/source clue", "primary", "Selegiline can explain l-methamphetamine.", ["arupDrugTesting"]),
     rel("selegiline", "amphetamine", "metabolite/source clue", "secondary", "Selegiline can contribute to l-amphetamine patterns.", ["arupDrugTesting"]),
     rel("benzphetamine", "methamphetamine", "metabolite", "primary", "Benzphetamine can metabolize to methamphetamine.", ["arupDrugTesting"]),
@@ -195,6 +305,7 @@
     rel("phentermine", "amphetamine", "immunoassay context", "context", "Phentermine can contribute to amphetamine-class immunoassay false-positive or source-ambiguity questions.", ["arupDrugTesting", "uic"]),
     rel("pseudoephedrine", "amphetamine", "immunoassay context", "context", "Pseudoephedrine is an exposure to review when an amphetamine immunoassay result is unexpected.", ["uic"]),
     rel("ephedrine", "amphetamine", "immunoassay context", "context", "Ephedrine is an exposure to review when an amphetamine immunoassay result is unexpected.", ["uic"]),
+    rel("bupropion", "amphetamine", "immunoassay caveat", "context", "Bupropion can be relevant to amphetamine immunoassay false-positive context.", ["uic", "arupDrugTesting"]),
     rel("mdma", "mda", "metabolite", "primary", "MDA can support MDMA pathway.", ["arupDrugTesting"]),
     rel("mdea", "mda", "metabolite", "primary", "MDEA can produce MDA.", ["arupDrugTesting"]),
     rel("lisdexamfetamine", "amphetamine", "expected finding", "primary", "Lisdexamfetamine explains amphetamine.", ["arupDrugTesting"]),
@@ -204,13 +315,17 @@
     rel("cocaine", "ecgonine_methyl_ester", "metabolite", "secondary", "Ecgonine methyl ester supports cocaine exposure when included.", ["arupDrugTesting"]),
     rel("cocaine", "cocaethylene", "ethanol co-exposure marker", "primary", "Cocaethylene suggests cocaine plus ethanol exposure.", ["arupDrugTesting"]),
     rel("cocaine", "norcocaine", "minor metabolite", "secondary", "Norcocaine is a cocaine metabolite when included.", ["arupDrugTesting"]),
+    rel("cocaine", "anhydroecgonine_methyl_ester", "pyrolysis marker", "context", "Anhydroecgonine methyl ester may support smoked cocaine exposure when included.", ["arupExpandedPanel"]),
 
     rel("delta9_thc", "hydroxy11_thc", "metabolite", "secondary", "11-hydroxy-THC is an intermediate THC metabolite.", ["arupDrugTesting"]),
+    rel("delta9_thc", "thc_cooh", "supportive metabolite", "primary", "THC-COOH is the common urine marker supporting cannabinoid exposure.", ["arupDetectionWindows", "arupDrugTesting"]),
+    rel("delta9_thc", "delta8_thc_cooh", "assay specificity context", "context", "Delta-8 THC-COOH is a related cannabinoid analyte; confirm assay specificity when delta-8 versus delta-9 matters.", ["arupDrugTesting"]),
     rel("hydroxy11_thc", "thc_cooh", "metabolite", "primary", "THC-COOH supports cannabinoid exposure.", ["arupDrugTesting"]),
     rel("thc_cooh", "thc_cooh_glucuronide", "conjugated metabolite", "secondary", "THC-COOH-glucuronide is a conjugated cannabinoid metabolite.", ["arupDrugTesting"]),
     rel("delta8_thc", "delta8_thc_cooh", "supportive metabolite", "primary", "Delta-8 THC-COOH supports delta-8 exposure when assay is specific.", ["arupDrugTesting"]),
     rel("cbd", "thc_cooh", "contamination/context", "context", "CBD products can complicate THC interpretation if THC contamination is possible.", ["arupDrugTesting"]),
     rel("thc_cooh", "creatinine_normalized_thc_cooh", "serial interpretation", "context", "Serial creatinine-normalized THC-COOH is more useful than a single raw value for reuse vs residual excretion.", ["arupDrugTesting"]),
+    rel("synthetic_cannabinoids", "delta9_thc", "assay limitation", "context", "Synthetic cannabinoids generally are not reliably detected by routine THC immunoassays.", ["arupDrugTesting", "arupExpandedPanel"]),
 
     rel("ethanol", "etg", "metabolite", "primary", "EtG supports recent ethanol exposure; cutoff/context matter.", ["arupDrugTesting"]),
     rel("ethanol", "ets", "metabolite", "primary", "EtS supports recent ethanol exposure; cutoff/context matter.", ["arupDrugTesting"]),
@@ -218,6 +333,23 @@
 
     rel("zolpidem", "zolpidem_carboxylic_acid", "supportive metabolite", "primary", "Zolpidem metabolite may be more useful than parent depending on timing/panel.", ["arupDrugTesting"]),
     rel("carisoprodol", "meprobamate", "supportive metabolite", "primary", "Meprobamate supports carisoprodol exposure but can also be direct exposure.", ["arupDrugTesting"]),
+    rel("zaleplon", "oxo_zaleplon_5", "supportive metabolite", "primary", "5-oxo-zaleplon supports zaleplon exposure when included.", ["arupExpandedPanel"]),
+    rel("eszopiclone", "zopiclone_n_oxide", "supportive metabolite", "primary", "Zopiclone N-oxide supports zopiclone/eszopiclone exposure when included.", ["arupExpandedPanel"]),
+    rel("ketamine", "norketamine", "supportive metabolite", "primary", "Norketamine supports ketamine exposure when included.", ["arupExpandedPanel"]),
+    rel("norketamine", "dehydronorketamine", "metabolite", "secondary", "Dehydronorketamine supports the ketamine metabolite pathway when included.", ["arupExpandedPanel"]),
+    rel("amitriptyline", "nortriptyline", "supportive metabolite", "primary", "Nortriptyline supports amitriptyline exposure but may also be prescribed directly.", ["arupExpandedPanel"]),
+    rel("imipramine", "desipramine", "supportive metabolite", "primary", "Desipramine supports imipramine exposure but may also be prescribed directly.", ["arupExpandedPanel"]),
+    rel("doxepin", "nordoxepin", "supportive metabolite", "primary", "Nordoxepin supports doxepin exposure when included.", ["arupExpandedPanel"]),
+    rel("nicotine", "cotinine", "supportive metabolite", "primary", "Cotinine supports nicotine exposure when included.", ["mayoAddictionPanel", "arupExpandedPanel"]),
+    rel("cotinine", "hydroxycotinine3", "metabolite", "secondary", "trans-3-hydroxycotinine supports nicotine pathway interpretation.", ["mayoAddictionPanel", "arupExpandedPanel"]),
+    rel("nicotine", "anabasine", "tobacco alkaloid marker", "context", "Anabasine may support tobacco exposure context when included.", ["mayoAddictionPanel", "arupExpandedPanel"]),
+    rel("mitragynine", "hydroxymitragynine7", "supportive metabolite", "primary", "7-hydroxymitragynine supports kratom/mitragynine exposure when included.", ["arupExpandedPanel"]),
+    rel("sertraline", "benzodiazepine_immunoassay", "immunoassay caveat", "context", "Sertraline can be relevant to benzodiazepine immunoassay false-positive context.", ["uic", "arupDrugTesting"]),
+    rel("venlafaxine", "pcp", "immunoassay caveat", "context", "Venlafaxine can be relevant to PCP immunoassay false-positive context.", ["uic", "arupDrugTesting"]),
+    rel("dextromethorphan", "pcp", "immunoassay caveat", "context", "Dextromethorphan can be relevant to PCP or opioid-screen caveat context.", ["uic", "arupDrugTesting"]),
+    rel("diphenhydramine", "pcp", "immunoassay caveat", "context", "Diphenhydramine can be relevant to PCP or TCA screen caveat context.", ["uic", "arupDrugTesting"]),
+    rel("quetiapine", "amitriptyline", "immunoassay caveat", "context", "Quetiapine can be relevant to TCA immunoassay caveat context.", ["uic", "arupDrugTesting"]),
+    rel("cyclobenzaprine", "amitriptyline", "immunoassay caveat", "context", "Cyclobenzaprine can be relevant to TCA immunoassay caveat context.", ["uic", "arupDrugTesting"]),
   ];
 
   const assayCaveats = [
@@ -230,14 +362,29 @@
     caveat("immunoassay", ["Benzodiazepines"], "Clonazepam / lorazepam screen limitation", "Many benzodiazepine screens may miss clonazepam, 7-aminoclonazepam, lorazepam, or glucuronidated metabolites depending on assay design.", ["arupBenzodiazepines", "uic"], ["clonazepam", "aminoclonazepam7", "lorazepam", "lorazepam_glucuronide"], "critical"),
     caveat("immunoassay", ["Stimulants"], "Amphetamine screen", "Amphetamine immunoassay false positives and source ambiguity can occur; unexpected results need definitive confirmation.", ["uic", "aafp"]),
     caveat("immunoassay", ["Stimulants"], "Amphetamine confirmation", "Amphetamine-class immunoassays have clinically important false positives and source ambiguity; unexpected positives need definitive confirmation.", ["uic", "aafp"], ["amphetamine", "methamphetamine"], "critical"),
+    caveat("immunoassay", ["Stimulants", "Assay caveats"], "Medication-related amphetamine screen caveats", "Bupropion, pseudoephedrine, ephedrine, phentermine, and related medications can be relevant to amphetamine-screen false-positive context depending on assay.", ["uic", "arupDrugTesting"], ["bupropion", "pseudoephedrine", "ephedrine", "phentermine", "amphetamine", "amphetamine_immunoassay"], "important"),
     caveat("immunoassay", ["Cocaine"], "Cocaine screen", "Benzoylecgonine is the primary urine marker; unexpected positives should still be interpreted with cutoff and confirmation context.", ["aafp"]),
     caveat("immunoassay", ["Cannabinoids"], "Cannabinoid screen", "THC immunoassays do not reliably determine timing, dose, impairment, or delta-8 vs delta-9 specificity.", ["arupDrugTesting"]),
     caveat("any", ["Cannabinoids"], "THC overinterpretation warning", "THC-COOH supports cannabinoid exposure but does not establish impairment, exact timing, dose, or new use versus residual excretion.", ["arupDetectionWindows", "uic"], ["thc_cooh", "thc_cooh_glucuronide", "delta9_thc"], "critical"),
     caveat("any", ["Alcohol markers"], "Alcohol marker context", "EtG and EtS require cutoff, timing, incidental exposure, and panel context before clinical conclusions are made.", ["arupDrugTesting", "arupDetectionWindows"], ["etg", "ets"], "critical"),
-    caveat("definitive", ["Opioids", "Benzodiazepines", "Stimulants", "Cocaine", "Cannabinoids", "Alcohol markers", "Sedative-hypnotics"], "Definitive testing", "LC-MS/MS or GC-MS is preferred for unexpected results, adherence/diversion concerns, and parent/metabolite pattern interpretation.", ["arupDrugTesting", "aafp"]),
+    caveat("immunoassay", ["Dissociatives", "Assay caveats"], "PCP screen false positives", "PCP immunoassays can have false positives; venlafaxine, dextromethorphan, diphenhydramine, and other medications may be assay-dependent context clues.", ["uic", "arupDrugTesting"], ["pcp", "venlafaxine", "dextromethorphan", "diphenhydramine"], "important"),
+    caveat("immunoassay", ["Antidepressants / TCA", "Muscle relaxants", "Assay caveats"], "TCA screen caveats", "TCA immunoassays can have medication-related false positives; interpret unexpected positives with definitive testing and medication review.", ["uic", "arupDrugTesting"], ["amitriptyline", "quetiapine", "diphenhydramine", "cyclobenzaprine"], "important"),
+    caveat("immunoassay", ["Sedative-hypnotics", "Gabapentinoids", "Kratom", "Nicotine markers"], "Routine panel coverage", "Many expanded-panel substances are not included in routine immunoassay screens; absence is only meaningful if the analyte was ordered and reported.", ["arupDrugTesting", "arupExpandedPanel"], ["zolpidem", "zaleplon", "eszopiclone", "gabapentin", "pregabalin", "mitragynine", "nicotine"], "important"),
+    caveat("definitive", ["Opioids", "Benzodiazepines", "Stimulants", "Cocaine", "Cannabinoids", "Alcohol markers", "Sedative-hypnotics", "Barbiturates", "Gabapentinoids", "Dissociatives", "Antidepressants / TCA", "Assay caveats", "Nicotine markers", "Kratom", "Muscle relaxants"], "Definitive testing", "LC-MS/MS or GC-MS is preferred for unexpected results, adherence/diversion concerns, and parent/metabolite pattern interpretation.", ["arupDrugTesting", "aafp"]),
   ];
 
-  const commonGroups = ["Opioids", "Benzodiazepines", "Stimulants", "Cannabinoids", "Cocaine"];
+  const commonGroups = [
+    "Opioids",
+    "Benzodiazepines",
+    "Stimulants",
+    "Cannabinoids",
+    "Cocaine",
+    "Alcohol markers",
+    "Sedative-hypnotics",
+    "Barbiturates",
+    "Dissociatives",
+    "Assay caveats",
+  ];
   const highYieldSearches = ["fentanyl", "oxycodone", "hydromorphone", "aminoclonazepam7", "eddp", "thc_cooh", "etg"];
   const absentPanelWarning = "Absent findings are only meaningful if each analyte was included in the ordered panel and reported as absent.";
   const patternScenarios = [
@@ -304,7 +451,26 @@
     { terms: ["etg", "incidental"], focusId: "etg" },
     { terms: ["etg", "cutoff"], focusId: "etg" },
   ];
-  const likelyExplanationIds = new Set(["hydromorphone", "oxymorphone", "oxazepam", "temazepam", "nordiazepam", "amphetamine", "methamphetamine", "thc_cooh", "etg", "ets", "aminoclonazepam7"]);
+  const likelyExplanationIds = new Set([
+    "hydromorphone",
+    "oxymorphone",
+    "oxazepam",
+    "temazepam",
+    "nordiazepam",
+    "amphetamine",
+    "methamphetamine",
+    "thc_cooh",
+    "etg",
+    "ets",
+    "aminoclonazepam7",
+    "nortriptyline",
+    "desipramine",
+    "meprobamate",
+    "pcp",
+    "benzodiazepine_immunoassay",
+    "opiate_immunoassay",
+    "amphetamine_immunoassay",
+  ]);
   const allowedClinicalTags = new Set([
     "Expected metabolite",
     "Supportive metabolite",
@@ -406,15 +572,71 @@
     meprobamate: answer("Meprobamate may reflect meprobamate exposure or carisoprodol metabolism.", "Carisoprodol can metabolize to meprobamate, but direct meprobamate exposure is also possible.", "Meprobamate is not source-specific.", "Review medication history and whether carisoprodol was detected or included.", "Do not conclude carisoprodol exposure from meprobamate alone."),
   };
 
+  function labelForIdFromItems(id) {
+    const found = items.find((candidate) => candidate.id === id);
+    return found ? found.name : id;
+  }
+
+  function formatShortList(names) {
+    const uniqueNames = [...new Set(names.filter(Boolean))].slice(0, 3);
+    if (!uniqueNames.length) {
+      return "";
+    }
+    if (uniqueNames.length === 1) {
+      return uniqueNames[0];
+    }
+    if (uniqueNames.length === 2) {
+      return `${uniqueNames[0]} and ${uniqueNames[1]}`;
+    }
+    return `${uniqueNames.slice(0, -1).join(", ")}, and ${uniqueNames[uniqueNames.length - 1]}`;
+  }
+
+  function buildAutoCuratedAnswer(entry) {
+    const outgoing = relationships.filter((row) => row.from === entry.id);
+    const incoming = relationships.filter((row) => row.to === entry.id);
+    const expectedFindings = formatShortList(outgoing.map((row) => labelForIdFromItems(row.to)));
+    const possibleSources = formatShortList(incoming.map((row) => labelForIdFromItems(row.from)));
+    const type = entry.type || "";
+    const isDrugLike = type.includes("drug");
+    const isContext = type.includes("context") || entry.group === "Assay caveats";
+
+    let bottomLine = entry.note || `${entry.name} interpretation depends on assay method, timing, panel contents, and medication history.`;
+    let likelyExplanation = "";
+    let commonPitfall = "Do not overinterpret a urine result without the ordered panel, cutoff, timing, assay method, and medication list.";
+    let nextStep = "Interpret with medication history, timing, panel contents, and references; consult the lab for unexpected results.";
+
+    if (isContext) {
+      bottomLine = `${entry.name} is included as assay or exposure context rather than a standalone source determination.`;
+      likelyExplanation = entry.note || "It helps explain possible screening limitations, false-positive patterns, or panel-coverage gaps.";
+      commonPitfall = "Do not treat context items as proof of the source of a result without definitive testing and clinical review.";
+      nextStep = "Review medication/exposure history and use definitive testing when a screening result conflicts with expectations.";
+    } else if (isDrugLike && expectedFindings) {
+      bottomLine = `${entry.name} exposure may be supported by ${expectedFindings} when included in the ordered panel.`;
+      likelyExplanation = `${expectedFindings} should be interpreted with parent drug, timing, cutoff, and the medication list.`;
+      commonPitfall = `Absence of ${expectedFindings} is only meaningful if the analyte was included and reported absent.`;
+      nextStep = `Confirm whether ${entry.name} and related findings were included in the ordered panel when exposure or adherence matters.`;
+    } else if (possibleSources) {
+      bottomLine = `${entry.name} may be explained by ${possibleSources} depending on timing, panel design, and clinical context.`;
+      likelyExplanation = `${entry.name} is most useful when interpreted with possible parent/source findings and medication history.`;
+      commonPitfall = `${entry.name} may not be source-specific by itself.`;
+      nextStep = `Compare ${entry.name} with ${possibleSources}, timing, cutoff, and the ordered panel.`;
+    } else if (isDrugLike) {
+      bottomLine = `${entry.name} is included for expanded-panel lookup and generally requires specific or definitive testing when clinically relevant.`;
+      likelyExplanation = entry.note || "Routine screens may not include this substance unless it was specifically ordered.";
+      commonPitfall = "A negative routine screen may simply mean this analyte was not included.";
+      nextStep = `Confirm whether ${entry.name} was included in the ordered panel and use definitive testing for unexpected results.`;
+    }
+
+    return answer(bottomLine, likelyExplanation, commonPitfall, nextStep);
+  }
+
   items.forEach((entry) => {
-    const curated = curatedAnswers[entry.id];
+    const curated = curatedAnswers[entry.id] || buildAutoCuratedAnswer(entry);
     if (curated) {
       const extraAliases = curated.extraAliases || [];
       Object.assign(entry, curated);
       entry.aliases = [...new Set([...(entry.aliases || []), ...extraAliases])];
       delete entry.extraAliases;
-    } else {
-      entry.curationStatus = "partial";
     }
     entry.showLikelyExplanation = likelyExplanationIds.has(entry.id);
   });
@@ -504,6 +726,9 @@
 
     if (notSourceSpecificPairs.has(`${from}:${to}`)) {
       return "Not source-specific";
+    }
+    if (normalizedLabel.includes("immunoassay") || normalizedLabel.includes("assay")) {
+      return "Assay limitation";
     }
     if (normalizedLabel.includes("isomer") || normalizedLabel.includes("ratio") || normalizedLabel.includes("serial")) {
       return "Requires quantitative context";

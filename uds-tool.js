@@ -236,6 +236,58 @@
 
   const commonGroups = ["Opioids", "Benzodiazepines", "Stimulants", "Cannabinoids", "Cocaine"];
   const highYieldSearches = ["fentanyl", "oxycodone", "hydromorphone", "aminoclonazepam7", "eddp", "thc_cooh", "etg"];
+  const universalUdsLimitation = "Do not infer dose, exact timing, impairment, intent, diversion, misuse, or adherence certainty from UDS alone.";
+  const absentPanelWarning = "Absent findings are only meaningful if each analyte was included in the ordered panel and reported as absent.";
+  const patternScenarios = [
+    {
+      id: "oxycodone_oxymorphone",
+      label: "Oxycodone -> oxymorphone",
+      method: "definitive",
+      expected: ["oxycodone"],
+      detected: ["oxymorphone", "noroxycodone"],
+      absent: [],
+    },
+    {
+      id: "hydrocodone_hydromorphone",
+      label: "Hydrocodone -> hydromorphone",
+      method: "definitive",
+      expected: ["hydrocodone"],
+      detected: ["hydromorphone", "norhydrocodone"],
+      absent: [],
+    },
+    {
+      id: "clonazepam_negative",
+      label: "Clonazepam, 7-amino absent",
+      method: "immunoassay",
+      expected: ["clonazepam"],
+      detected: [],
+      absent: ["aminoclonazepam7"],
+    },
+    {
+      id: "fentanyl_negative",
+      label: "Fentanyl, norfentanyl absent",
+      method: "immunoassay",
+      expected: ["fentanyl"],
+      detected: [],
+      absent: ["norfentanyl"],
+    },
+    {
+      id: "codeine_morphine",
+      label: "Codeine with morphine",
+      method: "definitive",
+      expected: ["codeine"],
+      detected: ["morphine"],
+      absent: [],
+    },
+    {
+      id: "buprenorphine_metabolite",
+      label: "Buprenorphine + norbuprenorphine",
+      method: "definitive",
+      expected: ["buprenorphine"],
+      detected: ["norbuprenorphine"],
+      absent: [],
+    },
+  ];
   const intentAliases = [
     { terms: ["negative", "opiate", "fentanyl"], focusId: "fentanyl", method: "immunoassay" },
     { terms: ["negative", "opiate", "oxycodone"], focusId: "oxycodone", method: "immunoassay" },
@@ -354,6 +406,7 @@
     analyzeButton: root.querySelector("#udsAnalyzeButton"),
     clearPatternButton: root.querySelector("#udsClearPatternButton"),
     copyPatternButton: root.querySelector("#udsCopyPatternButton"),
+    patternScenarios: root.querySelector("#udsPatternScenarios"),
     patternOutput: root.querySelector("#udsPatternOutput"),
   };
 
@@ -566,6 +619,7 @@
       }
     } else {
       renderPatternChips();
+      renderPatternScenarios();
       renderPatternOutput();
     }
   }
@@ -1005,6 +1059,39 @@
       : `<span class="uds-muted">No items added.</span>`;
   }
 
+  function renderPatternScenarios() {
+    elements.patternScenarios.innerHTML = `
+      <div class="uds-scenario-header">
+        <div>
+          <h4>Common scenarios</h4>
+          <p>Load a typical reconciliation pattern, then adjust the findings to match the report.</p>
+        </div>
+      </div>
+      <div class="uds-scenario-list">
+        ${patternScenarios
+          .map(
+            (scenario) => `
+              <button class="uds-scenario-button" data-uds-scenario="${escapeAttribute(scenario.id)}" type="button">
+                <span>${escapeHtml(scenario.label)}</span>
+                <small>${escapeHtml(formatScenarioMethod(scenario.method))}</small>
+              </button>
+            `,
+          )
+          .join("")}
+      </div>
+    `;
+  }
+
+  function formatScenarioMethod(method) {
+    if (method === "immunoassay") {
+      return "Immunoassay";
+    }
+    if (method === "definitive") {
+      return "Definitive";
+    }
+    return "Any method";
+  }
+
   function renderPatternOutput() {
     const result = analyzePattern();
     state.lastPatternSummary = result.summary;
@@ -1012,8 +1099,11 @@
 
     elements.patternOutput.innerHTML = `
       <div class="uds-result-block">
-        ${renderResultSection("Assessment", [result.assessment], "uds-result-assessment")}
+        ${renderEvidenceLine(result)}
+        ${renderResultSection("Can this be explained?", [result.assessment], "uds-result-assessment")}
         ${renderResultSection("Recommended next step", [result.nextStep], "uds-result-next-step")}
+        ${result.panelWarning ? renderResultSection("Panel coverage warning", [result.panelWarning], "uds-result-panel-warning") : ""}
+        ${renderResultSection("Do not infer", [result.doNotInfer], "uds-result-limitation")}
         ${renderDetailsSection("Explained findings", renderList(result.explained))}
         ${renderDetailsSection("Needs context", renderList(result.needsContext))}
         ${renderDetailsSection("Not explained", renderList(result.notExplained))}
@@ -1023,48 +1113,79 @@
     `;
   }
 
+  function renderEvidenceLine(result) {
+    if (!result.evidenceLabel) {
+      return "";
+    }
+
+    return `
+      <section class="uds-evidence-line uds-evidence-${escapeAttribute(result.evidenceTone)}">
+        <div>
+          <h4>Evidence level</h4>
+          <p>${escapeHtml(result.evidenceDescription)}</p>
+        </div>
+        <span class="uds-evidence-badge">${escapeHtml(result.evidenceLabel)}</span>
+      </section>
+    `;
+  }
+
   function analyzePattern() {
     const explained = [];
     const needsContext = [];
     const notExplained = [];
     const missingSupportive = [];
+    const panelWarning = state.absent.length
+      ? `${absentPanelWarning} Entered absent finding(s): ${state.absent.map(labelFor).join(", ")}.`
+      : "";
 
-    if (!state.expected.length && !state.detected.length) {
+    if (!state.expected.length && !state.detected.length && !state.absent.length) {
+      const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, []);
       return {
         assessment: "Add at least one prescribed/expected drug and one detected finding.",
+        evidenceLabel: evidence.label,
+        evidenceTone: evidence.tone,
+        evidenceDescription: evidence.description,
         explained: [],
         needsContext: [],
         notExplained: [],
         missingSupportive: [],
         nextStep: "Add detected findings to compare against the selected expected drug(s).",
-        methodNotes: getRelevantCaveats([...state.expected, ...state.detected]).map((entry) => entry.text),
+        panelWarning: "",
+        doNotInfer: universalUdsLimitation,
+        methodNotes: getRelevantCaveats([...state.expected, ...state.detected, ...state.absent]).map((entry) => entry.text),
         summary: "",
       };
     }
 
-    state.detected.forEach((detectedId) => {
-      const directExpected = state.expected.includes(detectedId);
-      if (directExpected) {
-        explained.push(`${labelFor(detectedId)} is listed as prescribed/expected.`);
-        return;
-      }
+    if (!state.expected.length) {
+      state.detected.forEach((detectedId) => {
+        notExplained.push(`${labelFor(detectedId)} cannot be reconciled until prescribed/expected medications are added.`);
+      });
+    } else {
+      state.detected.forEach((detectedId) => {
+        const directExpected = state.expected.includes(detectedId);
+        if (directExpected) {
+          explained.push(`${labelFor(detectedId)} is listed as prescribed/expected.`);
+          return;
+        }
 
-      const relationship = state.expected
-        .flatMap((expectedId) => getOutgoing(expectedId).map((row) => ({ expectedId, row })))
-        .find(({ row }) => row.to === detectedId);
+        const relationship = state.expected
+          .flatMap((expectedId) => getOutgoing(expectedId).map((row) => ({ expectedId, row })))
+          .find(({ row }) => row.to === detectedId);
 
-      if (!relationship) {
-        notExplained.push(`${labelFor(detectedId)} is not explained by the selected expected drugs.`);
-        return;
-      }
+        if (!relationship) {
+          notExplained.push(`${labelFor(detectedId)} is not explained by the selected expected drugs.`);
+          return;
+        }
 
-      const message = `${labelFor(detectedId)} can fit ${labelFor(relationship.expectedId)}: ${relationship.row.clue}`;
-      if (relationship.row.strength === "context") {
-        needsContext.push(message);
-      } else {
-        explained.push(message);
-      }
-    });
+        const message = `${labelFor(detectedId)} can fit ${labelFor(relationship.expectedId)}: ${relationship.row.clue}`;
+        if (relationship.row.strength === "context") {
+          needsContext.push(message);
+        } else {
+          explained.push(message);
+        }
+      });
+    }
 
     state.expected.forEach((expectedId) => {
       const supportive = getOutgoing(expectedId).filter((row) => row.strength === "primary");
@@ -1080,18 +1201,33 @@
       });
     });
 
-    const methodNotes = getRelevantCaveats([...state.expected, ...state.detected]).map((entry) => entry.text);
+    const methodNotes = getRelevantCaveats([...state.expected, ...state.detected, ...state.absent]).map((entry) => entry.text);
     const assessment = buildAssessment(explained, needsContext, notExplained);
-    const nextStep = buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes);
-    const summary = buildPatternSummary(assessment, nextStep, explained, needsContext, notExplained, methodNotes);
+    const nextStep = buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning);
+    const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes);
+    const summary = buildPatternSummary({
+      assessment,
+      nextStep,
+      evidence,
+      panelWarning,
+      doNotInfer: universalUdsLimitation,
+      explained,
+      needsContext,
+      notExplained,
+    });
 
     return {
       assessment,
+      evidenceLabel: evidence.label,
+      evidenceTone: evidence.tone,
+      evidenceDescription: evidence.description,
       nextStep,
       explained,
       needsContext,
       notExplained,
       missingSupportive: missingSupportive.slice(0, 8),
+      panelWarning,
+      doNotInfer: universalUdsLimitation,
       methodNotes: methodNotes.slice(0, 5),
       summary,
     };
@@ -1099,31 +1235,76 @@
 
   function buildAssessment(explained, needsContext, notExplained) {
     if (notExplained.length) {
-      return "At least one finding is not explained by the selected expected drug(s) in the current rule set.";
+      return "No. At least one finding is not explained by the selected expected medication(s) in the current rule set.";
     }
     if (needsContext.length) {
-      return "Findings are mostly compatible, but one or more results require timing, quantitative, cutoff, panel, or assay-method context.";
+      return "Possibly. Findings are mostly compatible, but one or more results require timing, quantitative, cutoff, panel, or assay-method context.";
     }
     if (explained.length) {
-      return "Findings are compatible with the selected expected drug(s), based on configured parent/metabolite relationships.";
+      return "Yes. Detected findings are compatible with the selected expected medication(s), based on configured parent/metabolite relationships.";
     }
-    return "Add detected findings to compare against the selected expected drug(s).";
+    return "Not enough information. Add detected findings to compare against the selected expected medication(s).";
   }
 
-  function buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes) {
+  function buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning) {
     if (notExplained.length) {
       return "Confirm medication list, assay method, panel contents, and timing; consider definitive testing or lab consultation.";
     }
     if (needsContext.length) {
       return "Interpret with timing, quantitative values, cutoff, and panel contents before making adherence or misuse conclusions.";
     }
+    if (panelWarning) {
+      return "Verify panel contents before treating absent findings as clinically meaningful.";
+    }
     if (missingSupportive.length) {
       return "Verify whether supportive metabolites were included in the ordered panel before treating absence as meaningful.";
     }
-    if (methodNotes.length) {
+    if (state.method === "immunoassay" && methodNotes.length) {
       return "Review method limitations before acting on the result.";
     }
+    if (explained.length) {
+      return "Document the pattern as compatible if the medication list, assay method, timing, cutoff, and panel contents fit.";
+    }
     return "Do not use this result alone to determine dose, timing, adherence, impairment, or absence of other exposure.";
+  }
+
+  function buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes) {
+    const hasCriticalMethodNote = state.method === "immunoassay" && methodNotes.some((note) => /not detect|may miss|false positive|false negative|specific/i.test(note));
+    const hasMarkedAbsentConcern = missingSupportive.some((note) => note.includes("marked absent"));
+
+    if (notExplained.length) {
+      return {
+        label: "Unexpected / unresolved",
+        tone: "warning",
+        description: "At least one detected finding is not explained by the selected expected medication(s).",
+      };
+    }
+    if (needsContext.length || hasMarkedAbsentConcern) {
+      return {
+        label: "Context-dependent",
+        tone: "caution",
+        description: "The pattern may fit, but timing, cutoff, quantitative values, or panel coverage materially affect interpretation.",
+      };
+    }
+    if (hasCriticalMethodNote) {
+      return {
+        label: "Assay-dependent",
+        tone: "method",
+        description: "The interpretation depends heavily on whether the ordered method includes the relevant analytes.",
+      };
+    }
+    if (explained.length) {
+      return {
+        label: "Compatible / expected",
+        tone: "compatible",
+        description: "Detected findings are explained by configured parent/metabolite relationships.",
+      };
+    }
+    return {
+      label: "Incomplete",
+      tone: "neutral",
+      description: "Add expected medications and detected findings to generate an interpretation.",
+    };
   }
 
   function buildLookupSummary(entry, primaryRows, secondaryRows, caveats, sourcesForEntry) {
@@ -1144,13 +1325,22 @@
     return lines.filter(Boolean).join("\n");
   }
 
-  function buildPatternSummary(assessment, nextStep, explained, needsContext, notExplained, methodNotes) {
-    const parts = ["UDS pattern check", `Assessment: ${assessment}`, `Recommended next step: ${nextStep}`];
-    if (needsContext.length) {
-      parts.push(`Needs context: ${needsContext.slice(0, 3).join("; ")}`);
+  function buildPatternSummary(result) {
+    const parts = [
+      "UDS pattern check",
+      `Can this be explained: ${result.assessment}`,
+      `Evidence level: ${result.evidence.label}`,
+      `Recommended next step: ${result.nextStep}`,
+    ];
+    if (result.panelWarning) {
+      parts.push(`Panel coverage warning: ${result.panelWarning}`);
     }
-    if (notExplained.length) {
-      parts.push(`Not explained: ${notExplained.slice(0, 3).join("; ")}`);
+    parts.push(`Do not infer: ${result.doNotInfer}`);
+    if (result.needsContext.length) {
+      parts.push(`Needs context: ${result.needsContext.slice(0, 3).join("; ")}`);
+    }
+    if (result.notExplained.length) {
+      parts.push(`Not explained: ${result.notExplained.slice(0, 3).join("; ")}`);
     }
     return parts.join("\n");
   }
@@ -1261,6 +1451,20 @@
 
   function removeChip(key, id) {
     state[key] = state[key].filter((entryId) => entryId !== id);
+    renderPatternChips();
+    renderPatternOutput();
+  }
+
+  function loadPatternScenario(id) {
+    const scenario = patternScenarios.find((entry) => entry.id === id);
+    if (!scenario) {
+      return;
+    }
+
+    state.expected = [...scenario.expected];
+    state.detected = [...scenario.detected];
+    state.absent = [...scenario.absent];
+    updateMethodControl(scenario.method);
     renderPatternChips();
     renderPatternOutput();
   }
@@ -1392,6 +1596,12 @@
     const removeButton = event.target.closest("[data-uds-remove]");
     if (removeButton) {
       removeChip(removeButton.dataset.udsRemove, removeButton.dataset.udsId);
+      return;
+    }
+
+    const scenarioButton = event.target.closest("[data-uds-scenario]");
+    if (scenarioButton) {
+      loadPatternScenario(scenarioButton.dataset.udsScenario);
     }
   });
 

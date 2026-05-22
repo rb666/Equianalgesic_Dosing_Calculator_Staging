@@ -33,6 +33,9 @@
   --uds-tag-supportive-bg: hsl(154 58% 88%);
   --uds-tag-supportive-border: hsl(154 50% 29%);
   --uds-tag-supportive-text: hsl(154 60% 18%);
+  --uds-tag-specific-bg: hsl(187 64% 91%);
+  --uds-tag-specific-border: hsl(187 54% 32%);
+  --uds-tag-specific-text: hsl(187 64% 20%);
   --uds-tag-expected-bg: hsl(209 78% 92%);
   --uds-tag-expected-border: hsl(209 62% 38%);
   --uds-tag-expected-text: hsl(209 72% 22%);
@@ -88,6 +91,9 @@
   --uds-tag-supportive-bg: hsl(154 30% 23%);
   --uds-tag-supportive-border: hsl(154 48% 62%);
   --uds-tag-supportive-text: hsl(154 74% 88%);
+  --uds-tag-specific-bg: hsl(187 28% 22%);
+  --uds-tag-specific-border: hsl(187 50% 64%);
+  --uds-tag-specific-text: hsl(187 78% 88%);
   --uds-tag-expected-bg: hsl(209 30% 23%);
   --uds-tag-expected-border: hsl(209 56% 66%);
   --uds-tag-expected-text: hsl(209 82% 90%);
@@ -408,6 +414,43 @@
   font-weight: 850;
 }
 
+.uds-interpretation-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.uds-interpretation-flag {
+  display: inline-flex;
+  width: fit-content;
+  padding: 6px 9px;
+  border: 2px solid var(--uds-tag-shared-border);
+  border-radius: 999px;
+  background: var(--uds-tag-shared-bg);
+  color: var(--uds-tag-shared-text);
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.02em;
+}
+
+.uds-interpretation-flag--assay {
+  border-color: var(--uds-tag-assay-border);
+  background: var(--uds-tag-assay-bg);
+  color: var(--uds-tag-assay-text);
+}
+
+.uds-interpretation-flag--specific {
+  border-color: var(--uds-tag-specific-border);
+  background: var(--uds-tag-specific-bg);
+  color: var(--uds-tag-specific-text);
+}
+
+.uds-interpretation-flag--support {
+  border-color: var(--uds-tag-supportive-border);
+  background: var(--uds-tag-supportive-bg);
+  color: var(--uds-tag-supportive-text);
+}
+
 .uds-answer-line {
   display: grid;
   grid-template-columns: minmax(150px, 0.34fr) minmax(0, 1fr);
@@ -724,6 +767,13 @@
   background: var(--uds-tag-supportive-bg);
   color: var(--uds-tag-supportive-text);
   box-shadow: 0 4px 10px color-mix(in srgb, var(--uds-tag-supportive-border) 18%, transparent);
+}
+
+.uds-relation-tag--specific {
+  border-color: var(--uds-tag-specific-border);
+  background: var(--uds-tag-specific-bg);
+  color: var(--uds-tag-specific-text);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--uds-tag-specific-border) 18%, transparent);
 }
 
 .uds-relation-tag--expected {

@@ -452,6 +452,7 @@
     { terms: ["etg", "cutoff"], focusId: "etg" },
   ];
   const likelyExplanationIds = new Set([
+    "morphine",
     "hydromorphone",
     "oxymorphone",
     "oxazepam",
@@ -474,6 +475,7 @@
   const allowedClinicalTags = new Set([
     "Expected metabolite",
     "Supportive metabolite",
+    "Specific marker",
     "Possible minor metabolite",
     "Possible parent drug",
     "Shared metabolite",
@@ -570,6 +572,19 @@
     zolpidem_carboxylic_acid: answer("Zolpidem phenyl-4-carboxylic acid supports zolpidem exposure when included.", "The metabolite may be more useful than parent zolpidem depending on timing and panel design.", "Routine drug screens may not include zolpidem or its metabolite.", "Confirm whether zolpidem-specific definitive testing was ordered when exposure matters.", "Do not infer zolpidem absence from a nonspecific drug screen."),
     carisoprodol: answer("Carisoprodol exposure may be supported by meprobamate, but meprobamate can also be direct exposure.", "Carisoprodol metabolizes to meprobamate.", "Meprobamate is not fully source-specific.", "Interpret carisoprodol and meprobamate together with medication history.", "Do not conclude carisoprodol use from meprobamate alone."),
     meprobamate: answer("Meprobamate may reflect meprobamate exposure or carisoprodol metabolism.", "Carisoprodol can metabolize to meprobamate, but direct meprobamate exposure is also possible.", "Meprobamate is not source-specific.", "Review medication history and whether carisoprodol was detected or included.", "Do not conclude carisoprodol exposure from meprobamate alone."),
+    opiate_immunoassay: answer("An opiate immunoassay is a morphine-like screen, not a full opioid panel.", "A report may show a separate opiate row plus separate rows for oxycodone, methadone, fentanyl, and other opioids.", "Do not treat a positive or negative opiate screen as covering oxycodone, fentanyl, methadone, buprenorphine, tramadol, or tapentadol.", "Check the specific ordered panel rows and use targeted or definitive testing when the clinical question involves a semisynthetic or synthetic opioid.", "", {}, ["opiate positive", "opiate negative", "positive opiate screen", "negative opiate screen", "opiate row", "generic opiate row"]),
+  };
+
+  const interpretationFlags = {
+    morphine: [{ label: "Not heroin-specific", tone: "ambiguity" }],
+    hydromorphone: [{ label: "Not source-specific", tone: "ambiguity" }],
+    oxymorphone: [{ label: "Not source-specific", tone: "ambiguity" }],
+    "6mam": [{ label: "Specific heroin marker", tone: "specific" }],
+    fentanyl: [{ label: "Not on routine opiate screen", tone: "assay" }],
+    norfentanyl: [{ label: "Fentanyl-specific finding", tone: "specific" }],
+    norhydrocodone: [{ label: "Supports hydrocodone", tone: "support" }],
+    noroxycodone: [{ label: "Supports oxycodone", tone: "support" }],
+    opiate_immunoassay: [{ label: "Screen category only", tone: "assay" }],
   };
 
   function labelForIdFromItems(id) {
@@ -639,6 +654,7 @@
       delete entry.extraAliases;
     }
     entry.showLikelyExplanation = likelyExplanationIds.has(entry.id);
+    entry.interpretationFlags = interpretationFlags[entry.id] || [];
   });
 
   const byId = new Map(items.map((entry) => [entry.id, entry]));
@@ -714,6 +730,8 @@
   function getDefaultClinicalTag(from, to, label, strength) {
     const normalizedLabel = normalize(label);
     const notSourceSpecificPairs = new Set([
+      "codeine:morphine",
+      "heroin:morphine",
       "hydrocodone:hydromorphone",
       "morphine:hydromorphone",
       "oxycodone:oxymorphone",
@@ -725,7 +743,13 @@
       "chlordiazepoxide:oxazepam",
       "carisoprodol:meprobamate",
     ]);
+    const specificMarkerPairs = new Set([
+      "heroin:6mam",
+    ]);
 
+    if (specificMarkerPairs.has(`${from}:${to}`)) {
+      return "Specific marker";
+    }
     if (notSourceSpecificPairs.has(`${from}:${to}`)) {
       return "Not source-specific";
     }
@@ -1041,6 +1065,7 @@
           </div>
         </div>
         ${renderMethodContext()}
+        ${renderInterpretationFlags(entry)}
         ${renderCurationStatus(entry)}
         ${renderAnswerLine("Bottom line", bottomLine)}
         ${likelyExplanation ? renderAnswerLine("Likely explanation", likelyExplanation) : ""}
@@ -1085,6 +1110,22 @@
 
     const label = state.method === "immunoassay" ? "Immunoassay screen" : "Definitive LC/GC-MS";
     return `<div class="uds-method-context">Interpreting for: ${escapeHtml(label)}</div>`;
+  }
+
+  function renderInterpretationFlags(entry) {
+    if (!entry.interpretationFlags?.length) {
+      return "";
+    }
+
+    return `
+      <div class="uds-interpretation-flags" aria-label="High-yield interpretation flags">
+        ${entry.interpretationFlags.map((flag) => `
+          <span class="uds-interpretation-flag uds-interpretation-flag--${escapeAttribute(flag.tone)}">
+            ${escapeHtml(flag.label)}
+          </span>
+        `).join("")}
+      </div>
+    `;
   }
 
   function renderDetailsSection(title, bodyHtml) {
@@ -1316,6 +1357,7 @@
     const tagClassMap = {
       "Expected metabolite": "uds-relation-tag--expected",
       "Supportive metabolite": "uds-relation-tag--supportive",
+      "Specific marker": "uds-relation-tag--specific",
       "Possible minor metabolite": "uds-relation-tag--minor",
       "Possible parent drug": "uds-relation-tag--parent",
       "Shared metabolite": "uds-relation-tag--shared",

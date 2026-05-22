@@ -346,6 +346,14 @@
   line-height: 1.45;
 }
 
+.uds-field-help {
+  margin: -2px 0 2px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 720;
+  line-height: 1.35;
+}
+
 .uds-badge-row,
 .uds-chip-list,
 .uds-common-list,

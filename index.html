@@ -22,7 +22,7 @@
       })();
     </script>
     <link rel="stylesheet" href="styles.css?v=20260521-uds-tool-integration" />
-    <link rel="stylesheet" href="uds-tool.css?v=20260521-uds-balanced-accents" />
+    <link rel="stylesheet" href="uds-tool.css?v=20260521-uds-audit-followup" />
   </head>
   <body>
     <div class="environment-banner">
@@ -1131,6 +1131,9 @@
 
                   <div class="uds-chip-input" data-uds-chip-group="absent">
                     <label for="udsAbsentInput">Absent, optional</label>
+                    <p class="uds-field-help">
+                      Only add absent findings if the analyte was included in the ordered panel and reported as absent.
+                    </p>
                     <div class="uds-add-row">
                       <input id="udsAbsentInput" list="udsItemOptions" placeholder="Search and add absent analyte" />
                       <button class="secondary-button" data-uds-add="absent" type="button">Add</button>
@@ -1240,6 +1243,6 @@
     </div>
 
     <script src="script.js?v=20260521-uds-tool-integration"></script>
-    <script src="uds-tool.js?v=20260521-uds-answer-engine"></script>
+    <script src="uds-tool.js?v=20260521-uds-audit-followup"></script>
   </body>
 </html>

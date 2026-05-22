@@ -251,7 +251,6 @@
     { terms: ["etg", "cutoff"], focusId: "etg" },
   ];
   const likelyExplanationIds = new Set(["hydromorphone", "oxymorphone", "oxazepam", "temazepam", "nordiazepam", "amphetamine", "methamphetamine", "thc_cooh", "etg", "ets", "aminoclonazepam7"]);
-  const doNotConcludeIds = new Set(["hydromorphone", "oxymorphone", "thc_cooh", "etg", "ets", "amphetamine", "methamphetamine", "aminoclonazepam7"]);
   const allowedClinicalTags = new Set([
     "Expected metabolite",
     "Supportive metabolite",
@@ -314,7 +313,6 @@
       entry.curationStatus = "partial";
     }
     entry.showLikelyExplanation = likelyExplanationIds.has(entry.id);
-    entry.showDoNotConclude = doNotConcludeIds.has(entry.id);
   });
 
   const byId = new Map(items.map((entry) => [entry.id, entry]));
@@ -684,7 +682,6 @@
       ${renderAssayDetailsInline(caveats)}
       ${caveats.length > 2 ? renderDetailsSection("Additional assay caveats", renderAssayCaveats(caveats.slice(2))) : ""}
       ${renderDetectionWindowInline(entry)}
-      ${renderDetailsSection("Interpretation cautions", renderDoNotConclude(entry))}
       ${renderDetailsSection("References", renderSources(sourcesForEntry))}
     `;
 
@@ -713,12 +710,10 @@
         </div>
         ${renderMethodContext()}
         ${renderCurationStatus(entry)}
-        ${renderCriticalCaveat(caveats, bottomLine)}
         ${renderAnswerLine("Bottom line", bottomLine)}
         ${likelyExplanation ? renderAnswerLine("Likely explanation", likelyExplanation) : ""}
         ${renderAnswerLine("Pitfall", pitfall)}
         ${renderAnswerLine("Next step", nextStep)}
-        ${shouldShowDoNotConclude(entry) ? renderAnswerLine("Do not conclude", entry.doNotConclude || buildDoNotConclude(entry)) : ""}
       </section>
     `;
   }
@@ -743,25 +738,6 @@
 
     const label = state.method === "immunoassay" ? "Immunoassay screen" : "Definitive LC/GC-MS";
     return `<div class="uds-method-context">Interpreting for: ${escapeHtml(label)}</div>`;
-  }
-
-  function renderCriticalCaveat(caveats, bottomLine = "") {
-    const critical = caveats.find((caveatEntry) => caveatEntry.severity === "critical");
-    if (!critical || isSubstantiallyDuplicate(critical.text, bottomLine)) {
-      return "";
-    }
-
-    return `<div class="uds-critical-warning">${escapeHtml(critical.text)}</div>`;
-  }
-
-  function isSubstantiallyDuplicate(a, b) {
-    if (!a || !b) {
-      return false;
-    }
-
-    const cleanA = normalize(a);
-    const cleanB = normalize(b);
-    return cleanA.includes(cleanB) || cleanB.includes(cleanA);
   }
 
   function renderDetailsSection(title, bodyHtml) {
@@ -865,10 +841,6 @@
       .join("");
   }
 
-  function renderDoNotConclude(entry) {
-    return `<div class="uds-note">${escapeHtml(entry.doNotConclude || buildDoNotConclude(entry))}</div>`;
-  }
-
   function renderCurationStatus(entry) {
     if (entry.curationStatus === "complete" && hasCuratedAnswer(entry)) {
       return "";
@@ -883,10 +855,6 @@
 
   function hasCuratedAnswer(entry) {
     return Boolean(entry.bottomLine && entry.commonPitfall && entry.nextStep);
-  }
-
-  function shouldShowDoNotConclude(entry) {
-    return entry.showDoNotConclude === true;
   }
 
   function shouldShowLikelyExplanation(entry) {
@@ -965,12 +933,7 @@
     return "Interpret with medication history, timing, panel contents, and references; consult the lab for unexpected results.";
   }
 
-  function buildDoNotConclude(entry) {
-    return `Do not conclude exact dose, timing, impairment, diversion, or adherence certainty from ${entry.name} urine detection alone.`;
-  }
-
   function renderLookupContextRail(entry, outgoing, incoming, caveats) {
-    const keyCaveat = caveats.find((caveatEntry) => caveatEntry.severity === "critical" || caveatEntry.severity === "important");
     const sourceCount = getSourcesForItem(entry.id).length;
 
     elements.relationsContent.innerHTML = `
@@ -979,8 +942,6 @@
         ${renderContextBlock("Method", getMethodLabel(state.method))}
         ${renderContextBlock("Class", entry.group)}
         ${renderContextBlock("Type", formatType(entry.type))}
-        ${entry.window ? renderContextBlock("Window", entry.window) : ""}
-        ${keyCaveat ? renderContextBlock("Key caution", keyCaveat.text) : ""}
         ${renderContextBlock(
           "References",
           sourceCount ? `${sourceCount} configured source${sourceCount === 1 ? "" : "s"}` : "No source configured",
@@ -1209,9 +1170,6 @@
       `Next step: ${nextStep}`,
     ];
 
-    if (entry.showDoNotConclude && entry.doNotConclude) {
-      lines.push(`Do not conclude: ${entry.doNotConclude}`);
-    }
     if (sourcesForEntry?.length) {
       lines.push(`References: ${sourcesForEntry.map((source) => source.title).join("; ")}`);
     }
@@ -1265,10 +1223,6 @@
             console.warn(`Complete item missing ${field}:`, entry.id);
           }
         });
-      }
-
-      if (entry.showDoNotConclude && !entry.doNotConclude) {
-        console.warn("showDoNotConclude set without doNotConclude:", entry.id);
       }
 
       if (entry.bottomLine && entry.bottomLine.length > 220) {

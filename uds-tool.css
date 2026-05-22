@@ -574,6 +574,19 @@
   min-height: 0;
 }
 
+.uds-lookup-nav {
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 0 12px;
+}
+
+.uds-lookup-back {
+  padding-inline: 14px;
+  border-width: 2px;
+  font-size: 0.86rem;
+  font-weight: 850;
+}
+
 .uds-relation-list,
 .uds-note-list {
   display: grid;

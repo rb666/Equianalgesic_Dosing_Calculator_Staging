@@ -652,6 +652,7 @@
     expected: [],
     detected: [],
     absent: [],
+    lookupBackStack: [],
     lastLookupSummary: "",
     lastPatternSummary: "",
   };
@@ -1010,6 +1011,7 @@
     state.lastLookupSummary = buildLookupSummary(entry, primaryRows, secondaryRows, caveats, sourcesForEntry);
 
     elements.lookupContent.innerHTML = `
+      ${renderLookupBackNav()}
       ${renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats)}
       ${renderDetailsSection("References", renderSources(sourcesForEntry))}
     `;
@@ -1044,6 +1046,21 @@
         ${renderAnswerLine("Pitfall", pitfall)}
         ${renderAnswerLine("Next step", nextStep)}
       </section>
+    `;
+  }
+
+  function renderLookupBackNav() {
+    const previousId = state.lookupBackStack[state.lookupBackStack.length - 1];
+    if (!previousId || !getItem(previousId)) {
+      return "";
+    }
+
+    return `
+      <div class="uds-lookup-nav">
+        <button class="secondary-button uds-lookup-back" data-uds-lookup-back type="button">
+          Back to ${escapeHtml(labelFor(previousId))}
+        </button>
+      </div>
     `;
   }
 
@@ -1278,7 +1295,7 @@
     const direction = relationship.from === focusId ? "->" : "<-";
 
     return `
-      <button class="uds-relation-row" data-uds-focus="${escapeAttribute(otherId)}" type="button">
+      <button class="uds-relation-row" data-uds-focus="${escapeAttribute(otherId)}" data-uds-history="true" type="button">
         <span class="uds-relation-main">
           ${escapeHtml(labelFor(focusId))} ${direction} ${escapeHtml(labelFor(otherId))}
         </span>
@@ -1762,9 +1779,15 @@
     renderPatternOutput();
   }
 
-  function setFocus(id) {
+  function setFocus(id, options = {}) {
     if (!getItem(id)) {
       return;
+    }
+
+    if (options.fromRelated && state.focusId && state.focusId !== id) {
+      state.lookupBackStack.push(state.focusId);
+    } else if (!options.keepHistory) {
+      state.lookupBackStack = [];
     }
 
     state.mode = "lookup";
@@ -1866,15 +1889,25 @@
   }
 
   root.addEventListener("click", (event) => {
+    const backButton = event.target.closest("[data-uds-lookup-back]");
+    if (backButton) {
+      const previousId = state.lookupBackStack.pop();
+      if (previousId) {
+        setFocus(previousId, { keepHistory: true });
+      }
+      return;
+    }
+
     const focusButton = event.target.closest("[data-uds-focus]");
     if (focusButton) {
       updateMethodControl(focusButton.dataset.udsMethod);
-      setFocus(focusButton.dataset.udsFocus);
+      setFocus(focusButton.dataset.udsFocus, { fromRelated: focusButton.dataset.udsHistory === "true" });
       return;
     }
 
     const groupButton = event.target.closest("[data-uds-group]");
     if (groupButton) {
+      state.lookupBackStack = [];
       renderLookupGroup(groupButton.dataset.udsGroup);
       return;
     }
@@ -1930,6 +1963,7 @@
   elements.startButton.addEventListener("click", () => {
     state.mode = "lookup";
     state.focusId = null;
+    state.lookupBackStack = [];
     state.relationFilter = "all";
     render();
   });

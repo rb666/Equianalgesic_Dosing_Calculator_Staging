@@ -1222,6 +1222,15 @@
     renderPatternPicker(key);
   }
 
+  function resetPatternPicker(key) {
+    patternDraft[key] = "";
+    if (elements[`${key}Input`]) {
+      elements[`${key}Input`].value = "";
+    }
+    setPatternFeedback(key, "");
+    renderPatternPicker(key);
+  }
+
   function renderLookupStart() {
     elements.lookupTitle.textContent = "Search-first clinical lookup";
     elements.copyLookupButton.disabled = true;
@@ -3028,9 +3037,7 @@
     });
 
     input.addEventListener("click", () => {
-      if (patternDraft[getPatternInputKey(input)]) {
-        input.select();
-      }
+      resetPatternPicker(getPatternInputKey(input));
     });
 
     input.addEventListener("keydown", (event) => {

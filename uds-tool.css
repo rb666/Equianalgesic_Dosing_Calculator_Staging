@@ -1319,6 +1319,16 @@
   background: var(--uds-pill-alt-bg);
 }
 
+.uds-result-source-ambiguity {
+  border-color: var(--uds-tag-context-border);
+  background: var(--uds-tag-context-bg);
+}
+
+.uds-result-detected-summary {
+  border-color: var(--uds-tag-specific-border);
+  background: var(--uds-tag-specific-bg);
+}
+
 .uds-result-panel-warning {
   border-color: var(--uds-pill-warm-border);
   background: var(--uds-pill-warm-bg);

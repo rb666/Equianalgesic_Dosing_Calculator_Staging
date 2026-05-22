@@ -1634,9 +1634,11 @@
         ${renderEvidenceLine(result)}
         ${renderWorkflowChecklist(result.workflowChecks)}
         ${renderResultSection("Can this be explained?", [result.assessment], "uds-result-assessment")}
+        ${result.detectedSummaries.length ? renderResultSection("Detected finding summary", result.detectedSummaries.slice(0, 3), "uds-result-detected-summary") : ""}
+        ${result.sourceAmbiguities.length ? renderResultSection("Source ambiguity", result.sourceAmbiguities.slice(0, 2), "uds-result-source-ambiguity") : ""}
         ${renderResultSection("Recommended next step", [result.nextStep], "uds-result-next-step")}
         ${result.panelWarning ? renderResultSection("Panel coverage warning", [result.panelWarning], "uds-result-panel-warning") : ""}
-        ${renderPatternDetailsSection("Source ambiguity flags", result.sourceAmbiguities)}
+        ${result.sourceAmbiguities.length > 2 ? renderPatternDetailsSection("Additional source ambiguity", result.sourceAmbiguities.slice(2)) : ""}
         ${renderPatternDetailsSection("Explained findings", result.explained)}
         ${renderPatternDetailsSection("Needs context", result.needsContext)}
         ${renderPatternDetailsSection("Not explained", result.notExplained)}
@@ -1703,6 +1705,7 @@
         evidenceTone: evidence.tone,
         evidenceDescription: evidence.description,
         workflowChecks: buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, [], ""),
+        detectedSummaries: [],
         sourceAmbiguities: [],
         explained: [],
         needsContext: [],
@@ -1717,7 +1720,13 @@
 
     if (!state.expected.length) {
       state.detected.forEach((detectedId) => {
-        notExplained.push(`${labelFor(detectedId)} cannot be reconciled until prescribed/expected medications are added.`);
+        const entry = getItem(detectedId);
+        const detectedSummary = entry
+          ? getMethodAnswer(entry, "bottomLine") || entry.bottomLine || entry.note
+          : "";
+        notExplained.push(
+          `${labelFor(detectedId)} is detected without an entered expected medication or exposure.${detectedSummary ? ` ${detectedSummary}` : ""}`,
+        );
       });
     } else {
       state.detected.forEach((detectedId) => {
@@ -1764,12 +1773,14 @@
     const nextStep = buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning);
     const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes);
     const sourceAmbiguities = buildSourceAmbiguities();
+    const detectedSummaries = buildDetectedSummaries(!state.expected.length || Boolean(notExplained.length));
     const workflowChecks = buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning, sourceAmbiguities);
     const summary = buildPatternSummary({
       assessment,
       nextStep,
       evidence,
       workflowChecks,
+      detectedSummaries,
       panelWarning,
       sourceAmbiguities,
       explained,
@@ -1784,6 +1795,7 @@
       evidenceDescription: evidence.description,
       workflowChecks,
       nextStep,
+      detectedSummaries,
       sourceAmbiguities,
       explained,
       needsContext,
@@ -1797,6 +1809,9 @@
 
   function buildAssessment(explained, needsContext, notExplained) {
     if (notExplained.length) {
+      if (!state.expected.length && state.detected.length) {
+        return "Unexpected finding(s) present. No expected medication or exposure was entered, so review as an unexpected positive unless history or panel context explains it.";
+      }
       return "No. At least one finding is not explained by the selected expected medication(s) in the current rule set.";
     }
     if (needsContext.length) {
@@ -1867,6 +1882,24 @@
       tone: "neutral",
       description: "Add expected medications and detected findings to generate an interpretation.",
     };
+  }
+
+  function buildDetectedSummaries(shouldSummarize) {
+    if (!shouldSummarize) {
+      return [];
+    }
+
+    return state.detected
+      .map((id) => {
+        const entry = getItem(id);
+        if (!entry) {
+          return "";
+        }
+        const summary = getMethodAnswer(entry, "bottomLine") || entry.bottomLine || entry.note;
+        return summary ? `${entry.name}: ${summary}` : "";
+      })
+      .filter(Boolean)
+      .slice(0, 5);
   }
 
   function buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning, sourceAmbiguities = []) {
@@ -1964,8 +1997,14 @@
   }
 
   function buildSourceAmbiguities() {
-    const selectedIds = [...new Set([...state.expected, ...state.detected, ...state.absent])];
-    const ambiguousMessages = selectedIds.flatMap((id) => {
+    const candidateIds = [...new Set([...state.detected, ...state.absent])];
+    if (!candidateIds.length) {
+      return [];
+    }
+
+    const expectedIds = new Set(state.expected);
+    const selectedIds = new Set([...state.expected, ...state.detected, ...state.absent]);
+    const ambiguousMessages = candidateIds.flatMap((id) => {
       const entry = getItem(id);
       if (!entry) {
         return [];
@@ -1975,11 +2014,29 @@
         .map((caveatEntry) => caveatEntry.text);
       const ambiguousRelationships = [...getIncoming(id), ...getOutgoing(id)]
         .filter((row) => row.clinicalTag === "Not source-specific" || row.clinicalTag === "Shared metabolite")
+        .sort((a, b) => scoreAmbiguityRelationship(b, expectedIds, selectedIds) - scoreAmbiguityRelationship(a, expectedIds, selectedIds))
         .map((row) => `${entry.name}: ${row.clue}`);
       return [...ambiguityCaveats, ...ambiguousRelationships];
     });
 
     return [...new Set(ambiguousMessages)].slice(0, 6);
+  }
+
+  function scoreAmbiguityRelationship(row, expectedIds, selectedIds) {
+    let score = 0;
+    if (expectedIds.has(row.from) || expectedIds.has(row.to)) {
+      score += 10;
+    }
+    if (selectedIds.has(row.from) && selectedIds.has(row.to)) {
+      score += 6;
+    }
+    if (row.from === "heroin" && selectedIds.has("6mam")) {
+      score += 5;
+    }
+    if (row.from === "codeine" && selectedIds.has("codeine")) {
+      score += 4;
+    }
+    return score;
   }
 
   function buildLookupSummary(entry, primaryRows, secondaryRows, caveats, sourcesForEntry) {
@@ -2018,6 +2075,9 @@
       if (unresolvedChecks.length) {
         parts.push(`Workflow checks: ${unresolvedChecks.join("; ")}`);
       }
+    }
+    if (result.detectedSummaries?.length) {
+      parts.push(`Detected finding summary: ${result.detectedSummaries.slice(0, 2).join("; ")}`);
     }
     if (result.sourceAmbiguities?.length) {
       parts.push(`Source ambiguity: ${result.sourceAmbiguities.slice(0, 2).join("; ")}`);

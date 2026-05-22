@@ -1021,6 +1021,24 @@
   background: var(--uds-context-bg);
 }
 
+.uds-detail-rail .uds-inline-section,
+.uds-detail-rail .uds-details,
+.uds-detail-rail .uds-compact-row,
+.uds-detail-rail .uds-section,
+.uds-detail-rail .uds-relation-row,
+.uds-detail-rail .uds-nav-row,
+.uds-detail-rail .uds-note,
+.uds-detail-rail .uds-assay-note,
+.uds-detail-rail .uds-empty {
+  border-width: 1px;
+}
+
+.uds-detail-rail .uds-inline-section h4,
+.uds-detail-rail .uds-section h4,
+.uds-detail-rail .uds-relation-tag {
+  border-width: 1px;
+}
+
 .uds-detail-rail .uds-section {
   min-height: 0;
   background: var(--uds-context-surface);

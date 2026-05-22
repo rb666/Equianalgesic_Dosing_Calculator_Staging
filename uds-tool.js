@@ -487,6 +487,7 @@
       category: "Expected metabolism",
       description: "Oxycodone with supportive metabolite pattern.",
       method: "definitive",
+      panelId: "targeted_definitive_panel",
       expected: ["oxycodone"],
       detected: ["oxymorphone", "noroxycodone"],
       absent: [],
@@ -497,6 +498,7 @@
       category: "Shared byproduct ambiguity",
       description: "Hydromorphone can fit hydrocodone but is not source-specific.",
       method: "definitive",
+      panelId: "targeted_definitive_panel",
       expected: ["hydrocodone"],
       detected: ["hydromorphone", "norhydrocodone"],
       absent: [],
@@ -507,6 +509,7 @@
       category: "Unexpected negative",
       description: "Benzodiazepine screen limitations and panel coverage.",
       method: "immunoassay",
+      panelId: "benzodiazepine_immunoassay_panel",
       expected: ["clonazepam"],
       detected: [],
       absent: ["aminoclonazepam7"],
@@ -517,6 +520,7 @@
       category: "Unexpected negative",
       description: "Generic opiate screen does not answer fentanyl exposure.",
       method: "immunoassay",
+      panelId: "generic_opiate_immunoassay",
       expected: ["fentanyl"],
       detected: [],
       absent: ["norfentanyl"],
@@ -527,6 +531,7 @@
       category: "Shared byproduct ambiguity",
       description: "Morphine may fit codeine but is not source-specific alone.",
       method: "definitive",
+      panelId: "targeted_definitive_panel",
       expected: ["codeine"],
       detected: ["morphine"],
       absent: [],
@@ -537,6 +542,7 @@
       category: "Adherence support",
       description: "Metabolite supports exposure/metabolism when included.",
       method: "definitive",
+      panelId: "targeted_definitive_panel",
       expected: ["buprenorphine"],
       detected: ["norbuprenorphine"],
       absent: [],
@@ -547,6 +553,7 @@
       category: "Adherence support",
       description: "EDDP helps support ingestion/metabolism.",
       method: "definitive",
+      panelId: "targeted_definitive_panel",
       expected: ["methadone"],
       detected: ["eddp"],
       absent: [],
@@ -557,6 +564,7 @@
       category: "Specific marker",
       description: "6-MAM is a specific recent heroin marker when detected.",
       method: "definitive",
+      panelId: "targeted_definitive_panel",
       expected: [],
       detected: ["6mam", "morphine"],
       absent: [],
@@ -567,6 +575,7 @@
       category: "Adherence support",
       description: "Specific metabolite supports alprazolam exposure.",
       method: "definitive",
+      panelId: "targeted_definitive_panel",
       expected: ["alprazolam"],
       detected: ["alpha_hydroxyalprazolam"],
       absent: [],
@@ -577,6 +586,7 @@
       category: "Unexpected negative",
       description: "Some assays under-detect glucuronidated benzodiazepines.",
       method: "immunoassay",
+      panelId: "benzodiazepine_immunoassay_panel",
       expected: ["lorazepam"],
       detected: [],
       absent: ["lorazepam_glucuronide"],
@@ -587,6 +597,7 @@
       category: "Unexpected positive",
       description: "Medication context can matter for stimulant screens.",
       method: "immunoassay",
+      panelId: "unknown_panel",
       expected: ["phentermine"],
       detected: ["amphetamine"],
       absent: [],
@@ -597,6 +608,7 @@
       category: "Timing / impairment limits",
       description: "Urine THC metabolite does not establish impairment or exact timing.",
       method: "definitive",
+      panelId: "targeted_definitive_panel",
       expected: [],
       detected: ["thc_cooh"],
       absent: [],
@@ -607,6 +619,7 @@
       category: "Timing / impairment limits",
       description: "Alcohol markers require cutoff, timing, and exposure context.",
       method: "definitive",
+      panelId: "targeted_definitive_panel",
       expected: [],
       detected: ["etg", "ets"],
       absent: [],
@@ -844,6 +857,7 @@
     expected: [],
     detected: [],
     absent: [],
+    absentMeta: {},
     absentStatus: "unknown",
     panelCoverageConfirmed: false,
     lookupBackStack: [],
@@ -1629,14 +1643,20 @@
     const values = state[key];
     container.innerHTML = values.length
       ? values
-        .map(
-          (id) => `
-            <button class="uds-chip" data-uds-remove="${key}" data-uds-id="${escapeAttribute(id)}" type="button">
-              ${escapeHtml(labelFor(id))}
+        .map((id) => {
+          const meta = key === "absent" ? getAbsentMeta(id) : null;
+          const metaText = meta
+            ? `${formatAbsentStatus(meta.status)}; coverage ${meta.panelCoverageConfirmed ? "verified" : "not verified"}; ${getSelectedPanel(meta.panelId).name}`
+            : "";
+
+          return `
+            <button class="uds-chip${metaText ? " uds-chip--with-meta" : ""}" data-uds-remove="${key}" data-uds-id="${escapeAttribute(id)}" type="button">
+              <span>${escapeHtml(labelFor(id))}</span>
+              ${metaText ? `<small class="uds-chip-meta">${escapeHtml(metaText)}</small>` : ""}
               <span class="uds-chip-remove" aria-hidden="true">x</span>
             </button>
-          `,
-        )
+          `;
+        })
         .join("")
       : `<span class="uds-muted">No items added.</span>`;
   }
@@ -1761,12 +1781,12 @@
     `;
   }
 
-  function getSelectedPanel() {
-    return panels.find((panel) => panel.id === state.panelId) || panels[0];
+  function getSelectedPanel(panelId = state.panelId) {
+    return panels.find((panel) => panel.id === panelId) || panels[0];
   }
 
-  function getPanelCoverage(itemId) {
-    const panel = getSelectedPanel();
+  function getPanelCoverage(itemId, panelId = state.panelId) {
+    const panel = getSelectedPanel(panelId);
     return panel?.analytes.find((analyte) => analyte.itemId === itemId) || null;
   }
 
@@ -1794,14 +1814,40 @@
     }
   }
 
-  function inferPanelForMethod(method) {
-    if (method === "immunoassay") {
-      return "generic_opiate_immunoassay";
+  function inferPanelForScenario(scenario) {
+    if (scenario.panelId) {
+      return scenario.panelId;
     }
-    if (method === "definitive") {
+
+    const allIds = [
+      ...(scenario.expected || []),
+      ...(scenario.detected || []),
+      ...(scenario.absent || []),
+    ];
+
+    if (scenario.method === "definitive") {
       return "targeted_definitive_panel";
     }
+
+    if (scenario.method === "immunoassay") {
+      if (allIds.some((id) => ["clonazepam", "aminoclonazepam7", "lorazepam", "lorazepam_glucuronide"].includes(id))) {
+        return "benzodiazepine_immunoassay_panel";
+      }
+
+      if (allIds.some((id) => ["fentanyl", "norfentanyl", "oxycodone", "oxymorphone", "methadone", "eddp", "buprenorphine", "norbuprenorphine"].includes(id))) {
+        return "generic_opiate_immunoassay";
+      }
+    }
+
     return "unknown_panel";
+  }
+
+  function getAbsentMeta(itemId) {
+    return state.absentMeta[itemId] || {
+      status: state.absentStatus,
+      panelId: state.panelId,
+      panelCoverageConfirmed: state.panelCoverageConfirmed,
+    };
   }
 
   function methodMatchesPanel() {
@@ -1828,10 +1874,10 @@
     }
 
     if (state.absent.length) {
-      if (state.absentStatus !== "reported_absent") {
+      if (state.absent.some((id) => getAbsentMeta(id).status !== "reported_absent")) {
         warnings.push("Absent entries are not marked as reported absent/negative, so they should be treated as non-actionable context.");
       }
-      if (!state.panelCoverageConfirmed) {
+      if (state.absent.some((id) => !getAbsentMeta(id).panelCoverageConfirmed)) {
         warnings.push("Absent findings are non-actionable until the analyte was verified as included and reportable on the ordered panel.");
       }
 
@@ -1853,38 +1899,47 @@
   }
 
   function classifyAbsentFinding(itemId) {
-    const panel = getSelectedPanel();
-    const coverage = getPanelCoverage(itemId);
+    const meta = getAbsentMeta(itemId);
+    const panel = getSelectedPanel(meta.panelId);
+    const coverage = getPanelCoverage(itemId, meta.panelId);
     const name = labelFor(itemId);
 
-    if (state.absentStatus !== "reported_absent") {
+    if (meta.status !== "reported_absent") {
       return {
         actionable: false,
-        message: `${name} was entered as absent, but the status is not marked as reported absent/negative.`,
-        panelWarning: `${name}: absent status is ${formatAbsentStatus(state.absentStatus)}.`,
+        message: `${name} was entered as absent, but the status is ${formatAbsentStatus(meta.status)}. Treat this as non-actionable until the report specifically lists it as absent/negative.`,
+        panelWarning: `${name}: absent status is ${formatAbsentStatus(meta.status)}.`,
       };
     }
 
-    if (!state.panelCoverageConfirmed) {
+    if (!meta.panelCoverageConfirmed) {
       return {
         actionable: false,
-        message: `${name} was entered as absent, but panel coverage has not been verified.`,
-        panelWarning: `${name}: verify that the analyte was included and reportable before interpreting absence.`,
+        message: `${name} was entered as reported absent, but panel coverage was not verified. Treat this as non-actionable until the analyte was confirmed included and reportable.`,
+        panelWarning: `${name}: verify that the analyte was included, tested, and reportable before interpreting absence.`,
       };
     }
 
     if (!panel || panel.id === "unknown_panel") {
       return {
         actionable: false,
-        message: `${name} was entered as absent, but the selected panel is unknown.`,
+        message: `${name} was entered as reported absent, but the selected panel is unknown.`,
         panelWarning: `${name}: panel unknown, so absence cannot support non-exposure or nonadherence.`,
       };
     }
 
     if (!coverage) {
+      if (panel.id === "targeted_definitive_panel") {
+        return {
+          actionable: true,
+          message: `${name} is treated as reported absent only because the user verified it was included and reportable on the targeted definitive panel. Interpret with timing, cutoff, specimen validity, and medication history.`,
+          panelWarning: `${name}: user-verified coverage, but this analyte is not explicitly mapped in the tool's selected panel definition.`,
+        };
+      }
+
       return {
-        actionable: panel.id === "targeted_definitive_panel",
-        message: `${name} is not mapped in the selected panel; confirm the reportable analyte list and cutoff.`,
+        actionable: false,
+        message: `${name} is not mapped in ${panel.name}; confirm the reportable analyte list and cutoff before interpreting absence.`,
         panelWarning: `${name}: selected panel lacks configured coverage for this analyte.`,
       };
     }
@@ -1900,16 +1955,38 @@
     if (coverage.status === "unknown") {
       return {
         actionable: false,
-        message: `${name} coverage is assay-dependent in ${panel.name}; confirm the specific reportable analyte before interpreting absence.`,
+        message: `${name} coverage is assay-dependent or unknown in ${panel.name}; confirm the specific reportable analyte before interpreting absence.`,
         panelWarning: `${name}: panel coverage is assay-dependent or unknown.`,
+      };
+    }
+
+    if (coverage.status === "class_screen_only") {
+      return {
+        actionable: false,
+        message: `${name} is represented only by a class-level screen in ${panel.name}; do not treat this as a specific analyte-negative result.`,
+        panelWarning: `${name}: class-level screen only, not specific analyte absence.`,
       };
     }
 
     return {
       actionable: true,
-      message: `${name} is treated as reported absent only because panel coverage was verified.`,
+      message: `${name} is treated as reported absent because the analyte was verified as included and reportable. Interpret with timing, cutoff, specimen validity, and medication history.`,
       panelWarning: "",
     };
+  }
+
+  function hasNonActionableAbsentFinding() {
+    return state.absent.some((id) => !classifyAbsentFinding(id).actionable);
+  }
+
+  function hasPanelDependentConcern(panelWarnings, absentReviews) {
+    return (
+      panelWarnings.length > 0 ||
+      hasNonActionableAbsentFinding() ||
+      absentReviews.some((message) =>
+        /non-actionable|not verified|unknown|not included|class-level|assay-dependent|not mapped/i.test(message)
+      )
+    );
   }
 
   function formatAbsentStatus(status) {
@@ -1947,7 +2024,7 @@
     const absentReviews = buildAbsentReviews();
 
     if (!state.expected.length && !state.detected.length && !state.absent.length) {
-      const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, [], []);
+      const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, [], [], []);
       return {
         assessment: "Add at least one prescribed/expected drug and one detected finding.",
         evidenceLabel: evidence.label,
@@ -2026,9 +2103,9 @@
       });
     });
 
-    const assessment = buildAssessment(explained, needsContext, notExplained);
-    const nextStep = buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings);
-    const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings);
+    const assessment = buildAssessment(explained, needsContext, notExplained, missingSupportive, panelWarnings, absentReviews);
+    const nextStep = buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings, absentReviews);
+    const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings, absentReviews);
     const sourceAmbiguities = buildSourceAmbiguities();
     const detectedSummaries = buildDetectedSummaries(!state.expected.length || Boolean(notExplained.length));
     const workflowChecks = buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings, sourceAmbiguities);
@@ -2068,12 +2145,15 @@
     };
   }
 
-  function buildAssessment(explained, needsContext, notExplained) {
+  function buildAssessment(explained, needsContext, notExplained, missingSupportive = [], panelWarnings = [], absentReviews = []) {
     if (notExplained.length) {
       if (!state.expected.length && state.detected.length) {
         return "Unexpected finding(s) present. No expected medication or exposure was entered, so review as an unexpected positive unless history or panel context explains it.";
       }
       return "No. At least one finding is not explained by the selected expected medication(s) in the current rule set.";
+    }
+    if (state.absent.length && hasPanelDependentConcern(panelWarnings, absentReviews)) {
+      return "Panel-dependent. Absent findings cannot be fully interpreted until the exact panel, reportable analytes, cutoffs, and coverage status are verified.";
     }
     if (needsContext.length) {
       return "Possibly. Findings are mostly compatible, but one or more results require timing, quantitative, cutoff, panel, or assay-method context.";
@@ -2081,34 +2161,40 @@
     if (explained.length) {
       return "Yes. Detected findings are compatible with the selected expected medication(s), based on configured parent/metabolite relationships.";
     }
+    if (state.absent.length) {
+      return "Panel-dependent. No detected finding was entered, and absent findings require panel coverage, timing, cutoff, and report context before interpretation.";
+    }
     return "Not enough information. Add detected findings to compare against the selected expected medication(s).";
   }
 
-  function buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings) {
+  function buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings, absentReviews = []) {
     if (notExplained.length) {
-      return "Confirm medication list, assay method, panel contents, and timing; consider definitive testing or lab consultation.";
+      return "Confirm medication list, assay method, panel contents, cutoff, specimen validity, and timing; consider definitive testing or lab consultation.";
+    }
+    if (state.absent.length && hasPanelDependentConcern(panelWarnings, absentReviews)) {
+      return "Verify the exact ordered panel, included analytes, reportable metabolites, cutoff, and specimen validity before treating absent findings as clinically meaningful.";
     }
     if (needsContext.length) {
       return "Interpret with timing, quantitative values, cutoff, and panel contents before making adherence or misuse conclusions.";
-    }
-    if (state.absent.length && panelWarnings.length) {
-      return "Verify panel contents before treating absent findings as clinically meaningful.";
     }
     if (missingSupportive.length) {
       return "Verify whether supportive metabolites were included in the ordered panel before treating absence as meaningful.";
     }
     if (state.method === "immunoassay" && methodNotes.length) {
-      return "Review method limitations before acting on the result.";
+      return "Review method limitations before acting on the result; use targeted or definitive testing when the result is unexpected or clinically consequential.";
     }
     if (explained.length) {
-      return "Document the pattern as compatible if the medication list, assay method, timing, cutoff, and panel contents fit.";
+      return "Document the pattern as compatible only if the medication list, assay method, timing, cutoff, specimen validity, and panel contents fit.";
     }
     return "Use this as a reconciliation aid; dose, timing, adherence, impairment, or absence of other exposure require supporting context.";
   }
 
-  function buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings) {
+  function buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings, absentReviews = []) {
     const hasCriticalMethodNote = state.method === "immunoassay" && methodNotes.some((note) => /not detect|may miss|false positive|false negative|specific/i.test(note));
-    const hasMarkedAbsentConcern = missingSupportive.some((note) => note.includes("marked absent"));
+    const hasAbsentPanelConcern = state.absent.length && hasPanelDependentConcern(panelWarnings, absentReviews);
+    const hasSupportiveConcern = missingSupportive.some((note) =>
+      /absent|panel|cutoff|included|reportable|not entered/i.test(note)
+    );
 
     if (notExplained.length) {
       return {
@@ -2117,25 +2203,25 @@
         description: "At least one detected finding is not explained by the selected expected medication(s).",
       };
     }
-    if (needsContext.length || hasMarkedAbsentConcern) {
+    if (hasAbsentPanelConcern) {
+      return {
+        label: "Panel-dependent",
+        tone: "caution",
+        description: "Interpretation depends on the exact ordered panel, reportable analytes, cutoffs, and whether absent findings were truly tested and reportable.",
+      };
+    }
+    if (needsContext.length || hasSupportiveConcern) {
       return {
         label: "Context-dependent",
         tone: "caution",
         description: "The pattern may fit, but timing, cutoff, quantitative values, or panel coverage materially affect interpretation.",
       };
     }
-    if (state.absent.length && panelWarnings.length) {
-      return {
-        label: "Panel-dependent",
-        tone: "caution",
-        description: "The interpretation depends on verified panel coverage and reportable analytes.",
-      };
-    }
     if (hasCriticalMethodNote) {
       return {
         label: "Assay-dependent",
         tone: "method",
-        description: "The interpretation depends heavily on whether the ordered method includes the relevant analytes.",
+        description: "The interpretation depends heavily on whether the ordered method includes and detects the relevant analytes.",
       };
     }
     if (explained.length) {
@@ -2235,12 +2321,28 @@
         : "No high-yield shared-byproduct ambiguity is flagged from the current selections.",
     });
 
+    const nonActionableAbsent = state.absent.length && hasNonActionableAbsentFinding();
+
     checks.push({
       title: "Absent findings",
-      status: state.absent.length ? (state.panelCoverageConfirmed ? "Coverage checked" : "Needs coverage") : missingSupportive.length ? "Check panel" : "None entered",
-      tone: state.absent.length || missingSupportive.length ? (state.panelCoverageConfirmed ? "compatible" : "caution") : "neutral",
+      status: state.absent.length
+        ? nonActionableAbsent
+          ? "Non-actionable until verified"
+          : "Coverage verified"
+        : missingSupportive.length
+          ? "Check panel"
+          : "None entered",
+      tone: state.absent.length
+        ? nonActionableAbsent
+          ? "caution"
+          : "compatible"
+        : missingSupportive.length
+          ? "caution"
+          : "neutral",
       text: state.absent.length
-        ? `${formatAbsentStatus(state.absentStatus)}; only meaningful when the analyte was ordered, tested, and reportable.`
+        ? nonActionableAbsent
+          ? "One or more absent findings cannot be interpreted until status, panel coverage, reportability, and cutoff are verified."
+          : "Absent findings are entered as reported absent with coverage verified; still interpret with timing, cutoff, specimen validity, and medication history."
         : missingSupportive.length
           ? "Supportive metabolites are not entered; verify whether they were included before treating this as discordant."
           : "No absent analytes were entered for this reconciliation.",
@@ -2366,6 +2468,9 @@
     if (result.ruleTrace?.length) {
       parts.push(`Rule/source trace: ${result.ruleTrace.slice(0, 2).join("; ")}`);
     }
+    parts.push(
+      "Safety limitation: UDS alone cannot determine dose, exact timing, impairment, diversion, misuse, or adherence certainty."
+    );
     return parts.join("\n");
   }
 
@@ -2477,12 +2582,26 @@
     }
 
     state[key].push(entry.id);
+
+    if (key === "absent") {
+      state.absentMeta[entry.id] = {
+        status: state.absentStatus,
+        panelId: state.panelId,
+        panelCoverageConfirmed: state.panelCoverageConfirmed,
+      };
+    }
+
     renderPatternChips();
     renderPatternOutput();
   }
 
   function removeChip(key, id) {
     state[key] = state[key].filter((entryId) => entryId !== id);
+
+    if (key === "absent") {
+      delete state.absentMeta[id];
+    }
+
     renderPatternChips();
     renderPatternOutput();
   }
@@ -2496,10 +2615,18 @@
     state.expected = [...scenario.expected];
     state.detected = [...scenario.detected];
     state.absent = [...scenario.absent];
+    state.absentMeta = {};
     updateMethodControl(scenario.method);
-    updatePanelControl(scenario.panelId || inferPanelForMethod(scenario.method));
+    updatePanelControl(inferPanelForScenario(scenario));
     state.absentStatus = scenario.absent.length ? "reported_absent" : "unknown";
     state.panelCoverageConfirmed = false;
+    state.absent.forEach((absentId) => {
+      state.absentMeta[absentId] = {
+        status: state.absentStatus,
+        panelId: state.panelId,
+        panelCoverageConfirmed: state.panelCoverageConfirmed,
+      };
+    });
     updateAbsentControls();
     renderPatternChips();
     renderPatternOutput();
@@ -2745,6 +2872,7 @@
     state.expected = [];
     state.detected = [];
     state.absent = [];
+    state.absentMeta = {};
     state.absentStatus = "unknown";
     state.panelCoverageConfirmed = false;
     updatePanelControl("unknown_panel");
@@ -2756,6 +2884,193 @@
   elements.copyPatternButton.addEventListener("click", () => {
     copyText(state.lastPatternSummary);
   });
+
+  function getPatternResultForValidation(testCase) {
+    const previousState = {
+      method: state.method,
+      panelId: state.panelId,
+      absentStatus: state.absentStatus,
+      panelCoverageConfirmed: state.panelCoverageConfirmed,
+      expected: [...state.expected],
+      detected: [...state.detected],
+      absent: [...state.absent],
+      absentMeta: { ...state.absentMeta },
+    };
+
+    state.method = testCase.method || "any";
+    state.panelId = testCase.panelId || "unknown_panel";
+    state.absentStatus = testCase.absentStatus || "unknown";
+    state.panelCoverageConfirmed = Boolean(testCase.panelCoverageConfirmed);
+    state.expected = [...(testCase.expected || [])];
+    state.detected = [...(testCase.detected || [])];
+    state.absent = [...(testCase.absent || [])];
+    state.absentMeta = { ...(testCase.absentMeta || {}) };
+
+    state.absent.forEach((id) => {
+      if (!state.absentMeta[id]) {
+        state.absentMeta[id] = {
+          status: state.absentStatus,
+          panelId: state.panelId,
+          panelCoverageConfirmed: state.panelCoverageConfirmed,
+        };
+      }
+    });
+
+    const result = analyzePattern();
+
+    state.method = previousState.method;
+    state.panelId = previousState.panelId;
+    state.absentStatus = previousState.absentStatus;
+    state.panelCoverageConfirmed = previousState.panelCoverageConfirmed;
+    state.expected = previousState.expected;
+    state.detected = previousState.detected;
+    state.absent = previousState.absent;
+    state.absentMeta = previousState.absentMeta;
+
+    return result;
+  }
+
+  function resultContains(result, patterns) {
+    const text = JSON.stringify(result).toLowerCase();
+    return patterns.every((pattern) => text.includes(pattern.toLowerCase()));
+  }
+
+  function runUdsGoldenCases() {
+    const cases = [
+      {
+        id: "fentanyl_negative_generic_opiate_unverified",
+        method: "immunoassay",
+        panelId: "generic_opiate_immunoassay",
+        absentStatus: "reported_absent",
+        panelCoverageConfirmed: false,
+        expected: ["fentanyl"],
+        detected: [],
+        absent: ["norfentanyl"],
+        mustContain: ["panel-dependent", "not verified", "fentanyl"],
+      },
+      {
+        id: "fentanyl_not_included_even_if_checked",
+        method: "immunoassay",
+        panelId: "generic_opiate_immunoassay",
+        absentStatus: "reported_absent",
+        panelCoverageConfirmed: true,
+        expected: ["fentanyl"],
+        detected: [],
+        absent: ["norfentanyl"],
+        mustContain: ["not included", "not clinically meaningful"],
+      },
+      {
+        id: "oxycodone_generic_opiate_screen",
+        method: "immunoassay",
+        panelId: "generic_opiate_immunoassay",
+        absentStatus: "reported_absent",
+        panelCoverageConfirmed: true,
+        expected: ["oxycodone"],
+        detected: [],
+        absent: ["oxycodone"],
+        mustContain: ["assay-dependent", "oxycodone"],
+      },
+      {
+        id: "clonazepam_benzo_screen",
+        method: "immunoassay",
+        panelId: "benzodiazepine_immunoassay_panel",
+        absentStatus: "reported_absent",
+        panelCoverageConfirmed: true,
+        expected: ["clonazepam"],
+        detected: [],
+        absent: ["aminoclonazepam7"],
+        mustContain: ["assay-dependent", "7-aminoclonazepam"],
+      },
+      {
+        id: "hydrocodone_hydromorphone_ambiguity",
+        method: "definitive",
+        panelId: "targeted_definitive_panel",
+        absentStatus: "unknown",
+        panelCoverageConfirmed: false,
+        expected: ["hydrocodone"],
+        detected: ["hydromorphone"],
+        absent: [],
+        mustContain: ["not source-specific", "hydromorphone"],
+      },
+      {
+        id: "thc_cooh_no_impairment",
+        method: "definitive",
+        panelId: "targeted_definitive_panel",
+        absentStatus: "unknown",
+        panelCoverageConfirmed: false,
+        expected: [],
+        detected: ["thc_cooh"],
+        absent: [],
+        mustContain: ["does not establish", "impairment"],
+      },
+      {
+        id: "definitive_absent_user_verified",
+        method: "definitive",
+        panelId: "targeted_definitive_panel",
+        absentStatus: "reported_absent",
+        panelCoverageConfirmed: true,
+        expected: ["fentanyl"],
+        detected: [],
+        absent: ["norfentanyl"],
+        mustContain: ["user verified", "timing", "cutoff"],
+      },
+      {
+        id: "mixed_absent_metadata_preserved",
+        method: "immunoassay",
+        panelId: "generic_opiate_immunoassay",
+        absentStatus: "reported_absent",
+        panelCoverageConfirmed: true,
+        expected: ["fentanyl", "oxycodone"],
+        detected: [],
+        absent: ["norfentanyl", "oxycodone"],
+        absentMeta: {
+          norfentanyl: {
+            status: "unknown",
+            panelId: "generic_opiate_immunoassay",
+            panelCoverageConfirmed: false,
+          },
+          oxycodone: {
+            status: "reported_absent",
+            panelId: "generic_opiate_immunoassay",
+            panelCoverageConfirmed: true,
+          },
+        },
+        mustContain: ["norfentanyl: absent status is unknown whether tested", "oxycodone: panel coverage is assay-dependent"],
+      },
+    ];
+
+    const results = cases.map((testCase) => {
+      const result = getPatternResultForValidation(testCase);
+      const passed = resultContains(result, testCase.mustContain);
+
+      return {
+        id: testCase.id,
+        passed,
+        evidence: result.evidenceLabel,
+        assessment: result.assessment,
+        nextStep: result.nextStep,
+      };
+    });
+
+    console.table(results);
+
+    const failed = results.filter((row) => !row.passed);
+    if (failed.length) {
+      console.warn("UDS golden-case validation failures:", failed);
+    } else {
+      console.info("All UDS golden cases passed.");
+    }
+
+    return results;
+  }
+
+  if (new URLSearchParams(window.location.search).has("udsValidation")) {
+    window.runUdsGoldenCases = runUdsGoldenCases;
+    const validationResults = runUdsGoldenCases();
+    document.documentElement.dataset.udsGoldenCases = validationResults.every((row) => row.passed) ? "passed" : "failed";
+    document.documentElement.dataset.udsGoldenCaseResults = JSON.stringify(validationResults);
+    console.info("UDS validation harness loaded. Run window.runUdsGoldenCases() to repeat.");
+  }
 
   validateUdsContent();
   render();

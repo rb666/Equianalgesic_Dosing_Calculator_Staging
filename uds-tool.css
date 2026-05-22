@@ -767,6 +767,28 @@
   cursor: pointer;
 }
 
+.uds-chip {
+  gap: 6px;
+}
+
+.uds-chip--with-meta {
+  display: grid;
+  justify-items: start;
+  border-radius: 12px;
+  padding: 7px 10px;
+}
+
+.uds-chip-meta {
+  display: block;
+  width: 100%;
+  font-size: 0.68rem;
+  font-weight: 760;
+  letter-spacing: 0;
+  line-height: 1.2;
+  opacity: 0.85;
+  text-transform: none;
+}
+
 .uds-chip:hover,
 .uds-filter-row button:hover,
 .uds-filter-row button.is-active {

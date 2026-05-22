@@ -29,6 +29,7 @@ Use this checklist before promoting UDS changes from staging to production.
 
 ## Golden Scenarios
 
+- Open staging with `?udsValidation=1`, confirm the automatic harness result is `passed`, then optionally run `window.runUdsGoldenCases()` in the browser console and confirm every row returns `passed: true`.
 - Fentanyl expected with negative generic opiate screen.
 - Oxycodone expected with negative generic opiate screen.
 - Clonazepam expected with negative benzodiazepine screen.
@@ -45,4 +46,3 @@ Use this checklist before promoting UDS changes from staging to production.
 - No user-entered UDS data leaves the browser.
 - No analytics, remote logging, or external API calls are added for entered analytes.
 - The UI remains professional-use only and avoids standalone diagnosis or disciplinary conclusions.
-

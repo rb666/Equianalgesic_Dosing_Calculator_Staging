@@ -1461,11 +1461,11 @@
         ${renderResultSection("Can this be explained?", [result.assessment], "uds-result-assessment")}
         ${renderResultSection("Recommended next step", [result.nextStep], "uds-result-next-step")}
         ${result.panelWarning ? renderResultSection("Panel coverage warning", [result.panelWarning], "uds-result-panel-warning") : ""}
-        ${renderDetailsSection("Explained findings", renderList(result.explained))}
-        ${renderDetailsSection("Needs context", renderList(result.needsContext))}
-        ${renderDetailsSection("Not explained", renderList(result.notExplained))}
-        ${renderDetailsSection("Missing supportive findings", renderList(result.missingSupportive))}
-        ${renderDetailsSection("Method notes", renderList(result.methodNotes))}
+        ${renderPatternDetailsSection("Explained findings", result.explained)}
+        ${renderPatternDetailsSection("Needs context", result.needsContext)}
+        ${renderPatternDetailsSection("Not explained", result.notExplained)}
+        ${renderPatternDetailsSection("Missing supportive findings", result.missingSupportive)}
+        ${renderPatternDetailsSection("Method notes", result.methodNotes)}
       </div>
     `;
   }
@@ -1715,6 +1715,14 @@
     return rows.length
       ? `<ul>${rows.map((row) => `<li>${escapeHtml(row)}</li>`).join("")}</ul>`
       : `<div class="uds-muted">None.</div>`;
+  }
+
+  function renderPatternDetailsSection(title, rows) {
+    if (!rows.length) {
+      return "";
+    }
+
+    return renderDetailsSection(title, renderList(rows));
   }
 
   function validateClinicalTags() {

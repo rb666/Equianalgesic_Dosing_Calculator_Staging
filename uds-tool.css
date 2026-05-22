@@ -694,9 +694,18 @@
 
 .uds-lookup-back {
   padding-inline: 14px;
-  border-width: 2px;
+  border: 2px solid var(--uds-panel-border);
+  background: var(--uds-section-bg);
+  color: var(--ink);
   font-size: 0.86rem;
-  font-weight: 850;
+  font-weight: 950;
+  box-shadow: 0 7px 16px var(--uds-selectable-shadow);
+}
+
+.uds-lookup-back:hover {
+  border-color: var(--uds-action-border);
+  background: var(--uds-selectable-hover);
+  color: var(--uds-action-text);
 }
 
 .uds-relation-list,

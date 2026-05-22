@@ -1851,6 +1851,17 @@ footer {
 
 .uds-back-button {
   min-width: 92px;
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-weight: 900;
+  box-shadow: 0 8px 18px var(--secondary-hover-shadow);
+}
+
+.uds-back-button:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent-soft) 70%, var(--surface-soft));
+  color: var(--accent-dark);
 }
 
 .uds-screen-body {

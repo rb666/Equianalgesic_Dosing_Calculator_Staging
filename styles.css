@@ -144,6 +144,12 @@ body.modal-open {
   overflow: hidden;
 }
 
+body.uds-screen-open .site-header,
+body.uds-screen-open main,
+body.uds-screen-open footer {
+  display: none;
+}
+
 .environment-banner {
   padding: 10px 16px;
   background: linear-gradient(90deg, var(--stage), var(--banner-end));
@@ -1793,6 +1799,60 @@ footer {
   padding: 24px;
 }
 
+.uds-screen {
+  padding: 22px 16px 44px;
+  background: var(--page);
+}
+
+.uds-screen-shell {
+  width: min(1720px, calc(100% - 16px));
+  margin: 0 auto;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 16px 42px var(--secondary-shadow);
+}
+
+.uds-screen-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding: 22px 24px 18px;
+  border-bottom: 2px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.uds-screen-header h2,
+.uds-screen-header p {
+  margin: 0;
+}
+
+.uds-screen-header > div {
+  display: grid;
+  gap: 6px;
+}
+
+.uds-screen-header .eyebrow {
+  margin: 0;
+}
+
+.uds-screen-header p:not(.eyebrow) {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.uds-back-button {
+  min-width: 92px;
+}
+
+.uds-screen-body {
+  display: grid;
+  gap: 28px;
+  padding: 24px;
+}
+
 .terms-header {
   padding: 24px 26px 18px;
   border-bottom: 2px solid #d8e2de;
@@ -1977,6 +2037,8 @@ footer {
 
   .reference-modal-header,
   .reference-modal-body,
+  .uds-screen-header,
+  .uds-screen-body,
   .terms-header,
   .terms-body,
   .terms-acceptance {
@@ -1984,8 +2046,17 @@ footer {
     padding-left: 18px;
   }
 
-  .reference-modal-header {
+  .reference-modal-header,
+  .uds-screen-header {
     display: grid;
+  }
+
+  .uds-screen-header {
+    grid-template-columns: 1fr;
+  }
+
+  .uds-back-button {
+    width: max-content;
   }
 
   .pk-selected-detail-grid {

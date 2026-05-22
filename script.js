@@ -1486,9 +1486,7 @@ const isModalVisible = (modalElement) =>
 const updateModalOpenState = () => {
   document.body.classList.toggle(
     "modal-open",
-    isModalVisible(termsModal) ||
-      isModalVisible(pharmacokineticsModal) ||
-      isModalVisible(udsModal),
+    isModalVisible(termsModal) || isModalVisible(pharmacokineticsModal),
   );
 };
 
@@ -1542,11 +1540,18 @@ const setUdsModalVisible = (visible) => {
   }
 
   udsModal.classList.toggle("is-hidden", !visible);
+  document.body.classList.toggle("uds-screen-open", visible);
   udsOpenButton?.setAttribute("aria-expanded", String(visible));
   updateModalOpenState();
 
-  if (visible && udsCloseButton) {
-    window.setTimeout(() => udsCloseButton.focus(), 0);
+  if (visible) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (udsCloseButton) {
+      window.setTimeout(() => udsCloseButton.focus(), 0);
+    }
+  } else if (udsOpenButton) {
+    window.setTimeout(() => udsOpenButton.focus(), 0);
   }
 };
 
@@ -3213,14 +3218,6 @@ if (udsOpenButton) {
 if (udsCloseButton) {
   udsCloseButton.addEventListener("click", () => {
     setUdsModalVisible(false);
-  });
-}
-
-if (udsModal) {
-  udsModal.addEventListener("click", (event) => {
-    if (event.target === udsModal) {
-      setUdsModalVisible(false);
-    }
   });
 }
 

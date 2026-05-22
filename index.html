@@ -21,8 +21,8 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260521-uds-tool-integration" />
-    <link rel="stylesheet" href="uds-tool.css?v=20260521-uds-fill-curation" />
+    <link rel="stylesheet" href="styles.css?v=20260522-uds-screen" />
+    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-screen" />
   </head>
   <body>
     <div class="environment-banner">
@@ -1011,15 +1011,20 @@
       </div>
     </div>
 
-    <div
+    <section
       aria-labelledby="udsModalTitle"
-      aria-modal="true"
-      class="reference-modal is-hidden"
+      class="uds-screen is-hidden"
       id="udsModal"
-      role="dialog"
     >
-      <div class="reference-dialog">
-        <div class="reference-modal-header">
+      <div class="uds-screen-shell">
+        <div class="uds-screen-header">
+          <button
+            class="secondary-button uds-back-button"
+            id="udsCloseButton"
+            type="button"
+          >
+            Back
+          </button>
           <div>
             <p class="eyebrow">Clinical reference</p>
             <h2 id="udsModalTitle">Urine Drug Screen (UDS) reference</h2>
@@ -1028,16 +1033,9 @@
               false-positive patterns, and interpretation rules.
             </p>
           </div>
-          <button
-            class="secondary-button modal-close-button"
-            id="udsCloseButton"
-            type="button"
-          >
-            Close
-          </button>
         </div>
 
-        <div class="reference-modal-body uds-modal-body">
+        <div class="uds-screen-body uds-modal-body">
           <section class="uds-tool" aria-label="Interactive urine drug screen reference tool">
             <div class="uds-toolbar">
               <div class="uds-search-block">
@@ -1163,7 +1161,7 @@
           </section>
         </div>
       </div>
-    </div>
+    </section>
 
     <div
       aria-labelledby="termsModalTitle"
@@ -1244,7 +1242,7 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260521-uds-tool-integration"></script>
-    <script src="uds-tool.js?v=20260521-uds-fill-curation"></script>
+    <script src="script.js?v=20260522-uds-screen"></script>
+    <script src="uds-tool.js?v=20260522-uds-screen"></script>
   </body>
 </html>

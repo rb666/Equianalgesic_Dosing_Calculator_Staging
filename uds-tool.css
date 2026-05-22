@@ -293,25 +293,25 @@
 .uds-mode-toggle {
   display: inline-grid;
   grid-template-columns: auto repeat(2, minmax(112px, 1fr));
-  gap: 4px;
+  gap: 3px;
   align-items: center;
   overflow: hidden;
-  border: 1.5px solid var(--uds-mode-border);
-  border-radius: 12px;
-  background: var(--uds-mode-track-bg);
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--uds-mode-border) 12%, transparent),
-    0 3px 9px var(--uds-selectable-shadow);
-  padding: 4px;
+  box-sizing: border-box;
+  height: 46px;
+  border: 2px solid var(--uds-selectable-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--uds-section-bg) 72%, var(--surface));
+  box-shadow: 0 4px 12px var(--uds-selectable-shadow);
+  padding: 3px;
 }
 
 .uds-mode-toggle-label {
   align-self: stretch;
   display: inline-flex;
   align-items: center;
-  padding: 0 10px 0 8px;
-  border-right: 1.5px solid color-mix(in srgb, var(--uds-mode-border) 38%, transparent);
-  color: var(--uds-mode-text);
+  padding: 0 11px 0 9px;
+  border-right: 2px solid color-mix(in srgb, var(--uds-selectable-border) 50%, transparent);
+  color: var(--muted);
   font-size: 0.72rem;
   font-weight: 950;
   letter-spacing: 0.12em;
@@ -319,10 +319,10 @@
 }
 
 .uds-mode-toggle button {
-  min-height: 40px;
-  border: 1.5px solid transparent;
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  min-height: 34px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
   color: var(--uds-mode-text);
   box-shadow: none;
   font-size: 0.9rem;
@@ -335,19 +335,17 @@
 }
 
 .uds-mode-toggle button:hover {
-  border-color: color-mix(in srgb, var(--uds-mode-border) 56%, transparent);
+  border-color: color-mix(in srgb, var(--uds-selectable-border) 72%, transparent);
   background: var(--uds-mode-hover-bg);
   box-shadow: none;
   transform: none;
 }
 
 .uds-mode-toggle button.is-active {
-  border-color: color-mix(in srgb, var(--uds-mode-border) 72%, transparent);
-  background: var(--uds-mode-active-bg);
+  border-color: color-mix(in srgb, var(--uds-selectable-border) 86%, transparent);
+  background: color-mix(in srgb, var(--surface) 88%, var(--uds-mode-active-bg));
   color: var(--uds-mode-active-text);
-  box-shadow:
-    0 2px 6px var(--uds-selectable-shadow),
-    inset 0 0 0 1px color-mix(in srgb, #ffffff 18%, transparent);
+  box-shadow: 0 3px 8px var(--uds-selectable-shadow);
   transform: none;
 }
 

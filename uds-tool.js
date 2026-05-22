@@ -678,14 +678,10 @@
 
     elements.lookupContent.innerHTML = `
       ${renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats)}
-      ${renderRelatedFindingsInline(entry, primaryRows, secondaryRows)}
-      ${renderAssayDetailsInline(caveats)}
-      ${caveats.length > 2 ? renderDetailsSection("Additional assay caveats", renderAssayCaveats(caveats.slice(2))) : ""}
-      ${renderDetectionWindowInline(entry)}
       ${renderDetailsSection("References", renderSources(sourcesForEntry))}
     `;
 
-    renderLookupContextRail(entry, outgoing, incoming, caveats);
+    renderLookupDetailsRail(entry, primaryRows, secondaryRows, caveats);
   }
 
   function renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats) {
@@ -933,43 +929,14 @@
     return "Interpret with medication history, timing, panel contents, and references; consult the lab for unexpected results.";
   }
 
-  function renderLookupContextRail(entry, outgoing, incoming, caveats) {
-    const sourceCount = getSourcesForItem(entry.id).length;
-
+  function renderLookupDetailsRail(entry, primaryRows, secondaryRows, caveats) {
     elements.relationsContent.innerHTML = `
-      <aside class="uds-context-rail" aria-label="Lookup context">
-        <h3 class="uds-context-title">At a glance</h3>
-        ${renderContextBlock("Method", getMethodLabel(state.method))}
-        ${renderContextBlock("Class", entry.group)}
-        ${renderContextBlock("Type", formatType(entry.type))}
-        ${renderContextBlock(
-          "References",
-          sourceCount ? `${sourceCount} configured source${sourceCount === 1 ? "" : "s"}` : "No source configured",
-        )}
+      <aside class="uds-detail-rail" aria-label="Clinical lookup details">
+        ${renderDetectionWindowInline(entry)}
+        ${renderRelatedFindingsInline(entry, primaryRows, secondaryRows)}
+        ${renderAssayDetailsInline(caveats)}
+        ${caveats.length > 2 ? renderDetailsSection("Additional assay caveats", renderAssayCaveats(caveats.slice(2))) : ""}
       </aside>
-    `;
-  }
-
-  function getMethodLabel(method) {
-    if (method === "immunoassay") {
-      return "Immunoassay screen";
-    }
-    if (method === "definitive") {
-      return "Definitive LC/GC-MS";
-    }
-    return "Any method";
-  }
-
-  function renderContextBlock(label, value) {
-    if (!value) {
-      return "";
-    }
-
-    return `
-      <div class="uds-context-block">
-        <div class="uds-context-label">${escapeHtml(label)}</div>
-        <div class="uds-context-value">${escapeHtml(value)}</div>
-      </div>
     `;
   }
 

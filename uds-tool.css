@@ -124,6 +124,22 @@
   --uds-tag-context-text: hsl(205 34% 84%);
 }
 
+:root[data-theme="dark"] #udsLookupView {
+  --uds-action-text: hsl(205 26% 82%);
+  --uds-pill-bg: hsl(205 13% 20%);
+  --uds-pill-border: hsl(205 18% 46%);
+  --uds-pill-text: hsl(205 28% 84%);
+  --uds-tag-supportive-bg: hsl(154 12% 18%);
+  --uds-tag-supportive-border: hsl(154 18% 39%);
+  --uds-tag-supportive-text: hsl(154 24% 74%);
+  --uds-tag-specific-bg: hsl(187 11% 18%);
+  --uds-tag-specific-border: hsl(187 18% 40%);
+  --uds-tag-specific-text: hsl(187 24% 74%);
+  --uds-tag-exposure-bg: hsl(187 11% 18%);
+  --uds-tag-exposure-border: hsl(187 18% 40%);
+  --uds-tag-exposure-text: hsl(187 24% 74%);
+}
+
 .uds-modal-body {
   gap: 18px;
 }

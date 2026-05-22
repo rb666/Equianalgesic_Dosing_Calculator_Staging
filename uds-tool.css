@@ -601,6 +601,45 @@
   gap: 8px;
 }
 
+.uds-question-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.uds-question-button {
+  display: grid;
+  gap: 4px;
+  min-height: 66px;
+  padding: 11px 12px;
+  border: 2px solid var(--uds-action-border);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--uds-action-bg) 48%, var(--surface));
+  color: var(--ink);
+  text-align: left;
+  box-shadow: 0 4px 12px var(--uds-selectable-shadow);
+}
+
+.uds-question-button:hover {
+  background: var(--uds-action-hover-bg);
+  box-shadow:
+    inset 4px 0 0 var(--uds-action-border),
+    0 7px 16px var(--uds-action-shadow);
+  transform: none;
+}
+
+.uds-question-button span {
+  color: var(--uds-action-text);
+  font-weight: 950;
+}
+
+.uds-question-button small {
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 730;
+  line-height: 1.3;
+}
+
 .uds-badge,
 .uds-chip,
 .uds-filter-row button {
@@ -1061,6 +1100,25 @@
   gap: 8px;
 }
 
+.uds-scenario-group {
+  display: grid;
+  gap: 8px;
+}
+
+.uds-scenario-group + .uds-scenario-group {
+  padding-top: 10px;
+  border-top: 2px solid color-mix(in srgb, var(--uds-context-border) 46%, transparent);
+}
+
+.uds-scenario-group h5 {
+  margin: 0;
+  color: var(--uds-context-text);
+  font-size: 0.74rem;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .uds-scenario-button {
   display: grid;
   gap: 3px;
@@ -1092,9 +1150,137 @@
   text-transform: uppercase;
 }
 
+.uds-scenario-button em {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 720;
+  line-height: 1.3;
+}
+
 .uds-result-block {
   display: grid;
   gap: 10px;
+}
+
+.uds-workflow-checks {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+  border: 2px solid var(--uds-panel-border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 6px 16px var(--uds-selectable-shadow);
+}
+
+.uds-workflow-checks-head {
+  display: grid;
+  gap: 3px;
+}
+
+.uds-workflow-checks-head h4,
+.uds-workflow-checks-head p {
+  margin: 0;
+}
+
+.uds-workflow-checks-head h4 {
+  color: var(--eyebrow);
+  font-size: 0.8rem;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.uds-workflow-checks-head p {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 730;
+}
+
+.uds-workflow-check-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.uds-workflow-check {
+  display: grid;
+  gap: 5px;
+  padding: 10px 11px;
+  border: 2px solid var(--uds-selectable-border);
+  border-radius: 9px;
+  background: var(--uds-selectable-bg);
+}
+
+.uds-workflow-check span {
+  width: fit-content;
+  padding: 4px 7px;
+  border: 1.5px solid var(--uds-pill-alt-border);
+  border-radius: 999px;
+  background: var(--uds-pill-alt-bg);
+  color: var(--uds-pill-alt-text);
+  font-size: 0.68rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.uds-workflow-check strong {
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 950;
+}
+
+.uds-workflow-check p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 720;
+  line-height: 1.35;
+}
+
+.uds-workflow-check--compatible {
+  border-color: var(--uds-tag-supportive-border);
+  background: var(--uds-tag-supportive-bg);
+}
+
+.uds-workflow-check--compatible span {
+  border-color: var(--uds-tag-supportive-border);
+  background: var(--surface);
+  color: var(--uds-tag-supportive-text);
+}
+
+.uds-workflow-check--caution {
+  border-color: var(--uds-tag-context-border);
+  background: var(--uds-tag-context-bg);
+}
+
+.uds-workflow-check--caution span {
+  border-color: var(--uds-tag-context-border);
+  background: var(--surface);
+  color: var(--uds-tag-context-text);
+}
+
+.uds-workflow-check--warning {
+  border-color: var(--uds-tag-assay-border);
+  background: var(--uds-tag-assay-bg);
+}
+
+.uds-workflow-check--warning span {
+  border-color: var(--uds-tag-assay-border);
+  background: var(--surface);
+  color: var(--uds-tag-assay-text);
+}
+
+.uds-workflow-check--method {
+  border-color: var(--uds-action-border);
+  background: var(--uds-action-bg);
+}
+
+.uds-workflow-check--method span {
+  border-color: var(--uds-action-border);
+  background: var(--surface);
+  color: var(--uds-action-text);
 }
 
 .uds-result-section {
@@ -1222,7 +1408,9 @@
   .uds-toolbar,
   .uds-view,
   .uds-pattern-view,
-  .uds-grid {
+  .uds-grid,
+  .uds-question-list,
+  .uds-workflow-check-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1244,6 +1432,8 @@
   }
 
   .uds-scenario-list,
+  .uds-question-list,
+  .uds-workflow-check-grid,
   .uds-evidence-line {
     grid-template-columns: 1fr;
   }

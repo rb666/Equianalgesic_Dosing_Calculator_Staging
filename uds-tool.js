@@ -386,11 +386,51 @@
     "Assay caveats",
   ];
   const highYieldSearches = ["fentanyl", "oxycodone", "hydromorphone", "aminoclonazepam7", "eddp", "thc_cooh", "etg"];
+  const clinicalQuestionShortcuts = [
+    {
+      label: "Negative opiate screen with fentanyl",
+      focusId: "fentanyl",
+      method: "immunoassay",
+      hint: "Check why a generic opiate screen can miss fentanyl.",
+    },
+    {
+      label: "Oxycodone not on routine opiate screen",
+      focusId: "oxycodone",
+      method: "immunoassay",
+      hint: "Review when oxycodone-specific testing is needed.",
+    },
+    {
+      label: "Hydromorphone from hydrocodone?",
+      focusId: "hydromorphone",
+      method: "definitive",
+      hint: "Separate source ambiguity from expected metabolism.",
+    },
+    {
+      label: "Clonazepam with negative benzo screen",
+      focusId: "aminoclonazepam7",
+      method: "immunoassay",
+      hint: "Review 7-aminoclonazepam and assay limitations.",
+    },
+    {
+      label: "THC timing or impairment question",
+      focusId: "thc_cooh",
+      method: "definitive",
+      hint: "Clarify what urine THC-COOH can and cannot answer.",
+    },
+    {
+      label: "EtG incidental exposure question",
+      focusId: "etg",
+      method: "definitive",
+      hint: "Review cutoff, timing, and context limits.",
+    },
+  ];
   const absentPanelWarning = "Absent findings are only meaningful if each analyte was included in the ordered panel and reported as absent.";
   const patternScenarios = [
     {
       id: "oxycodone_oxymorphone",
       label: "Oxycodone -> oxymorphone",
+      category: "Expected metabolism",
+      description: "Oxycodone with supportive metabolite pattern.",
       method: "definitive",
       expected: ["oxycodone"],
       detected: ["oxymorphone", "noroxycodone"],
@@ -399,6 +439,8 @@
     {
       id: "hydrocodone_hydromorphone",
       label: "Hydrocodone -> hydromorphone",
+      category: "Shared byproduct ambiguity",
+      description: "Hydromorphone can fit hydrocodone but is not source-specific.",
       method: "definitive",
       expected: ["hydrocodone"],
       detected: ["hydromorphone", "norhydrocodone"],
@@ -407,6 +449,8 @@
     {
       id: "clonazepam_negative",
       label: "Clonazepam, 7-amino absent",
+      category: "Unexpected negative",
+      description: "Benzodiazepine screen limitations and panel coverage.",
       method: "immunoassay",
       expected: ["clonazepam"],
       detected: [],
@@ -415,6 +459,8 @@
     {
       id: "fentanyl_negative",
       label: "Fentanyl, norfentanyl absent",
+      category: "Unexpected negative",
+      description: "Generic opiate screen does not answer fentanyl exposure.",
       method: "immunoassay",
       expected: ["fentanyl"],
       detected: [],
@@ -423,6 +469,8 @@
     {
       id: "codeine_morphine",
       label: "Codeine with morphine",
+      category: "Shared byproduct ambiguity",
+      description: "Morphine may fit codeine but is not source-specific alone.",
       method: "definitive",
       expected: ["codeine"],
       detected: ["morphine"],
@@ -431,9 +479,81 @@
     {
       id: "buprenorphine_metabolite",
       label: "Buprenorphine + norbuprenorphine",
+      category: "Adherence support",
+      description: "Metabolite supports exposure/metabolism when included.",
       method: "definitive",
       expected: ["buprenorphine"],
       detected: ["norbuprenorphine"],
+      absent: [],
+    },
+    {
+      id: "methadone_eddp",
+      label: "Methadone + EDDP",
+      category: "Adherence support",
+      description: "EDDP helps support ingestion/metabolism.",
+      method: "definitive",
+      expected: ["methadone"],
+      detected: ["eddp"],
+      absent: [],
+    },
+    {
+      id: "heroin_6mam",
+      label: "Heroin marker 6-MAM",
+      category: "Specific marker",
+      description: "6-MAM is a specific recent heroin marker when detected.",
+      method: "definitive",
+      expected: [],
+      detected: ["6mam", "morphine"],
+      absent: [],
+    },
+    {
+      id: "alprazolam_metabolite",
+      label: "Alprazolam + alpha-hydroxy",
+      category: "Adherence support",
+      description: "Specific metabolite supports alprazolam exposure.",
+      method: "definitive",
+      expected: ["alprazolam"],
+      detected: ["alpha_hydroxyalprazolam"],
+      absent: [],
+    },
+    {
+      id: "lorazepam_negative",
+      label: "Lorazepam, screen negative",
+      category: "Unexpected negative",
+      description: "Some assays under-detect glucuronidated benzodiazepines.",
+      method: "immunoassay",
+      expected: ["lorazepam"],
+      detected: [],
+      absent: ["lorazepam_glucuronide"],
+    },
+    {
+      id: "amphetamine_phentermine_context",
+      label: "Amphetamine + phentermine context",
+      category: "Unexpected positive",
+      description: "Medication context can matter for stimulant screens.",
+      method: "immunoassay",
+      expected: ["phentermine"],
+      detected: ["amphetamine"],
+      absent: [],
+    },
+    {
+      id: "thc_timing",
+      label: "THC-COOH timing question",
+      category: "Timing / impairment limits",
+      description: "Urine THC metabolite does not establish impairment or exact timing.",
+      method: "definitive",
+      expected: [],
+      detected: ["thc_cooh"],
+      absent: [],
+    },
+    {
+      id: "etg_context",
+      label: "EtG / EtS context",
+      category: "Timing / impairment limits",
+      description: "Alcohol markers require cutoff, timing, and exposure context.",
+      method: "definitive",
+      expected: [],
+      detected: ["etg", "ets"],
       absent: [],
     },
   ];
@@ -951,6 +1071,12 @@
           ${highYieldSearches.map((id) => renderItemChip(id)).join("")}
         </div>
       </section>
+      <section class="uds-section uds-question-section">
+        <h4>Common clinical questions</h4>
+        <div class="uds-question-list">
+          ${clinicalQuestionShortcuts.map((shortcut) => renderClinicalQuestionShortcut(shortcut)).join("")}
+        </div>
+      </section>
       <details class="uds-details">
         <summary>Browse by drug class</summary>
         <div class="uds-details-body">
@@ -989,6 +1115,20 @@
     return `
       <button class="uds-chip" data-uds-focus="${escapeAttribute(id)}" type="button">
         ${escapeHtml(labelFor(id))}
+      </button>
+    `;
+  }
+
+  function renderClinicalQuestionShortcut(shortcut) {
+    return `
+      <button
+        class="uds-question-button"
+        data-uds-focus="${escapeAttribute(shortcut.focusId)}"
+        data-uds-method="${escapeAttribute(shortcut.method)}"
+        type="button"
+      >
+        <span>${escapeHtml(shortcut.label)}</span>
+        <small>${escapeHtml(shortcut.hint)}</small>
       </button>
     `;
   }
@@ -1437,25 +1577,40 @@
   }
 
   function renderPatternScenarios() {
+    const groupedScenarios = patternScenarios.reduce((groups, scenario) => {
+      const category = scenario.category || "Common patterns";
+      if (!groups.has(category)) {
+        groups.set(category, []);
+      }
+      groups.get(category).push(scenario);
+      return groups;
+    }, new Map());
+
     elements.patternScenarios.innerHTML = `
       <div class="uds-scenario-header">
         <div>
-          <h4>Start with an example</h4>
-          <p>Load a common UDS pattern to see how reconciliation works, then adjust the chips to match the report.</p>
+          <h4>Clinical workflow templates</h4>
+          <p>Load a standard review scenario, then adjust expected, detected, and tested-absent findings to match the report.</p>
         </div>
       </div>
-      <div class="uds-scenario-list">
-        ${patternScenarios
-          .map(
-            (scenario) => `
-              <button class="uds-scenario-button" data-uds-scenario="${escapeAttribute(scenario.id)}" type="button">
-                <span>${escapeHtml(scenario.label)}</span>
-                <small>${escapeHtml(formatScenarioMethod(scenario.method))}</small>
-              </button>
-            `,
-          )
-          .join("")}
-      </div>
+      ${[...groupedScenarios.entries()].map(([category, scenarios]) => `
+        <section class="uds-scenario-group">
+          <h5>${escapeHtml(category)}</h5>
+          <div class="uds-scenario-list">
+            ${scenarios.map((scenario) => renderPatternScenarioButton(scenario)).join("")}
+          </div>
+        </section>
+      `).join("")}
+    `;
+  }
+
+  function renderPatternScenarioButton(scenario) {
+    return `
+      <button class="uds-scenario-button" data-uds-scenario="${escapeAttribute(scenario.id)}" type="button">
+        <span>${escapeHtml(scenario.label)}</span>
+        <small>${escapeHtml(formatScenarioMethod(scenario.method))}</small>
+        ${scenario.description ? `<em>${escapeHtml(scenario.description)}</em>` : ""}
+      </button>
     `;
   }
 
@@ -1477,15 +1632,41 @@
     elements.patternOutput.innerHTML = `
       <div class="uds-result-block">
         ${renderEvidenceLine(result)}
+        ${renderWorkflowChecklist(result.workflowChecks)}
         ${renderResultSection("Can this be explained?", [result.assessment], "uds-result-assessment")}
         ${renderResultSection("Recommended next step", [result.nextStep], "uds-result-next-step")}
         ${result.panelWarning ? renderResultSection("Panel coverage warning", [result.panelWarning], "uds-result-panel-warning") : ""}
+        ${renderPatternDetailsSection("Source ambiguity flags", result.sourceAmbiguities)}
         ${renderPatternDetailsSection("Explained findings", result.explained)}
         ${renderPatternDetailsSection("Needs context", result.needsContext)}
         ${renderPatternDetailsSection("Not explained", result.notExplained)}
         ${renderPatternDetailsSection("Missing supportive findings", result.missingSupportive)}
         ${renderPatternDetailsSection("Method notes", result.methodNotes)}
       </div>
+    `;
+  }
+
+  function renderWorkflowChecklist(checks) {
+    if (!checks?.length) {
+      return "";
+    }
+
+    return `
+      <section class="uds-workflow-checks" aria-label="UDS review workflow checks">
+        <div class="uds-workflow-checks-head">
+          <h4>Review workflow</h4>
+          <p>Use these checks before acting on the result.</p>
+        </div>
+        <div class="uds-workflow-check-grid">
+          ${checks.map((check) => `
+            <article class="uds-workflow-check uds-workflow-check--${escapeAttribute(check.tone)}">
+              <span>${escapeHtml(check.status)}</span>
+              <strong>${escapeHtml(check.title)}</strong>
+              <p>${escapeHtml(check.text)}</p>
+            </article>
+          `).join("")}
+        </div>
+      </section>
     `;
   }
 
@@ -1521,6 +1702,8 @@
         evidenceLabel: evidence.label,
         evidenceTone: evidence.tone,
         evidenceDescription: evidence.description,
+        workflowChecks: buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, [], ""),
+        sourceAmbiguities: [],
         explained: [],
         needsContext: [],
         notExplained: [],
@@ -1580,11 +1763,15 @@
     const assessment = buildAssessment(explained, needsContext, notExplained);
     const nextStep = buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning);
     const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes);
+    const sourceAmbiguities = buildSourceAmbiguities();
+    const workflowChecks = buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning, sourceAmbiguities);
     const summary = buildPatternSummary({
       assessment,
       nextStep,
       evidence,
+      workflowChecks,
       panelWarning,
+      sourceAmbiguities,
       explained,
       needsContext,
       notExplained,
@@ -1595,7 +1782,9 @@
       evidenceLabel: evidence.label,
       evidenceTone: evidence.tone,
       evidenceDescription: evidence.description,
+      workflowChecks,
       nextStep,
+      sourceAmbiguities,
       explained,
       needsContext,
       notExplained,
@@ -1638,7 +1827,7 @@
     if (explained.length) {
       return "Document the pattern as compatible if the medication list, assay method, timing, cutoff, and panel contents fit.";
     }
-    return "Do not use this result alone to determine dose, timing, adherence, impairment, or absence of other exposure.";
+    return "Use this as a reconciliation aid; dose, timing, adherence, impairment, or absence of other exposure require supporting context.";
   }
 
   function buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes) {
@@ -1680,6 +1869,119 @@
     };
   }
 
+  function buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning, sourceAmbiguities = []) {
+    const checks = [];
+    const hasInputs = state.expected.length || state.detected.length || state.absent.length;
+    const methodTone = state.method === "any" ? "neutral" : state.method === "immunoassay" ? "method" : "compatible";
+    const methodStatus = state.method === "any" ? "Choose if known" : formatScenarioMethod(state.method);
+    const methodText = state.method === "any"
+      ? "If the report is a screen or definitive panel, select the method before relying on the interpretation."
+      : state.method === "immunoassay"
+        ? "Treat screen results as presumptive and watch for false negatives, false positives, and class-panel gaps."
+        : "Use parent/metabolite pattern, timing, cutoff, and medication history to interpret source and compatibility.";
+
+    checks.push({
+      title: "Method and panel",
+      status: methodStatus,
+      tone: methodTone,
+      text: methodText,
+    });
+
+    if (!hasInputs) {
+      checks.push({
+        title: "Medication match",
+        status: "Waiting for inputs",
+        tone: "neutral",
+        text: "Add expected medications and detected findings to determine whether the result can be explained.",
+      });
+    } else if (notExplained.length) {
+      checks.push({
+        title: "Medication match",
+        status: "Unresolved",
+        tone: "warning",
+        text: "At least one detected finding is not explained by the selected expected medication list.",
+      });
+    } else if (needsContext.length) {
+      checks.push({
+        title: "Medication match",
+        status: "Context-dependent",
+        tone: "caution",
+        text: "The pattern may fit, but timing, cutoff, quantitative values, or assay design still matter.",
+      });
+    } else if (explained.length) {
+      checks.push({
+        title: "Medication match",
+        status: "Compatible",
+        tone: "compatible",
+        text: "Detected findings are explained by configured parent/metabolite relationships.",
+      });
+    } else {
+      checks.push({
+        title: "Medication match",
+        status: "Incomplete",
+        tone: "neutral",
+        text: "Add detected findings from the report to compare against the expected medication list.",
+      });
+    }
+
+    checks.push({
+      title: "Source ambiguity",
+      status: sourceAmbiguities.length ? "Review closely" : "No major flag",
+      tone: sourceAmbiguities.length ? "caution" : "compatible",
+      text: sourceAmbiguities.length
+        ? "One or more findings can come from multiple sources; avoid source conclusions from the analyte alone."
+        : "No high-yield shared-byproduct ambiguity is flagged from the current selections.",
+    });
+
+    checks.push({
+      title: "Absent findings",
+      status: state.absent.length ? "Panel-confirmed only" : missingSupportive.length ? "Check panel" : "None entered",
+      tone: state.absent.length || missingSupportive.length ? "caution" : "neutral",
+      text: state.absent.length
+        ? "Only treat absent findings as meaningful if the analyte was ordered, tested, and reported absent."
+        : missingSupportive.length
+          ? "Supportive metabolites are not entered; verify whether they were included before treating this as discordant."
+          : "No absent analytes were entered for this reconciliation.",
+    });
+
+    if (state.method === "immunoassay" && methodNotes.length) {
+      checks.push({
+        title: "Confirmation threshold",
+        status: "Consider definitive",
+        tone: "method",
+        text: "If the result is unexpected or clinically consequential, use targeted or definitive testing before changing care.",
+      });
+    } else if (panelWarning) {
+      checks.push({
+        title: "Confirmation threshold",
+        status: "Verify panel",
+        tone: "caution",
+        text: "Panel contents should be verified before acting on absent findings.",
+      });
+    }
+
+    return checks;
+  }
+
+  function buildSourceAmbiguities() {
+    const selectedIds = [...new Set([...state.expected, ...state.detected, ...state.absent])];
+    const ambiguousMessages = selectedIds.flatMap((id) => {
+      const entry = getItem(id);
+      if (!entry) {
+        return [];
+      }
+      const ambiguityCaveats = getRelevantCaveats([id])
+        .filter((caveatEntry) => /ambiguity|not source-specific|source-specific/i.test(`${caveatEntry.title} ${caveatEntry.text}`))
+        .map((caveatEntry) => caveatEntry.text);
+      const ambiguousRelationships = [...getIncoming(id), ...getOutgoing(id)]
+        .filter((row) => row.clinicalTag === "Not source-specific" || row.clinicalTag === "Shared metabolite")
+        .map((row) => `${entry.name}: ${row.clue}`);
+      return [...ambiguityCaveats, ...ambiguousRelationships];
+    });
+
+    return [...new Set(ambiguousMessages)].slice(0, 6);
+  }
+
   function buildLookupSummary(entry, primaryRows, secondaryRows, caveats, sourcesForEntry) {
     const bottomLine = getMethodAnswer(entry, "bottomLine") || entry.bottomLine || buildBottomLine(entry, primaryRows, secondaryRows, caveats);
     const pitfall = getMethodAnswer(entry, "commonPitfall") || entry.commonPitfall || buildCommonPitfall(entry, caveats);
@@ -1707,6 +2009,18 @@
     ];
     if (result.panelWarning) {
       parts.push(`Panel coverage warning: ${result.panelWarning}`);
+    }
+    if (result.workflowChecks?.length) {
+      const unresolvedChecks = result.workflowChecks
+        .filter((check) => ["warning", "caution", "method"].includes(check.tone))
+        .slice(0, 3)
+        .map((check) => `${check.title}: ${check.status}`);
+      if (unresolvedChecks.length) {
+        parts.push(`Workflow checks: ${unresolvedChecks.join("; ")}`);
+      }
+    }
+    if (result.sourceAmbiguities?.length) {
+      parts.push(`Source ambiguity: ${result.sourceAmbiguities.slice(0, 2).join("; ")}`);
     }
     if (result.needsContext.length) {
       parts.push(`Needs context: ${result.needsContext.slice(0, 3).join("; ")}`);

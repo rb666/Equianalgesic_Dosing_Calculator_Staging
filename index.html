@@ -21,8 +21,8 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260522-uds-left-names-back" />
-    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-left-names-back" />
+    <link rel="stylesheet" href="styles.css?v=20260522-uds-workflow" />
+    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-workflow" />
   </head>
   <body>
     <div class="environment-banner">
@@ -1131,9 +1131,10 @@
                     Pattern Check turns that into one reconciliation workflow.
                   </p>
                   <p>
-                    Add expected medications, detected analytes, and only confirmed absent analytes.
-                    The tool then flags what is compatible, what needs context, and what is unresolved,
-                    with a copyable next-step summary.
+                    Add expected medications first, then detected analytes, then only confirmed
+                    tested-absent analytes. The output prioritizes method/panel coverage,
+                    medication compatibility, source ambiguity, absent-finding risk, and the next
+                    safest review step.
                   </p>
                 </section>
                 <div class="uds-workflow-callout">
@@ -1285,6 +1286,6 @@
     </div>
 
     <script src="script.js?v=20260522-uds-screen"></script>
-    <script src="uds-tool.js?v=20260522-uds-left-names-back"></script>
+    <script src="uds-tool.js?v=20260522-uds-workflow"></script>
   </body>
 </html>

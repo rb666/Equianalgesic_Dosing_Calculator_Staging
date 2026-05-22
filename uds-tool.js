@@ -236,7 +236,6 @@
 
   const commonGroups = ["Opioids", "Benzodiazepines", "Stimulants", "Cannabinoids", "Cocaine"];
   const highYieldSearches = ["fentanyl", "oxycodone", "hydromorphone", "aminoclonazepam7", "eddp", "thc_cooh", "etg"];
-  const universalUdsLimitation = "Do not infer dose, exact timing, impairment, intent, diversion, misuse, or adherence certainty from UDS alone.";
   const absentPanelWarning = "Absent findings are only meaningful if each analyte was included in the ordered panel and reported as absent.";
   const patternScenarios = [
     {
@@ -1103,7 +1102,6 @@
         ${renderResultSection("Can this be explained?", [result.assessment], "uds-result-assessment")}
         ${renderResultSection("Recommended next step", [result.nextStep], "uds-result-next-step")}
         ${result.panelWarning ? renderResultSection("Panel coverage warning", [result.panelWarning], "uds-result-panel-warning") : ""}
-        ${renderResultSection("Do not infer", [result.doNotInfer], "uds-result-limitation")}
         ${renderDetailsSection("Explained findings", renderList(result.explained))}
         ${renderDetailsSection("Needs context", renderList(result.needsContext))}
         ${renderDetailsSection("Not explained", renderList(result.notExplained))}
@@ -1151,7 +1149,6 @@
         missingSupportive: [],
         nextStep: "Add detected findings to compare against the selected expected drug(s).",
         panelWarning: "",
-        doNotInfer: universalUdsLimitation,
         methodNotes: getRelevantCaveats([...state.expected, ...state.detected, ...state.absent]).map((entry) => entry.text),
         summary: "",
       };
@@ -1210,7 +1207,6 @@
       nextStep,
       evidence,
       panelWarning,
-      doNotInfer: universalUdsLimitation,
       explained,
       needsContext,
       notExplained,
@@ -1227,7 +1223,6 @@
       notExplained,
       missingSupportive: missingSupportive.slice(0, 8),
       panelWarning,
-      doNotInfer: universalUdsLimitation,
       methodNotes: methodNotes.slice(0, 5),
       summary,
     };
@@ -1335,7 +1330,6 @@
     if (result.panelWarning) {
       parts.push(`Panel coverage warning: ${result.panelWarning}`);
     }
-    parts.push(`Do not infer: ${result.doNotInfer}`);
     if (result.needsContext.length) {
       parts.push(`Needs context: ${result.needsContext.slice(0, 3).join("; ")}`);
     }

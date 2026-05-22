@@ -814,11 +814,6 @@
   background: var(--uds-pill-warm-bg);
 }
 
-.uds-result-limitation {
-  border-color: var(--uds-context-border);
-  background: var(--uds-context-bg);
-}
-
 .uds-evidence-line {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

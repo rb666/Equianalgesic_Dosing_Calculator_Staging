@@ -22,7 +22,7 @@
       })();
     </script>
     <link rel="stylesheet" href="styles.css?v=20260522-uds-value" />
-    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-template-collapse" />
+    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-panel-aware" />
   </head>
   <body>
     <div class="environment-banner">
@@ -1112,7 +1112,7 @@
                     <p class="eyebrow">UDS reconciliation</p>
                     <h3>Can this UDS result be explained?</h3>
                     <p class="uds-panel-intro">
-                      Add the expected medication list, then add what the urine drug screen detected.
+                      Add report context, expected medications, and detected findings. Use absent findings only when panel coverage is verified.
                     </p>
                   </div>
                   <div class="uds-panel-head-actions">
@@ -1147,6 +1147,29 @@
                   </p>
                 </section>
                 <div class="uds-pattern-grid">
+                  <div class="uds-chip-input uds-workflow-step uds-report-context">
+                    <div class="uds-step-heading">
+                      <span class="uds-step-number">0</span>
+                      <label for="udsPanelSelect">Report context</label>
+                    </div>
+                    <p class="uds-field-help">
+                      Panel context controls whether absent findings can be used safely.
+                    </p>
+                    <label class="uds-field-stack" for="udsPanelSelect">
+                      Ordered panel
+                      <select id="udsPanelSelect">
+                        <option value="unknown_panel">Unknown / report not reviewed</option>
+                        <option value="generic_opiate_immunoassay">Generic opiate immunoassay</option>
+                        <option value="benzodiazepine_immunoassay_panel">Benzodiazepine immunoassay screen</option>
+                        <option value="targeted_definitive_panel">Targeted definitive LC/GC-MS panel</option>
+                      </select>
+                    </label>
+                    <label class="uds-checkbox-row" for="udsPanelCoverageConfirmed">
+                      <input id="udsPanelCoverageConfirmed" type="checkbox" />
+                      <span>I verified absent analytes were included and reportable.</span>
+                    </label>
+                  </div>
+
                   <div class="uds-chip-input uds-workflow-step" data-uds-chip-group="expected">
                     <div class="uds-step-heading">
                       <span class="uds-step-number">1</span>
@@ -1181,6 +1204,14 @@
                     <p class="uds-field-help">
                       Only add absent findings if the analyte was included in the ordered panel and reported as absent.
                     </p>
+                    <label class="uds-field-stack" for="udsAbsentStatus">
+                      Absent entry status
+                      <select id="udsAbsentStatus">
+                        <option value="unknown">Unknown whether tested</option>
+                        <option value="not_reported">Not reported / not shown</option>
+                        <option value="reported_absent">Reported absent / negative</option>
+                      </select>
+                    </label>
                     <div class="uds-add-row">
                       <input id="udsAbsentInput" list="udsItemOptions" placeholder="Example: norfentanyl, 7-aminoclonazepam" />
                       <button class="secondary-button" data-uds-add="absent" type="button">Add</button>
@@ -1384,6 +1415,6 @@
     </div>
 
     <script src="script.js?v=20260522-uds-value"></script>
-    <script src="uds-tool.js?v=20260522-uds-template-collapse"></script>
+    <script src="uds-tool.js?v=20260522-uds-panel-aware"></script>
   </body>
 </html>

@@ -424,7 +424,62 @@
       hint: "Review cutoff, timing, and context limits.",
     },
   ];
-  const absentPanelWarning = "Absent findings are only meaningful if each analyte was included in the ordered panel and reported as absent.";
+  const panels = [
+    {
+      id: "unknown_panel",
+      name: "Unknown / report not reviewed",
+      method: "any",
+      description: "Use when the exact ordered panel, reportable analytes, and cutoffs are not known.",
+      analytes: [],
+    },
+    {
+      id: "generic_opiate_immunoassay",
+      name: "Generic opiate immunoassay",
+      method: "immunoassay",
+      description: "Class screen behavior varies by manufacturer and lab; many synthetic and semisynthetic opioids need targeted testing.",
+      analytes: [
+        panelAnalyte("morphine", "class_screen_only", "opiate class screen"),
+        panelAnalyte("codeine", "class_screen_only", "opiate class screen"),
+        panelAnalyte("hydrocodone", "unknown", "assay-dependent cross-reactivity"),
+        panelAnalyte("hydromorphone", "unknown", "assay-dependent cross-reactivity"),
+        panelAnalyte("oxycodone", "unknown", "often needs oxycodone-specific assay"),
+        panelAnalyte("oxymorphone", "unknown", "often needs oxycodone-specific assay"),
+        panelAnalyte("fentanyl", "not_included", "requires fentanyl-specific or definitive testing"),
+        panelAnalyte("norfentanyl", "not_included", "requires fentanyl-specific or definitive testing"),
+        panelAnalyte("methadone", "not_included", "requires methadone-specific or definitive testing"),
+        panelAnalyte("eddp", "not_included", "requires methadone-specific or definitive testing"),
+        panelAnalyte("buprenorphine", "not_included", "requires buprenorphine-specific or definitive testing"),
+        panelAnalyte("norbuprenorphine", "not_included", "requires buprenorphine-specific or definitive testing"),
+        panelAnalyte("tramadol", "not_included", "requires targeted or definitive testing"),
+        panelAnalyte("tapentadol", "not_included", "requires targeted or definitive testing"),
+      ],
+    },
+    {
+      id: "benzodiazepine_immunoassay_panel",
+      name: "Benzodiazepine immunoassay screen",
+      method: "immunoassay",
+      description: "Class screen sensitivity depends on assay target; clonazepam, lorazepam, and glucuronides are commonly under-detected.",
+      analytes: [
+        panelAnalyte("diazepam", "class_screen_only", "benzodiazepine class screen"),
+        panelAnalyte("nordiazepam", "class_screen_only", "benzodiazepine class screen"),
+        panelAnalyte("oxazepam", "class_screen_only", "benzodiazepine class screen"),
+        panelAnalyte("temazepam", "class_screen_only", "benzodiazepine class screen"),
+        panelAnalyte("clonazepam", "unknown", "may be under-detected by some screens"),
+        panelAnalyte("aminoclonazepam7", "unknown", "often needs definitive testing"),
+        panelAnalyte("lorazepam", "unknown", "glucuronide sensitivity is assay-dependent"),
+        panelAnalyte("lorazepam_glucuronide", "unknown", "often needs definitive testing"),
+        panelAnalyte("alprazolam", "unknown", "assay-dependent"),
+        panelAnalyte("alpha_hydroxyalprazolam", "unknown", "assay-dependent"),
+      ],
+    },
+    {
+      id: "targeted_definitive_panel",
+      name: "Targeted definitive LC/GC-MS panel",
+      method: "definitive",
+      description: "Definitive testing is targeted; absent findings still require confirmation that the analyte was included and reportable.",
+      analytes: [],
+    },
+  ];
   const patternScenarios = [
     {
       id: "oxycodone_oxymorphone",
@@ -783,11 +838,14 @@
   const state = {
     mode: "lookup",
     method: "any",
+    panelId: "unknown_panel",
     focusId: null,
     relationFilter: "all",
     expected: [],
     detected: [],
     absent: [],
+    absentStatus: "unknown",
+    panelCoverageConfirmed: false,
     lookupBackStack: [],
     lastLookupSummary: "",
     lastPatternSummary: "",
@@ -798,6 +856,9 @@
     searchClear: root.querySelector("#udsSearchClear"),
     searchResults: root.querySelector("#udsSearchResults"),
     methodSelect: root.querySelector("#udsMethodSelect"),
+    panelSelect: root.querySelector("#udsPanelSelect"),
+    absentStatusSelect: root.querySelector("#udsAbsentStatus"),
+    panelCoverageConfirmed: root.querySelector("#udsPanelCoverageConfirmed"),
     startButton: root.querySelector("#udsStartButton"),
     modeButtons: [...root.querySelectorAll("[data-uds-mode]")],
     lookupView: root.querySelector("#udsLookupView"),
@@ -827,11 +888,15 @@
   }
 
   function rel(from, to, label, strength, clue, sourceIds) {
-    return { from, to, label, strength, clinicalTag: getDefaultClinicalTag(from, to, label, strength), clue, sourceIds };
+    return { id: `rel:${from}:${to}:${normalize(label)}`, from, to, label, strength, clinicalTag: getDefaultClinicalTag(from, to, label, strength), clue, sourceIds };
   }
 
   function caveat(method, groups, title, text, sourceIds, itemIds = [], severity = "routine") {
     return { method, groups, title, text, sourceIds, itemIds, severity };
+  }
+
+  function panelAnalyte(itemId, status, reportableAs = "", cutoffNote = "") {
+    return { itemId, status, reportableAs, cutoffNote };
   }
 
   function answer(bottomLine, likelyExplanation, commonPitfall, nextStep, doNotConclude = "", methodAnswers = {}, extraAliases = []) {
@@ -1642,13 +1707,16 @@
         ${result.detectedSummaries.length ? renderResultSection("Detected finding summary", result.detectedSummaries.slice(0, 3), "uds-result-detected-summary") : ""}
         ${result.sourceAmbiguities.length ? renderResultSection("Source ambiguity", result.sourceAmbiguities.slice(0, 2), "uds-result-source-ambiguity") : ""}
         ${renderResultSection("Recommended next step", [result.nextStep], "uds-result-next-step")}
-        ${result.panelWarning ? renderResultSection("Panel coverage warning", [result.panelWarning], "uds-result-panel-warning") : ""}
+        ${result.panelWarnings.length ? renderResultSection("Panel and method warnings", result.panelWarnings.slice(0, 3), "uds-result-panel-warning") : ""}
         ${result.sourceAmbiguities.length > 2 ? renderPatternDetailsSection("Additional source ambiguity", result.sourceAmbiguities.slice(2)) : ""}
+        ${renderPatternDetailsSection("Absent finding review", result.absentReviews)}
         ${renderPatternDetailsSection("Explained findings", result.explained)}
         ${renderPatternDetailsSection("Needs context", result.needsContext)}
         ${renderPatternDetailsSection("Not explained", result.notExplained)}
         ${renderPatternDetailsSection("Missing supportive findings", result.missingSupportive)}
+        ${result.panelWarnings.length > 3 ? renderPatternDetailsSection("Additional panel and method warnings", result.panelWarnings.slice(3)) : ""}
         ${renderPatternDetailsSection("Method notes", result.methodNotes)}
+        ${renderPatternDetailsSection("Rule/source trace", result.ruleTrace)}
       </div>
     `;
   }
@@ -1693,23 +1761,199 @@
     `;
   }
 
+  function getSelectedPanel() {
+    return panels.find((panel) => panel.id === state.panelId) || panels[0];
+  }
+
+  function getPanelCoverage(itemId) {
+    const panel = getSelectedPanel();
+    return panel?.analytes.find((analyte) => analyte.itemId === itemId) || null;
+  }
+
+  function getPanelLabel() {
+    return getSelectedPanel()?.name || "Unknown / report not reviewed";
+  }
+
+  function updatePanelControl(panelId) {
+    if (!panelId) {
+      return;
+    }
+
+    state.panelId = panelId;
+    if (elements.panelSelect) {
+      elements.panelSelect.value = panelId;
+    }
+  }
+
+  function updateAbsentControls() {
+    if (elements.absentStatusSelect) {
+      elements.absentStatusSelect.value = state.absentStatus;
+    }
+    if (elements.panelCoverageConfirmed) {
+      elements.panelCoverageConfirmed.checked = state.panelCoverageConfirmed;
+    }
+  }
+
+  function inferPanelForMethod(method) {
+    if (method === "immunoassay") {
+      return "generic_opiate_immunoassay";
+    }
+    if (method === "definitive") {
+      return "targeted_definitive_panel";
+    }
+    return "unknown_panel";
+  }
+
+  function methodMatchesPanel() {
+    const panel = getSelectedPanel();
+    return !panel || panel.method === "any" || state.method === "any" || panel.method === state.method;
+  }
+
+  function buildPanelWarnings() {
+    const warnings = [];
+    const panel = getSelectedPanel();
+
+    if (state.method === "any") {
+      warnings.push("Method is set to Any; select immunoassay or definitive testing when known for more specific interpretation.");
+    } else if (state.method === "immunoassay") {
+      warnings.push("Immunoassay results are presumptive and can miss drugs outside the screen target or cross-react with unrelated medications.");
+    } else if (state.method === "definitive") {
+      warnings.push("Definitive testing identifies targeted analytes only; verify the exact panel and reportable metabolites.");
+    }
+
+    if (panel?.id === "unknown_panel") {
+      warnings.push("Panel is unknown. Verify the ordered test, included analytes, cutoffs, and reportable findings before acting on absent results.");
+    } else if (!methodMatchesPanel()) {
+      warnings.push(`${panel.name} is configured as ${formatScenarioMethod(panel.method)}, while the selected method is ${formatScenarioMethod(state.method)}.`);
+    }
+
+    if (state.absent.length) {
+      if (state.absentStatus !== "reported_absent") {
+        warnings.push("Absent entries are not marked as reported absent/negative, so they should be treated as non-actionable context.");
+      }
+      if (!state.panelCoverageConfirmed) {
+        warnings.push("Absent findings are non-actionable until the analyte was verified as included and reportable on the ordered panel.");
+      }
+
+      state.absent.forEach((id) => {
+        const assessment = classifyAbsentFinding(id);
+        if (assessment.panelWarning) {
+          warnings.push(assessment.panelWarning);
+        }
+      });
+    }
+
+    return [...new Set(warnings)];
+  }
+
+  function buildAbsentReviews() {
+    return state.absent
+      .map((id) => classifyAbsentFinding(id).message)
+      .filter(Boolean);
+  }
+
+  function classifyAbsentFinding(itemId) {
+    const panel = getSelectedPanel();
+    const coverage = getPanelCoverage(itemId);
+    const name = labelFor(itemId);
+
+    if (state.absentStatus !== "reported_absent") {
+      return {
+        actionable: false,
+        message: `${name} was entered as absent, but the status is not marked as reported absent/negative.`,
+        panelWarning: `${name}: absent status is ${formatAbsentStatus(state.absentStatus)}.`,
+      };
+    }
+
+    if (!state.panelCoverageConfirmed) {
+      return {
+        actionable: false,
+        message: `${name} was entered as absent, but panel coverage has not been verified.`,
+        panelWarning: `${name}: verify that the analyte was included and reportable before interpreting absence.`,
+      };
+    }
+
+    if (!panel || panel.id === "unknown_panel") {
+      return {
+        actionable: false,
+        message: `${name} was entered as absent, but the selected panel is unknown.`,
+        panelWarning: `${name}: panel unknown, so absence cannot support non-exposure or nonadherence.`,
+      };
+    }
+
+    if (!coverage) {
+      return {
+        actionable: panel.id === "targeted_definitive_panel",
+        message: `${name} is not mapped in the selected panel; confirm the reportable analyte list and cutoff.`,
+        panelWarning: `${name}: selected panel lacks configured coverage for this analyte.`,
+      };
+    }
+
+    if (coverage.status === "not_included") {
+      return {
+        actionable: false,
+        message: `${name} is not included in ${panel.name}; absence is not clinically meaningful for that panel.`,
+        panelWarning: `${name}: ${coverage.cutoffNote || "not included in selected panel"}.`,
+      };
+    }
+
+    if (coverage.status === "unknown") {
+      return {
+        actionable: false,
+        message: `${name} coverage is assay-dependent in ${panel.name}; confirm the specific reportable analyte before interpreting absence.`,
+        panelWarning: `${name}: panel coverage is assay-dependent or unknown.`,
+      };
+    }
+
+    return {
+      actionable: true,
+      message: `${name} is treated as reported absent only because panel coverage was verified.`,
+      panelWarning: "",
+    };
+  }
+
+  function formatAbsentStatus(status) {
+    if (status === "reported_absent") {
+      return "reported absent / negative";
+    }
+    if (status === "not_reported") {
+      return "not reported / not shown";
+    }
+    return "unknown whether tested";
+  }
+
+  function buildRuleTraceEntry(row, reason) {
+    const sourceLabels = getSourceLabels(row.sourceIds);
+    return `${reason}: ${labelFor(row.from)} -> ${labelFor(row.to)} (${row.clinicalTag || row.label}). ${row.clue}${sourceLabels ? ` Sources: ${sourceLabels}.` : ""}`;
+  }
+
+  function getSourceLabels(sourceIds = []) {
+    return sourceIds
+      .map((id) => sources[id]?.title || id)
+      .filter(Boolean)
+      .join("; ");
+  }
+
   function analyzePattern() {
     const explained = [];
     const needsContext = [];
     const notExplained = [];
     const missingSupportive = [];
-    const panelWarning = state.absent.length
-      ? `${absentPanelWarning} Entered absent finding(s): ${state.absent.map(labelFor).join(", ")}.`
-      : "";
+    const ruleTrace = [];
+    const selectedIds = [...state.expected, ...state.detected, ...state.absent];
+    const methodNotes = getRelevantCaveats(selectedIds).map((entry) => entry.text);
+    const hasInputs = Boolean(selectedIds.length);
+    const panelWarnings = hasInputs ? buildPanelWarnings() : [];
+    const absentReviews = buildAbsentReviews();
 
     if (!state.expected.length && !state.detected.length && !state.absent.length) {
-      const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, []);
+      const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, [], []);
       return {
         assessment: "Add at least one prescribed/expected drug and one detected finding.",
         evidenceLabel: evidence.label,
         evidenceTone: evidence.tone,
         evidenceDescription: evidence.description,
-        workflowChecks: buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, [], ""),
+        workflowChecks: buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, [], [], []),
         detectedSummaries: [],
         sourceAmbiguities: [],
         explained: [],
@@ -1717,8 +1961,10 @@
         notExplained: [],
         missingSupportive: [],
         nextStep: "Add detected findings to compare against the selected expected drug(s).",
-        panelWarning: "",
-        methodNotes: getRelevantCaveats([...state.expected, ...state.detected, ...state.absent]).map((entry) => entry.text),
+        panelWarnings: [],
+        absentReviews: [],
+        methodNotes,
+        ruleTrace: [],
         summary: "",
       };
     }
@@ -1751,7 +1997,8 @@
         }
 
         const message = `${labelFor(detectedId)} can fit ${labelFor(relationship.expectedId)}: ${relationship.row.clue}`;
-        if (relationship.row.strength === "context") {
+        ruleTrace.push(buildRuleTraceEntry(relationship.row, "Detected finding explained"));
+        if (relationship.row.strength === "context" || relationship.row.clinicalTag === "Not source-specific" || relationship.row.clinicalTag === "Shared metabolite") {
           needsContext.push(message);
         } else {
           explained.push(message);
@@ -1766,31 +2013,38 @@
         const markedAbsent = state.absent.includes(row.to);
         if (!hasFinding && !markedAbsent) {
           missingSupportive.push(`${labelFor(row.to)} would support ${labelFor(expectedId)} if included in the ordered panel.`);
+          ruleTrace.push(buildRuleTraceEntry(row, "Supportive finding not entered"));
         }
         if (markedAbsent) {
-          missingSupportive.push(`${labelFor(row.to)} is marked absent; consider panel inclusion, timing, cutoff, and method before treating this as discordant.`);
+          const absentAssessment = classifyAbsentFinding(row.to);
+          const absentMessage = absentAssessment.actionable
+            ? `${labelFor(row.to)} is reported absent on a verified panel; interpret with timing, cutoff, and method before treating this as discordant.`
+            : absentAssessment.message;
+          missingSupportive.push(absentMessage);
+          ruleTrace.push(buildRuleTraceEntry(row, "Supportive finding entered as absent"));
         }
       });
     });
 
-    const methodNotes = getRelevantCaveats([...state.expected, ...state.detected, ...state.absent]).map((entry) => entry.text);
     const assessment = buildAssessment(explained, needsContext, notExplained);
-    const nextStep = buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning);
-    const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes);
+    const nextStep = buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings);
+    const evidence = buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings);
     const sourceAmbiguities = buildSourceAmbiguities();
     const detectedSummaries = buildDetectedSummaries(!state.expected.length || Boolean(notExplained.length));
-    const workflowChecks = buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning, sourceAmbiguities);
+    const workflowChecks = buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings, sourceAmbiguities);
     const summary = buildPatternSummary({
       assessment,
       nextStep,
       evidence,
       workflowChecks,
       detectedSummaries,
-      panelWarning,
+      panelWarnings,
+      absentReviews,
       sourceAmbiguities,
       explained,
       needsContext,
       notExplained,
+      ruleTrace,
     });
 
     return {
@@ -1806,8 +2060,10 @@
       needsContext,
       notExplained,
       missingSupportive: missingSupportive.slice(0, 8),
-      panelWarning,
+      panelWarnings,
+      absentReviews,
       methodNotes: methodNotes.slice(0, 5),
+      ruleTrace: [...new Set(ruleTrace)].slice(0, 8),
       summary,
     };
   }
@@ -1828,14 +2084,14 @@
     return "Not enough information. Add detected findings to compare against the selected expected medication(s).";
   }
 
-  function buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning) {
+  function buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings) {
     if (notExplained.length) {
       return "Confirm medication list, assay method, panel contents, and timing; consider definitive testing or lab consultation.";
     }
     if (needsContext.length) {
       return "Interpret with timing, quantitative values, cutoff, and panel contents before making adherence or misuse conclusions.";
     }
-    if (panelWarning) {
+    if (state.absent.length && panelWarnings.length) {
       return "Verify panel contents before treating absent findings as clinically meaningful.";
     }
     if (missingSupportive.length) {
@@ -1850,7 +2106,7 @@
     return "Use this as a reconciliation aid; dose, timing, adherence, impairment, or absence of other exposure require supporting context.";
   }
 
-  function buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes) {
+  function buildEvidenceLevel(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings) {
     const hasCriticalMethodNote = state.method === "immunoassay" && methodNotes.some((note) => /not detect|may miss|false positive|false negative|specific/i.test(note));
     const hasMarkedAbsentConcern = missingSupportive.some((note) => note.includes("marked absent"));
 
@@ -1866,6 +2122,13 @@
         label: "Context-dependent",
         tone: "caution",
         description: "The pattern may fit, but timing, cutoff, quantitative values, or panel coverage materially affect interpretation.",
+      };
+    }
+    if (state.absent.length && panelWarnings.length) {
+      return {
+        label: "Panel-dependent",
+        tone: "caution",
+        description: "The interpretation depends on verified panel coverage and reportable analytes.",
       };
     }
     if (hasCriticalMethodNote) {
@@ -1907,11 +2170,12 @@
       .slice(0, 5);
   }
 
-  function buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarning, sourceAmbiguities = []) {
+  function buildWorkflowChecks(explained, needsContext, notExplained, missingSupportive, methodNotes, panelWarnings, sourceAmbiguities = []) {
     const checks = [];
     const hasInputs = state.expected.length || state.detected.length || state.absent.length;
     const methodTone = state.method === "any" ? "neutral" : state.method === "immunoassay" ? "method" : "compatible";
     const methodStatus = state.method === "any" ? "Choose if known" : formatScenarioMethod(state.method);
+    const panel = getSelectedPanel();
     const methodText = state.method === "any"
       ? "If the report is a screen or definitive panel, select the method before relying on the interpretation."
       : state.method === "immunoassay"
@@ -1922,7 +2186,7 @@
       title: "Method and panel",
       status: methodStatus,
       tone: methodTone,
-      text: methodText,
+      text: `${methodText} Panel: ${panel?.name || "Unknown"}.`,
     });
 
     if (!hasInputs) {
@@ -1973,10 +2237,10 @@
 
     checks.push({
       title: "Absent findings",
-      status: state.absent.length ? "Panel-confirmed only" : missingSupportive.length ? "Check panel" : "None entered",
-      tone: state.absent.length || missingSupportive.length ? "caution" : "neutral",
+      status: state.absent.length ? (state.panelCoverageConfirmed ? "Coverage checked" : "Needs coverage") : missingSupportive.length ? "Check panel" : "None entered",
+      tone: state.absent.length || missingSupportive.length ? (state.panelCoverageConfirmed ? "compatible" : "caution") : "neutral",
       text: state.absent.length
-        ? "Only treat absent findings as meaningful if the analyte was ordered, tested, and reported absent."
+        ? `${formatAbsentStatus(state.absentStatus)}; only meaningful when the analyte was ordered, tested, and reportable.`
         : missingSupportive.length
           ? "Supportive metabolites are not entered; verify whether they were included before treating this as discordant."
           : "No absent analytes were entered for this reconciliation.",
@@ -1989,7 +2253,7 @@
         tone: "method",
         text: "If the result is unexpected or clinically consequential, use targeted or definitive testing before changing care.",
       });
-    } else if (panelWarning) {
+    } else if (state.absent.length && panelWarnings.length) {
       checks.push({
         title: "Confirmation threshold",
         status: "Verify panel",
@@ -2065,12 +2329,18 @@
   function buildPatternSummary(result) {
     const parts = [
       "UDS pattern check",
+      `Method: ${formatScenarioMethod(state.method)}`,
+      `Panel: ${getPanelLabel()}`,
+      `Absent coverage confirmed: ${state.panelCoverageConfirmed ? "yes" : "no"}`,
       `Can this be explained: ${result.assessment}`,
       `Evidence level: ${result.evidence.label}`,
       `Recommended next step: ${result.nextStep}`,
     ];
-    if (result.panelWarning) {
-      parts.push(`Panel coverage warning: ${result.panelWarning}`);
+    if (result.panelWarnings?.length) {
+      parts.push(`Panel/method warnings: ${result.panelWarnings.slice(0, 3).join("; ")}`);
+    }
+    if (result.absentReviews?.length) {
+      parts.push(`Absent finding review: ${result.absentReviews.slice(0, 3).join("; ")}`);
     }
     if (result.workflowChecks?.length) {
       const unresolvedChecks = result.workflowChecks
@@ -2092,6 +2362,9 @@
     }
     if (result.notExplained.length) {
       parts.push(`Not explained: ${result.notExplained.slice(0, 3).join("; ")}`);
+    }
+    if (result.ruleTrace?.length) {
+      parts.push(`Rule/source trace: ${result.ruleTrace.slice(0, 2).join("; ")}`);
     }
     return parts.join("\n");
   }
@@ -2224,6 +2497,10 @@
     state.detected = [...scenario.detected];
     state.absent = [...scenario.absent];
     updateMethodControl(scenario.method);
+    updatePanelControl(scenario.panelId || inferPanelForMethod(scenario.method));
+    state.absentStatus = scenario.absent.length ? "reported_absent" : "unknown";
+    state.panelCoverageConfirmed = false;
+    updateAbsentControls();
     renderPatternChips();
     renderPatternOutput();
   }
@@ -2392,6 +2669,21 @@
     render();
   });
 
+  elements.panelSelect?.addEventListener("change", () => {
+    updatePanelControl(elements.panelSelect.value);
+    renderPatternOutput();
+  });
+
+  elements.absentStatusSelect?.addEventListener("change", () => {
+    state.absentStatus = elements.absentStatusSelect.value;
+    renderPatternOutput();
+  });
+
+  elements.panelCoverageConfirmed?.addEventListener("change", () => {
+    state.panelCoverageConfirmed = elements.panelCoverageConfirmed.checked;
+    renderPatternOutput();
+  });
+
   elements.searchInput.addEventListener("input", () => {
     showSearchResults(elements.searchInput.value);
   });
@@ -2453,6 +2745,10 @@
     state.expected = [];
     state.detected = [];
     state.absent = [];
+    state.absentStatus = "unknown";
+    state.panelCoverageConfirmed = false;
+    updatePanelControl("unknown_panel");
+    updateAbsentControls();
     renderPatternChips();
     renderPatternOutput();
   });

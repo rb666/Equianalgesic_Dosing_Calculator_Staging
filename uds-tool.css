@@ -351,7 +351,7 @@
   justify-content: space-between;
   padding: 16px 18px;
   border-bottom: 2px solid var(--uds-panel-border);
-  background: color-mix(in srgb, var(--uds-action-bg) 46%, var(--surface));
+  background: color-mix(in srgb, var(--uds-section-bg) 62%, var(--surface));
 }
 
 .uds-panel-head-actions {
@@ -387,10 +387,10 @@
   display: grid;
   gap: 13px;
   padding: 18px;
-  border: 2px solid var(--uds-action-border);
+  border: 2px solid var(--uds-panel-border);
   border-radius: 12px;
-  background: color-mix(in srgb, var(--uds-action-bg) 55%, var(--surface));
-  box-shadow: 0 10px 26px var(--uds-action-shadow);
+  background: var(--surface);
+  box-shadow: 0 10px 24px var(--uds-selectable-shadow);
 }
 
 .uds-answer-header {

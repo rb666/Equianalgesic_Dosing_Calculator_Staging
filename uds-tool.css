@@ -1192,10 +1192,10 @@
   padding-top: 14px;
 }
 
-.uds-scenario-panel {
+.uds-panel > div.uds-scenario-panel {
   display: grid;
   gap: 10px;
-  margin-top: 14px;
+  margin: 14px 18px 0;
   padding: 13px;
   border: 2px solid var(--uds-context-border);
   border-radius: 10px;

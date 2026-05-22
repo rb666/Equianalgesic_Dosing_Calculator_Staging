@@ -703,7 +703,7 @@
   };
 
   function item(id, name, group, type, aliases, window, note, sourceIds) {
-    return { id, name, group, type, aliases, window, note, sourceIds, curationStatus: "partial" };
+    return { id, name, group, type, aliases, displayAliases: aliases, window, note, sourceIds, curationStatus: "partial" };
   }
 
   function rel(from, to, label, strength, clue, sourceIds) {
@@ -1065,6 +1065,7 @@
           </div>
         </div>
         ${renderMethodContext()}
+        ${renderLookupNameList(entry)}
         ${renderInterpretationFlags(entry)}
         ${renderCurationStatus(entry)}
         ${renderAnswerLine("Bottom line", bottomLine)}
@@ -1110,6 +1111,24 @@
 
     const label = state.method === "immunoassay" ? "Immunoassay screen" : "Definitive LC/GC-MS";
     return `<div class="uds-method-context">Interpreting for: ${escapeHtml(label)}</div>`;
+  }
+
+  function renderLookupNameList(entry) {
+    const names = [entry.name, ...(entry.displayAliases || [])]
+      .map((name) => name.trim())
+      .filter(Boolean);
+    const uniqueNames = [...new Set(names)];
+
+    if (uniqueNames.length <= 1) {
+      return "";
+    }
+
+    return `
+      <div class="uds-name-list">
+        <span class="uds-name-list-label">Generic / brand</span>
+        <span class="uds-name-list-value">${uniqueNames.map(escapeHtml).join(", ")}</span>
+      </div>
+    `;
   }
 
   function renderInterpretationFlags(entry) {

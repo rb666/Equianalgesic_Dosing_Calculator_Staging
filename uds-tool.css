@@ -701,6 +701,17 @@
   background: hsl(209 42% 97%);
 }
 
+:root:not([data-theme="dark"]) #udsLookupView .uds-name-list,
+:root:not([data-theme="dark"]) .uds-detail-rail .uds-detection-window {
+  border-color: hsl(332 18% 62%);
+  background: hsl(332 28% 97%);
+}
+
+:root:not([data-theme="dark"]) #udsLookupView .uds-name-list-label,
+:root:not([data-theme="dark"]) .uds-detail-rail .uds-detection-window .uds-compact-label {
+  color: hsl(332 24% 34%);
+}
+
 :root:not([data-theme="dark"]) #udsLookupView .uds-answer-card {
   border-color: hsl(209 28% 66%);
   background: hsl(209 42% 98%);
@@ -1113,6 +1124,17 @@
   background:
     linear-gradient(90deg, hsl(28 30% 46%) 0 4px, transparent 4px),
     linear-gradient(var(--uds-selectable-bg), var(--uds-selectable-bg));
+}
+
+:root[data-theme="dark"] #udsLookupView .uds-name-list,
+:root[data-theme="dark"] .uds-detail-rail .uds-detection-window {
+  border-color: hsl(332 16% 44%);
+  background: hsl(332 12% 17%);
+}
+
+:root[data-theme="dark"] #udsLookupView .uds-name-list-label,
+:root[data-theme="dark"] .uds-detail-rail .uds-detection-window .uds-compact-label {
+  color: hsl(334 28% 76%);
 }
 
 .uds-pattern-grid {

@@ -1805,13 +1805,19 @@ footer {
 }
 
 .uds-screen-shell {
-  width: min(1720px, calc(100% - 16px));
+  width: min(1462px, 85%);
   margin: 0 auto;
   border: 1.5px solid var(--line);
   border-radius: 12px;
   background: var(--surface);
   color: var(--ink);
   box-shadow: 0 16px 42px var(--secondary-shadow);
+}
+
+@media (max-width: 1040px) {
+  .uds-screen-shell {
+    width: 100%;
+  }
 }
 
 .uds-screen-header {

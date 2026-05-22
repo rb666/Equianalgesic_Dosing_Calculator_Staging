@@ -1332,6 +1332,9 @@ const pharmacokineticsCloseButton = document.querySelector(
 const udsOpenButton = document.querySelector("#udsOpenButton");
 const udsModal = document.querySelector("#udsModal");
 const udsCloseButton = document.querySelector("#udsCloseButton");
+const udsValueOpenButton = document.querySelector("#udsValueOpenButton");
+const udsValueModal = document.querySelector("#udsValueModal");
+const udsValueCloseButton = document.querySelector("#udsValueCloseButton");
 const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
@@ -1486,7 +1489,9 @@ const isModalVisible = (modalElement) =>
 const updateModalOpenState = () => {
   document.body.classList.toggle(
     "modal-open",
-    isModalVisible(termsModal) || isModalVisible(pharmacokineticsModal),
+    isModalVisible(termsModal) ||
+      isModalVisible(pharmacokineticsModal) ||
+      isModalVisible(udsValueModal),
   );
 };
 
@@ -1531,6 +1536,22 @@ const setPharmacokineticsModalVisible = (visible) => {
 
   if (visible && pharmacokineticsCloseButton) {
     window.setTimeout(() => pharmacokineticsCloseButton.focus(), 0);
+  }
+};
+
+const setUdsValueModalVisible = (visible) => {
+  if (!udsValueModal) {
+    return;
+  }
+
+  udsValueModal.classList.toggle("is-hidden", !visible);
+  udsValueOpenButton?.setAttribute("aria-expanded", String(visible));
+  updateModalOpenState();
+
+  if (visible && udsValueCloseButton) {
+    window.setTimeout(() => udsValueCloseButton.focus(), 0);
+  } else if (!visible && udsValueOpenButton) {
+    window.setTimeout(() => udsValueOpenButton.focus(), 0);
   }
 };
 
@@ -3209,6 +3230,26 @@ if (pharmacokineticsModal) {
   });
 }
 
+if (udsValueOpenButton) {
+  udsValueOpenButton.addEventListener("click", () => {
+    setUdsValueModalVisible(true);
+  });
+}
+
+if (udsValueCloseButton) {
+  udsValueCloseButton.addEventListener("click", () => {
+    setUdsValueModalVisible(false);
+  });
+}
+
+if (udsValueModal) {
+  udsValueModal.addEventListener("click", (event) => {
+    if (event.target === udsValueModal) {
+      setUdsValueModalVisible(false);
+    }
+  });
+}
+
 if (udsOpenButton) {
   udsOpenButton.addEventListener("click", () => {
     setUdsModalVisible(true);
@@ -3241,6 +3282,11 @@ document.addEventListener("keydown", (event) => {
 
   if (isModalVisible(pharmacokineticsModal)) {
     setPharmacokineticsModalVisible(false);
+    return;
+  }
+
+  if (isModalVisible(udsValueModal)) {
+    setUdsValueModalVisible(false);
     return;
   }
 

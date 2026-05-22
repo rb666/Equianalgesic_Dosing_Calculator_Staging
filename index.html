@@ -21,7 +21,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260522-uds-audit" />
+    <link rel="stylesheet" href="styles.css?v=20260522-uds-value" />
     <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-audit" />
   </head>
   <body>
@@ -1033,6 +1033,15 @@
               false-positive patterns, and interpretation rules.
             </p>
           </div>
+          <button
+            aria-controls="udsValueModal"
+            aria-expanded="false"
+            class="secondary-button uds-value-button"
+            id="udsValueOpenButton"
+            type="button"
+          >
+            Why use this tool?
+          </button>
         </div>
 
         <div class="uds-screen-body uds-modal-body">
@@ -1207,6 +1216,99 @@
     </section>
 
     <div
+      aria-labelledby="udsValueModalTitle"
+      aria-modal="true"
+      class="reference-modal uds-value-modal is-hidden"
+      id="udsValueModal"
+      role="dialog"
+    >
+      <div class="reference-dialog uds-value-dialog">
+        <div class="reference-modal-header">
+          <div>
+            <p class="eyebrow">Workflow value</p>
+            <h2 id="udsValueModalTitle">Why use this UDS tool?</h2>
+            <p>
+              A concise overview of how the tool improves UDS review compared with
+              fragmented manual lookup.
+            </p>
+          </div>
+          <button
+            class="secondary-button modal-close-button"
+            id="udsValueCloseButton"
+            type="button"
+          >
+            Close
+          </button>
+        </div>
+
+        <div class="reference-modal-body uds-value-body">
+          <section class="uds-value-summary-card">
+            <h3>Structured workflow instead of fragmented lookup</h3>
+            <p>
+              This UDS reference and reconciliation tool turns a traditionally
+              fragmented review process into a single structured workflow. Instead of
+              manually cross-checking medication lists, metabolites, assay limitations,
+              panel coverage, detection windows, false-positive risks, and
+              confirmatory testing needs across multiple references, clinicians can
+              work through one guided interface.
+            </p>
+          </section>
+
+          <section class="uds-value-grid" aria-label="UDS tool benefits">
+            <article>
+              <h3>Faster clinical answers</h3>
+              <p>
+                Lookup answers focused questions such as whether fentanyl appears on a
+                routine opiate screen, whether 7-aminoclonazepam supports clonazepam
+                exposure, or why hydromorphone may appear with hydrocodone.
+              </p>
+            </article>
+            <article>
+              <h3>Real report reconciliation</h3>
+              <p>
+                Pattern Check lets the user enter expected medications, detected
+                findings, and only confirmed tested-absent analytes, then organizes the
+                output around method/panel coverage, compatibility, source ambiguity,
+                absent-finding risk, and next steps.
+              </p>
+            </article>
+            <article>
+              <h3>Fewer missed pitfalls</h3>
+              <p>
+                The tool highlights when a finding is compatible, unexpected,
+                assay-dependent, panel-dependent, or not source-specific by itself.
+                This is especially useful for shared metabolites such as
+                hydromorphone, oxymorphone, morphine, oxazepam, temazepam, and
+                nordiazepam.
+              </p>
+            </article>
+            <article>
+              <h3>Cleaner documentation</h3>
+              <p>
+                Copyable summaries support faster chart review, pharmacist review,
+                consult notes, and communication around unexpected positives,
+                unexpected negatives, and metabolite ambiguity.
+              </p>
+            </article>
+          </section>
+
+          <section class="uds-value-impact">
+            <h3>Workflow impact</h3>
+            <p>
+              The practical impact is less time spent searching separate references,
+              more consistent interpretation between reviewers, more cautious handling
+              of presumptive immunoassay results, and clearer identification of when
+              definitive testing or lab consultation is appropriate. The tool helps
+              reduce premature conclusions about adherence, misuse, diversion, timing,
+              or impairment when the urine result alone cannot support those
+              conclusions.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div
       aria-labelledby="termsModalTitle"
       aria-modal="true"
       class="terms-modal is-hidden"
@@ -1285,7 +1387,7 @@
       </div>
     </div>
 
-    <script src="script.js?v=20260522-uds-screen"></script>
+    <script src="script.js?v=20260522-uds-value"></script>
     <script src="uds-tool.js?v=20260522-uds-audit"></script>
   </body>
 </html>

@@ -2018,6 +2018,7 @@
   elements.patternGuideButton.addEventListener("click", () => {
     const isHidden = elements.patternGuide.classList.toggle("is-hidden");
     elements.patternGuideButton.setAttribute("aria-expanded", String(!isHidden));
+    elements.patternGuideButton.textContent = isHidden ? "Quick guide" : "Hide guide";
   });
 
   elements.addButtons.forEach((button) => {

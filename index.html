@@ -22,7 +22,7 @@
       })();
     </script>
     <link rel="stylesheet" href="styles.css?v=20260522-uds-value" />
-    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-panel-logic-hardening" />
+    <link rel="stylesheet" href="uds-tool.css?v=20260522-uds-pattern-picker-rebuild" />
   </head>
   <body>
     <div class="environment-banner">
@@ -1130,8 +1130,6 @@
                     </button>
                   </div>
                 </div>
-
-                <datalist id="udsItemOptions"></datalist>
                 <section class="uds-pattern-guide is-hidden" id="udsPatternGuide">
                   <h4>Why use Pattern Check?</h4>
                   <p>
@@ -1177,9 +1175,12 @@
                     </div>
                     <p class="uds-field-help">What is prescribed, reported, or otherwise expected?</p>
                     <div class="uds-add-row">
-                      <input id="udsExpectedInput" list="udsItemOptions" placeholder="Example: oxycodone, clonazepam, fentanyl" />
+                      <input id="udsExpectedInput" autocomplete="off" placeholder="Search expected medication..." type="search" />
                       <button class="secondary-button" data-uds-add="expected" type="button">Add</button>
                     </div>
+                    <div class="uds-pattern-picker" id="udsExpectedPicker" role="listbox" aria-label="Expected medication matches"></div>
+                    <div class="uds-pattern-selected" id="udsExpectedSelected" aria-live="polite"></div>
+                    <div class="uds-pattern-input-feedback is-hidden" id="udsExpectedFeedback" aria-live="polite"></div>
                     <div class="uds-chip-list" id="udsExpectedChips"></div>
                   </div>
 
@@ -1190,9 +1191,12 @@
                     </div>
                     <p class="uds-field-help">What did the report list as present or positive?</p>
                     <div class="uds-add-row">
-                      <input id="udsDetectedInput" list="udsItemOptions" placeholder="Example: oxymorphone, norfentanyl, EDDP" />
+                      <input id="udsDetectedInput" autocomplete="off" placeholder="Search detected finding..." type="search" />
                       <button class="secondary-button" data-uds-add="detected" type="button">Add</button>
                     </div>
+                    <div class="uds-pattern-picker" id="udsDetectedPicker" role="listbox" aria-label="Detected finding matches"></div>
+                    <div class="uds-pattern-selected" id="udsDetectedSelected" aria-live="polite"></div>
+                    <div class="uds-pattern-input-feedback is-hidden" id="udsDetectedFeedback" aria-live="polite"></div>
                     <div class="uds-chip-list" id="udsDetectedChips"></div>
                   </div>
 
@@ -1213,9 +1217,12 @@
                       </select>
                     </label>
                     <div class="uds-add-row">
-                      <input id="udsAbsentInput" list="udsItemOptions" placeholder="Example: norfentanyl, 7-aminoclonazepam" />
+                      <input id="udsAbsentInput" autocomplete="off" placeholder="Search absent finding..." type="search" />
                       <button class="secondary-button" data-uds-add="absent" type="button">Add</button>
                     </div>
+                    <div class="uds-pattern-picker" id="udsAbsentPicker" role="listbox" aria-label="Absent finding matches"></div>
+                    <div class="uds-pattern-selected" id="udsAbsentSelected" aria-live="polite"></div>
+                    <div class="uds-pattern-input-feedback is-hidden" id="udsAbsentFeedback" aria-live="polite"></div>
                     <div class="uds-chip-list" id="udsAbsentChips"></div>
                   </div>
                 </div>
@@ -1420,6 +1427,6 @@
     </div>
 
     <script src="script.js?v=20260522-uds-value"></script>
-    <script src="uds-tool.js?v=20260522-uds-panel-logic-hardening"></script>
+    <script src="uds-tool.js?v=20260522-uds-pattern-picker-rebuild"></script>
   </body>
 </html>

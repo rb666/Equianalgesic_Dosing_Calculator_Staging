@@ -881,12 +881,20 @@
     lookupContent: root.querySelector("#udsLookupContent"),
     relationsContent: root.querySelector("#udsRelationsContent"),
     copyLookupButton: root.querySelector("#udsCopyLookupButton"),
-    itemOptions: root.querySelector("#udsItemOptions"),
     patternGuide: root.querySelector("#udsPatternGuide"),
     patternGuideButton: root.querySelector("#udsPatternGuideButton"),
     expectedInput: root.querySelector("#udsExpectedInput"),
     detectedInput: root.querySelector("#udsDetectedInput"),
     absentInput: root.querySelector("#udsAbsentInput"),
+    expectedPicker: root.querySelector("#udsExpectedPicker"),
+    detectedPicker: root.querySelector("#udsDetectedPicker"),
+    absentPicker: root.querySelector("#udsAbsentPicker"),
+    expectedSelected: root.querySelector("#udsExpectedSelected"),
+    detectedSelected: root.querySelector("#udsDetectedSelected"),
+    absentSelected: root.querySelector("#udsAbsentSelected"),
+    expectedFeedback: root.querySelector("#udsExpectedFeedback"),
+    detectedFeedback: root.querySelector("#udsDetectedFeedback"),
+    absentFeedback: root.querySelector("#udsAbsentFeedback"),
     expectedChips: root.querySelector("#udsExpectedChips"),
     detectedChips: root.querySelector("#udsDetectedChips"),
     absentChips: root.querySelector("#udsAbsentChips"),
@@ -895,6 +903,17 @@
     copyPatternButton: root.querySelector("#udsCopyPatternButton"),
     patternScenarios: root.querySelector("#udsPatternScenarios"),
     patternOutput: root.querySelector("#udsPatternOutput"),
+  };
+
+  const patternInputKeys = ["expected", "detected", "absent"];
+  const patternDraft = patternInputKeys.reduce((accumulator, key) => {
+    accumulator[key] = "";
+    return accumulator;
+  }, {});
+  const patternPickerDefaults = {
+    expected: ["oxycodone", "hydrocodone", "fentanyl", "clonazepam", "methadone", "buprenorphine"],
+    detected: ["oxymorphone", "hydromorphone", "norfentanyl", "aminoclonazepam7", "eddp", "thc_cooh"],
+    absent: ["norfentanyl", "aminoclonazepam7", "oxycodone", "norbuprenorphine", "eddp", "lorazepam_glucuronide"],
   };
 
   function item(id, name, group, type, aliases, window, note, sourceIds) {
@@ -1113,8 +1132,6 @@
     elements.lookupView.classList.toggle("is-hidden", state.mode !== "lookup");
     elements.patternView.classList.toggle("is-hidden", state.mode !== "pattern");
 
-    renderDatalist();
-
     if (state.mode === "lookup") {
       if (state.focusId) {
         renderLookupItem(state.focusId);
@@ -1122,16 +1139,87 @@
         renderLookupStart();
       }
     } else {
+      renderPatternPickers();
       renderPatternChips();
       renderPatternScenarios();
       renderPatternOutput();
     }
   }
 
-  function renderDatalist() {
-    elements.itemOptions.innerHTML = items
-      .map((entry) => `<option value="${escapeHtml(entry.name)}"></option>`)
-      .join("");
+  function renderPatternPickers() {
+    patternInputKeys.forEach((key) => renderPatternPicker(key));
+  }
+
+  function renderPatternPicker(key) {
+    const input = elements[`${key}Input`];
+    const picker = elements[`${key}Picker`];
+    const selected = elements[`${key}Selected`];
+    if (!input || !picker || !selected) {
+      return;
+    }
+
+    const results = getPatternPickerResults(key);
+    picker.innerHTML = results.length
+      ? results.map((entry) => renderPatternPickerOption(key, entry)).join("")
+      : `<p class="uds-muted">No matches available.</p>`;
+
+    const selectedEntry = patternDraft[key] ? getItem(patternDraft[key]) : null;
+    selected.innerHTML = selectedEntry
+      ? `
+        <div class="uds-selected-preview">
+          <span>Selected: <strong>${escapeHtml(selectedEntry.name)}</strong></span>
+          <button class="ghost-button" data-uds-clear-draft="${escapeAttribute(key)}" type="button">Change</button>
+        </div>
+      `
+      : `<span class="uds-muted">Choose a result below, then press Add.</span>`;
+  }
+
+  function getPatternPickerResults(key) {
+    const input = elements[`${key}Input`];
+    const query = input?.value.trim() || "";
+    const candidates = query
+      ? searchItems(query, 8)
+      : (patternPickerDefaults[key] || []).map((id) => getItem(id)).filter(Boolean);
+
+    return candidates.filter((entry) => !state[key].includes(entry.id));
+  }
+
+  function renderPatternPickerOption(key, entry) {
+    const isSelected = patternDraft[key] === entry.id;
+    const preview = entry.bottomLine || entry.commonPitfall || entry.note || "";
+
+    return `
+      <button class="uds-picker-option${isSelected ? " is-selected" : ""}" data-uds-pick="${escapeAttribute(key)}" data-uds-id="${escapeAttribute(entry.id)}" type="button" role="option" aria-selected="${isSelected ? "true" : "false"}">
+        <span>
+          <strong>${escapeHtml(entry.name)}</strong>
+          <small>${escapeHtml(entry.group)} &middot; ${escapeHtml(formatType(entry.type))}</small>
+        </span>
+        ${preview ? `<em>${escapeHtml(preview)}</em>` : ""}
+      </button>
+    `;
+  }
+
+  function selectPatternDraft(key, id) {
+    const entry = getItem(id);
+    const input = elements[`${key}Input`];
+    if (!entry || !input) {
+      return;
+    }
+
+    patternDraft[key] = entry.id;
+    input.value = entry.name;
+    setPatternFeedback(key, `Selected ${entry.name}. Press Add to commit.`, "success");
+    renderPatternPicker(key);
+    input.focus();
+    input.select();
+  }
+
+  function clearPatternDraft(key, options = {}) {
+    patternDraft[key] = "";
+    if (options.clearInput && elements[`${key}Input`]) {
+      elements[`${key}Input`].value = "";
+    }
+    renderPatternPicker(key);
   }
 
   function renderLookupStart() {
@@ -1637,6 +1725,7 @@
     renderChipList("expected", elements.expectedChips);
     renderChipList("detected", elements.detectedChips);
     renderChipList("absent", elements.absentChips);
+    renderPatternPickers();
   }
 
   function renderChipList(key, container) {
@@ -2570,15 +2659,35 @@
     return (
       items.find((entry) => normalize(entry.name) === normalizedValue) ||
       items.find((entry) => entry.aliases.some((alias) => normalize(alias) === normalizedValue)) ||
-      searchItems(value, 1)[0] ||
       null
     );
   }
 
-  function addChip(key, rawValue) {
-    const entry = findItemFromInput(rawValue);
-    if (!entry || state[key].includes(entry.id)) {
+  function getPatternInputKey(input) {
+    return input.id.replace("uds", "").replace("Input", "").toLowerCase();
+  }
+
+  function setPatternFeedback(key, message, tone = "neutral") {
+    const feedback = elements[`${key}Feedback`];
+    if (!feedback) {
       return;
+    }
+
+    feedback.textContent = message || "";
+    feedback.dataset.tone = tone;
+    feedback.classList.toggle("is-hidden", !message);
+  }
+
+  function addChipById(key, id) {
+    const entry = getItem(id);
+    if (!entry) {
+      setPatternFeedback(key, "No matching drug, metabolite, or finding.", "warning");
+      return false;
+    }
+
+    if (state[key].includes(entry.id)) {
+      setPatternFeedback(key, `${entry.name} is already added.`, "warning");
+      return false;
     }
 
     state[key].push(entry.id);
@@ -2593,6 +2702,35 @@
 
     renderPatternChips();
     renderPatternOutput();
+    clearPatternDraft(key, { clearInput: true });
+    setPatternFeedback(key, `Added ${entry.name}.`, "success");
+    return true;
+  }
+
+  function addChip(key) {
+    const rawValue = elements[`${key}Input`]?.value || "";
+    const selectedEntry = patternDraft[key] ? getItem(patternDraft[key]) : null;
+    const hasText = Boolean(rawValue.trim());
+
+    if (!selectedEntry && !hasText) {
+      setPatternFeedback(key, "Choose a result before adding.", "warning");
+      return false;
+    }
+
+    const exactMatch = findItemFromInput(rawValue);
+    const entry = selectedEntry || exactMatch || null;
+
+    if (!entry) {
+      setPatternFeedback(
+        key,
+        "Choose a specific result below, then press Add.",
+        "warning",
+      );
+      renderPatternPicker(key);
+      return false;
+    }
+
+    return addChipById(key, entry.id);
   }
 
   function removeChip(key, id) {
@@ -2604,6 +2742,7 @@
 
     renderPatternChips();
     renderPatternOutput();
+    setPatternFeedback(key, "");
   }
 
   function loadPatternScenario(id) {
@@ -2627,6 +2766,10 @@
         panelCoverageConfirmed: state.panelCoverageConfirmed,
       };
     });
+    patternInputKeys.forEach((key) => {
+      clearPatternDraft(key, { clearInput: true });
+    });
+    ["expected", "detected", "absent"].forEach((key) => setPatternFeedback(key, ""));
     updateAbsentControls();
     renderPatternChips();
     renderPatternOutput();
@@ -2742,6 +2885,19 @@
   }
 
   root.addEventListener("click", (event) => {
+    const pickButton = event.target.closest("[data-uds-pick]");
+    if (pickButton) {
+      selectPatternDraft(pickButton.dataset.udsPick, pickButton.dataset.udsId);
+      return;
+    }
+
+    const clearDraftButton = event.target.closest("[data-uds-clear-draft]");
+    if (clearDraftButton) {
+      clearPatternDraft(clearDraftButton.dataset.udsClearDraft, { clearInput: true });
+      setPatternFeedback(clearDraftButton.dataset.udsClearDraft, "");
+      return;
+    }
+
     const backButton = event.target.closest("[data-uds-lookup-back]");
     if (backButton) {
       const previousId = state.lookupBackStack.pop();
@@ -2850,21 +3006,50 @@
     button.addEventListener("click", () => {
       const key = button.dataset.udsAdd;
       const input = elements[`${key}Input`];
-      addChip(key, input.value);
-      input.value = "";
+      if (addChip(key)) {
+        input.value = "";
+      }
       input.focus();
     });
   });
 
   [elements.expectedInput, elements.detectedInput, elements.absentInput].forEach((input) => {
+    input.addEventListener("input", () => {
+      const key = getPatternInputKey(input);
+      patternDraft[key] = "";
+      setPatternFeedback(key, "");
+      renderPatternPicker(key);
+    });
+
+    input.addEventListener("focus", () => {
+      if (patternDraft[getPatternInputKey(input)]) {
+        input.select();
+      }
+    });
+
+    input.addEventListener("click", () => {
+      if (patternDraft[getPatternInputKey(input)]) {
+        input.select();
+      }
+    });
+
     input.addEventListener("keydown", (event) => {
+      const key = getPatternInputKey(input);
+
       if (event.key !== "Enter") {
         return;
       }
+
       event.preventDefault();
-      const key = input.id.replace("uds", "").replace("Input", "").toLowerCase();
-      addChip(key, input.value);
-      input.value = "";
+      const results = getPatternPickerResults(key);
+      if (!patternDraft[key] && results.length) {
+        selectPatternDraft(key, results[0].id);
+        return;
+      }
+
+      if (addChip(key)) {
+        input.value = "";
+      }
     });
   });
 
@@ -2877,6 +3062,10 @@
     state.panelCoverageConfirmed = false;
     updatePanelControl("unknown_panel");
     updateAbsentControls();
+    patternInputKeys.forEach((key) => {
+      clearPatternDraft(key, { clearInput: true });
+    });
+    ["expected", "detected", "absent"].forEach((key) => setPatternFeedback(key, ""));
     renderPatternChips();
     renderPatternOutput();
   });

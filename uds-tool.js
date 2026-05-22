@@ -215,16 +215,80 @@
 
   const assayCaveats = [
     caveat("immunoassay", ["Opioids"], "Opiate immunoassay", "A generic opiate immunoassay is morphine-like and may miss oxycodone, fentanyl, methadone, buprenorphine, tramadol, tapentadol, and other synthetic or semisynthetic opioids.", ["arupDrugTesting", "aafp"]),
+    caveat("immunoassay", ["Opioids"], "Fentanyl screen limitation", "Routine opiate immunoassays do not detect fentanyl; use fentanyl-specific or definitive testing.", ["arupDrugTesting", "aafp"], ["fentanyl", "norfentanyl"], "critical"),
+    caveat("immunoassay", ["Opioids"], "Oxycodone screen limitation", "Routine opiate immunoassays may be negative despite oxycodone use unless an oxycodone-specific assay is ordered.", ["mayoOpiates", "mayoOxycodone", "aafp"], ["oxycodone", "noroxycodone", "oxymorphone", "noroxymorphone"], "critical"),
     caveat("immunoassay", ["Benzodiazepines"], "Benzodiazepine immunoassay", "Some benzodiazepine screens under-detect clonazepam, lorazepam, and glucuronidated metabolites depending on assay design.", ["arupBenzodiazepines", "uic"]),
+    caveat("immunoassay", ["Benzodiazepines"], "Clonazepam / lorazepam screen limitation", "Many benzodiazepine screens may miss clonazepam, 7-aminoclonazepam, lorazepam, or glucuronidated metabolites depending on assay design.", ["arupBenzodiazepines", "uic"], ["clonazepam", "aminoclonazepam7", "lorazepam", "lorazepam_glucuronide"], "critical"),
     caveat("immunoassay", ["Stimulants"], "Amphetamine screen", "Amphetamine immunoassay false positives and source ambiguity can occur; unexpected results need definitive confirmation.", ["uic", "aafp"]),
+    caveat("immunoassay", ["Stimulants"], "Amphetamine confirmation", "Amphetamine-class immunoassays have clinically important false positives and source ambiguity; unexpected positives need definitive confirmation.", ["uic", "aafp"], ["amphetamine", "methamphetamine"], "critical"),
     caveat("immunoassay", ["Cocaine"], "Cocaine screen", "Benzoylecgonine is the primary urine marker; unexpected positives should still be interpreted with cutoff and confirmation context.", ["aafp"]),
     caveat("immunoassay", ["Cannabinoids"], "Cannabinoid screen", "THC immunoassays do not reliably determine timing, dose, impairment, or delta-8 vs delta-9 specificity.", ["arupDrugTesting"]),
+    caveat("any", ["Alcohol markers"], "Alcohol marker context", "EtG and EtS require cutoff, timing, incidental exposure, and panel context before clinical conclusions are made.", ["arupDrugTesting", "arupDetectionWindows"], ["etg", "ets"], "critical"),
     caveat("definitive", ["Opioids", "Benzodiazepines", "Stimulants", "Cocaine", "Cannabinoids", "Alcohol markers", "Sedative-hypnotics"], "Definitive testing", "LC-MS/MS or GC-MS is preferred for unexpected results, adherence/diversion concerns, and parent/metabolite pattern interpretation.", ["arupDrugTesting", "aafp"]),
   ];
 
   const commonGroups = ["Opioids", "Benzodiazepines", "Stimulants", "Cannabinoids", "Cocaine"];
   const commonFindings = ["hydromorphone", "oxymorphone", "noroxycodone", "norhydrocodone", "eddp", "norbuprenorphine", "aminoclonazepam7", "alpha_hydroxyalprazolam", "benzoylecgonine", "thc_cooh"];
   const commonDrugs = ["oxycodone", "hydrocodone", "morphine", "codeine", "fentanyl", "buprenorphine", "methadone", "alprazolam", "clonazepam", "lorazepam", "diazepam"];
+  const highYieldSearches = ["oxycodone", "fentanyl", "norfentanyl", "eddp", "aminoclonazepam7", "hydromorphone", "oxymorphone", "benzoylecgonine", "thc_cooh", "etg"];
+  const intentAliases = [
+    { terms: ["negative opiate", "oxycodone"], focusId: "oxycodone" },
+    { terms: ["negative opiate", "fentanyl"], focusId: "fentanyl" },
+    { terms: ["negative benzo", "clonazepam"], focusId: "aminoclonazepam7" },
+    { terms: ["benzo screen negative", "clonazepam"], focusId: "aminoclonazepam7" },
+    { terms: ["benzo screen negative", "lorazepam"], focusId: "lorazepam" },
+    { terms: ["methadone metabolite"], focusId: "eddp" },
+    { terms: ["cocaine metabolite"], focusId: "benzoylecgonine" },
+  ];
+  const curatedAnswers = {
+    morphine: answer("Morphine in urine may reflect morphine use, codeine metabolism, or heroin exposure when paired with 6-MAM.", "Interpret morphine with codeine, 6-MAM, hydromorphone, timing, and the medication list.", "Morphine alone is not specific for heroin exposure.", "Compare the full opiate pattern and use definitive testing when source matters.", "Do not conclude exact source, dose, timing, impairment, or adherence from morphine alone."),
+    codeine: answer("Codeine exposure may produce codeine, morphine, and sometimes small hydrocodone depending on timing and metabolism.", "Codeine with morphine can be compatible with codeine use; codeine-specific metabolites add support when included.", "Morphine can appear after codeine and should not automatically be treated as separate morphine exposure.", "Interpret relative concentrations, timing, medication list, and definitive analytes if source matters.", "Do not conclude non-prescribed morphine solely from morphine in a codeine-compatible pattern."),
+    hydrocodone: answer("Hydrocodone exposure is commonly supported by norhydrocodone and may also produce hydromorphone.", "Hydrocodone, norhydrocodone, hydromorphone, and dihydrocodeine can form a compatible hydrocodone pattern.", "Hydromorphone may be a metabolite rather than a separate hydromorphone exposure.", "Review the full parent/metabolite pattern and quantitative context when available.", "Do not conclude hydromorphone misuse from hydromorphone alone."),
+    hydromorphone: answer("Hydromorphone can reflect prescribed hydromorphone, hydrocodone metabolism, or minor morphine metabolism.", "Hydromorphone is not source-specific without the rest of the opiate pattern.", "Hydromorphone alone cannot identify the parent opioid.", "Compare hydrocodone, norhydrocodone, morphine, timing, and quantitative context.", "Do not conclude source from hydromorphone alone; it may reflect hydromorphone use, hydrocodone metabolism, or minor morphine metabolism."),
+    oxycodone: answer("Oxycodone exposure may be supported by oxycodone, noroxycodone, oxymorphone, and/or noroxymorphone depending on timing and panel design.", "Noroxycodone supports oxycodone; oxymorphone can be an oxycodone metabolite or a separate prescribed drug.", "A routine opiate screen may be negative despite oxycodone use.", "Use oxycodone-specific testing or definitive LC/GC-MS when oxycodone exposure or adherence matters.", "Do not assume a negative generic opiate screen excludes oxycodone.", { immunoassay: { bottomLine: "A routine opiate immunoassay may be negative despite oxycodone use unless an oxycodone-specific assay is ordered.", commonPitfall: "Do not interpret a negative generic opiate screen as excluding oxycodone exposure.", nextStep: "Order oxycodone-specific testing or definitive LC/GC-MS when oxycodone exposure or adherence matters." }, definitive: { bottomLine: "Oxycodone exposure may be supported by oxycodone, noroxycodone, oxymorphone, and/or noroxymorphone depending on timing and panel design.", commonPitfall: "Oxymorphone may reflect prescribed oxymorphone or oxycodone metabolism.", nextStep: "Interpret with the prescribed medication list and the full metabolite pattern." } }, ["negative opiate screen oxycodone", "opiate screen negative oxycodone"]),
+    oxymorphone: answer("Oxymorphone may reflect prescribed oxymorphone or oxycodone metabolism.", "Noroxymorphone, oxycodone, and noroxycodone help distinguish likely pathways when included.", "Oxymorphone is not automatically evidence of separate oxymorphone use.", "Compare prescribed medications and the full oxycodone/oxymorphone pathway.", "Do not assume oxymorphone misuse; it may be prescribed directly or appear as an oxycodone metabolite."),
+    noroxycodone: answer("Noroxycodone is a supportive oxycodone metabolite when included in the ordered panel.", "Noroxycodone with oxycodone and/or oxymorphone supports oxycodone exposure.", "Absence may reflect timing, cutoff, or panel design rather than nonadherence.", "Confirm whether noroxycodone was included in the definitive panel.", "Do not use noroxycodone alone to determine dose, timing, or adherence certainty."),
+    noroxymorphone: answer("Noroxymorphone supports the oxycodone/oxymorphone pathway when included.", "It may appear with oxycodone or oxymorphone exposure depending on panel design and timing.", "It is not source-specific without parent drugs and clinical context.", "Interpret with oxycodone, oxymorphone, noroxycodone, and medication history.", "Do not conclude exact source or timing from noroxymorphone alone."),
+    fentanyl: answer("Fentanyl exposure is usually supported by norfentanyl, but fentanyl is not detected by a routine opiate immunoassay.", "Fentanyl and/or norfentanyl supports fentanyl exposure when included in the ordered panel.", "A negative routine opiate screen does not rule out fentanyl exposure.", "Use fentanyl-specific immunoassay or definitive LC/GC-MS when fentanyl exposure or adherence matters.", "Urine detection does not establish dose, timing, impairment, or adherence certainty.", { immunoassay: { bottomLine: "Routine opiate immunoassays do not detect fentanyl.", commonPitfall: "A negative generic opiate screen does not rule out fentanyl exposure.", nextStep: "Order fentanyl-specific testing or definitive LC/GC-MS when fentanyl exposure or adherence matters." }, definitive: { bottomLine: "Fentanyl exposure is usually supported by fentanyl and/or norfentanyl on definitive testing.", commonPitfall: "Timing and chronic exposure can affect parent/metabolite pattern.", nextStep: "Interpret fentanyl and norfentanyl together with timing and medication history." } }, ["negative opiate screen fentanyl", "opiate screen negative fentanyl"]),
+    norfentanyl: answer("Norfentanyl is a supportive fentanyl metabolite when included in the ordered panel.", "Norfentanyl with or without parent fentanyl can support fentanyl exposure depending on timing.", "A routine opiate screen may still be negative.", "Use fentanyl-specific or definitive testing and interpret timing carefully.", "Do not infer dose, timing, or impairment from norfentanyl alone."),
+    buprenorphine: answer("Buprenorphine exposure is supported by buprenorphine and/or norbuprenorphine when included in a specific panel.", "Norbuprenorphine supports metabolism/exposure; naloxone may appear with combination products.", "Routine opiate screens usually do not answer buprenorphine questions.", "Use buprenorphine-specific testing or definitive LC/GC-MS when adherence matters.", "Do not conclude adherence or diversion solely from one qualitative buprenorphine result."),
+    norbuprenorphine: answer("Norbuprenorphine supports buprenorphine metabolism/exposure when included.", "It is usually interpreted with parent buprenorphine and product history.", "Panel design and timing affect whether parent or metabolite appears.", "Review buprenorphine, norbuprenorphine, naloxone, timing, and assay method.", "Do not infer exact dosing or adherence certainty from norbuprenorphine alone."),
+    methadone: answer("Methadone exposure is best supported by methadone plus EDDP when included.", "EDDP supports methadone ingestion/metabolism and helps distinguish ingestion from direct specimen contamination.", "Routine opiate screens do not reliably detect methadone unless methadone-specific testing is ordered.", "Use methadone-specific or definitive testing when methadone exposure or adherence matters.", "Do not conclude dose, timing, or adherence certainty from methadone alone."),
+    eddp: answer("EDDP supports methadone ingestion and metabolism.", "EDDP is the major methadone metabolite and is useful when assessing whether methadone was metabolized.", "Methadone without EDDP may require timing, cutoff, renal, or specimen-integrity context.", "Interpret EDDP with parent methadone, timing, and the ordered panel.", "Do not use EDDP alone to determine dose, timing, or impairment.", {}, ["ed dp", "methadone metabolite", "EDDP", "eddp"]),
+    tramadol: answer("Tramadol exposure may require a specific or definitive panel and is not reliably answered by a routine opiate screen.", "O-desmethyltramadol supports tramadol exposure when included.", "Routine opiate immunoassay results may be misleading for tramadol.", "Use specific/definitive testing when tramadol exposure or adherence matters.", "Do not conclude absence of tramadol from a negative generic opiate screen."),
+    tapentadol: answer("Tapentadol is not a routine opiate screen finding and usually requires specific or definitive testing.", "Tapentadol and/or N-desmethyltapentadol may support exposure depending on panel design.", "A negative generic opiate screen does not exclude tapentadol exposure.", "Confirm that tapentadol was included in the ordered panel.", "Do not infer absence, timing, or dose from a generic opiate screen."),
+    "6mam": answer("6-MAM is a specific marker of recent heroin exposure when detected.", "6-MAM has a short detection window; morphine may persist longer after heroin exposure.", "Absence of 6-MAM does not exclude prior heroin exposure if timing is delayed.", "Interpret with timing, morphine/codeine pattern, and definitive testing.", "Do not use absence of 6-MAM alone to exclude heroin exposure outside the short detection window.", {}, ["6 acetylmorphine", "heroin metabolite", "6 monoacetylmorphine"]),
+    benzoylecgonine: answer("Benzoylecgonine is the primary urine metabolite supporting cocaine exposure.", "Cocaine parent may be short-lived; benzoylecgonine is the common urine target.", "A positive result does not establish impairment, exact timing, or route.", "Interpret with cutoff, confirmation status, timing, and clinical context.", "Do not use benzoylecgonine alone to determine impairment or exact timing.", {}, ["cocaine metabolite", "coke metabolite", "BE", "benzoyl ecgonine"]),
+    amphetamine: answer("Amphetamine may be a prescribed drug, metabolite, or immunoassay finding requiring context.", "It can reflect amphetamine salts, lisdexamfetamine, methamphetamine metabolism, or other pathways.", "Amphetamine immunoassays can have false positives and source ambiguity.", "Confirm unexpected results with definitive testing and review medication/source context.", "Do not conclude illicit stimulant use from an amphetamine screen alone."),
+    methamphetamine: answer("Methamphetamine may produce amphetamine and may require isomer testing to clarify source.", "d/l isomer testing can help distinguish some prescription, OTC, and illicit sources.", "Methamphetamine/amphetamine patterns are source-dependent and can be overinterpreted.", "Use definitive testing and isomer information when source matters.", "Do not conclude source or route from methamphetamine alone."),
+    thc_cooh: answer("THC-COOH supports cannabinoid exposure but does not establish impairment, exact timing, or new use.", "Detection can persist for days to much longer depending on frequency of use and patient factors.", "Single urine THC metabolite results are poor tools for impairment or exact timing.", "Use clinical context and serial creatinine-normalized values only when reuse versus residual excretion is the question.", "Do not use a single urine THC metabolite result to determine impairment, exact timing, or new use versus residual excretion.", {}, ["carboxy THC", "THC metabolite", "cannabis metabolite"]),
+    etg: answer("EtG supports recent ethanol exposure but must be interpreted with cutoff, timing, and incidental exposure context.", "EtG is a sensitive alcohol metabolite and is often paired with EtS.", "Low-level positives can be context-dependent and should not be overinterpreted.", "Review cutoff, collection timing, EtS, exposure history, and lab guidance.", "Do not interpret EtG without cutoff, timing, and incidental exposure context."),
+    ets: answer("EtS supports recent ethanol exposure and is commonly interpreted alongside EtG.", "EtS can support ethanol exposure and may help contextualize EtG results.", "Cutoff and incidental exposure context are essential.", "Review EtG/EtS together with cutoff, timing, and exposure history.", "Do not interpret EtS without cutoff, timing, and incidental exposure context."),
+    peth: answer("PEth supports longer-window alcohol exposure compared with urine EtG/EtS.", "PEth reflects phosphatidylethanol formation in blood and is not a same-window urine alcohol marker.", "PEth does not define exact timing of last drink.", "Interpret with the testing matrix, cutoff, and clinical context.", "Do not use PEth alone to determine exact timing, impairment, or a precise drinking amount."),
+    clonazepam: answer("Clonazepam exposure is often best supported by 7-aminoclonazepam, and some benzodiazepine screens may miss it.", "7-aminoclonazepam is the key metabolite when included.", "A negative benzodiazepine immunoassay does not exclude clonazepam exposure.", "Use definitive testing when clonazepam exposure or adherence matters.", "Do not conclude absence of clonazepam from a negative benzodiazepine screen alone.", { immunoassay: { bottomLine: "Many benzodiazepine screens may miss clonazepam or 7-aminoclonazepam.", commonPitfall: "A negative benzodiazepine screen does not exclude clonazepam exposure.", nextStep: "Order definitive testing that includes 7-aminoclonazepam when clonazepam matters." } }, ["negative benzo screen clonazepam", "benzo screen negative clonazepam"]),
+    aminoclonazepam7: answer("7-aminoclonazepam supports clonazepam exposure when included in the ordered panel.", "This metabolite is usually more useful than parent clonazepam in urine.", "It may be missed by some immunoassay screens.", "Use definitive benzodiazepine testing when clonazepam exposure or adherence matters.", "Do not infer dose, timing, or adherence certainty from 7-aminoclonazepam alone.", { immunoassay: { bottomLine: "A benzodiazepine immunoassay may be negative despite clonazepam exposure.", commonPitfall: "Do not treat a negative screen as excluding clonazepam.", nextStep: "Use definitive testing that includes 7-aminoclonazepam." } }, ["clonazepam metabolite", "klonopin metabolite", "7 amino clonazepam", "7-amino"]),
+    lorazepam: answer("Lorazepam may be under-detected by some benzodiazepine immunoassays, especially when glucuronidated metabolites are not well detected.", "Lorazepam and lorazepam-glucuronide support exposure when included.", "A negative benzodiazepine screen does not always exclude lorazepam.", "Use definitive testing when lorazepam exposure or adherence matters.", "Do not conclude absence of lorazepam from a negative benzodiazepine screen alone."),
+    oxazepam: answer("Oxazepam may be prescribed directly or appear as a shared terminal metabolite of several benzodiazepines.", "Diazepam-type benzodiazepines can produce nordiazepam, temazepam, and oxazepam.", "Oxazepam is not source-specific.", "Interpret with nordiazepam, temazepam, diazepam-type medications, and medication history.", "Do not conclude a single parent benzodiazepine from oxazepam alone."),
+    temazepam: answer("Temazepam may be prescribed directly or appear in diazepam-type metabolism.", "Temazepam with nordiazepam and/or oxazepam can fit a diazepam-type pathway.", "Temazepam is not always a separate exposure.", "Interpret with the full benzodiazepine metabolite pattern.", "Do not conclude separate temazepam use without medication history and pattern context."),
+    nordiazepam: answer("Nordiazepam is a shared diazepam-type benzodiazepine metabolite.", "Diazepam, chlordiazepoxide, clorazepate, and related pathways may produce nordiazepam.", "Nordiazepam is not source-specific.", "Interpret with oxazepam, temazepam, medication list, and timing.", "Do not identify a single parent benzodiazepine from nordiazepam alone."),
+    alprazolam: answer("Alprazolam exposure is supported by alpha-hydroxyalprazolam when included.", "Parent alprazolam and alpha-hydroxyalprazolam together support exposure.", "Some benzodiazepine screens vary in sensitivity by assay.", "Use definitive testing when alprazolam exposure or adherence matters.", "Do not infer exact dose or timing from alprazolam urine detection alone."),
+    alpha_hydroxyalprazolam: answer("Alpha-hydroxyalprazolam supports alprazolam exposure.", "It is a key alprazolam metabolite when included in definitive benzodiazepine testing.", "Absence may reflect panel design, timing, or cutoff.", "Interpret with parent alprazolam, timing, and ordered panel contents.", "Do not use this metabolite alone to determine dose, timing, or impairment.", {}, ["alprazolam metabolite", "xanax metabolite", "alpha hydroxy alprazolam"]),
+    zolpidem: answer("Zolpidem usually requires specific testing; routine drug screens may not include it.", "Parent zolpidem and/or zolpidem metabolite may support exposure depending on timing and panel.", "Absence from a routine screen may simply mean it was not tested.", "Confirm whether zolpidem or its metabolite was included in the ordered panel.", "Do not infer absence of zolpidem from a nonspecific drug screen."),
+    carisoprodol: answer("Carisoprodol exposure may be supported by meprobamate, but meprobamate can also be direct exposure.", "Carisoprodol metabolizes to meprobamate.", "Meprobamate is not fully source-specific.", "Interpret carisoprodol and meprobamate together with medication history.", "Do not conclude carisoprodol use from meprobamate alone."),
+    meprobamate: answer("Meprobamate may reflect meprobamate exposure or carisoprodol metabolism.", "Carisoprodol can metabolize to meprobamate, but direct meprobamate exposure is also possible.", "Meprobamate is not source-specific.", "Review medication history and whether carisoprodol was detected or included.", "Do not conclude carisoprodol exposure from meprobamate alone."),
+  };
+
+  items.forEach((entry) => {
+    const curated = curatedAnswers[entry.id];
+    if (curated) {
+      const extraAliases = curated.extraAliases || [];
+      Object.assign(entry, curated);
+      entry.aliases = [...new Set([...(entry.aliases || []), ...extraAliases])];
+      delete entry.extraAliases;
+    } else {
+      entry.curationStatus = "partial";
+    }
+  });
 
   const byId = new Map(items.map((entry) => [entry.id, entry]));
   const relationshipsByFrom = groupBy(relationships, "from");
@@ -269,15 +333,45 @@
   };
 
   function item(id, name, group, type, aliases, window, note, sourceIds) {
-    return { id, name, group, type, aliases, window, note, sourceIds };
+    return { id, name, group, type, aliases, window, note, sourceIds, curationStatus: "partial" };
   }
 
   function rel(from, to, label, strength, clue, sourceIds) {
-    return { from, to, label, strength, clue, sourceIds };
+    return { from, to, label, strength, clinicalTag: getDefaultClinicalTag(label, strength), clue, sourceIds };
   }
 
-  function caveat(method, groups, title, text, sourceIds) {
-    return { method, groups, title, text, sourceIds };
+  function caveat(method, groups, title, text, sourceIds, itemIds = [], severity = "routine") {
+    return { method, groups, title, text, sourceIds, itemIds, severity };
+  }
+
+  function answer(bottomLine, likelyExplanation, commonPitfall, nextStep, doNotConclude = "", methodAnswers = {}, extraAliases = []) {
+    return {
+      curationStatus: "complete",
+      bottomLine,
+      likelyExplanation,
+      commonPitfall,
+      nextStep,
+      doNotConclude,
+      methodAnswers,
+      extraAliases,
+    };
+  }
+
+  function getDefaultClinicalTag(label, strength) {
+    const normalizedLabel = normalize(label);
+    if (strength === "context" || normalizedLabel.includes("context") || normalizedLabel.includes("impurity")) {
+      return "Requires context";
+    }
+    if (normalizedLabel.includes("minor")) {
+      return "Possible minor metabolite";
+    }
+    if (normalizedLabel.includes("supportive") || normalizedLabel.includes("specific") || normalizedLabel.includes("marker")) {
+      return "Supportive finding";
+    }
+    if (normalizedLabel.includes("metabolite")) {
+      return "Expected metabolite";
+    }
+    return "Associated finding";
   }
 
   function groupBy(list, key) {
@@ -306,7 +400,7 @@
       return 0;
     }
 
-    const searchable = [entry.name, entry.group, entry.type, ...entry.aliases].map(normalize);
+    const searchable = [entry.name, entry.group, entry.type, entry.note, entry.bottomLine, ...(entry.aliases || [])].map(normalize);
     const name = normalize(entry.name);
 
     if (name === normalizedQuery) {
@@ -331,12 +425,34 @@
   }
 
   function searchItems(query, limit = 12) {
-    return items
+    const intentMatch = matchIntentAlias(query);
+    const ranked = items
       .map((entry) => ({ entry, score: getSearchScore(entry, query) }))
       .filter(({ score }) => score > 0)
       .sort((a, b) => b.score - a.score || a.entry.name.localeCompare(b.entry.name))
       .slice(0, limit)
       .map(({ entry }) => entry);
+    if (!intentMatch) {
+      return ranked;
+    }
+
+    const intentEntry = getItem(intentMatch);
+    if (!intentEntry) {
+      return ranked;
+    }
+
+    return [intentEntry, ...ranked.filter((entry) => entry.id !== intentEntry.id)].slice(0, limit);
+  }
+
+  function matchIntentAlias(query) {
+    const normalizedQuery = normalize(query);
+    if (!normalizedQuery) {
+      return null;
+    }
+
+    return intentAliases.find((intent) =>
+      intent.terms.every((term) => normalizedQuery.includes(normalize(term)))
+    )?.focusId || null;
   }
 
   function getItem(id) {
@@ -353,11 +469,20 @@
 
   function getRelevantCaveats(itemIds) {
     const groups = new Set(itemIds.map((id) => getItem(id)?.group).filter(Boolean));
-    return assayCaveats.filter((entry) => {
-      const methodMatches = state.method === "any" || entry.method === state.method;
-      const groupMatches = entry.groups.some((group) => groups.has(group));
-      return methodMatches && groupMatches;
-    });
+    const ids = new Set(itemIds);
+    return assayCaveats
+      .filter((entry) => {
+        const methodMatches = state.method === "any" || entry.method === state.method || entry.method === "any";
+        const hasItemScope = Boolean(entry.itemIds?.length);
+        const groupMatches = entry.groups?.some((group) => groups.has(group));
+        const itemMatches = entry.itemIds?.some((id) => ids.has(id));
+        return methodMatches && (hasItemScope ? itemMatches : groupMatches);
+      })
+      .sort((a, b) => severityRank(b.severity) - severityRank(a.severity));
+  }
+
+  function severityRank(severity) {
+    return { critical: 3, important: 2, routine: 1 }[severity] || 0;
   }
 
   function getSourcesForItem(id) {
@@ -405,22 +530,34 @@
   }
 
   function renderLookupStart() {
-    elements.lookupTitle.textContent = "Start with a common item or search";
+    elements.lookupTitle.textContent = "Search-first clinical lookup";
     elements.copyLookupButton.disabled = true;
     state.lastLookupSummary = "";
 
     elements.lookupContent.innerHTML = `
-      <div class="uds-grid">
-        ${renderCommonGroups()}
-        ${renderCommonList("Common findings", commonFindings)}
-        ${renderCommonList("Common drugs", commonDrugs)}
-        ${renderCommonList("High-impact assay caveats", ["oxycodone", "fentanyl", "buprenorphine", "methadone", "clonazepam", "lorazepam"])}
-      </div>
+      <section class="uds-section uds-search-first">
+        <h4>Search any drug, metabolite, screen, or finding</h4>
+        <p class="uds-muted">Examples: oxycodone, norfentanyl, EDDP, 7-aminoclonazepam, negative opiate screen fentanyl, EtG.</p>
+      </section>
+      <section class="uds-section">
+        <h4>High-yield quick searches</h4>
+        <div class="uds-common-list">
+          ${highYieldSearches.map((id) => renderItemChip(id)).join("")}
+        </div>
+      </section>
+      <details class="uds-details">
+        <summary>Browse by drug class</summary>
+        <div class="uds-details-body">
+          ${renderCommonGroups()}
+          ${renderCommonList("Common findings", commonFindings)}
+          ${renderCommonList("Common drugs", commonDrugs)}
+        </div>
+      </details>
     `;
 
     elements.relationsContent.innerHTML = `
       <div class="uds-empty">
-        Search or select a common item. Related parent drugs, metabolites, assay caveats, and source links will appear here.
+        Search or select a high-yield item. Related parent drugs, metabolites, assay caveats, and reference links will appear here.
       </div>
     `;
   }
@@ -500,75 +637,235 @@
     const lookupIsDrug = entry.type.includes("drug");
     const primaryRows = lookupIsDrug ? outgoing : incoming;
     const secondaryRows = lookupIsDrug ? incoming : outgoing;
-    const primaryTitle = lookupIsDrug ? "Expected" : "Sources";
-    const secondaryTitle = lookupIsDrug ? "Can also explain this item" : "Also expected from this source";
-    const clues = [...primaryRows, ...secondaryRows].slice(0, 4).map((relationship) => relationship.clue);
 
     elements.lookupTitle.textContent = entry.name;
     elements.copyLookupButton.disabled = false;
-    state.lastLookupSummary = buildLookupSummary(entry, primaryRows, clues);
+    state.lastLookupSummary = buildLookupSummary(entry, primaryRows, secondaryRows, caveats, sourcesForEntry);
 
     elements.lookupContent.innerHTML = `
       <article>
-        <h3 class="uds-card-title">${escapeHtml(entry.name)}</h3>
-        <p class="uds-muted">
-          ${escapeHtml(entry.group)} - ${escapeHtml(formatType(entry.type))}
-          ${entry.aliases.length ? ` - Also: ${escapeHtml(entry.aliases.join(", "))}` : ""}
-        </p>
-        <div class="uds-badge-row">
-          <span class="uds-badge">${escapeHtml(entry.group)}</span>
-          <span class="uds-badge">${escapeHtml(formatType(entry.type))}</span>
-          <span class="uds-badge">${escapeHtml(entry.window)}</span>
-        </div>
-        <div class="uds-grid">
-          <section class="uds-section">
-            <h4>${primaryTitle}</h4>
-            <div class="uds-relation-list">
-              ${primaryRows.length ? primaryRows.map((relationship) => renderRelationshipRow(relationship, id)).join("") : renderEmpty("No primary relationships configured.")}
-            </div>
-          </section>
-          <section class="uds-section">
-            <h4>Clues</h4>
-            <div class="uds-note-list">
-              ${clues.length ? clues.map((clue) => `<div class="uds-note">${escapeHtml(clue)}</div>`).join("") : renderEmpty(entry.note)}
-            </div>
-          </section>
-        </div>
-        ${
-          secondaryRows.length
-            ? `
-              <details class="uds-details">
-                <summary>${escapeHtml(secondaryTitle)}</summary>
-                <div class="uds-details-body">
-                  <div class="uds-relation-list">${secondaryRows.map((relationship) => renderRelationshipRow(relationship, id)).join("")}</div>
-                </div>
-              </details>
-            `
-            : ""
-        }
-        <details class="uds-details">
-          <summary>Details</summary>
-          <div class="uds-details-body">
-            <div class="uds-note">${escapeHtml(entry.note)}</div>
-            ${caveats.map((caveatEntry) => `<div class="uds-note"><strong>${escapeHtml(caveatEntry.title)}:</strong> ${escapeHtml(caveatEntry.text)}</div>`).join("")}
-          </div>
-        </details>
-        <details class="uds-details">
-          <summary>Sources</summary>
-          <div class="uds-details-body">
-            ${renderSources(sourcesForEntry)}
-          </div>
-        </details>
+        ${renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats)}
+        ${renderCollapsedLookupDetails(entry, primaryRows, secondaryRows, caveats, sourcesForEntry)}
       </article>
     `;
 
     renderRelationsPane(entry, outgoing, incoming, caveats);
   }
 
+  function renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats) {
+    const criticalCaveat = caveats.find((caveatEntry) => caveatEntry.severity === "critical");
+    const bottomLine = getMethodAnswer(entry, "bottomLine") || entry.bottomLine || buildBottomLine(entry, primaryRows, secondaryRows, caveats);
+    const likelyExplanation = entry.likelyExplanation || buildLikelyExplanation(entry, primaryRows, secondaryRows);
+    const commonPitfall = getMethodAnswer(entry, "commonPitfall") || entry.commonPitfall || buildCommonPitfall(entry, caveats);
+    const nextStep = getMethodAnswer(entry, "nextStep") || entry.nextStep || buildNextStep(entry, caveats);
+
+    return `
+      <section class="uds-answer-card" aria-label="Clinical answer">
+        <div class="uds-answer-header">
+          <div>
+            <p class="eyebrow">Clinical answer</p>
+            <h3>${escapeHtml(entry.name)}</h3>
+          </div>
+          <div class="uds-badge-row">
+            <span class="uds-badge">${escapeHtml(entry.group)}</span>
+            <span class="uds-badge">${escapeHtml(formatType(entry.type))}</span>
+            <span class="uds-badge">${escapeHtml(entry.window)}</span>
+          </div>
+        </div>
+        ${renderCurationStatus(entry)}
+        ${criticalCaveat ? `<div class="uds-critical-warning">${escapeHtml(criticalCaveat.text)}</div>` : ""}
+        ${renderAnswerLine("Bottom line", bottomLine)}
+        ${renderAnswerLine("Likely explanation(s)", likelyExplanation)}
+        ${renderAnswerLine("Common pitfall", commonPitfall)}
+        ${renderAnswerLine("What to do next", nextStep)}
+        ${shouldShowDoNotConclude(entry) ? renderAnswerLine("Do not conclude", entry.doNotConclude || buildDoNotConclude(entry)) : ""}
+      </section>
+    `;
+  }
+
+  function renderAnswerLine(label, text) {
+    if (!text) {
+      return "";
+    }
+
+    return `
+      <div class="uds-answer-line">
+        <div class="uds-answer-label">${escapeHtml(label)}</div>
+        <div class="uds-answer-text">${escapeHtml(text)}</div>
+      </div>
+    `;
+  }
+
+  function renderCollapsedLookupDetails(entry, primaryRows, secondaryRows, caveats, sourcesForEntry) {
+    return `
+      ${renderDetailsSection("Expected / possible related findings", renderRelationshipList(primaryRows, secondaryRows, entry.id))}
+      ${renderDetailsSection("Detection window details", renderDetectionWindow(entry))}
+      ${renderDetailsSection("Assay limitations", renderAssayCaveats(caveats))}
+      ${renderDetailsSection("False positives / false negatives", renderFalsePositiveNegative(entry, caveats))}
+      ${renderDetailsSection("Do not overinterpret", renderDoNotConclude(entry))}
+      ${renderDetailsSection("References", renderSources(sourcesForEntry))}
+    `;
+  }
+
+  function renderDetailsSection(title, bodyHtml) {
+    if (!bodyHtml) {
+      return "";
+    }
+
+    return `
+      <details class="uds-details">
+        <summary>${escapeHtml(title)}</summary>
+        <div class="uds-details-body">
+          ${bodyHtml}
+        </div>
+      </details>
+    `;
+  }
+
+  function renderRelationshipList(primaryRows, secondaryRows, focusId) {
+    const lookupIsDrug = getItem(focusId)?.type.includes("drug");
+    const primaryTitle = lookupIsDrug ? "Expected urine findings" : "Possible parent drug(s) / explanations";
+    const secondaryTitle = lookupIsDrug ? "Other possible related findings" : "Also associated with";
+    const sections = [];
+
+    sections.push(`
+      <section class="uds-section">
+        <h4>${primaryTitle}</h4>
+        <div class="uds-relation-list">
+          ${primaryRows.length ? primaryRows.map((relationship) => renderRelationshipRow(relationship, focusId)).join("") : renderEmpty("No primary relationships configured.")}
+        </div>
+      </section>
+    `);
+
+    if (secondaryRows.length) {
+      sections.push(`
+        <section class="uds-section">
+          <h4>${secondaryTitle}</h4>
+          <div class="uds-relation-list">
+            ${secondaryRows.map((relationship) => renderRelationshipRow(relationship, focusId)).join("")}
+          </div>
+        </section>
+      `);
+    }
+
+    return `<div class="uds-grid">${sections.join("")}</div>`;
+  }
+
+  function renderDetectionWindow(entry) {
+    return `<div class="uds-note"><strong>${escapeHtml(entry.name)}:</strong> ${escapeHtml(entry.window || "Panel and timing dependent.")}</div>`;
+  }
+
+  function renderAssayCaveats(caveats) {
+    if (!caveats.length) {
+      return renderEmpty("No method-specific assay limitation is configured for this item.");
+    }
+
+    return caveats
+      .map((caveatEntry) => `<div class="uds-note"><strong>${escapeHtml(caveatEntry.title)}:</strong> ${escapeHtml(caveatEntry.text)}</div>`)
+      .join("");
+  }
+
+  function renderFalsePositiveNegative(entry, caveats) {
+    const caveatText = caveats.length
+      ? caveats.map((caveatEntry) => caveatEntry.text).join(" ")
+      : "False-positive and false-negative interpretation depends on assay design, cutoff, cross-reactivity, timing, and panel contents.";
+    return `<div class="uds-note">${escapeHtml(caveatText)}</div>`;
+  }
+
+  function renderDoNotConclude(entry) {
+    return `<div class="uds-note">${escapeHtml(entry.doNotConclude || buildDoNotConclude(entry))}</div>`;
+  }
+
+  function renderCurationStatus(entry) {
+    if (entry.curationStatus === "complete" && hasCuratedAnswer(entry)) {
+      return "";
+    }
+
+    const message = entry.curationStatus === "partial"
+      ? "Partial curated interpretation: verify details with assay method, panel contents, and references."
+      : "Limited curated interpretation: this entry is present for search/relationship mapping but needs content review.";
+
+    return `<div class="uds-caution">${escapeHtml(message)}</div>`;
+  }
+
+  function hasCuratedAnswer(entry) {
+    return Boolean(entry.bottomLine && entry.commonPitfall && entry.nextStep);
+  }
+
+  function shouldShowDoNotConclude(entry) {
+    const highRiskIds = new Set([
+      "hydromorphone",
+      "oxymorphone",
+      "thc_cooh",
+      "etg",
+      "ets",
+      "amphetamine",
+      "methamphetamine",
+      "aminoclonazepam7",
+    ]);
+    return highRiskIds.has(entry.id);
+  }
+
+  function getMethodAnswer(entry, field) {
+    if (!entry.methodAnswers) {
+      return "";
+    }
+    if (state.method === "immunoassay") {
+      return entry.methodAnswers.immunoassay?.[field] || "";
+    }
+    if (state.method === "definitive") {
+      return entry.methodAnswers.definitive?.[field] || "";
+    }
+    return "";
+  }
+
+  function buildBottomLine(entry, primaryRows, secondaryRows, caveats) {
+    const critical = caveats.find((caveatEntry) => caveatEntry.severity === "critical");
+    if (critical) {
+      return critical.text;
+    }
+    if (entry.note) {
+      return entry.note;
+    }
+    return `${entry.name} interpretation depends on assay method, timing, panel contents, and medication history.`;
+  }
+
+  function buildLikelyExplanation(entry, primaryRows, secondaryRows) {
+    if (primaryRows.length) {
+      const names = primaryRows.slice(0, 4).map((row) => labelFor(row.to === entry.id ? row.from : row.to)).join(", ");
+      return `${entry.name} is associated with ${names}. Interpret the pattern rather than a single analyte.`;
+    }
+    if (secondaryRows.length) {
+      const names = secondaryRows.slice(0, 4).map((row) => labelFor(row.to === entry.id ? row.from : row.to)).join(", ");
+      return `${entry.name} may be related to ${names}, depending on timing and panel design.`;
+    }
+    return entry.note || "No configured parent/metabolite relationship is available for this item.";
+  }
+
+  function buildCommonPitfall(entry, caveats) {
+    const critical = caveats.find((caveatEntry) => caveatEntry.severity === "critical");
+    if (critical) {
+      return critical.text;
+    }
+    return "Do not overinterpret a urine result without the ordered panel, cutoff, timing, assay method, and medication list.";
+  }
+
+  function buildNextStep(entry, caveats) {
+    if (caveats.some((caveatEntry) => caveatEntry.method === "immunoassay")) {
+      return "Use definitive testing or a targeted assay when the result conflicts with the medication list or clinical question.";
+    }
+    return "Interpret with medication history, timing, panel contents, and references; consult the lab for unexpected results.";
+  }
+
+  function buildDoNotConclude(entry) {
+    return `Do not conclude exact dose, timing, impairment, diversion, or adherence certainty from ${entry.name} urine detection alone.`;
+  }
+
   function renderRelationsPane(entry, outgoing, incoming, caveats) {
+    const lookupIsDrug = entry.type.includes("drug");
     const relationshipGroups = [
-      ["Sources", incoming],
-      ["Expected", outgoing],
+      ["Possible parent drug(s) / explanations", incoming],
+      [lookupIsDrug ? "Expected urine findings" : "Also associated with", outgoing],
     ];
 
     elements.relationsContent.innerHTML = `
@@ -636,7 +933,7 @@
           ${escapeHtml(labelFor(focusId))} ${direction} ${escapeHtml(labelFor(otherId))}
         </span>
         <span class="uds-relation-sub">${escapeHtml(relationship.clue)}</span>
-        <span class="uds-relation-tag">${escapeHtml(relationship.label)}</span>
+        <span class="uds-relation-tag">${escapeHtml(relationship.clinicalTag || formatStrength(relationship.strength))}</span>
       </button>
     `;
   }
@@ -647,7 +944,7 @@
       <button class="uds-nav-row" data-uds-focus="${escapeAttribute(otherId)}" type="button">
         <span class="uds-nav-main">${escapeHtml(labelFor(otherId))}</span>
         <span class="uds-nav-sub">${escapeHtml(relationship.clue)}</span>
-        <span class="uds-relation-tag">${escapeHtml(relationship.label)}</span>
+        <span class="uds-relation-tag">${escapeHtml(relationship.clinicalTag || formatStrength(relationship.strength))}</span>
       </button>
     `;
   }
@@ -705,6 +1002,7 @@
     elements.patternOutput.innerHTML = `
       <div class="uds-result-block">
         ${renderResultSection("Assessment", [result.assessment], "uds-result-assessment")}
+        ${renderResultSection("Recommended next step", [result.nextStep], "uds-result-next-step")}
         ${renderResultSection("Explained", result.explained)}
         ${renderResultSection("Needs context", result.needsContext)}
         ${renderResultSection("Not explained", result.notExplained)}
@@ -727,6 +1025,7 @@
         needsContext: [],
         notExplained: [],
         missingSupportive: [],
+        nextStep: "Add detected findings to compare against the selected expected drug(s).",
         methodNotes: getRelevantCaveats([...state.expected, ...state.detected]).map((entry) => entry.text),
         summary: "",
       };
@@ -772,10 +1071,12 @@
 
     const methodNotes = getRelevantCaveats([...state.expected, ...state.detected]).map((entry) => entry.text);
     const assessment = buildAssessment(explained, needsContext, notExplained);
-    const summary = buildPatternSummary(assessment, explained, needsContext, notExplained);
+    const nextStep = buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes);
+    const summary = buildPatternSummary(assessment, nextStep, explained, needsContext, notExplained, methodNotes);
 
     return {
       assessment,
+      nextStep,
       explained,
       needsContext,
       notExplained,
@@ -787,27 +1088,54 @@
 
   function buildAssessment(explained, needsContext, notExplained) {
     if (notExplained.length) {
-      return "Pattern is partially discordant; at least one detected finding is not explained by the selected expected drugs.";
+      return "At least one finding is not explained by the selected expected drug(s) in the current rule set. Confirm medication list, assay method, panel contents, timing, and consider definitive testing or lab consultation.";
     }
     if (needsContext.length) {
-      return "Pattern mostly fits, with one or more findings requiring quantitative, timing, or assay context.";
+      return "Findings are mostly compatible, but one or more results require timing, quantitative, cutoff, panel, or assay-method context.";
     }
     if (explained.length) {
-      return "Pattern fits the selected expected drug(s) based on configured parent/metabolite relationships.";
+      return "Findings are compatible with the selected expected drug(s), based on configured parent/metabolite relationships. This does not confirm dose, timing, adherence, or absence of other exposure.";
     }
-    return "Insufficient pattern data to interpret.";
+    return "Add detected findings to compare against the selected expected drug(s).";
   }
 
-  function buildLookupSummary(entry, rows, clues) {
-    const relationText = rows.length
-      ? rows.slice(0, 4).map((row) => `${labelFor(row.to === entry.id ? row.from : row.to)} (${row.label})`).join(", ")
-      : "no primary relationships configured";
-    const clueText = clues.length ? ` Key clue: ${clues[0]}` : "";
-    return `${entry.name}: ${entry.note} Related findings/sources: ${relationText}.${clueText}`;
+  function buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes) {
+    if (notExplained.length) {
+      return "Confirm the medication list and assay method; consider definitive testing or lab consultation for unexplained findings.";
+    }
+    if (needsContext.length) {
+      return "Interpret with timing, quantitative values, cutoff, and panel contents before making adherence or misuse conclusions.";
+    }
+    if (missingSupportive.length) {
+      return "Verify whether supportive metabolites were included in the ordered panel before treating their absence as meaningful.";
+    }
+    if (methodNotes.length) {
+      return "Review method limitations before acting on the result.";
+    }
+    return "Use clinical context, timing, and the ordered panel details to confirm interpretation.";
   }
 
-  function buildPatternSummary(assessment, explained, needsContext, notExplained) {
-    const parts = [assessment];
+  function buildLookupSummary(entry, primaryRows, secondaryRows, caveats, sourcesForEntry) {
+    const lines = [
+      `UDS lookup: ${entry.name}`,
+      `Bottom line: ${getMethodAnswer(entry, "bottomLine") || entry.bottomLine || buildBottomLine(entry, primaryRows, secondaryRows, caveats)}`,
+      `Likely explanation(s): ${entry.likelyExplanation || buildLikelyExplanation(entry, primaryRows, secondaryRows)}`,
+      `Common pitfall: ${getMethodAnswer(entry, "commonPitfall") || entry.commonPitfall || buildCommonPitfall(entry, caveats)}`,
+      `What to do next: ${getMethodAnswer(entry, "nextStep") || entry.nextStep || buildNextStep(entry, caveats)}`,
+    ];
+
+    if (entry.doNotConclude) {
+      lines.push(`Do not overinterpret: ${entry.doNotConclude}`);
+    }
+    if (sourcesForEntry?.length) {
+      lines.push(`References: ${sourcesForEntry.map((source) => source.title).join("; ")}`);
+    }
+
+    return lines.filter(Boolean).join("\n");
+  }
+
+  function buildPatternSummary(assessment, nextStep, explained, needsContext, notExplained, methodNotes) {
+    const parts = [`Assessment: ${assessment}`, `Recommended next step: ${nextStep}`];
     if (explained.length) {
       parts.push(`Explained: ${explained.slice(0, 4).join(" ")}`);
     }
@@ -816,6 +1144,9 @@
     }
     if (notExplained.length) {
       parts.push(`Not explained: ${notExplained.slice(0, 3).join(" ")}`);
+    }
+    if (methodNotes.length) {
+      parts.push(`Method notes: ${methodNotes.slice(0, 3).join(" ")}`);
     }
     return parts.join(" ");
   }
@@ -855,6 +1186,10 @@
     };
 
     return labels[type] || type.replaceAll("_", " ");
+  }
+
+  function formatStrength(strength) {
+    return strength ? strength.replaceAll("_", " ") : "relationship";
   }
 
   function capitalize(value) {
@@ -915,20 +1250,24 @@
 
     elements.searchResults.innerHTML = results.length
       ? results
-        .map(
-          (entry) => `
-            <button class="uds-search-result" data-uds-focus="${escapeAttribute(entry.id)}" type="button">
-              <span>
-                <strong>${escapeHtml(entry.name)}</strong>
-                <span class="uds-relation-sub">${escapeHtml(entry.group)} - ${escapeHtml(formatType(entry.type))}${entry.aliases.length ? ` - ${escapeHtml(entry.aliases.slice(0, 3).join(", "))}` : ""}</span>
-              </span>
-              <span class="uds-relation-tag">${getOutgoing(entry.id).length + getIncoming(entry.id).length} links</span>
-            </button>
-          `,
-        )
+        .map((entry) => renderSearchResult(entry))
         .join("")
       : renderEmpty("No match. Try a brand, metabolite, class, or common finding.");
     elements.searchResults.classList.remove("is-hidden");
+  }
+
+  function renderSearchResult(entry) {
+    return `
+      <button class="uds-search-result" data-uds-focus="${escapeAttribute(entry.id)}" type="button">
+        <div class="uds-search-result-main">
+          <span class="uds-search-result-name">${escapeHtml(entry.name)}</span>
+          <span class="uds-search-result-meta">${escapeHtml(entry.group)} - ${escapeHtml(formatType(entry.type))}</span>
+        </div>
+        <div class="uds-search-result-summary">
+          ${escapeHtml(entry.bottomLine || entry.note || "")}
+        </div>
+      </button>
+    `;
   }
 
   async function copyText(text) {

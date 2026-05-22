@@ -1196,10 +1196,35 @@
   display: grid;
   gap: 10px;
   margin: 14px 18px 0;
-  padding: 13px;
+  padding: 11px 13px;
   border: 2px solid var(--uds-context-border);
   border-radius: 10px;
   background: var(--uds-context-bg);
+}
+
+.uds-scenario-details {
+  display: grid;
+  gap: 10px;
+}
+
+.uds-scenario-summary {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  list-style: none;
+}
+
+.uds-scenario-summary::-webkit-details-marker {
+  display: none;
+}
+
+.uds-scenario-body {
+  display: grid;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 2px solid color-mix(in srgb, var(--uds-context-border) 46%, transparent);
 }
 
 .uds-scenario-header h4,
@@ -1221,6 +1246,27 @@
   font-size: 0.88rem;
   font-weight: 720;
   line-height: 1.35;
+}
+
+.uds-scenario-toggle-text {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border: 1.5px solid var(--uds-context-border);
+  border-radius: 999px;
+  background: var(--uds-context-surface);
+  color: var(--uds-context-text);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.uds-scenario-toggle-text::before {
+  content: "Show";
+}
+
+.uds-scenario-details[open] .uds-scenario-toggle-text::before {
+  content: "Hide";
 }
 
 .uds-scenario-list {

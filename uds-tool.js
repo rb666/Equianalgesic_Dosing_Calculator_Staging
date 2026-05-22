@@ -1587,20 +1587,25 @@
     }, new Map());
 
     elements.patternScenarios.innerHTML = `
-      <div class="uds-scenario-header">
-        <div>
-          <h4>Clinical workflow templates</h4>
-          <p>Load a standard review scenario, then adjust expected, detected, and tested-absent findings to match the report.</p>
-        </div>
-      </div>
-      ${[...groupedScenarios.entries()].map(([category, scenarios]) => `
-        <section class="uds-scenario-group">
-          <h5>${escapeHtml(category)}</h5>
-          <div class="uds-scenario-list">
-            ${scenarios.map((scenario) => renderPatternScenarioButton(scenario)).join("")}
+      <details class="uds-scenario-details">
+        <summary class="uds-scenario-summary">
+          <div class="uds-scenario-header">
+            <h4>Clinical workflow templates</h4>
+            <p>Optional starting points for common UDS reconciliation patterns.</p>
           </div>
-        </section>
-      `).join("")}
+          <span class="uds-scenario-toggle-text" aria-hidden="true"></span>
+        </summary>
+        <div class="uds-scenario-body">
+          ${[...groupedScenarios.entries()].map(([category, scenarios]) => `
+            <section class="uds-scenario-group">
+              <h5>${escapeHtml(category)}</h5>
+              <div class="uds-scenario-list">
+                ${scenarios.map((scenario) => renderPatternScenarioButton(scenario)).join("")}
+              </div>
+            </section>
+          `).join("")}
+        </div>
+      </details>
     `;
   }
 

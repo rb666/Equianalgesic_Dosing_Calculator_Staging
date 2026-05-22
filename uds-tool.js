@@ -231,23 +231,36 @@
   ];
 
   const commonGroups = ["Opioids", "Benzodiazepines", "Stimulants", "Cannabinoids", "Cocaine"];
-  const commonFindings = ["hydromorphone", "oxymorphone", "noroxycodone", "norhydrocodone", "eddp", "norbuprenorphine", "aminoclonazepam7", "alpha_hydroxyalprazolam", "benzoylecgonine", "thc_cooh"];
-  const commonDrugs = ["oxycodone", "hydrocodone", "morphine", "codeine", "fentanyl", "buprenorphine", "methadone", "alprazolam", "clonazepam", "lorazepam", "diazepam"];
-  const highYieldSearches = ["oxycodone", "fentanyl", "norfentanyl", "eddp", "aminoclonazepam7", "hydromorphone", "oxymorphone", "benzoylecgonine", "thc_cooh", "etg"];
+  const highYieldSearches = ["fentanyl", "oxycodone", "hydromorphone", "aminoclonazepam7", "eddp", "thc_cooh", "etg"];
   const intentAliases = [
-    { terms: ["negative opiate", "oxycodone"], focusId: "oxycodone" },
-    { terms: ["negative opiate", "fentanyl"], focusId: "fentanyl" },
-    { terms: ["negative benzo", "clonazepam"], focusId: "aminoclonazepam7" },
-    { terms: ["benzo screen negative", "clonazepam"], focusId: "aminoclonazepam7" },
-    { terms: ["benzo screen negative", "lorazepam"], focusId: "lorazepam" },
+    { terms: ["negative", "opiate", "fentanyl"], focusId: "fentanyl", method: "immunoassay" },
+    { terms: ["negative", "opiate", "oxycodone"], focusId: "oxycodone", method: "immunoassay" },
+    { terms: ["negative", "benzo", "clonazepam"], focusId: "aminoclonazepam7", method: "immunoassay" },
+    { terms: ["benzo", "screen", "negative", "clonazepam"], focusId: "aminoclonazepam7", method: "immunoassay" },
+    { terms: ["benzo", "screen", "negative", "lorazepam"], focusId: "lorazepam", method: "immunoassay" },
     { terms: ["methadone metabolite"], focusId: "eddp" },
     { terms: ["cocaine metabolite"], focusId: "benzoylecgonine" },
-    { terms: ["hydromorphone", "hydrocodone"], focusId: "hydromorphone" },
+    { terms: ["hydromorphone", "hydrocodone"], focusId: "hydromorphone", method: "definitive" },
     { terms: ["thc", "timing"], focusId: "thc_cooh" },
     { terms: ["thc", "impairment"], focusId: "thc_cooh" },
     { terms: ["etg", "incidental"], focusId: "etg" },
     { terms: ["etg", "cutoff"], focusId: "etg" },
   ];
+  const likelyExplanationIds = new Set(["hydromorphone", "oxymorphone", "oxazepam", "temazepam", "nordiazepam", "amphetamine", "methamphetamine", "thc_cooh", "etg", "ets", "aminoclonazepam7"]);
+  const doNotConcludeIds = new Set(["hydromorphone", "oxymorphone", "thc_cooh", "etg", "ets", "amphetamine", "methamphetamine", "aminoclonazepam7"]);
+  const allowedClinicalTags = new Set([
+    "Expected metabolite",
+    "Supportive metabolite",
+    "Possible minor metabolite",
+    "Possible parent drug",
+    "Shared metabolite",
+    "Not source-specific",
+    "Assay limitation",
+    "Exposure marker",
+    "Requires quantitative context",
+    "Requires timing context",
+    "Requires panel context",
+  ]);
   const curatedAnswers = {
     morphine: answer("Morphine in urine may reflect morphine use, codeine metabolism, or heroin exposure when paired with 6-MAM.", "Interpret morphine with codeine, 6-MAM, hydromorphone, timing, and the medication list.", "Morphine alone is not specific for heroin exposure.", "Compare the full opiate pattern and use definitive testing when source matters.", "Do not conclude exact source, dose, timing, impairment, or adherence from morphine alone."),
     codeine: answer("Codeine exposure may produce codeine, morphine, and sometimes small hydrocodone depending on timing and metabolism.", "Codeine with morphine can be compatible with codeine use; codeine-specific metabolites add support when included.", "Morphine can appear after codeine and should not automatically be treated as separate morphine exposure.", "Interpret relative concentrations, timing, medication list, and definitive analytes if source matters.", "Do not conclude non-prescribed morphine solely from morphine in a codeine-compatible pattern."),
@@ -296,6 +309,8 @@
     } else {
       entry.curationStatus = "partial";
     }
+    entry.showLikelyExplanation = likelyExplanationIds.has(entry.id);
+    entry.showDoNotConclude = doNotConcludeIds.has(entry.id);
   });
 
   const byId = new Map(items.map((entry) => [entry.id, entry]));
@@ -383,19 +398,25 @@
     if (notSourceSpecificPairs.has(`${from}:${to}`)) {
       return "Not source-specific";
     }
+    if (normalizedLabel.includes("isomer") || normalizedLabel.includes("ratio") || normalizedLabel.includes("serial")) {
+      return "Requires quantitative context";
+    }
     if (strength === "context" || normalizedLabel.includes("context") || normalizedLabel.includes("impurity")) {
-      return "Requires context";
+      return "Requires panel context";
     }
     if (normalizedLabel.includes("minor")) {
       return "Possible minor metabolite";
     }
-    if (normalizedLabel.includes("supportive") || normalizedLabel.includes("specific") || normalizedLabel.includes("marker")) {
-      return "Supportive finding";
+    if (normalizedLabel.includes("marker") || normalizedLabel.includes("exposure")) {
+      return "Exposure marker";
+    }
+    if (normalizedLabel.includes("supportive") || normalizedLabel.includes("specific")) {
+      return "Supportive metabolite";
     }
     if (normalizedLabel.includes("metabolite")) {
       return "Expected metabolite";
     }
-    return "Associated finding";
+    return "Requires panel context";
   }
 
   function groupBy(list, key) {
@@ -460,7 +481,7 @@
       return ranked;
     }
 
-    const intentEntry = getItem(intentMatch);
+    const intentEntry = getItem(intentMatch.focusId);
     if (!intentEntry) {
       return ranked;
     }
@@ -476,7 +497,7 @@
 
     return intentAliases.find((intent) =>
       intent.terms.every((term) => normalizedQuery.includes(normalize(term)))
-    )?.focusId || null;
+    ) || null;
   }
 
   function getItem(id) {
@@ -561,7 +582,7 @@
     elements.lookupContent.innerHTML = `
       <section class="uds-section uds-search-first">
         <h4>Search any drug, metabolite, screen, or finding</h4>
-        <p class="uds-muted">Examples: oxycodone, norfentanyl, EDDP, 7-aminoclonazepam, negative opiate screen fentanyl, EtG.</p>
+        <p class="uds-muted">Examples: oxycodone, negative opiate screen fentanyl, 7-aminoclonazepam, EDDP, EtG.</p>
       </section>
       <section class="uds-section">
         <h4>High-yield quick searches</h4>
@@ -573,8 +594,6 @@
         <summary>Browse by drug class</summary>
         <div class="uds-details-body">
           ${renderCommonGroups()}
-          ${renderCommonList("Common findings", commonFindings)}
-          ${renderCommonList("Common drugs", commonDrugs)}
         </div>
       </details>
     `;
@@ -600,17 +619,6 @@
               `,
             )
             .join("")}
-        </div>
-      </section>
-    `;
-  }
-
-  function renderCommonList(title, ids) {
-    return `
-      <section class="uds-section">
-        <h4>${escapeHtml(title)}</h4>
-        <div class="uds-common-list">
-          ${ids.map((id) => renderItemChip(id)).join("")}
         </div>
       </section>
     `;
@@ -667,9 +675,10 @@
     state.lastLookupSummary = buildLookupSummary(entry, primaryRows, secondaryRows, caveats, sourcesForEntry);
 
     elements.lookupContent.innerHTML = `
-      <article>
+      <article class="uds-lookup-result">
         ${renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats)}
         ${renderCollapsedLookupDetails(entry, primaryRows, secondaryRows, caveats, sourcesForEntry)}
+        ${renderRelatedFindingsPanel(entry, primaryRows, secondaryRows)}
       </article>
     `;
 
@@ -677,10 +686,11 @@
   }
 
   function renderClinicalAnswerCard(entry, primaryRows, secondaryRows, caveats) {
-    const criticalCaveat = caveats.find((caveatEntry) => caveatEntry.severity === "critical");
     const bottomLine = getMethodAnswer(entry, "bottomLine") || entry.bottomLine || buildBottomLine(entry, primaryRows, secondaryRows, caveats);
-    const likelyExplanation = entry.likelyExplanation || buildLikelyExplanation(entry, primaryRows, secondaryRows);
-    const commonPitfall = getMethodAnswer(entry, "commonPitfall") || entry.commonPitfall || buildCommonPitfall(entry, caveats);
+    const likelyExplanation = shouldShowLikelyExplanation(entry)
+      ? entry.likelyExplanation || buildLikelyExplanation(entry, primaryRows, secondaryRows)
+      : "";
+    const pitfall = getMethodAnswer(entry, "commonPitfall") || entry.commonPitfall || buildCommonPitfall(entry, caveats);
     const nextStep = getMethodAnswer(entry, "nextStep") || entry.nextStep || buildNextStep(entry, caveats);
 
     return `
@@ -696,12 +706,13 @@
             <span class="uds-badge">${escapeHtml(entry.window)}</span>
           </div>
         </div>
+        ${renderMethodContext()}
         ${renderCurationStatus(entry)}
-        ${criticalCaveat ? `<div class="uds-critical-warning">${escapeHtml(criticalCaveat.text)}</div>` : ""}
+        ${renderCriticalCaveat(caveats, bottomLine)}
         ${renderAnswerLine("Bottom line", bottomLine)}
-        ${renderAnswerLine("Likely explanation(s)", likelyExplanation)}
-        ${renderAnswerLine("Common pitfall", commonPitfall)}
-        ${renderAnswerLine("What to do next", nextStep)}
+        ${likelyExplanation ? renderAnswerLine("Likely explanation", likelyExplanation) : ""}
+        ${renderAnswerLine("Pitfall", pitfall)}
+        ${renderAnswerLine("Next step", nextStep)}
         ${shouldShowDoNotConclude(entry) ? renderAnswerLine("Do not conclude", entry.doNotConclude || buildDoNotConclude(entry)) : ""}
       </section>
     `;
@@ -720,13 +731,39 @@
     `;
   }
 
+  function renderMethodContext() {
+    if (state.method === "any") {
+      return "";
+    }
+
+    const label = state.method === "immunoassay" ? "Immunoassay screen" : "Definitive LC/GC-MS";
+    return `<div class="uds-method-context">Interpreting for: ${escapeHtml(label)}</div>`;
+  }
+
+  function renderCriticalCaveat(caveats, bottomLine = "") {
+    const critical = caveats.find((caveatEntry) => caveatEntry.severity === "critical");
+    if (!critical || isSubstantiallyDuplicate(critical.text, bottomLine)) {
+      return "";
+    }
+
+    return `<div class="uds-critical-warning">${escapeHtml(critical.text)}</div>`;
+  }
+
+  function isSubstantiallyDuplicate(a, b) {
+    if (!a || !b) {
+      return false;
+    }
+
+    const cleanA = normalize(a);
+    const cleanB = normalize(b);
+    return cleanA.includes(cleanB) || cleanB.includes(cleanA);
+  }
+
   function renderCollapsedLookupDetails(entry, primaryRows, secondaryRows, caveats, sourcesForEntry) {
     return `
-      ${renderDetailsSection("Expected / possible related findings", renderRelationshipList(primaryRows, secondaryRows, entry.id))}
-      ${renderDetailsSection("Detection window details", renderDetectionWindow(entry))}
-      ${renderDetailsSection("Assay limitations", renderAssayCaveats(caveats))}
-      ${renderDetailsSection("False positives / false negatives", renderFalsePositiveNegative(entry, caveats))}
-      ${renderDetailsSection("Do not overinterpret", renderDoNotConclude(entry))}
+      ${renderDetailsSection("Assay details", renderAssayCaveats(caveats))}
+      ${renderDetailsSection("Detection window", renderDetectionWindow(entry))}
+      ${renderDetailsSection("Interpretation cautions", renderDoNotConclude(entry))}
       ${renderDetailsSection("References", renderSources(sourcesForEntry))}
     `;
   }
@@ -775,6 +812,21 @@
     return `<div class="uds-grid">${sections.join("")}</div>`;
   }
 
+  function renderRelatedFindingsPanel(entry, primaryRows, secondaryRows) {
+    if (!primaryRows.length && !secondaryRows.length) {
+      return "";
+    }
+
+    return `
+      <details class="uds-details uds-related-panel">
+        <summary>Related findings</summary>
+        <div class="uds-details-body">
+          ${renderRelationshipList(primaryRows, secondaryRows, entry.id)}
+        </div>
+      </details>
+    `;
+  }
+
   function renderDetectionWindow(entry) {
     return `<div class="uds-note"><strong>${escapeHtml(entry.name)}:</strong> ${escapeHtml(entry.window || "Panel and timing dependent.")}</div>`;
   }
@@ -787,13 +839,6 @@
     return caveats
       .map((caveatEntry) => `<div class="uds-note"><strong>${escapeHtml(caveatEntry.title)}:</strong> ${escapeHtml(caveatEntry.text)}</div>`)
       .join("");
-  }
-
-  function renderFalsePositiveNegative(entry, caveats) {
-    const caveatText = caveats.length
-      ? caveats.map((caveatEntry) => caveatEntry.text).join(" ")
-      : "False-positive and false-negative interpretation depends on assay design, cutoff, cross-reactivity, timing, and panel contents.";
-    return `<div class="uds-note">${escapeHtml(caveatText)}</div>`;
   }
 
   function renderDoNotConclude(entry) {
@@ -817,17 +862,11 @@
   }
 
   function shouldShowDoNotConclude(entry) {
-    const highRiskIds = new Set([
-      "hydromorphone",
-      "oxymorphone",
-      "thc_cooh",
-      "etg",
-      "ets",
-      "amphetamine",
-      "methamphetamine",
-      "aminoclonazepam7",
-    ]);
-    return highRiskIds.has(entry.id);
+    return entry.showDoNotConclude === true;
+  }
+
+  function shouldShowLikelyExplanation(entry) {
+    return entry.showLikelyExplanation === true;
   }
 
   function getMethodAnswer(entry, field) {
@@ -848,9 +887,24 @@
     if (critical) {
       return critical.text;
     }
+
+    const relatedNames = primaryRows
+      .slice(0, 3)
+      .map((row) => labelFor(row.to === entry.id ? row.from : row.to))
+      .filter(Boolean);
+
+    if (relatedNames.length && entry.type.includes("drug")) {
+      return `${entry.name} may be associated with ${relatedNames.join(", ")}. Interpret with assay method, timing, and panel contents.`;
+    }
+
+    if (relatedNames.length) {
+      return `${entry.name} may be explained by ${relatedNames.join(", ")}. Interpret with the full medication list and metabolite pattern.`;
+    }
+
     if (entry.note) {
       return entry.note;
     }
+
     return `${entry.name} interpretation depends on assay method, timing, panel contents, and medication history.`;
   }
 
@@ -886,64 +940,22 @@
   }
 
   function renderRelationsPane(entry, outgoing, incoming, caveats) {
-    const lookupIsDrug = entry.type.includes("drug");
-    const relationshipGroups = [
-      ["Possible parent drug(s) / explanations", incoming],
-      [lookupIsDrug ? "Expected urine findings" : "Also associated with", outgoing],
-    ];
-
     elements.relationsContent.innerHTML = `
-      <div class="uds-filter-row">
-        ${["all", "primary", "secondary", "context", "assay"].map((filter) => `
-          <button class="${state.relationFilter === filter ? "is-active" : ""}" data-uds-filter="${filter}" type="button">
-            ${filter === "all" ? "All" : capitalize(filter)}
-          </button>
-        `).join("")}
+      <div class="uds-empty">
+        Open "Related findings" below the clinical answer to review parent drugs, metabolites, and relationship context.
       </div>
-      ${relationshipGroups
-        .map(([title, rows]) => renderNavGroup(title, filterRelationships(rows), entry.id))
-        .join("")}
       ${
-        shouldShowAssay()
+        caveats.length
           ? `
             <section class="uds-section">
-              <h4>Assay / method</h4>
+              <h4>Method note</h4>
               <div class="uds-relation-list">
-                ${caveats.length ? caveats.map((caveatEntry) => `<div class="uds-note"><strong>${escapeHtml(caveatEntry.title)}:</strong> ${escapeHtml(caveatEntry.text)}</div>`).join("") : renderEmpty("No method-specific caveats configured for this selection.")}
+                <div class="uds-note">${escapeHtml(caveats[0].text)}</div>
               </div>
             </section>
           `
           : ""
       }
-    `;
-  }
-
-  function filterRelationships(rows) {
-    if (state.relationFilter === "all") {
-      return rows;
-    }
-    if (state.relationFilter === "assay") {
-      return [];
-    }
-    return rows.filter((relationship) => relationship.strength === state.relationFilter);
-  }
-
-  function shouldShowAssay() {
-    return state.relationFilter === "all" || state.relationFilter === "assay";
-  }
-
-  function renderNavGroup(title, rows, focusId) {
-    if (!rows.length) {
-      return "";
-    }
-
-    return `
-      <section class="uds-section">
-        <h4>${escapeHtml(title)}</h4>
-        <div class="uds-relation-list">
-          ${rows.map((relationship) => renderNavRow(relationship, focusId)).join("")}
-        </div>
-      </section>
     `;
   }
 
@@ -957,20 +969,14 @@
           ${escapeHtml(labelFor(focusId))} ${direction} ${escapeHtml(labelFor(otherId))}
         </span>
         <span class="uds-relation-sub">${escapeHtml(relationship.clue)}</span>
-        <span class="uds-relation-tag">${escapeHtml(relationship.clinicalTag || formatStrength(relationship.strength))}</span>
+        ${renderRelationshipTag(relationship)}
       </button>
     `;
   }
 
-  function renderNavRow(relationship, focusId) {
-    const otherId = relationship.from === focusId ? relationship.to : relationship.from;
-    return `
-      <button class="uds-nav-row" data-uds-focus="${escapeAttribute(otherId)}" type="button">
-        <span class="uds-nav-main">${escapeHtml(labelFor(otherId))}</span>
-        <span class="uds-nav-sub">${escapeHtml(relationship.clue)}</span>
-        <span class="uds-relation-tag">${escapeHtml(relationship.clinicalTag || formatStrength(relationship.strength))}</span>
-      </button>
-    `;
+  function renderRelationshipTag(relationship) {
+    const tag = relationship.clinicalTag || formatStrength(relationship.strength);
+    return `<span class="uds-relation-tag">${escapeHtml(tag)}</span>`;
   }
 
   function renderSources(sourceList) {
@@ -1027,11 +1033,11 @@
       <div class="uds-result-block">
         ${renderResultSection("Assessment", [result.assessment], "uds-result-assessment")}
         ${renderResultSection("Recommended next step", [result.nextStep], "uds-result-next-step")}
-        ${renderResultSection("Explained", result.explained)}
-        ${renderResultSection("Needs context", result.needsContext)}
-        ${renderResultSection("Not explained", result.notExplained)}
-        ${renderResultSection("Missing supportive, if relevant", result.missingSupportive)}
-        ${renderResultSection("Method notes", result.methodNotes)}
+        ${renderDetailsSection("Explained findings", renderList(result.explained))}
+        ${renderDetailsSection("Needs context", renderList(result.needsContext))}
+        ${renderDetailsSection("Not explained", renderList(result.notExplained))}
+        ${renderDetailsSection("Missing supportive findings", renderList(result.missingSupportive))}
+        ${renderDetailsSection("Method notes", renderList(result.methodNotes))}
       </div>
     `;
   }
@@ -1112,44 +1118,46 @@
 
   function buildAssessment(explained, needsContext, notExplained) {
     if (notExplained.length) {
-      return "At least one finding is not explained by the selected expected drug(s) in the current rule set. Confirm medication list, assay method, panel contents, timing, and consider definitive testing or lab consultation.";
+      return "At least one finding is not explained by the selected expected drug(s) in the current rule set.";
     }
     if (needsContext.length) {
       return "Findings are mostly compatible, but one or more results require timing, quantitative, cutoff, panel, or assay-method context.";
     }
     if (explained.length) {
-      return "Findings are compatible with the selected expected drug(s), based on configured parent/metabolite relationships. This does not confirm dose, timing, adherence, or absence of other exposure.";
+      return "Findings are compatible with the selected expected drug(s), based on configured parent/metabolite relationships.";
     }
     return "Add detected findings to compare against the selected expected drug(s).";
   }
 
   function buildPatternNextStep(explained, needsContext, notExplained, missingSupportive, methodNotes) {
     if (notExplained.length) {
-      return "Confirm the medication list and assay method; consider definitive testing or lab consultation for unexplained findings.";
+      return "Confirm medication list, assay method, panel contents, and timing; consider definitive testing or lab consultation.";
     }
     if (needsContext.length) {
       return "Interpret with timing, quantitative values, cutoff, and panel contents before making adherence or misuse conclusions.";
     }
     if (missingSupportive.length) {
-      return "Verify whether supportive metabolites were included in the ordered panel before treating their absence as meaningful.";
+      return "Verify whether supportive metabolites were included in the ordered panel before treating absence as meaningful.";
     }
     if (methodNotes.length) {
       return "Review method limitations before acting on the result.";
     }
-    return "Use clinical context, timing, and the ordered panel details to confirm interpretation.";
+    return "Do not use this result alone to determine dose, timing, adherence, impairment, or absence of other exposure.";
   }
 
   function buildLookupSummary(entry, primaryRows, secondaryRows, caveats, sourcesForEntry) {
+    const bottomLine = getMethodAnswer(entry, "bottomLine") || entry.bottomLine || buildBottomLine(entry, primaryRows, secondaryRows, caveats);
+    const pitfall = getMethodAnswer(entry, "commonPitfall") || entry.commonPitfall || buildCommonPitfall(entry, caveats);
+    const nextStep = getMethodAnswer(entry, "nextStep") || entry.nextStep || buildNextStep(entry, caveats);
     const lines = [
       `UDS lookup: ${entry.name}`,
-      `Bottom line: ${getMethodAnswer(entry, "bottomLine") || entry.bottomLine || buildBottomLine(entry, primaryRows, secondaryRows, caveats)}`,
-      `Likely explanation(s): ${entry.likelyExplanation || buildLikelyExplanation(entry, primaryRows, secondaryRows)}`,
-      `Common pitfall: ${getMethodAnswer(entry, "commonPitfall") || entry.commonPitfall || buildCommonPitfall(entry, caveats)}`,
-      `What to do next: ${getMethodAnswer(entry, "nextStep") || entry.nextStep || buildNextStep(entry, caveats)}`,
+      `Bottom line: ${bottomLine}`,
+      `Pitfall: ${pitfall}`,
+      `Next step: ${nextStep}`,
     ];
 
-    if (entry.doNotConclude) {
-      lines.push(`Do not overinterpret: ${entry.doNotConclude}`);
+    if (entry.showDoNotConclude && entry.doNotConclude) {
+      lines.push(`Do not conclude: ${entry.doNotConclude}`);
     }
     if (sourcesForEntry?.length) {
       lines.push(`References: ${sourcesForEntry.map((source) => source.title).join("; ")}`);
@@ -1159,20 +1167,14 @@
   }
 
   function buildPatternSummary(assessment, nextStep, explained, needsContext, notExplained, methodNotes) {
-    const parts = [`Assessment: ${assessment}`, `Recommended next step: ${nextStep}`];
-    if (explained.length) {
-      parts.push(`Explained: ${explained.slice(0, 4).join(" ")}`);
-    }
+    const parts = ["UDS pattern check", `Assessment: ${assessment}`, `Recommended next step: ${nextStep}`];
     if (needsContext.length) {
-      parts.push(`Needs context: ${needsContext.slice(0, 3).join(" ")}`);
+      parts.push(`Needs context: ${needsContext.slice(0, 3).join("; ")}`);
     }
     if (notExplained.length) {
-      parts.push(`Not explained: ${notExplained.slice(0, 3).join(" ")}`);
+      parts.push(`Not explained: ${notExplained.slice(0, 3).join("; ")}`);
     }
-    if (methodNotes.length) {
-      parts.push(`Method notes: ${methodNotes.slice(0, 3).join(" ")}`);
-    }
-    return parts.join(" ");
+    return parts.join("\n");
   }
 
   function renderResultSection(title, rows, className = "") {
@@ -1186,6 +1188,48 @@
         }
       </section>
     `;
+  }
+
+  function renderList(rows) {
+    return rows.length
+      ? `<ul>${rows.map((row) => `<li>${escapeHtml(row)}</li>`).join("")}</ul>`
+      : `<div class="uds-muted">None.</div>`;
+  }
+
+  function validateClinicalTags() {
+    relationships.forEach((row) => {
+      if (row.clinicalTag && !allowedClinicalTags.has(row.clinicalTag)) {
+        console.warn("Unexpected clinicalTag:", row.clinicalTag, row);
+      }
+    });
+  }
+
+  function validateUdsContent() {
+    items.forEach((entry) => {
+      if (entry.curationStatus === "complete") {
+        ["bottomLine", "commonPitfall", "nextStep"].forEach((field) => {
+          if (!entry[field]) {
+            console.warn(`Complete item missing ${field}:`, entry.id);
+          }
+        });
+      }
+
+      if (entry.showDoNotConclude && !entry.doNotConclude) {
+        console.warn("showDoNotConclude set without doNotConclude:", entry.id);
+      }
+
+      if (entry.bottomLine && entry.bottomLine.length > 220) {
+        console.warn("Bottom line may be too long:", entry.id, entry.bottomLine);
+      }
+      if (entry.commonPitfall && entry.commonPitfall.length > 180) {
+        console.warn("Pitfall may be too long:", entry.id, entry.commonPitfall);
+      }
+      if (entry.nextStep && entry.nextStep.length > 180) {
+        console.warn("Next step may be too long:", entry.id, entry.nextStep);
+      }
+    });
+
+    validateClinicalTags();
   }
 
   function renderEmpty(text) {
@@ -1214,10 +1258,6 @@
 
   function formatStrength(strength) {
     return strength ? strength.replaceAll("_", " ") : "relationship";
-  }
-
-  function capitalize(value) {
-    return value.charAt(0).toUpperCase() + value.slice(1);
   }
 
   function findItemFromInput(value) {
@@ -1264,6 +1304,29 @@
     render();
   }
 
+  function updateMethodControl(method) {
+    if (!method) {
+      return;
+    }
+
+    state.method = method;
+    elements.methodSelect.value = method;
+  }
+
+  function handleLookupSearch(query) {
+    const intentMatch = matchIntentAlias(query);
+    if (intentMatch) {
+      updateMethodControl(intentMatch.method);
+      setFocus(intentMatch.focusId);
+      return;
+    }
+
+    const first = searchItems(query, 1)[0];
+    if (first) {
+      setFocus(first.id);
+    }
+  }
+
   function showSearchResults(query) {
     const results = searchItems(query);
     if (!query.trim()) {
@@ -1281,15 +1344,19 @@
   }
 
   function renderSearchResult(entry) {
+    const intentMatch = matchIntentAlias(elements.searchInput.value);
+    const methodAttribute = intentMatch?.focusId === entry.id && intentMatch.method
+      ? ` data-uds-method="${escapeAttribute(intentMatch.method)}"`
+      : "";
+    const preview = entry.bottomLine || entry.commonPitfall || entry.note || "";
+
     return `
-      <button class="uds-search-result" data-uds-focus="${escapeAttribute(entry.id)}" type="button">
+      <button class="uds-search-result" data-uds-focus="${escapeAttribute(entry.id)}"${methodAttribute} type="button">
         <div class="uds-search-result-main">
           <span class="uds-search-result-name">${escapeHtml(entry.name)}</span>
-          <span class="uds-search-result-meta">${escapeHtml(entry.group)} - ${escapeHtml(formatType(entry.type))}</span>
+          <span class="uds-search-result-meta">${escapeHtml(entry.group)} &middot; ${escapeHtml(formatType(entry.type))}</span>
         </div>
-        <div class="uds-search-result-summary">
-          ${escapeHtml(entry.bottomLine || entry.note || "")}
-        </div>
+        ${preview ? `<div class="uds-search-result-summary">${escapeHtml(preview)}</div>` : ""}
       </button>
     `;
   }
@@ -1330,6 +1397,7 @@
   root.addEventListener("click", (event) => {
     const focusButton = event.target.closest("[data-uds-focus]");
     if (focusButton) {
+      updateMethodControl(focusButton.dataset.udsMethod);
       setFocus(focusButton.dataset.udsFocus);
       return;
     }
@@ -1373,10 +1441,7 @@
     if (event.key !== "Enter") {
       return;
     }
-    const first = searchItems(elements.searchInput.value, 1)[0];
-    if (first) {
-      setFocus(first.id);
-    }
+    handleLookupSearch(elements.searchInput.value);
   });
 
   elements.searchClear.addEventListener("click", () => {
@@ -1432,5 +1497,6 @@
     copyText(state.lastPatternSummary);
   });
 
+  validateUdsContent();
   render();
 })();

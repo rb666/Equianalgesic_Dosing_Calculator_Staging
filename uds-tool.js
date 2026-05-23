@@ -835,7 +835,14 @@
       <section class="uds-simple-grid uds-lookup-grid">
         <div class="uds-card">
           <div class="uds-card-head"><div><p class="uds-eyebrow">Reference</p><h3>Look up drug / metabolite</h3></div></div>
-          <input data-field="lookupQuery" list="udsItemOptions" placeholder="Search fentanyl, 7-aminoclonazepam, EtG, methylphenidate..." value="${escapeHtml(state.lookupQuery)}" />
+          <input
+            autocomplete="off"
+            data-field="lookupQuery"
+            placeholder="Search fentanyl, 7-aminoclonazepam, EtG, methylphenidate..."
+            spellcheck="false"
+            type="search"
+            value="${escapeHtml(state.lookupQuery)}"
+          />
           <div class="uds-search-list" id="udsLookupResults">
             ${renderLookupResults()}
           </div>
@@ -2116,16 +2123,6 @@
     });
   }
 
-  function addDatalist() {
-    let datalist = document.querySelector("#udsItemOptions");
-    if (!datalist) {
-      datalist = document.createElement("datalist");
-      datalist.id = "udsItemOptions";
-      document.body.appendChild(datalist);
-    }
-    datalist.innerHTML = items.map((entry) => `<option value="${escapeHtml(entry.name)}"></option>`).join("");
-  }
-
   function snapshotState() {
     return {
       context: state.context,
@@ -2679,7 +2676,6 @@
   };
 
   setRootShell();
-  addDatalist();
   attachEvents();
   render();
 })();

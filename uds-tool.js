@@ -829,7 +829,17 @@
     if (profile.id === "unknown") cannotSupport.push("A negative or absent result cannot be relied on when the ordered panel is unknown.");
     if (["dilute", "invalid", "adulterated"].includes(state.validityFlag)) cannotSupport.push("Negative results are limited by specimen validity concerns.");
 
-    const chartNote = buildChartNote({ label, confirmationLevel, nextStep, safetyFlags, methodNotes, panelWarnings, validityWarnings });
+    const chartNote = buildChartNote({
+      label,
+      confirmationLevel,
+      nextStep,
+      safetyFlags,
+      methodNotes,
+      panelWarnings,
+      validityWarnings,
+      absentConcerns,
+      expectedNegatives,
+    });
     const patientScript = buildPatientScript({ label, nextStep });
 
     return {
@@ -1090,6 +1100,7 @@
   function buildSafetyFlags() {
     const detected = state.detected.map(getItem).filter(Boolean);
     const expected = state.expected.map(getItem).filter(Boolean);
+    const absent = state.absent.map(getItem).filter(Boolean);
     const allKnown = [...detected, ...expected];
     const flags = [];
     const hasExpectedOrDetectedOpioid = allKnown.some((entry) => entry.tags.includes("opioid"));
@@ -1098,11 +1109,21 @@
     const hasExpectedBenzo = expected.some((entry) => entry.tags.includes("benzodiazepine"));
     const hasDetectedAlcohol = detected.some((entry) => entry.tags.includes("alcohol"));
     const hasDetectedSedative = detected.some((entry) => entry.tags.includes("sedative"));
+    const fentanylDetected = detected.some((entry) => ["fentanyl", "norfentanyl"].includes(entry.id));
+    const hasExpectedOudMedicationAbsent =
+      state.context === "oud" &&
+      state.absentVerified &&
+      absent.some((entry) => ["buprenorphine", "methadone"].includes(entry.id)) &&
+      state.expected.some((id) => ["buprenorphine", "methadone"].includes(id));
+
     if (hasExpectedOrDetectedOpioid && hasDetectedBenzo) flags.push("Opioid therapy/exposure + benzodiazepine detected: assess sedation/overdose risk and naloxone access.");
     if (hasDetectedOpioid && hasExpectedBenzo) flags.push("Opioid detected with expected benzodiazepine therapy: assess sedation/overdose risk and coordination of prescribing.");
     if (hasExpectedOrDetectedOpioid && hasDetectedAlcohol) flags.push("Opioid therapy/exposure + alcohol marker detected: assess respiratory depression and safety risk.");
     if (hasExpectedOrDetectedOpioid && hasDetectedSedative && !hasDetectedBenzo) flags.push("Opioid therapy/exposure + sedating co-exposure detected: assess sedation/overdose risk.");
-    if (detected.some((entry) => ["fentanyl", "norfentanyl"].includes(entry.id))) flags.push("Fentanyl/norfentanyl detected: review overdose prevention, naloxone, and treatment adequacy.");
+    if (hasExpectedOudMedicationAbsent) flags.push("OUD treatment context with expected buprenorphine or methadone absent: assess adherence barriers, withdrawal/craving risk, recurrence risk, and whether repeat or definitive testing is needed.");
+    if (fentanylDetected) flags.push("Fentanyl/norfentanyl detected: review overdose prevention, naloxone, and treatment adequacy.");
+    if (fentanylDetected && state.context === "oud") flags.push("OUD treatment context with fentanyl/norfentanyl detected: review buprenorphine/methadone adequacy, overdose prevention, naloxone, and follow-up intensity.");
+    if (fentanylDetected && state.context === "chronic_opioid") flags.push("Chronic opioid therapy context with fentanyl/norfentanyl detected: assess overdose risk, medication interactions, nonprescribed exposure, and confirm if the result affects prescribing.");
     if (detected.some((entry) => entry.id === "xylazine")) flags.push("Xylazine detected or suspected: routine UDS usually misses it; naloxone still treats opioid co-exposure, but xylazine effects require supportive care.");
     if (state.context === "pregnancy") flags.push("Pregnancy/perinatal context: confirm unexpected results before high-consequence action and follow local policy/law.");
     if (state.context === "adolescent") flags.push("Adolescent context: consider consent/confidentiality rules and avoid punitive use.");
@@ -1190,15 +1211,27 @@
     ];
   }
 
-  function buildChartNote({ label, confirmationLevel, nextStep, safetyFlags, methodNotes, panelWarnings, validityWarnings }) {
+  function buildChartNote({
+    label,
+    confirmationLevel,
+    nextStep,
+    safetyFlags,
+    methodNotes,
+    panelWarnings,
+    validityWarnings,
+    absentConcerns,
+    expectedNegatives,
+  }) {
     const expected = state.expected.map(itemLabel).join(", ") || "none entered";
     const detected = state.detected.map(itemLabel).join(", ") || "none entered";
     const absent = state.absent.map(itemLabel).join(", ") || "none entered";
     return [
       "UDS clinical reference review, no patient identifiers entered.",
-      `Context: ${formatContext(state.context)}. Consequence if wrong: ${state.consequence}.`,
+      `Context: ${formatContext(state.context)}. Decision impact: ${state.consequence}.`,
       `Result source: ${formatResultSource(state.resultSource)}. Method/panel: ${formatMethod(state.method)} / ${selectedProfile().label}. Specimen validity: ${formatValidity(state.validityFlag)}.`,
       `Expected: ${expected}. Detected: ${detected}. Tested-but-absent: ${absent}. Absent coverage verified: ${state.absentVerified ? "yes" : "no"}.`,
+      absentConcerns.length ? `Absent-finding concerns: ${absentConcerns.slice(0, 3).join("; ")}.` : "Absent-finding concerns: none generated from entered findings.",
+      expectedNegatives.length ? `Expected negative/absent findings: ${expectedNegatives.slice(0, 3).join("; ")}.` : "Expected negative/absent findings: none generated from entered findings.",
       `Interpretation label: ${label}. Confirmation threshold: ${confirmationLevel}.`,
       safetyFlags.length ? `Safety flags: ${safetyFlags.join("; ")}.` : "Safety flags: none generated from entered findings.",
       validityWarnings.length ? `Specimen validity limitations: ${validityWarnings.join("; ")}.` : "Specimen validity limitations: none generated from selected flag.",
@@ -1704,6 +1737,30 @@
         (result) => result.safetyFlags.some((line) => /opioid.*alcohol|alcohol.*opioid/i.test(line)),
       ),
       runCase(
+        "OUD expected medication absent creates workflow safety flag",
+        {
+          context: "oud",
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["buprenorphine"],
+          absent: ["buprenorphine"],
+          absentVerified: true,
+          validityFlag: "normal",
+        },
+        (result) => result.safetyFlags.some((line) => /adherence barriers|withdrawal|recurrence/i.test(line)),
+      ),
+      runCase(
+        "OUD fentanyl finding creates context-specific safety flag",
+        {
+          context: "oud",
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          detected: ["norfentanyl"],
+          validityFlag: "normal",
+        },
+        (result) => result.safetyFlags.some((line) => /OUD treatment context.*fentanyl/i.test(line)),
+      ),
+      runCase(
         "Unknown validity with compatible positive does not overpower compatibility",
         {
           method: "definitive",
@@ -1833,6 +1890,35 @@
 
     await copyText(text);
     return { failed: failed.length, results };
+  };
+
+  window.copyUdsDebugState = async function copyUdsDebugState() {
+    const result = analyzeInterpretation();
+    const payload = {
+      appVersion: APP_VERSION,
+      context: state.context,
+      consequence: state.consequence,
+      resultSource: state.resultSource,
+      method: state.method,
+      panelId: state.panelId,
+      expected: [...state.expected],
+      detected: [...state.detected],
+      absent: [...state.absent],
+      absentVerified: state.absentVerified,
+      validityFlag: state.validityFlag,
+      label: result.label,
+      confirmationLevel: result.confirmationLevel,
+      nextStep: result.nextStep,
+      panelWarnings: result.panelWarnings,
+      methodNotes: result.methodNotes,
+      validityWarnings: result.validityWarnings,
+      absentConcerns: result.absentConcerns,
+      expectedNegatives: result.expectedNegatives,
+      safetyFlags: result.safetyFlags,
+    };
+
+    await copyText(JSON.stringify(payload, null, 2));
+    return payload;
   };
 
   setRootShell();

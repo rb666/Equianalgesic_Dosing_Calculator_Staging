@@ -695,3 +695,22 @@
   background: #2a1212;
   color: #fecaca;
 }
+
+:root[data-theme="dark"] .uds-status--compatible {
+  border-color: #34d399;
+  background: #052e24;
+  color: #a7f3d0;
+}
+
+:root[data-theme="dark"] .uds-status--caution,
+:root[data-theme="dark"] .uds-status--method {
+  border-color: #f59e0b;
+  background: #2a1f08;
+  color: #fde68a;
+}
+
+:root[data-theme="dark"] .uds-status--warning {
+  border-color: #f87171;
+  background: #2a1212;
+  color: #fecaca;
+}

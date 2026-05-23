@@ -377,100 +377,16 @@
       </div>
     </div>
 
-<div
-      aria-labelledby="termsModalTitle"
-      aria-modal="true"
-      class="terms-modal is-hidden"
-      id="termsModal"
-      role="dialog"
-    >
-      <div class="terms-dialog">
-        <div class="terms-header">
-          <p class="eyebrow" id="termsModalEyebrow">Required acknowledgement</p>
-          <h2 id="termsModalTitle">Clinical terms and disclaimer</h2>
-        </div>
-
-        <div class="terms-body">
-          <section>
-            <h3>Professional use only</h3>
-            <p>
-              This tool is intended for use by licensed healthcare professionals
-              only. It is an educational aid and is not medical advice, a formal
-              recommendation, or a substitute for professional clinical judgment.
-            </p>
-          </section>
-
-          <section>
-            <h3>High-risk opioid conversion warning</h3>
-            <p>
-              Calculated doses are estimates only. When switching opioids,
-              clinicians should typically reduce the calculated equianalgesic dose
-              by 25% to 50% to account for incomplete cross-tolerance, individual
-              patient variability, comorbidities, organ dysfunction, concurrent
-              medications, and the bedside clinical picture.
-            </p>
-          </section>
-
-          <section>
-            <h3>No warranty or liability</h3>
-            <p>
-              While this tool was developed by medical professionals, calc.med
-              makes no warranties regarding the accuracy, completeness, or
-              suitability of the calculations. Use of this site is at your own risk.
-              The developers shall not be liable for damages arising from use or
-              misuse of this tool.
-            </p>
-          </section>
-
-          <section>
-            <h3>Privacy and PHI</h3>
-            <p>
-              This calculator does not store, transmit, or record Protected Health
-              Information (PHI). Calculations are performed locally on your device.
-              Do not enter patient names, medical record numbers, dates of birth, or
-              other identifying information.
-            </p>
-          </section>
-        </div>
-
-        <form class="terms-acceptance" id="termsAcceptanceForm">
-          <label for="termsAcceptInput">
-            Type ACCEPT to acknowledge and continue
-            <input
-              autocomplete="off"
-              id="termsAcceptInput"
-              name="termsAcceptInput"
-              spellcheck="false"
-              type="text"
-            />
-          </label>
-          <div class="terms-actions">
-            <button class="secondary-button is-hidden" id="termsCloseButton" type="button">
-              Close
-            </button>
-            <button disabled id="termsAcceptButton" type="submit">
-              Accept and continue
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
     <script src="/uds-tool.js?v=20260522-uds-panel-aware"></script>
     <script>
       (() => {
-        const TERMS_ACCEPTANCE_STORAGE_KEY = "calc-med-terms-accepted-v1";
         const valueModal = document.querySelector("#udsValueModal");
         const valueOpenButton = document.querySelector("#udsValueOpenButton");
         const valueCloseButton = document.querySelector("#udsValueCloseButton");
-        const termsModal = document.querySelector("#termsModal");
-        const termsForm = document.querySelector("#termsAcceptanceForm");
-        const termsInput = document.querySelector("#termsAcceptInput");
-        const termsAcceptButton = document.querySelector("#termsAcceptButton");
 
         const isVisible = (element) => Boolean(element && !element.classList.contains("is-hidden"));
         const updateModalOpenState = () => {
-          document.body.classList.toggle("modal-open", isVisible(valueModal) || isVisible(termsModal));
+          document.body.classList.toggle("modal-open", isVisible(valueModal));
         };
         const setValueModalVisible = (visible) => {
           if (!valueModal) return;
@@ -480,19 +396,6 @@
           if (visible) valueCloseButton?.focus();
           else valueOpenButton?.focus();
         };
-        const hasAcceptedTerms = () => {
-          try {
-            return localStorage.getItem(TERMS_ACCEPTANCE_STORAGE_KEY) === "accepted";
-          } catch {
-            return false;
-          }
-        };
-        const setTermsVisible = (visible) => {
-          if (!termsModal) return;
-          termsModal.classList.toggle("is-hidden", !visible);
-          updateModalOpenState();
-          if (visible) termsInput?.focus();
-        };
 
         valueOpenButton?.addEventListener("click", () => setValueModalVisible(true));
         valueCloseButton?.addEventListener("click", () => setValueModalVisible(false));
@@ -500,24 +403,10 @@
           if (event.target === valueModal) setValueModalVisible(false);
         });
 
-        termsInput?.addEventListener("input", () => {
-          if (termsAcceptButton) termsAcceptButton.disabled = termsInput.value.trim() !== "ACCEPT";
-        });
-        termsForm?.addEventListener("submit", (event) => {
-          event.preventDefault();
-          if (termsInput?.value.trim() !== "ACCEPT") return;
-          try {
-            localStorage.setItem(TERMS_ACCEPTANCE_STORAGE_KEY, "accepted");
-          } catch {}
-          setTermsVisible(false);
-        });
-
         document.addEventListener("keydown", (event) => {
           if (event.key !== "Escape") return;
           if (isVisible(valueModal)) setValueModalVisible(false);
         });
-
-        if (!hasAcceptedTerms()) setTermsVisible(true);
       })();
     </script>
   </body>

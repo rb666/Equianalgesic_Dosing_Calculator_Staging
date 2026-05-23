@@ -1329,9 +1329,6 @@ const pharmacokineticsModal = document.querySelector("#pharmacokineticsModal");
 const pharmacokineticsCloseButton = document.querySelector(
   "#pharmacokineticsCloseButton",
 );
-const udsOpenButton = document.querySelector("#udsOpenButton");
-const udsModal = document.querySelector("#udsModal");
-const udsCloseButton = document.querySelector("#udsCloseButton");
 const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
@@ -1486,9 +1483,7 @@ const isModalVisible = (modalElement) =>
 const updateModalOpenState = () => {
   document.body.classList.toggle(
     "modal-open",
-    isModalVisible(termsModal) ||
-      isModalVisible(pharmacokineticsModal) ||
-      isModalVisible(udsModal),
+    isModalVisible(termsModal) || isModalVisible(pharmacokineticsModal),
   );
 };
 
@@ -1533,20 +1528,6 @@ const setPharmacokineticsModalVisible = (visible) => {
 
   if (visible && pharmacokineticsCloseButton) {
     window.setTimeout(() => pharmacokineticsCloseButton.focus(), 0);
-  }
-};
-
-const setUdsModalVisible = (visible) => {
-  if (!udsModal) {
-    return;
-  }
-
-  udsModal.classList.toggle("is-hidden", !visible);
-  udsOpenButton?.setAttribute("aria-expanded", String(visible));
-  updateModalOpenState();
-
-  if (visible && udsCloseButton) {
-    window.setTimeout(() => udsCloseButton.focus(), 0);
   }
 };
 
@@ -3204,26 +3185,6 @@ if (pharmacokineticsModal) {
   });
 }
 
-if (udsOpenButton) {
-  udsOpenButton.addEventListener("click", () => {
-    setUdsModalVisible(true);
-  });
-}
-
-if (udsCloseButton) {
-  udsCloseButton.addEventListener("click", () => {
-    setUdsModalVisible(false);
-  });
-}
-
-if (udsModal) {
-  udsModal.addEventListener("click", (event) => {
-    if (event.target === udsModal) {
-      setUdsModalVisible(false);
-    }
-  });
-}
-
 if (pharmacokineticsGraphGrid) {
   pharmacokineticsGraphGrid.addEventListener("click", (event) => {
     const selectedCard = event.target.closest("[data-pk-index]");
@@ -3244,11 +3205,6 @@ document.addEventListener("keydown", (event) => {
 
   if (isModalVisible(pharmacokineticsModal)) {
     setPharmacokineticsModalVisible(false);
-    return;
-  }
-
-  if (isModalVisible(udsModal)) {
-    setUdsModalVisible(false);
     return;
   }
 

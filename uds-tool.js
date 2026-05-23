@@ -263,6 +263,21 @@
       || null;
   }
 
+  function findExactItem(value) {
+    const query = normalize(value);
+    if (!query) return null;
+    return items.find((entry) => normalize(entry.name) === query)
+      || items.find((entry) => entry.aliases.some((alias) => normalize(alias) === query))
+      || null;
+  }
+
+  function findEnterPickerItem(value) {
+    const exact = findExactItem(value);
+    if (exact) return exact;
+    const matches = searchItems(value, 3);
+    return matches.length === 1 ? matches[0] : null;
+  }
+
   function searchItems(query, limit = 20) {
     const q = normalize(query);
     if (!q) return items.slice(0, limit);
@@ -286,6 +301,7 @@
   function setRootShell() {
     root.setAttribute("aria-labelledby", "udsModalTitle");
     root.setAttribute("role", "dialog");
+    root.setAttribute("aria-modal", "true");
     root.innerHTML = `
       <div class="uds-shell">
         <header class="uds-header">
@@ -473,19 +489,26 @@
       return `<div class="uds-picker-empty">No available matches. Try a drug, metabolite, brand, or finding.</div>`;
     }
 
-    return matches.map((entry) => `
-      <button
-        class="uds-picker-option"
-        data-action="pick-chip"
-        data-id="${escapeHtml(entry.id)}"
-        data-key="${escapeHtml(key)}"
-        role="option"
-        type="button"
-      >
-        <span class="uds-picker-name">${escapeHtml(entry.name)}</span>
-        <span class="uds-picker-meta">${escapeHtml(entry.group)} · ${escapeHtml(entry.type.replaceAll("_", " "))}</span>
-      </button>
-    `).join("");
+    const ambiguityHint = query.trim() && matches.length > 1
+      ? `<div class="uds-picker-empty">Multiple matches. Select one below instead of pressing Enter.</div>`
+      : "";
+
+    return `
+      ${ambiguityHint}
+      ${matches.map((entry) => `
+        <button
+          class="uds-picker-option"
+          data-action="pick-chip"
+          data-id="${escapeHtml(entry.id)}"
+          data-key="${escapeHtml(key)}"
+          role="option"
+          type="button"
+        >
+          <span class="uds-picker-name">${escapeHtml(entry.name)}</span>
+          <span class="uds-picker-meta">${escapeHtml(entry.group)} · ${escapeHtml(entry.type.replaceAll("_", " "))}</span>
+        </button>
+      `).join("")}
+    `;
   }
 
   function selectedIdsForPicker(key) {
@@ -1124,7 +1147,7 @@
   }
 
   function addChip(key, rawValue) {
-    const entry = findItem(rawValue);
+    const entry = findEnterPickerItem(rawValue);
     return addChipById(key, entry?.id);
   }
 
@@ -1142,7 +1165,7 @@
   }
 
   function addPanelAnalyte(rawValue) {
-    const entry = findItem(rawValue);
+    const entry = findEnterPickerItem(rawValue);
     return addPanelAnalyteById(entry?.id);
   }
 
@@ -1248,25 +1271,7 @@
   }
 
   function attachEvents() {
-    const openButton = document.querySelector("#udsOpenButton");
-    if (openButton) {
-      openButton.addEventListener("click", () => {
-        root.classList.remove("is-hidden");
-        document.body.classList.add("uds-screen-open");
-        openButton.setAttribute("aria-expanded", "true");
-      });
-    }
-
     root.addEventListener("click", (event) => {
-      const close = event.target.closest("#udsCloseButton");
-      if (close) {
-        root.classList.add("is-hidden");
-        document.body.classList.remove("uds-screen-open");
-        openButton?.setAttribute("aria-expanded", "false");
-        openButton?.focus();
-        return;
-      }
-
       const modeButton = event.target.closest("[data-mode]");
       if (modeButton) {
         state.mode = modeButton.dataset.mode;

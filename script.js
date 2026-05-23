@@ -1512,8 +1512,9 @@ const setUdsModalVisible = (visible) => {
   if (visible) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-    if (udsCloseButton) {
-      window.setTimeout(() => udsCloseButton.focus(), 0);
+    const currentCloseButton = udsModal.querySelector("#udsCloseButton");
+    if (currentCloseButton) {
+      window.setTimeout(() => currentCloseButton.focus(), 0);
     }
   } else if (udsOpenButton) {
     window.setTimeout(() => udsOpenButton.focus(), 0);
@@ -3163,9 +3164,11 @@ if (udsOpenButton) {
   });
 }
 
-if (udsCloseButton) {
-  udsCloseButton.addEventListener("click", () => {
-    setUdsModalVisible(false);
+if (udsModal) {
+  udsModal.addEventListener("click", (event) => {
+    if (event.target.closest("#udsCloseButton")) {
+      setUdsModalVisible(false);
+    }
   });
 }
 

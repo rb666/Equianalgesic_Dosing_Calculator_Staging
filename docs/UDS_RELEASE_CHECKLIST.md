@@ -37,9 +37,12 @@ Use this checklist before promoting UDS changes from staging to production.
 - Console: `window.copyUdsDebugState()` copies a non-identifying JSON snapshot of the current UDS inputs and interpretation.
 - Copy short summary produces a concise consult-style summary with interpretation, confirmation threshold, key warnings, and next step.
 - Manual: Open UDS, click an Expected input so the picker opens, then press Escape. The picker closes and the UDS screen remains open.
-- Manual: Open UDS, expand Optional validity details, enter creatinine `12`, then click outside. The section remains open and output includes a low-creatinine warning.
+- Manual: Open UDS, enter an absent finding, expand Optional validity details, enter creatinine `12`, then click outside. The section remains open and output includes a low-creatinine warning for absent/negative interpretation.
 - Manual: Click `Clear validity details`. Optional details reset and the low-creatinine warning disappears.
 - Manual: Set validity flag to `Appears interpretable`, then set oxidants/adulterants to `Abnormal / positive`. Output becomes `Specimen-limited` and recommends repeat/lab consultation.
+- Critical validity details without detected or absent findings still return `Incomplete` and `Needs result input`.
+- Low creatinine with a positive-only compatible definitive result does not override compatibility or routine documentation.
+- Strong supportive metabolite entry suppresses the expected-parent-not-entered reminder.
 - Detected finding with no expected medication context uses the softer `Detected finding without expected medication context` label.
 - Detected finding with no expected medication context uses a non-accusatory support line that says clinical meaning requires medication/exposure/panel/timing context.
 - Detected analyte missing from a selected local profile warns that the selected profile may be incomplete or wrong.
@@ -49,7 +52,7 @@ Use this checklist before promoting UDS changes from staging to production.
 - OUD context with expected buprenorphine or methadone absent creates a non-punitive workflow safety flag.
 - OUD context with expected norbuprenorphine or EDDP absent creates a non-punitive supportive-metabolite workflow flag.
 - OUD context with fentanyl/norfentanyl detected creates a treatment-adequacy and overdose-prevention safety flag.
-- Optional validity details: low creatinine, abnormal specific gravity/pH, or abnormal oxidants add specimen-validity warnings without requiring patient identifiers.
+- Optional validity details: low creatinine and abnormal specific gravity mainly limit negative/absent interpretation, while abnormal pH or oxidants can make the result specimen-limited.
 - Unknown validity with a positive compatible finding does not automatically become specimen-limited.
 - Unknown validity with an absent finding cautions that absent/negative interpretation is less secure.
 - Generic opiate immunoassay with methadone, buprenorphine, tramadol, or tapentadol warns that targeted or definitive testing is needed when those drugs matter.

@@ -232,9 +232,12 @@
         .map(normalizeLocalProfile)
         .filter(Boolean);
 
-      if (normalized.length !== parsed.length) {
+      const normalizedJson = JSON.stringify(normalized);
+      const parsedJson = JSON.stringify(parsed);
+
+      if (normalizedJson !== parsedJson) {
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+          localStorage.setItem(STORAGE_KEY, normalizedJson);
         } catch {
           // Ignore cleanup persistence failure.
         }
@@ -256,12 +259,31 @@
   }
 
   function normalizeCoverageEntry(row) {
+    if (typeof row === "string") {
+      return getItem(row) ? coverage(row, "included") : null;
+    }
+
     if (!row || !row.id || !getItem(row.id)) {
       return null;
     }
 
     const status = COVERAGE_STATUSES.has(row.status) ? row.status : "included";
     return coverage(row.id, status);
+  }
+
+  function dedupeCoverageEntries(entries) {
+    const seen = new Set();
+    const deduped = [];
+
+    entries.forEach((entry) => {
+      if (!entry || !entry.id) return;
+      const key = `${entry.id}:${entry.status}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      deduped.push(entry);
+    });
+
+    return deduped;
   }
 
   function normalizeLocalProfile(raw) {
@@ -280,7 +302,7 @@
       ? raw.method
       : "unknown";
     const analytes = Array.isArray(raw.analytes)
-      ? raw.analytes.map(normalizeCoverageEntry).filter(Boolean)
+      ? dedupeCoverageEntries(raw.analytes.map(normalizeCoverageEntry).filter(Boolean))
       : [];
 
     return {
@@ -437,7 +459,10 @@
               <p class="uds-eyebrow">Primary workflow</p>
               <h3>Interpret a result</h3>
             </div>
-            <button class="uds-text-button" data-action="clear-interpret" type="button">Clear</button>
+            <div class="uds-header-actions">
+              <button class="uds-text-button" data-action="clear-interpret" type="button">Clear findings</button>
+              <button class="uds-text-button" data-action="reset-interpret-all" type="button">Reset all</button>
+            </div>
           </div>
           ${renderContextControls()}
           ${renderChipEditor("expected", "Expected medications/substances", "Prescribed, reported, administered, or otherwise expected")}
@@ -941,7 +966,12 @@
         }
       });
 
-      if (shouldPromptExpectedParent(expectedId) && !state.detected.includes(expectedId) && !state.absent.includes(expectedId)) {
+      if (
+        shouldPromptExpectedParent(expectedId) &&
+        !state.detected.includes(expectedId) &&
+        !state.absent.includes(expectedId) &&
+        !hasStrongSupportiveFindingEntered(expectedId)
+      ) {
         expectedParentNotEntered.push(`${itemLabel(expectedId)} is expected but was not entered as detected or absent. Check whether the report includes the parent drug or only metabolites.`);
       }
     });
@@ -951,7 +981,8 @@
     const validityWarnings = validity.warning ? [validity.warning] : [];
     const detailValidity = deriveValidityDetailWarnings();
     validityNotes.push(...detailValidity.notes);
-    validityWarnings.push(...detailValidity.warnings);
+    validityWarnings.push(...detailValidity.negativeLimitations);
+    validityWarnings.push(...detailValidity.criticalWarnings);
     if (state.validityFlag === "unknown" && state.absent.length) {
       validityWarnings.push("Specimen validity is unknown; absent/negative findings are less secure than positive detected findings.");
     }
@@ -975,6 +1006,7 @@
       validityWarnings,
       absentConcerns,
       expectedNegatives,
+      expectedParentNotEntered,
     });
     const shortSummary = [
       `UDS interpretation: ${label}.`,
@@ -1027,6 +1059,12 @@
     }
 
     return !EXPECTED_PARENT_PROMPT_EXCLUSIONS.has(expectedId);
+  }
+
+  function hasStrongSupportiveFindingEntered(expectedId) {
+    return (relationshipsByFrom.get(expectedId) || [])
+      .filter((row) => row.strength === "strong")
+      .some((row) => state.detected.includes(row.to) || state.absent.includes(row.to));
   }
 
   function getCoverage(profile, id) {
@@ -1256,33 +1294,43 @@
   }
 
   function deriveValidityDetailWarnings() {
-    const warnings = [];
     const notes = [];
+    const negativeLimitations = [];
+    const criticalWarnings = [];
     const creatinine = Number.parseFloat(state.validityDetails.creatinine);
     const specificGravity = Number.parseFloat(state.validityDetails.specificGravity);
     const ph = Number.parseFloat(state.validityDetails.ph);
+    const hasAbsentFindings = state.absent.length > 0;
 
     if (Number.isFinite(creatinine)) {
       if (creatinine < 20) {
-        warnings.push("Creatinine is low; negative or absent findings may be less reliable.");
-      } else {
-        notes.push("Creatinine detail entered and does not trigger the low-creatinine warning threshold.");
+        const message = "Creatinine is low; negative or absent findings may be less reliable.";
+        if (hasAbsentFindings) {
+          negativeLimitations.push(message);
+        } else {
+          notes.push("Creatinine is low; this mainly limits negative or absent interpretation.");
+        }
       }
     }
 
     if (Number.isFinite(specificGravity) && (specificGravity < 1.003 || specificGravity > 1.035)) {
-      warnings.push("Specific gravity is outside a typical expected urine range; interpret with laboratory validity comments.");
+      const message = "Specific gravity is outside a typical expected urine range; interpret negative or absent findings with laboratory validity comments.";
+      if (hasAbsentFindings) {
+        negativeLimitations.push(message);
+      } else {
+        notes.push("Specific gravity is outside a typical expected range; this is most important when interpreting negative or absent findings.");
+      }
     }
 
     if (Number.isFinite(ph) && (ph < 4.5 || ph > 9)) {
-      warnings.push("Urine pH is outside a typical expected range; consider specimen validity or lab consultation.");
+      criticalWarnings.push("Urine pH is outside a typical expected range; consider specimen validity or lab consultation.");
     }
 
     if (state.validityDetails.oxidants === "abnormal") {
-      warnings.push("Oxidants/adulterants are reported abnormal; consult the lab and avoid relying on the result without repeat or confirmation.");
+      criticalWarnings.push("Oxidants/adulterants are reported abnormal; consult the lab and avoid relying on the result without repeat or confirmation.");
     }
 
-    return { notes, warnings };
+    return { notes, negativeLimitations, criticalWarnings };
   }
 
   function hasCriticalValidityDetailProblem() {
@@ -1355,8 +1403,8 @@
       validityWarnings.length > 0 ||
       state.method === "unknown";
 
-    if (hasHardValidityProblem) return "Repeat / consult lab";
     if (!hasResultInput) return "Needs result input";
+    if (hasHardValidityProblem) return "Repeat / consult lab";
     if (state.consequence === "high" && hasActionableUncertainty) return "Confirm before action";
     if (state.consequence === "high") return "High-consequence review";
     if (state.method === "immunoassay" && (notExplained.length || hasUnexpectedAbsent)) return "Confirmation recommended";
@@ -1368,8 +1416,8 @@
 
   function labelForResult({ explained, contextNeeded, notExplained, absentReviews, panelWarnings, validityWarnings }) {
     const hasResultInput = state.detected.length > 0 || state.absent.length > 0;
-    if (["invalid", "adulterated"].includes(state.validityFlag) || hasCriticalValidityDetailProblem()) return { label: "Specimen-limited", tone: "warning" };
     if (!hasResultInput) return { label: "Incomplete", tone: "neutral" };
+    if (["invalid", "adulterated"].includes(state.validityFlag) || hasCriticalValidityDetailProblem()) return { label: "Specimen-limited", tone: "warning" };
     if (notExplained.length && !state.expected.length) return { label: "Detected finding without expected medication context", tone: "caution" };
     if (notExplained.length) return { label: "Unexpected positive", tone: "warning" };
     if (absentReviews.some((row) => row.severity === "unexpected_negative")) return { label: "Unexpected negative", tone: "caution" };
@@ -1385,8 +1433,8 @@
 
   function nextStepFor({ label, confirmationLevel, notExplained, contextNeeded, absentConcerns, panelWarnings, validityWarnings }) {
     if (confirmationLevel === "Confirm before action") return "Because the result may change care or has high consequence, obtain definitive confirmation or lab/toxicology input before major management changes.";
-    if (["invalid", "adulterated"].includes(state.validityFlag) || hasCriticalValidityDetailProblem()) return "Do not interpret this result as final. Repeat collection per policy or consult the laboratory.";
     if (!state.detected.length && !state.absent.length) return "Add detected positive/present findings or verified tested-but-absent findings to complete the reconciliation.";
+    if (["invalid", "adulterated"].includes(state.validityFlag) || hasCriticalValidityDetailProblem()) return "Do not interpret this result as final. Repeat collection per policy or consult the laboratory.";
     if (notExplained.length && !state.expected.length) return "Add expected medications/substances, recent administered medications, or reported exposures if known; otherwise review as a detected finding requiring clinical context.";
     if (notExplained.length && state.method === "immunoassay") return "Discuss nonjudgmentally, review medication/OTC exposures, and confirm unexpected positives with definitive testing before changing care.";
     if (notExplained.length) return "Review medication/substance history, timing, and panel details; consult the lab or confirm if the result affects management.";
@@ -1453,6 +1501,7 @@
     validityWarnings,
     absentConcerns,
     expectedNegatives,
+    expectedParentNotEntered,
   }) {
     const expected = state.expected.map(itemLabel).join(", ") || "none entered";
     const detected = state.detected.map(itemLabel).join(", ") || "none entered";
@@ -1464,6 +1513,7 @@
       `Expected: ${expected}. Detected: ${detected}. Tested-but-absent: ${absent}. Absent coverage verified: ${state.absentVerified ? "yes" : "no"}.`,
       absentConcerns.length ? `Absent-finding concerns: ${absentConcerns.slice(0, 3).join("; ")}.` : "Absent-finding concerns: none generated from entered findings.",
       expectedNegatives.length ? `Expected negative/absent findings: ${expectedNegatives.slice(0, 3).join("; ")}.` : "Expected negative/absent findings: none generated from entered findings.",
+      expectedParentNotEntered.length ? `Expected parent findings to check: ${expectedParentNotEntered.slice(0, 3).join("; ")}.` : "",
       `Interpretation label: ${label}. Confirmation threshold: ${confirmationLevel}.`,
       safetyFlags.length ? `Safety flags: ${safetyFlags.join("; ")}.` : "Safety flags: none generated from entered findings.",
       validityWarnings.length ? `Specimen validity limitations: ${validityWarnings.join("; ")}.` : "Specimen validity limitations: none generated from selected flag.",
@@ -1471,7 +1521,7 @@
       panelWarnings.length ? `Panel limitations: ${panelWarnings.slice(0, 3).join("; ")}.` : "Panel limitations: none generated from selected profile.",
       `Next step: ${nextStep}`,
       "Limits: urine testing alone does not prove dose, exact timing, impairment, diversion, intent, or legal/forensic conclusions.",
-    ].join("\n");
+    ].filter(Boolean).join("\n");
   }
 
   function buildPatientScript({ label, nextStep }) {
@@ -1615,7 +1665,7 @@
       method: state.panelDraft.method,
       note: state.panelDraft.note || `Reviewed ${state.panelDraft.reviewDate || "date not set"}. Non-identifying local profile.`,
       validityIncluded: Boolean(state.panelDraft.validityIncluded),
-      analytes: [...state.panelDraft.analytes],
+      analytes: dedupeCoverageEntries([...state.panelDraft.analytes]),
       reviewDate: state.panelDraft.reviewDate,
     });
     state.panelDraft = blankPanelDraft();
@@ -1707,6 +1757,22 @@
         return;
       }
       if (actionName === "clear-interpret") {
+        state.expected = [];
+        state.detected = [];
+        state.absent = [];
+        state.absentVerified = false;
+        state.validityFlag = "unknown";
+        state.validityDetails = blankValidityDetails();
+        state.validityDetailsOpen = false;
+        render();
+        return;
+      }
+      if (actionName === "reset-interpret-all") {
+        state.context = "chronic_opioid";
+        state.consequence = "moderate";
+        state.resultSource = "unknown";
+        state.method = "unknown";
+        state.panelId = "unknown";
         state.expected = [];
         state.detected = [];
         state.absent = [];
@@ -2048,6 +2114,20 @@
           /Routine documentation/i.test(result.confirmationLevel),
       ),
       runCase(
+        "Low creatinine with positive-only compatible result stays compatible",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["oxycodone"],
+          detected: ["oxycodone"],
+          validityFlag: "normal",
+          validityDetails: { ...blankValidityDetails(), creatinine: "12" },
+        },
+        (result) =>
+          /Consistent|expected/i.test(result.label) &&
+          /Routine documentation/i.test(result.confirmationLevel),
+      ),
+      runCase(
         "Expected opioid plus detected alcohol marker creates safety flag",
         {
           method: "definitive",
@@ -2085,6 +2165,18 @@
         (result) => result.safetyFlags.some((line) => /supportive metabolite|timing|adherence/i.test(line)),
       ),
       runCase(
+        "Strong supportive metabolite suppresses expected parent reminder",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["buprenorphine"],
+          detected: ["norbuprenorphine"],
+          validityFlag: "normal",
+        },
+        (result) =>
+          !result.expectedParentNotEntered.some((line) => /Buprenorphine is expected/i.test(line)),
+      ),
+      runCase(
         "Low creatinine validity detail cautions absent findings",
         {
           method: "definitive",
@@ -2110,6 +2202,20 @@
         (result) =>
           /Specimen-limited/i.test(result.label) &&
           /Repeat|consult/i.test(result.nextStep),
+      ),
+      runCase(
+        "Critical validity detail without result remains incomplete",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          detected: [],
+          absent: [],
+          validityFlag: "normal",
+          validityDetails: { ...blankValidityDetails(), oxidants: "abnormal" },
+        },
+        (result) =>
+          /Incomplete/i.test(result.label) &&
+          /Needs result input/i.test(result.confirmationLevel),
       ),
       runCase(
         "OUD fentanyl finding creates context-specific safety flag",

@@ -437,7 +437,7 @@
             ${option("lab_definitive", "Laboratory definitive LC/GC-MS", state.resultSource)}
           </select>
         </label>
-        <label>Panel profile
+        <label class="uds-field-wide">Panel profile
           <select data-field="panelId">
             ${allProfiles().map((profile) => option(profile.id, profile.label, state.panelId)).join("")}
           </select>

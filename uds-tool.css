@@ -183,6 +183,10 @@
   gap: 10px;
 }
 
+.uds-field-wide {
+  grid-column: 1 / -1;
+}
+
 .uds-card label,
 .uds-input-section,
 .uds-output-block {

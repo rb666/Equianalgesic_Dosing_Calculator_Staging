@@ -6,6 +6,12 @@
 
   const STORAGE_KEY = "uds-clinical-reference-panels-v1";
   const APP_VERSION = "2026-05-23 workflow redesign";
+  const COVERAGE_STATUSES = new Set([
+    "included",
+    "class_screen",
+    "assay_dependent",
+    "not_included",
+  ]);
   const REVIEW_METADATA = {
     lastReviewed: "2026-05-23",
     status: "staging clinical-content review",
@@ -206,10 +212,48 @@
   function loadProfiles() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      return Array.isArray(parsed) ? parsed.filter((profile) => profile && profile.id && profile.label) : [];
+      if (!Array.isArray(parsed)) {
+        return [];
+      }
+
+      return parsed
+        .map(normalizeLocalProfile)
+        .filter(Boolean);
     } catch {
       return [];
     }
+  }
+
+  function normalizeCoverageEntry(row) {
+    if (!row || !row.id || !getItem(row.id)) {
+      return null;
+    }
+
+    const status = COVERAGE_STATUSES.has(row.status) ? row.status : "included";
+    return coverage(row.id, status);
+  }
+
+  function normalizeLocalProfile(raw) {
+    if (!raw || !raw.id || !raw.label) {
+      return null;
+    }
+
+    const method = ["immunoassay", "definitive", "mixed", "unknown"].includes(raw.method)
+      ? raw.method
+      : "unknown";
+    const analytes = Array.isArray(raw.analytes)
+      ? raw.analytes.map(normalizeCoverageEntry).filter(Boolean)
+      : [];
+
+    return {
+      id: String(raw.id),
+      label: String(raw.label).slice(0, 80),
+      method,
+      note: String(raw.note || ""),
+      validityIncluded: Boolean(raw.validityIncluded),
+      analytes,
+      reviewDate: raw.reviewDate || "",
+    };
   }
 
   function saveProfiles() {

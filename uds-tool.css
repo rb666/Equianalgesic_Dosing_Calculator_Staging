@@ -9,7 +9,7 @@
 }
 
 .uds-screen.is-hidden,
-.is-hidden {
+#udsModal .is-hidden {
   display: none !important;
 }
 

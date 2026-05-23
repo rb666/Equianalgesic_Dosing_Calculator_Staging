@@ -168,6 +168,7 @@
     panelDraftCoverageStatus: "included",
     panelDraftError: "",
     lastSummary: "",
+    lastShortSummary: "",
     lastPatientScript: "",
   };
 
@@ -399,6 +400,7 @@
   function renderInterpret() {
     const result = analyzeInterpretation();
     state.lastSummary = result.chartNote;
+    state.lastShortSummary = result.shortSummary;
     state.lastPatientScript = result.patientScript;
     return `
       <section class="uds-workflow-grid">
@@ -445,6 +447,7 @@
           ${renderDetails("Expected parent findings to check", result.expectedParentNotEntered)}
           <div class="uds-copy-grid">
             <button class="uds-primary-button" data-action="copy-summary" type="button">Copy chart note</button>
+            <button class="uds-secondary-button" data-action="copy-short-summary" type="button">Copy short summary</button>
             <button class="uds-secondary-button" data-action="copy-patient" type="button">Copy patient script</button>
           </div>
           <pre class="uds-note-preview">${escapeHtml(result.chartNote)}</pre>
@@ -851,10 +854,15 @@
         safetyFlags: [],
         canSupport: ["This tool supports clinical reference review only."],
         cannotSupport: ["Legal, employment, custody, forensic, or chain-of-custody conclusions."],
-        nextStep,
-        chartNote,
-        patientScript: "This clinical reference tool is not designed for legal, employment, custody, or forensic testing decisions.",
-      };
+      nextStep,
+      chartNote,
+      shortSummary: [
+        `UDS interpretation: ${label}.`,
+        "Confirmation threshold: Do not use for this purpose.",
+        `Next: ${nextStep}`,
+      ].join("\n"),
+      patientScript: "This clinical reference tool is not designed for legal, employment, custody, or forensic testing decisions.",
+    };
     }
 
     state.detected.forEach((detectedId) => {
@@ -934,6 +942,14 @@
       absentConcerns,
       expectedNegatives,
     });
+    const shortSummary = [
+      `UDS interpretation: ${label}.`,
+      `Confirmation threshold: ${confirmationLevel}.`,
+      safetyFlags.length ? `Safety: ${safetyFlags.slice(0, 2).join("; ")}.` : "",
+      panelWarnings.length ? `Panel/profile: ${panelWarnings.slice(0, 2).join("; ")}.` : "",
+      validityWarnings.length ? `Validity: ${validityWarnings.slice(0, 2).join("; ")}.` : "",
+      `Next: ${nextStep}`,
+    ].filter(Boolean).join("\n");
     const patientScript = buildPatientScript({ label, nextStep });
 
     return {
@@ -957,6 +973,7 @@
       cannotSupport,
       nextStep,
       chartNote,
+      shortSummary,
       patientScript,
     };
   }
@@ -1649,6 +1666,10 @@
         copyText(state.lastSummary);
         return;
       }
+      if (actionName === "copy-short-summary") {
+        copyText(state.lastShortSummary);
+        return;
+      }
       if (actionName === "copy-patient") {
         copyText(state.lastPatientScript);
         return;
@@ -2141,6 +2162,7 @@
       label: result.label,
       confirmationLevel: result.confirmationLevel,
       nextStep: result.nextStep,
+      shortSummary: result.shortSummary,
       panelWarnings: result.panelWarnings,
       methodNotes: result.methodNotes,
       validityWarnings: result.validityWarnings,

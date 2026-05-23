@@ -35,6 +35,7 @@ Use this checklist before promoting UDS changes from staging to production.
 - Console: `window.runUdsGoldenCases()` returns all `passed: true`.
 - Console: `window.copyFailedUdsGoldenCases()` copies `All UDS golden cases passed.` when no regression is present.
 - Console: `window.copyUdsDebugState()` copies a non-identifying JSON snapshot of the current UDS inputs and interpretation.
+- Copy short summary produces a concise consult-style summary with interpretation, confirmation threshold, key warnings, and next step.
 - Manual: Open UDS, click an Expected input so the picker opens, then press Escape. The picker closes and the UDS screen remains open.
 - Detected finding with no expected medication context uses the softer `Detected finding without expected medication context` label.
 - Detected finding with no expected medication context uses a non-accusatory support line that says clinical meaning requires medication/exposure/panel/timing context.

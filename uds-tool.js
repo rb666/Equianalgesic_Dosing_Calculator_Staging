@@ -131,7 +131,7 @@
     profile("benzodiazepine_screen", "Benzodiazepine immunoassay", "immunoassay", "Class screen. Detection varies; clonazepam and lorazepam are common blind spots.", false, [
       coverage("diazepam", "class_screen"), coverage("nordiazepam", "class_screen"), coverage("temazepam", "class_screen"), coverage("oxazepam", "class_screen"), coverage("alprazolam", "assay_dependent"), coverage("alpha_hydroxyalprazolam", "assay_dependent"), coverage("clonazepam", "assay_dependent"), coverage("aminoclonazepam7", "assay_dependent"), coverage("lorazepam", "assay_dependent"),
     ]),
-    profile("targeted_definitive", "Targeted definitive panel", "definitive", "Definitive methods are still targeted. Only interpret absent analytes if included and reportable.", true, []),
+    profile("targeted_definitive", "Unmapped targeted definitive panel", "definitive", "Use when the report says definitive testing was performed but the exact included analytes have not been mapped here. Absent findings still require verified report coverage.", true, []),
     profile("example_broad_definitive", "Example broad definitive profile", "definitive", "Example profile for demonstration only; replace with local non-identifying panel profiles.", true, [
       "morphine", "codeine", "6mam", "hydrocodone", "norhydrocodone", "hydromorphone", "oxycodone", "noroxycodone", "oxymorphone", "fentanyl", "norfentanyl", "buprenorphine", "norbuprenorphine", "methadone", "eddp", "tramadol", "odesmethyltramadol", "diazepam", "nordiazepam", "temazepam", "oxazepam", "clonazepam", "aminoclonazepam7", "lorazepam", "alprazolam", "alpha_hydroxyalprazolam", "amphetamine", "methamphetamine", "methylphenidate", "ritalinic_acid", "benzoylecgonine", "thc_cooh", "etg", "ets", "gabapentin", "pregabalin", "zolpidem", "mitragynine", "xylazine"
     ].map((id) => coverage(id, "included"))),
@@ -145,6 +145,7 @@
     mode: "interpret",
     context: "chronic_opioid",
     consequence: "moderate",
+    resultSource: "unknown",
     method: "unknown",
     panelId: "unknown",
     expected: [],
@@ -373,9 +374,9 @@
           ${renderOutputBlock("Specimen validity", [...result.validityNotes, ...result.validityWarnings])}
           ${renderOutputBlock("What this can support", result.canSupport)}
           ${renderOutputBlock("What this cannot support", result.cannotSupport)}
-          ${renderOutputBlock("Expected negative / absent findings", result.expectedNegatives)}
-          ${result.panelWarnings.length ? renderOutputBlock("Panel/method limitations", result.panelWarnings) : ""}
+          ${result.panelWarnings.length ? renderOutputBlock("Panel/profile limitations", result.panelWarnings) : ""}
           ${renderOutputBlock("Recommended next step", [result.nextStep])}
+          ${result.expectedNegatives.length ? renderDetails("Expected negative / absent findings", result.expectedNegatives) : ""}
           ${renderDetails("Reasoning details", [
             ...result.explained.map((line) => `Compatible: ${line}`),
             ...result.contextNeeded.map((line) => `Context: ${line}`),
@@ -383,8 +384,9 @@
             ...result.absentConcerns.map((line) => `Absent review: ${line}`),
             ...result.expectedNegatives.map((line) => `Expected negative: ${line}`),
             ...result.validityWarnings.map((line) => `Specimen validity: ${line}`),
-            ...result.panelWarnings.map((line) => `Panel/method: ${line}`),
+            ...result.panelWarnings.map((line) => `Panel/profile: ${line}`),
           ])}
+          ${renderDetails("Method notes", result.methodNotes)}
           ${renderDetails("Optional supportive findings to check", result.supportiveNotEntered)}
           <div class="uds-copy-grid">
             <button class="uds-primary-button" data-action="copy-summary" type="button">Copy chart note</button>
@@ -409,6 +411,7 @@
             ${option("psychiatry", "Psychiatry", state.context)}
             ${option("pregnancy", "Pregnancy / perinatal", state.context)}
             ${option("adolescent", "Adolescent", state.context)}
+            ${option("forensic_nonclinical", "Legal / employment / forensic - not supported", state.context)}
             ${option("other", "Other clinical context", state.context)}
           </select>
         </label>
@@ -424,6 +427,14 @@
             ${option("unknown", "Unknown", state.method)}
             ${option("immunoassay", "Immunoassay screen", state.method)}
             ${option("definitive", "Definitive LC/GC-MS", state.method)}
+          </select>
+        </label>
+        <label>Result source
+          <select data-field="resultSource">
+            ${option("unknown", "Unknown", state.resultSource)}
+            ${option("poc", "Point-of-care cup/card", state.resultSource)}
+            ${option("lab_screen", "Laboratory immunoassay", state.resultSource)}
+            ${option("lab_definitive", "Laboratory definitive LC/GC-MS", state.resultSource)}
           </select>
         </label>
         <label>Panel profile
@@ -724,8 +735,42 @@
     const explained = [];
     const contextNeeded = [];
     const notExplained = [];
+    const methodNotes = buildMethodNotes();
     const panelWarnings = buildPanelWarnings(profile);
     const safetyFlags = buildSafetyFlags();
+
+    if (state.context === "forensic_nonclinical") {
+      const label = "Nonclinical/forensic use not supported";
+      const nextStep = "Use appropriate chain-of-custody, forensic/workplace protocols, certified laboratory processes, and qualified review. This clinical reference tool should not be used for legal, employment, custody, or forensic conclusions.";
+      const chartNote = [
+        "UDS clinical reference review, no patient identifiers entered.",
+        "Selected context is legal/employment/forensic, which is outside this tool's intended use.",
+        `Next step: ${nextStep}`,
+      ].join("\n");
+
+      return {
+        label,
+        tone: "warning",
+        confirmationLevel: "Do not use for this purpose",
+        explained: [],
+        contextNeeded: [],
+        notExplained: [],
+        absentConcerns: [],
+        absentReviews: [],
+        expectedNegatives: [],
+        supportiveNotEntered: [],
+        methodNotes: [],
+        panelWarnings: [],
+        validityNotes: [],
+        validityWarnings: [],
+        safetyFlags: [],
+        canSupport: ["This tool supports clinical reference review only."],
+        cannotSupport: ["Legal, employment, custody, forensic, or chain-of-custody conclusions."],
+        nextStep,
+        chartNote,
+        patientScript: "This clinical reference tool is not designed for legal, employment, custody, or forensic testing decisions.",
+      };
+    }
 
     state.detected.forEach((detectedId) => {
       if (state.expected.includes(detectedId)) {
@@ -769,6 +814,9 @@
     const validity = classifyValidity();
     const validityNotes = validity.note ? [validity.note] : [];
     const validityWarnings = validity.warning ? [validity.warning] : [];
+    if (state.validityFlag === "unknown" && state.absent.length) {
+      validityWarnings.push("Specimen validity is unknown; absent/negative findings are less secure than positive detected findings.");
+    }
 
     const confirmationLevel = confirmationLevelFor({ notExplained, absentReviews, panelWarnings, validityWarnings });
     const { label, tone } = labelForResult({ explained, contextNeeded, notExplained, absentReviews, panelWarnings, validityWarnings });
@@ -779,7 +827,7 @@
     if (profile.id === "unknown") cannotSupport.push("A negative or absent result cannot be relied on when the ordered panel is unknown.");
     if (["dilute", "invalid", "adulterated"].includes(state.validityFlag)) cannotSupport.push("Negative results are limited by specimen validity concerns.");
 
-    const chartNote = buildChartNote({ label, confirmationLevel, nextStep, safetyFlags, panelWarnings, validityWarnings });
+    const chartNote = buildChartNote({ label, confirmationLevel, nextStep, safetyFlags, methodNotes, panelWarnings, validityWarnings });
     const patientScript = buildPatientScript({ label, nextStep });
 
     return {
@@ -793,6 +841,7 @@
       absentReviews,
       expectedNegatives: [...new Set(expectedNegatives)].slice(0, 8),
       supportiveNotEntered: [...new Set(supportiveNotEntered)].slice(0, 8),
+      methodNotes,
       panelWarnings: [...new Set(panelWarnings)].slice(0, 8),
       validityNotes,
       validityWarnings,
@@ -914,9 +963,6 @@
 
   function buildPanelWarnings(profile) {
     const warnings = [];
-    if (state.method === "unknown") warnings.push("Method is unknown. Select immunoassay versus definitive if available before acting on the result.");
-    if (state.method === "immunoassay") warnings.push("Immunoassay results are presumptive and can have false positives, false negatives, and class-panel gaps.");
-    if (state.method === "definitive") warnings.push("Definitive testing is targeted; it only answers analytes included and reportable in that method.");
     if (profile.id === "unknown") warnings.push("Panel profile is unknown. Do not rely on absent findings until included analytes/cutoffs are verified.");
     if (profile.method !== "unknown" && state.method !== "unknown" && profile.method !== state.method && profile.method !== "mixed") warnings.push(`Selected profile method (${profile.method}) does not match selected result method (${state.method}).`);
 
@@ -932,9 +978,37 @@
     if (state.panelId === "generic_opiate_screen" && hasFentanylQuestion) warnings.push("Generic opiate screens do not exclude fentanyl/norfentanyl exposure.");
     const hasOxyQuestion = [...state.expected, ...state.absent].some((id) => ["oxycodone", "oxymorphone", "noroxycodone"].includes(id));
     if (state.panelId === "generic_opiate_screen" && hasOxyQuestion) warnings.push("A generic opiate screen may miss oxycodone/oxymorphone unless oxycodone-specific testing is included.");
+    const genericOpiateBlindSpotIds = [
+      "buprenorphine",
+      "norbuprenorphine",
+      "methadone",
+      "eddp",
+      "tramadol",
+      "odesmethyltramadol",
+      "tapentadol",
+    ];
+    const hasGenericOpiateBlindSpotQuestion = [...state.expected, ...state.detected, ...state.absent]
+      .some((id) => genericOpiateBlindSpotIds.includes(id));
+    if (state.panelId === "generic_opiate_screen" && hasGenericOpiateBlindSpotQuestion) warnings.push("Generic opiate screens do not reliably detect buprenorphine, methadone/EDDP, tramadol, or tapentadol; order targeted or definitive testing when those drugs matter.");
     const hasClonazepamQuestion = [...state.expected, ...state.absent].some((id) => ["clonazepam", "aminoclonazepam7"].includes(id));
     if (state.panelId === "benzodiazepine_screen" && hasClonazepamQuestion) warnings.push("Some benzodiazepine screens under-detect clonazepam/7-aminoclonazepam.");
+    const hasLorazepamQuestion = [...state.expected, ...state.absent].some((id) => id === "lorazepam");
+    if (state.panelId === "benzodiazepine_screen" && hasLorazepamQuestion) warnings.push("Some benzodiazepine screens under-detect lorazepam or glucuronidated metabolites.");
     return warnings;
+  }
+
+  function buildMethodNotes() {
+    const notes = [];
+    if (state.method === "immunoassay") {
+      notes.push("Immunoassay results are presumptive and can have false positives, false negatives, and class-panel gaps.");
+    }
+    if (state.method === "definitive") {
+      notes.push("Definitive testing is targeted; it only answers analytes included and reportable in that method.");
+    }
+    if (state.method === "unknown") {
+      notes.push("Method is unknown. Select immunoassay versus definitive if available before acting on the result.");
+    }
+    return notes;
   }
 
   function classifyValidity() {
@@ -971,27 +1045,32 @@
     }
 
     return {
-      note: "",
-      warning: "Specimen validity is unknown; interpret cautiously.",
+      note: "Specimen validity is not reported. Interpret negative or absent findings cautiously.",
+      warning: "",
       severity: "unknown",
     };
   }
 
   function buildSafetyFlags() {
     const detected = state.detected.map(getItem).filter(Boolean);
+    const expected = state.expected.map(getItem).filter(Boolean);
+    const allKnown = [...detected, ...expected];
     const flags = [];
-    const hasOpioid = detected.some((entry) => entry.tags.includes("opioid"));
-    const hasBenzo = detected.some((entry) => entry.tags.includes("benzodiazepine"));
-    const hasAlcohol = detected.some((entry) => entry.tags.includes("alcohol"));
-    const hasSedative = detected.some((entry) => entry.tags.includes("sedative"));
-    if (hasOpioid && hasBenzo) flags.push("Opioid + benzodiazepine detected: assess sedation/overdose risk and naloxone access.");
-    if (hasOpioid && hasAlcohol) flags.push("Opioid + alcohol marker detected: assess respiratory depression and safety risk.");
-    if (hasOpioid && hasSedative && !hasBenzo) flags.push("Opioid + sedating co-exposure detected: assess sedation/overdose risk.");
+    const hasExpectedOrDetectedOpioid = allKnown.some((entry) => entry.tags.includes("opioid"));
+    const hasDetectedOpioid = detected.some((entry) => entry.tags.includes("opioid"));
+    const hasDetectedBenzo = detected.some((entry) => entry.tags.includes("benzodiazepine"));
+    const hasExpectedBenzo = expected.some((entry) => entry.tags.includes("benzodiazepine"));
+    const hasDetectedAlcohol = detected.some((entry) => entry.tags.includes("alcohol"));
+    const hasDetectedSedative = detected.some((entry) => entry.tags.includes("sedative"));
+    if (hasExpectedOrDetectedOpioid && hasDetectedBenzo) flags.push("Opioid therapy/exposure + benzodiazepine detected: assess sedation/overdose risk and naloxone access.");
+    if (hasDetectedOpioid && hasExpectedBenzo) flags.push("Opioid detected with expected benzodiazepine therapy: assess sedation/overdose risk and coordination of prescribing.");
+    if (hasExpectedOrDetectedOpioid && hasDetectedAlcohol) flags.push("Opioid therapy/exposure + alcohol marker detected: assess respiratory depression and safety risk.");
+    if (hasExpectedOrDetectedOpioid && hasDetectedSedative && !hasDetectedBenzo) flags.push("Opioid therapy/exposure + sedating co-exposure detected: assess sedation/overdose risk.");
     if (detected.some((entry) => ["fentanyl", "norfentanyl"].includes(entry.id))) flags.push("Fentanyl/norfentanyl detected: review overdose prevention, naloxone, and treatment adequacy.");
     if (detected.some((entry) => entry.id === "xylazine")) flags.push("Xylazine detected or suspected: routine UDS usually misses it; naloxone still treats opioid co-exposure, but xylazine effects require supportive care.");
     if (state.context === "pregnancy") flags.push("Pregnancy/perinatal context: confirm unexpected results before high-consequence action and follow local policy/law.");
     if (state.context === "adolescent") flags.push("Adolescent context: consider consent/confidentiality rules and avoid punitive use.");
-    return flags;
+    return [...new Set(flags)];
   }
 
   function confirmationLevelFor({ notExplained, absentReviews, panelWarnings, validityWarnings }) {
@@ -1002,22 +1081,23 @@
     const hasPanelLimitedAbsent = absentReviews.some((row) =>
       ["panel_limited", "non_actionable"].includes(row.severity),
     );
-    const hasUncertainty =
-      notExplained.length ||
+    const hasHardValidityProblem = ["invalid", "adulterated"].includes(state.validityFlag);
+    const hasActionableUncertainty =
+      notExplained.length > 0 ||
       hasUnexpectedAbsent ||
       hasPanelLimitedAbsent ||
-      validityWarnings.length ||
-      state.method === "unknown" ||
-      state.method === "immunoassay" ||
-      panelWarnings.some((line) => /unknown|not included|assay-dependent|may miss|does not exclude/i.test(line));
+      panelWarnings.length > 0 ||
+      validityWarnings.length > 0 ||
+      state.method === "unknown";
 
-    if (["invalid", "adulterated"].includes(state.validityFlag)) return "Repeat / consult lab";
+    if (hasHardValidityProblem) return "Repeat / consult lab";
     if (!hasResultInput) return "Needs result input";
-    if (state.consequence === "high" && hasUncertainty) return "Confirm before action";
+    if (state.consequence === "high" && hasActionableUncertainty) return "Confirm before action";
     if (state.consequence === "high") return "High-consequence review";
     if (state.method === "immunoassay" && (notExplained.length || hasUnexpectedAbsent)) return "Confirmation recommended";
     if (notExplained.length || hasUnexpectedAbsent) return "Clarify / confirm";
     if (hasPanelLimitedAbsent || panelWarnings.length) return "Verify panel";
+    if (validityWarnings.length) return "Interpret cautiously";
     return "Routine documentation";
   }
 
@@ -1030,8 +1110,10 @@
     if (absentReviews.some((row) => row.severity === "supportive_absent")) return { label: "Supportive finding absent / context-dependent", tone: "caution" };
     if (absentReviews.some((row) => ["panel_limited", "non_actionable"].includes(row.severity))) return { label: "Assay-limited / panel-dependent", tone: "method" };
     if (contextNeeded.length) return { label: "Source-ambiguous / context-dependent", tone: "caution" };
-    if (validityWarnings.length || panelWarnings.some((line) => /unknown|assay-dependent|not included|may miss|does not exclude/i.test(line))) return { label: "Assay-limited / panel-dependent", tone: "method" };
+    if (panelWarnings.length) return { label: "Assay-limited / panel-dependent", tone: "method" };
+    if (validityWarnings.length && state.absent.length) return { label: "Specimen-limited absent finding", tone: "caution" };
     if (explained.length) return { label: "Consistent / expected", tone: "compatible" };
+    if (state.detected.length && !state.expected.length) return { label: "Detected finding without expected medication context", tone: "caution" };
     return { label: "Incomplete", tone: "neutral" };
   }
 
@@ -1041,12 +1123,14 @@
     if (!state.detected.length && !state.absent.length) return "Add detected positive/present findings or verified tested-but-absent findings to complete the reconciliation.";
     if (notExplained.length && state.method === "immunoassay") return "Discuss nonjudgmentally, review medication/OTC exposures, and confirm unexpected positives with definitive testing before changing care.";
     if (notExplained.length) return "Review medication/substance history, timing, and panel details; consult the lab or confirm if the result affects management.";
-    if (validityWarnings.length) return "Address specimen-validity limitations before relying on negative or absent findings.";
     if (absentConcerns.length && !state.absentVerified) return "Verify panel coverage and reportable analytes before interpreting any absent result.";
+    if (panelWarnings.length) return "Resolve panel/profile limitations before relying on absent or class-screen findings.";
+    if (validityWarnings.length && state.absent.length) return "Interpret absent findings cautiously because specimen validity is incomplete or limited.";
+    if (validityWarnings.length) return "Address specimen-validity limitations before relying on the result.";
     if (contextNeeded.length) return "Interpret with timing, cutoff, quantitative values if available, and the full parent/metabolite pattern.";
-    if (panelWarnings.length) return "Resolve panel/method limitations before relying on absent or class-screen findings.";
     if (label === "Consistent / expected") return "Document as compatible with the entered expected medication/substance list, assuming timing, cutoff, and specimen validity fit.";
-    return "Add expected medications, detected findings, and verified absent findings to complete the reconciliation.";
+    if (label === "Detected finding without expected medication context") return "Add expected medications/substances or review as an unexpected detected finding if no explanation is known.";
+    return "Document expected negatives or compatible findings as appropriate, while avoiding dose, timing, impairment, diversion, or intent conclusions.";
   }
 
   function buildCanSupport(explained, contextNeeded, notExplained) {
@@ -1068,19 +1152,20 @@
     ];
   }
 
-  function buildChartNote({ label, confirmationLevel, nextStep, safetyFlags, panelWarnings, validityWarnings }) {
+  function buildChartNote({ label, confirmationLevel, nextStep, safetyFlags, methodNotes, panelWarnings, validityWarnings }) {
     const expected = state.expected.map(itemLabel).join(", ") || "none entered";
     const detected = state.detected.map(itemLabel).join(", ") || "none entered";
     const absent = state.absent.map(itemLabel).join(", ") || "none entered";
     return [
       "UDS clinical reference review, no patient identifiers entered.",
       `Context: ${formatContext(state.context)}. Consequence if wrong: ${state.consequence}.`,
-      `Method/panel: ${formatMethod(state.method)} / ${selectedProfile().label}. Specimen validity: ${formatValidity(state.validityFlag)}.`,
+      `Result source: ${formatResultSource(state.resultSource)}. Method/panel: ${formatMethod(state.method)} / ${selectedProfile().label}. Specimen validity: ${formatValidity(state.validityFlag)}.`,
       `Expected: ${expected}. Detected: ${detected}. Tested-but-absent: ${absent}. Absent coverage verified: ${state.absentVerified ? "yes" : "no"}.`,
       `Interpretation label: ${label}. Confirmation threshold: ${confirmationLevel}.`,
       safetyFlags.length ? `Safety flags: ${safetyFlags.join("; ")}.` : "Safety flags: none generated from entered findings.",
       validityWarnings.length ? `Specimen validity limitations: ${validityWarnings.join("; ")}.` : "Specimen validity limitations: none generated from selected flag.",
-      panelWarnings.length ? `Panel/method limitations: ${panelWarnings.slice(0, 3).join("; ")}.` : "Panel/method limitations: none generated from selected inputs.",
+      methodNotes.length ? `Method notes: ${methodNotes.slice(0, 2).join("; ")}.` : "Method notes: none generated from selected method.",
+      panelWarnings.length ? `Panel limitations: ${panelWarnings.slice(0, 3).join("; ")}.` : "Panel limitations: none generated from selected profile.",
       `Next step: ${nextStep}`,
       "Limits: urine testing alone does not prove dose, exact timing, impairment, diversion, intent, or legal/forensic conclusions.",
     ].join("\n");
@@ -1149,6 +1234,15 @@
   function addChip(key, rawValue) {
     const entry = findEnterPickerItem(rawValue);
     return addChipById(key, entry?.id);
+  }
+
+  function formatResultSource(value) {
+    return {
+      unknown: "unknown source",
+      poc: "point-of-care cup/card",
+      lab_screen: "laboratory immunoassay",
+      lab_definitive: "laboratory definitive LC/GC-MS",
+    }[value] || value;
   }
 
   function addChipById(key, id) {
@@ -1370,6 +1464,11 @@
       const field = target.dataset.field;
       if (field) {
         if (field === "absentVerified") state.absentVerified = target.checked;
+        else if (field === "resultSource") {
+          state.resultSource = target.value;
+          if (target.value === "poc" || target.value === "lab_screen") state.method = "immunoassay";
+          if (target.value === "lab_definitive") state.method = "definitive";
+        }
         else state[field] = target.value;
         render();
         return;

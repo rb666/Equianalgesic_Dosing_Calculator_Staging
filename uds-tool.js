@@ -182,6 +182,14 @@
     lastPatientScript: "",
   };
 
+  const lookupPointer = {
+    active: false,
+    x: 0,
+    y: 0,
+  };
+  let lookupHoverRow = null;
+  let lookupHoverFrame = 0;
+
   function item(id, name, group, type, aliases, window, note, bestTest, tags) {
     return { id, name, group, type, aliases, window, note, bestTest, tags };
   }
@@ -569,7 +577,6 @@
         <div class="uds-section-label"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(hint)}</span></div>
         <div class="uds-add-line uds-add-line--picker">
           ${renderPickerInput(key, "Type drug, metabolite, brand, or finding...")}
-          <button class="uds-secondary-button" data-action="add-chip" data-key="${key}" type="button">Add</button>
         </div>
         <div class="uds-chip-list">${renderChips(key)}</div>
       </section>
@@ -586,7 +593,6 @@
         </label>
         <div class="uds-add-line uds-add-line--picker">
           ${renderPickerInput("absent", "Example: norfentanyl, 7-aminoclonazepam")}
-          <button class="uds-secondary-button" data-action="add-chip" data-key="absent" type="button">Add</button>
         </div>
         <div class="uds-chip-list">${renderChips("absent")}</div>
       </section>
@@ -1783,7 +1789,90 @@
     return added;
   }
 
+  function setLookupHoverRow(row) {
+    if (lookupHoverRow === row) return;
+    lookupHoverRow?.classList.remove("is-pointer-hovered");
+    lookupHoverRow = row;
+    lookupHoverRow?.classList.add("is-pointer-hovered");
+  }
+
+  function syncLookupHoverFromPointer() {
+    lookupHoverFrame = 0;
+
+    if (!lookupPointer.active) {
+      setLookupHoverRow(null);
+      return;
+    }
+
+    const list = root.querySelector("#udsLookupResults");
+    const element = document.elementFromPoint(lookupPointer.x, lookupPointer.y);
+
+    if (!list || !element || !list.contains(element)) {
+      setLookupHoverRow(null);
+      return;
+    }
+
+    const row = element.closest(".uds-row-button");
+    setLookupHoverRow(row && list.contains(row) ? row : null);
+  }
+
+  function scheduleLookupHoverSync() {
+    if (lookupHoverFrame) return;
+    lookupHoverFrame = window.requestAnimationFrame(syncLookupHoverFromPointer);
+  }
+
   function attachEvents() {
+    root.addEventListener("pointermove", (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const list = target?.closest("#udsLookupResults");
+
+      if (!list) {
+        lookupPointer.active = false;
+        setLookupHoverRow(null);
+        return;
+      }
+
+      lookupPointer.active = true;
+      lookupPointer.x = event.clientX;
+      lookupPointer.y = event.clientY;
+      syncLookupHoverFromPointer();
+    });
+
+    root.addEventListener("pointerout", (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const list = target?.closest("#udsLookupResults");
+      const related = event.relatedTarget instanceof Element ? event.relatedTarget : null;
+
+      if (list && (!related || !list.contains(related))) {
+        lookupPointer.active = false;
+        setLookupHoverRow(null);
+      }
+    });
+
+    root.addEventListener(
+      "scroll",
+      (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+
+        if (target?.id === "udsLookupResults") {
+          scheduleLookupHoverSync();
+        }
+      },
+      true,
+    );
+
+    root.addEventListener(
+      "wheel",
+      (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+
+        if (target?.closest("#udsLookupResults")) {
+          window.setTimeout(scheduleLookupHoverSync, 0);
+        }
+      },
+      { passive: true },
+    );
+
     root.addEventListener("click", (event) => {
       const modeButton = event.target.closest("[data-mode]");
       if (modeButton) {
@@ -1972,6 +2061,7 @@
         const results = root.querySelector("#udsLookupResults");
         if (results) {
           results.innerHTML = renderLookupResults();
+          scheduleLookupHoverSync();
         }
         return;
       }

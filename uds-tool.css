@@ -1,4 +1,22 @@
 /* UDS workflow redesign: minimal, PHI-safe clinical reference interface */
+:root {
+  --uds-neutral-fg: #374151;
+  --uds-neutral-bg: #f3f4f6;
+  --uds-neutral-border: #d1d5db;
+  --uds-compatible-fg: #065f46;
+  --uds-compatible-bg: #ecfdf5;
+  --uds-compatible-border: #10b981;
+  --uds-caution-fg: #92400e;
+  --uds-caution-bg: #fffbeb;
+  --uds-caution-border: #f59e0b;
+  --uds-method-fg: #1e3a8a;
+  --uds-method-bg: #eff6ff;
+  --uds-method-border: #3b82f6;
+  --uds-warning-fg: #991b1b;
+  --uds-warning-bg: #fef2f2;
+  --uds-warning-border: #ef4444;
+}
+
 .uds-screen {
   position: fixed;
   inset: 0;
@@ -382,18 +400,76 @@
   align-items: center;
   min-height: 30px;
   padding: 5px 9px;
-  border: 1px solid color-mix(in srgb, var(--accent, #276749) 55%, #000 8%);
+  border: 1px solid var(--uds-neutral-border);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--accent, #276749) 10%, var(--surface, #fff));
-  color: color-mix(in srgb, var(--accent, #276749) 84%, #000 16%);
+  background: var(--uds-neutral-bg);
+  color: var(--uds-neutral-fg);
   font-size: 0.82rem;
   font-weight: 800;
   cursor: pointer;
 }
 
 .uds-chip span {
-  color: var(--muted, #5b6673);
+  color: currentColor;
+  opacity: 0.78;
   font-weight: 900;
+}
+
+.uds-chip--expected {
+  border-color: #6366f1;
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.uds-chip--detected {
+  border-color: #14b8a6;
+  background: #f0fdfa;
+  color: #115e59;
+}
+
+.uds-chip--absent {
+  border-color: #94a3b8;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.uds-chip--panel {
+  border-color: #7c3aed;
+  background: #f5f3ff;
+  color: #5b21b6;
+}
+
+.uds-chip--coverage {
+  gap: 8px;
+}
+
+.uds-chip--coverage span:first-of-type {
+  font-size: 0.72rem;
+  font-weight: 780;
+}
+
+.uds-chip--coverage-included {
+  border-color: var(--uds-compatible-border);
+  background: var(--uds-compatible-bg);
+  color: var(--uds-compatible-fg);
+}
+
+.uds-chip--coverage-class_screen {
+  border-color: var(--uds-method-border);
+  background: var(--uds-method-bg);
+  color: var(--uds-method-fg);
+}
+
+.uds-chip--coverage-assay_dependent {
+  border-color: var(--uds-caution-border);
+  background: var(--uds-caution-bg);
+  color: var(--uds-caution-fg);
+}
+
+.uds-chip--coverage-not_included {
+  border-color: var(--uds-warning-border);
+  background: var(--uds-warning-bg);
+  color: var(--uds-warning-fg);
 }
 
 .uds-checkbox-line {
@@ -468,39 +544,69 @@
   max-width: 260px;
   min-height: 30px;
   padding: 5px 9px;
-  border: 1px solid var(--border, #cbd5df);
+  border: 1px solid var(--uds-neutral-border);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--surface, #fff) 70%, #eef2f7 30%);
-  color: var(--ink, #1f2933);
+  background: var(--uds-neutral-bg);
+  color: var(--uds-neutral-fg);
   font-size: 0.78rem;
   font-weight: 800;
   text-align: center;
 }
 
 .uds-status--compatible {
-  border-color: #047857;
-  background: #ecfdf5;
-  color: #065f46;
+  border-color: var(--uds-compatible-border);
+  background: var(--uds-compatible-bg);
+  color: var(--uds-compatible-fg);
 }
 
-.uds-status--caution,
+.uds-status--caution {
+  border-color: var(--uds-caution-border);
+  background: var(--uds-caution-bg);
+  color: var(--uds-caution-fg);
+}
+
 .uds-status--method {
-  border-color: #d97706;
-  background: #fffbeb;
-  color: #92400e;
+  border-color: var(--uds-method-border);
+  background: var(--uds-method-bg);
+  color: var(--uds-method-fg);
 }
 
 .uds-status--warning {
-  border-color: #b91c1c;
-  background: #fef2f2;
-  color: #991b1b;
+  border-color: var(--uds-warning-border);
+  background: var(--uds-warning-bg);
+  color: var(--uds-warning-fg);
 }
 
 .uds-output-block {
   padding: 11px 12px;
   border: 1px solid color-mix(in srgb, var(--border, #cbd5df) 74%, transparent);
+  border-left-width: 4px;
   border-radius: 12px;
   background: color-mix(in srgb, var(--surface, #fff) 94%, #f3f6f8 6%);
+}
+
+.uds-output-block--neutral {
+  border-left-color: var(--uds-neutral-border);
+}
+
+.uds-output-block--compatible {
+  border-left-color: var(--uds-compatible-border);
+  background: color-mix(in srgb, var(--uds-compatible-bg) 38%, var(--surface, #fff));
+}
+
+.uds-output-block--caution {
+  border-left-color: var(--uds-caution-border);
+  background: color-mix(in srgb, var(--uds-caution-bg) 46%, var(--surface, #fff));
+}
+
+.uds-output-block--method {
+  border-left-color: var(--uds-method-border);
+  background: color-mix(in srgb, var(--uds-method-bg) 48%, var(--surface, #fff));
+}
+
+.uds-output-block--warning {
+  border-left-color: var(--uds-warning-border);
+  background: color-mix(in srgb, var(--uds-warning-bg) 54%, var(--surface, #fff));
 }
 
 .uds-output-block h4 {
@@ -540,6 +646,11 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 9px;
+}
+
+.uds-output-tone-label {
+  margin-right: 6px;
+  font-weight: 900;
 }
 
 .uds-note-preview {
@@ -641,6 +752,94 @@
   line-height: 1;
 }
 
+.uds-list-badge--compatible {
+  border-color: var(--uds-compatible-border);
+  background: var(--uds-compatible-bg);
+  color: var(--uds-compatible-fg);
+}
+
+.uds-list-badge--method {
+  border-color: var(--uds-method-border);
+  background: var(--uds-method-bg);
+  color: var(--uds-method-fg);
+}
+
+.uds-list-badge--warning {
+  border-color: var(--uds-warning-border);
+  background: var(--uds-warning-bg);
+  color: var(--uds-warning-fg);
+}
+
+.uds-list-badge--neutral {
+  border-color: var(--uds-neutral-border);
+  background: var(--uds-neutral-bg);
+  color: var(--uds-neutral-fg);
+}
+
+.uds-tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 24px;
+  padding: 3px 8px;
+  border: 1px solid var(--uds-neutral-border);
+  border-radius: 999px;
+  background: var(--uds-neutral-bg);
+  color: var(--uds-neutral-fg);
+  font-size: 0.72rem;
+  font-weight: 820;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.uds-tag--opioid {
+  border-color: #8b5cf6;
+  background: #f5f3ff;
+  color: #5b21b6;
+}
+
+.uds-tag--sedative {
+  border-color: #6366f1;
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.uds-tag--stimulant {
+  border-color: #f97316;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.uds-tag--cannabinoid {
+  border-color: #22c55e;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.uds-tag--alcohol {
+  border-color: #14b8a6;
+  background: #f0fdfa;
+  color: #115e59;
+}
+
+.uds-tag--method {
+  border-color: var(--uds-method-border);
+  background: var(--uds-method-bg);
+  color: var(--uds-method-fg);
+}
+
+.uds-tag--risk {
+  border-color: var(--uds-warning-border);
+  background: var(--uds-warning-bg);
+  color: var(--uds-warning-fg);
+}
+
+.uds-tag--other {
+  border-color: var(--uds-neutral-border);
+  background: var(--uds-neutral-bg);
+  color: var(--uds-neutral-fg);
+}
+
 @media (max-width: 900px) {
   .uds-header {
     grid-template-columns: 1fr;
@@ -682,6 +881,24 @@
   .uds-add-line {
     grid-template-columns: 1fr;
   }
+}
+
+:root[data-theme="dark"] {
+  --uds-neutral-fg: #e5e7eb;
+  --uds-neutral-bg: #1f2937;
+  --uds-neutral-border: #4b5563;
+  --uds-compatible-fg: #a7f3d0;
+  --uds-compatible-bg: #052e24;
+  --uds-compatible-border: #34d399;
+  --uds-caution-fg: #fde68a;
+  --uds-caution-bg: #2a1f08;
+  --uds-caution-border: #f59e0b;
+  --uds-method-fg: #bfdbfe;
+  --uds-method-bg: #0f1f3f;
+  --uds-method-border: #60a5fa;
+  --uds-warning-fg: #fecaca;
+  --uds-warning-bg: #2a1212;
+  --uds-warning-border: #f87171;
 }
 
 :root[data-theme="dark"] .uds-screen {
@@ -753,21 +970,120 @@
   color: #fecaca;
 }
 
-:root[data-theme="dark"] .uds-status--compatible {
-  border-color: #34d399;
-  background: #052e24;
-  color: #a7f3d0;
+:root[data-theme="dark"] .uds-chip--expected {
+  border-color: #818cf8;
+  background: #1e1b4b;
+  color: #c7d2fe;
 }
 
-:root[data-theme="dark"] .uds-status--caution,
+:root[data-theme="dark"] .uds-chip--detected {
+  border-color: #2dd4bf;
+  background: #042f2e;
+  color: #99f6e4;
+}
+
+:root[data-theme="dark"] .uds-chip--absent {
+  border-color: #64748b;
+  background: #0f172a;
+  color: #cbd5e1;
+}
+
+:root[data-theme="dark"] .uds-chip--panel {
+  border-color: #a78bfa;
+  background: #2e1065;
+  color: #ddd6fe;
+}
+
+:root[data-theme="dark"] .uds-output-block--neutral {
+  border-left-color: var(--uds-neutral-border);
+}
+
+:root[data-theme="dark"] .uds-output-block--compatible {
+  border-left-color: var(--uds-compatible-border);
+  background: color-mix(in srgb, var(--uds-compatible-bg) 48%, #111827);
+}
+
+:root[data-theme="dark"] .uds-output-block--caution {
+  border-left-color: var(--uds-caution-border);
+  background: color-mix(in srgb, var(--uds-caution-bg) 52%, #111827);
+}
+
+:root[data-theme="dark"] .uds-output-block--method {
+  border-left-color: var(--uds-method-border);
+  background: color-mix(in srgb, var(--uds-method-bg) 58%, #111827);
+}
+
+:root[data-theme="dark"] .uds-output-block--warning {
+  border-left-color: var(--uds-warning-border);
+  background: color-mix(in srgb, var(--uds-warning-bg) 56%, #111827);
+}
+
+:root[data-theme="dark"] .uds-status--compatible {
+  border-color: var(--uds-compatible-border);
+  background: var(--uds-compatible-bg);
+  color: var(--uds-compatible-fg);
+}
+
+:root[data-theme="dark"] .uds-status--caution {
+  border-color: var(--uds-caution-border);
+  background: var(--uds-caution-bg);
+  color: var(--uds-caution-fg);
+}
+
 :root[data-theme="dark"] .uds-status--method {
-  border-color: #f59e0b;
-  background: #2a1f08;
-  color: #fde68a;
+  border-color: var(--uds-method-border);
+  background: var(--uds-method-bg);
+  color: var(--uds-method-fg);
 }
 
 :root[data-theme="dark"] .uds-status--warning {
-  border-color: #f87171;
-  background: #2a1212;
-  color: #fecaca;
+  border-color: var(--uds-warning-border);
+  background: var(--uds-warning-bg);
+  color: var(--uds-warning-fg);
+}
+
+:root[data-theme="dark"] .uds-list-badge--compatible {
+  color: var(--uds-compatible-fg);
+}
+
+:root[data-theme="dark"] .uds-list-badge--method {
+  color: var(--uds-method-fg);
+}
+
+:root[data-theme="dark"] .uds-list-badge--warning {
+  color: var(--uds-warning-fg);
+}
+
+:root[data-theme="dark"] .uds-list-badge--neutral {
+  color: var(--uds-neutral-fg);
+}
+
+:root[data-theme="dark"] .uds-tag--opioid {
+  border-color: #a78bfa;
+  background: #2e1065;
+  color: #ddd6fe;
+}
+
+:root[data-theme="dark"] .uds-tag--sedative {
+  border-color: #818cf8;
+  background: #1e1b4b;
+  color: #c7d2fe;
+}
+
+:root[data-theme="dark"] .uds-tag--stimulant {
+  border-color: #fb923c;
+  background: #431407;
+  color: #fed7aa;
+}
+
+:root[data-theme="dark"] .uds-tag--cannabinoid {
+  border-color: #4ade80;
+  background: #052e16;
+  color: #bbf7d0;
+}
+
+:root[data-theme="dark"] .uds-tag--alcohol {
+  border-color: #2dd4bf;
+  background: #042f2e;
+  color: #99f6e4;
 }

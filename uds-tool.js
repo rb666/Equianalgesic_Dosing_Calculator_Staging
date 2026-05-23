@@ -365,6 +365,18 @@
     return getItem(id)?.name || id;
   }
 
+  function groupToneForItem(entry) {
+    if (!entry) return "other";
+    if (entry.tags.includes("high_risk") || entry.tags.includes("emerging")) return "risk";
+    if (entry.tags.includes("opioid")) return "opioid";
+    if (entry.tags.includes("benzodiazepine") || entry.tags.includes("sedative")) return "sedative";
+    if (entry.tags.includes("stimulant")) return "stimulant";
+    if (entry.tags.includes("cannabinoid")) return "cannabinoid";
+    if (entry.tags.includes("alcohol")) return "alcohol";
+    if (entry.tags.includes("assay_context")) return "method";
+    return "other";
+  }
+
   function findItem(value) {
     const query = normalize(value);
     if (!query) return null;
@@ -485,12 +497,12 @@
             </div>
             <span class="uds-status uds-status--${escapeHtml(result.tone)}">${escapeHtml(result.confirmationLevel)}</span>
           </div>
-          ${renderOutputBlock("Immediate safety flags", result.safetyFlags)}
-          ${renderOutputBlock("Specimen validity", [...result.validityNotes, ...result.validityWarnings])}
-          ${renderOutputBlock("What this can support", result.canSupport)}
-          ${renderOutputBlock("What this cannot support", result.cannotSupport)}
-          ${result.panelWarnings.length ? renderOutputBlock("Panel/profile limitations", result.panelWarnings) : ""}
-          ${renderOutputBlock("Recommended next step", [result.nextStep])}
+          ${renderOutputBlock("Immediate safety flags", result.safetyFlags, safetyOutputTone(result.safetyFlags))}
+          ${renderOutputBlock("Specimen validity", [...result.validityNotes, ...result.validityWarnings], validityOutputTone(result))}
+          ${renderOutputBlock("What this can support", result.canSupport, result.explained.length ? "compatible" : "neutral")}
+          ${renderOutputBlock("What this cannot support", result.cannotSupport, "neutral")}
+          ${result.panelWarnings.length ? renderOutputBlock("Panel/profile limitations", result.panelWarnings, "method") : ""}
+          ${renderOutputBlock("Recommended next step", [result.nextStep], nextStepOutputTone(result))}
           ${result.expectedNegatives.length ? renderDetails("Expected negative / absent findings", result.expectedNegatives) : ""}
           ${renderDetails("Reasoning details", [
             ...result.explained.map((line) => `Compatible: ${line}`),
@@ -692,9 +704,34 @@
     `;
   }
 
+  function chipToneForKey(key) {
+    return {
+      expected: "expected",
+      detected: "detected",
+      absent: "absent",
+      panelAnalyte: "panel",
+    }[key] || "neutral";
+  }
+
   function renderChips(key) {
+    const tone = chipToneForKey(key);
     return state[key].length
-      ? state[key].map((id) => `<button class="uds-chip" data-action="remove-chip" data-key="${key}" data-id="${escapeHtml(id)}" type="button">${escapeHtml(itemLabel(id))}<span>x</span></button>`).join("")
+      ? state[key]
+        .map(
+          (id) => `
+            <button
+              class="uds-chip uds-chip--${escapeHtml(tone)}"
+              data-action="remove-chip"
+              data-key="${escapeHtml(key)}"
+              data-id="${escapeHtml(id)}"
+              type="button"
+            >
+              ${escapeHtml(itemLabel(id))}
+              <span aria-hidden="true">x</span>
+            </button>
+          `,
+        )
+        .join("")
       : `<span class="uds-muted">None entered.</span>`;
   }
 
@@ -702,11 +739,56 @@
     return `<option value="${escapeHtml(value)}" ${value === selectedValue ? "selected" : ""}>${escapeHtml(label)}</option>`;
   }
 
-  function renderOutputBlock(title, rows) {
+  function tonePrefix(tone) {
+    return {
+      compatible: "Compatible",
+      caution: "Caution",
+      method: "Panel/method",
+      warning: "Action needed",
+      neutral: "Info",
+    }[tone] || "Info";
+  }
+
+  function safetyOutputTone(rows) {
+    if (!rows.length) return "neutral";
+
+    return rows.some((line) => /xylazine|fentanyl|respiratory depression|overdose/i.test(line))
+      ? "warning"
+      : "caution";
+  }
+
+  function validityOutputTone(result) {
+    if (
+      ["invalid", "adulterated"].includes(state.validityFlag) ||
+      hasCriticalValidityDetailProblem()
+    ) {
+      return "warning";
+    }
+
+    return result.validityWarnings.length ? "caution" : "neutral";
+  }
+
+  function nextStepOutputTone(result) {
+    if (/Confirm before action|Repeat \/ consult lab|Do not use/i.test(result.confirmationLevel)) {
+      return "warning";
+    }
+
+    if (/Verify panel|Clarify|Confirmation recommended|Interpret cautiously/i.test(result.confirmationLevel)) {
+      return "caution";
+    }
+
+    if (/Routine documentation|High-consequence review/i.test(result.confirmationLevel)) {
+      return result.tone || "neutral";
+    }
+
+    return "neutral";
+  }
+
+  function renderOutputBlock(title, rows, tone = "neutral") {
     const validRows = rows.filter(Boolean);
     return `
-      <section class="uds-output-block">
-        <h4>${escapeHtml(title)}</h4>
+      <section class="uds-output-block uds-output-block--${escapeHtml(tone)}">
+        <h4><span class="uds-output-tone-label">${escapeHtml(tonePrefix(tone))}</span> ${escapeHtml(title)}</h4>
         ${validRows.length ? `<ul>${validRows.map((row) => `<li>${escapeHtml(row)}</li>`).join("")}</ul>` : `<p class="uds-muted">No flag from current inputs.</p>`}
       </section>
     `;
@@ -759,7 +841,7 @@
           </div>
         </div>
         <div class="uds-card uds-output-card">
-          <div class="uds-card-head"><div><p class="uds-eyebrow">Lookup result</p><h3>${escapeHtml(selected.name)}</h3></div><span class="uds-status">${escapeHtml(selected.group)}</span></div>
+          <div class="uds-card-head"><div><p class="uds-eyebrow">Lookup result</p><h3>${escapeHtml(selected.name)}</h3></div><span class="uds-tag uds-tag--${escapeHtml(groupToneForItem(selected))}">${escapeHtml(selected.group)}</span></div>
           ${renderOutputBlock("Bottom line", [selected.note])}
           ${renderOutputBlock("Best test concept", [selected.bestTest])}
           ${renderOutputBlock("Approximate urine window", [selected.window])}
@@ -855,7 +937,20 @@
               <button class="uds-secondary-button" data-action="add-panel-analyte" type="button">Add</button>
             </div>
             <div class="uds-chip-list">
-              ${state.panelDraft.analytes.length ? state.panelDraft.analytes.map((row) => `<button class="uds-chip" data-action="remove-panel-analyte" data-id="${escapeHtml(row.id)}" type="button">${escapeHtml(itemLabel(row.id))} (${escapeHtml(coverageText(row.status))})<span>x</span></button>`).join("") : `<span class="uds-muted">No analytes added.</span>`}
+              ${state.panelDraft.analytes.length
+                ? state.panelDraft.analytes.map((row) => `
+                  <button
+                    class="uds-chip uds-chip--coverage uds-chip--coverage-${escapeHtml(row.status)}"
+                    data-action="remove-panel-analyte"
+                    data-id="${escapeHtml(row.id)}"
+                    type="button"
+                  >
+                    ${escapeHtml(itemLabel(row.id))}
+                    <span>${escapeHtml(coverageText(row.status))}</span>
+                    <span aria-hidden="true">x</span>
+                  </button>
+                `).join("")
+                : `<span class="uds-muted">No analytes added.</span>`}
             </div>
           </section>
           ${state.panelDraftError ? `<div class="uds-warning-box">${escapeHtml(state.panelDraftError)}</div>` : ""}
@@ -880,10 +975,15 @@
         </div>
         ${isLocal ? `
           <div class="uds-profile-actions">
+            <span class="uds-list-badge uds-list-badge--${escapeHtml(profileBadgeTone(profile, isLocal))}">Local</span>
             <button class="uds-text-button" data-action="copy-panel-json" data-id="${escapeHtml(profile.id)}" type="button">Copy JSON</button>
             <button class="uds-text-button" data-action="delete-panel" data-id="${escapeHtml(profile.id)}" type="button">Delete</button>
           </div>
-        ` : `<span class="uds-list-badge">Built-in</span>`}
+        ` : `
+          <span class="uds-list-badge uds-list-badge--${escapeHtml(profileBadgeTone(profile, isLocal))}">
+            ${isDemoProfile(profile) ? "Demo" : "Built-in"}
+          </span>
+        `}
       </article>
     `;
   }
@@ -1086,6 +1186,13 @@
 
   function isDemoProfile(profile) {
     return profile?.id === "example_broad_definitive";
+  }
+
+  function profileBadgeTone(profile, isLocal) {
+    if (isDemoProfile(profile)) return "warning";
+    if (isLocal) return "compatible";
+    if (profile.id === "unknown" || profile.id === "targeted_definitive") return "method";
+    return "neutral";
   }
 
   function coverageText(status) {

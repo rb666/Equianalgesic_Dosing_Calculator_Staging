@@ -37,6 +37,9 @@ Use this checklist before promoting UDS changes from staging to production.
 - Console: `window.copyUdsDebugState()` copies a non-identifying JSON snapshot of the current UDS inputs and interpretation.
 - Copy short summary produces a concise consult-style summary with interpretation, confirmation threshold, key warnings, and next step.
 - Manual: Open UDS, click an Expected input so the picker opens, then press Escape. The picker closes and the UDS screen remains open.
+- Manual: Open UDS, expand Optional validity details, enter creatinine `12`, then click outside. The section remains open and output includes a low-creatinine warning.
+- Manual: Click `Clear validity details`. Optional details reset and the low-creatinine warning disappears.
+- Manual: Set validity flag to `Appears interpretable`, then set oxidants/adulterants to `Abnormal / positive`. Output becomes `Specimen-limited` and recommends repeat/lab consultation.
 - Detected finding with no expected medication context uses the softer `Detected finding without expected medication context` label.
 - Detected finding with no expected medication context uses a non-accusatory support line that says clinical meaning requires medication/exposure/panel/timing context.
 - Detected analyte missing from a selected local profile warns that the selected profile may be incomplete or wrong.

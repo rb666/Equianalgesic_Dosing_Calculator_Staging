@@ -160,6 +160,7 @@
     absentVerified: false,
     validityFlag: "unknown",
     validityDetails: blankValidityDetails(),
+    validityDetailsOpen: false,
     localProfiles: loadProfiles(),
     lookupQuery: "",
     lookupId: "fentanyl",
@@ -603,7 +604,11 @@
 
   function renderValidityDetails() {
     return `
-      <details class="uds-details">
+      <details
+        class="uds-details"
+        data-validity-details
+        ${state.validityDetailsOpen ? "open" : ""}
+      >
         <summary>Optional validity details</summary>
         <div class="uds-field-grid uds-field-grid--compact">
           <label>Creatinine, mg/dL
@@ -622,6 +627,9 @@
               ${option("abnormal", "Abnormal / positive", state.validityDetails.oxidants)}
             </select>
           </label>
+        </div>
+        <div class="uds-mini-action-row">
+          <button class="uds-text-button" data-action="reset-validity-details" type="button">Clear validity details</button>
         </div>
       </details>
     `;
@@ -1239,6 +1247,12 @@
     return { notes, warnings };
   }
 
+  function hasCriticalValidityDetailProblem() {
+    const ph = Number.parseFloat(state.validityDetails.ph);
+    return state.validityDetails.oxidants === "abnormal" ||
+      (Number.isFinite(ph) && (ph < 4.5 || ph > 9));
+  }
+
   function buildSafetyFlags() {
     const detected = state.detected.map(getItem).filter(Boolean);
     const expected = state.expected.map(getItem).filter(Boolean);
@@ -1292,7 +1306,9 @@
     const hasPanelLimitedAbsent = absentReviews.some((row) =>
       ["panel_limited", "non_actionable"].includes(row.severity),
     );
-    const hasHardValidityProblem = ["invalid", "adulterated"].includes(state.validityFlag);
+    const hasHardValidityProblem =
+      ["invalid", "adulterated"].includes(state.validityFlag) ||
+      hasCriticalValidityDetailProblem();
     const hasActionableUncertainty =
       notExplained.length > 0 ||
       hasUnexpectedAbsent ||
@@ -1314,7 +1330,7 @@
 
   function labelForResult({ explained, contextNeeded, notExplained, absentReviews, panelWarnings, validityWarnings }) {
     const hasResultInput = state.detected.length > 0 || state.absent.length > 0;
-    if (["invalid", "adulterated"].includes(state.validityFlag)) return { label: "Specimen-limited", tone: "warning" };
+    if (["invalid", "adulterated"].includes(state.validityFlag) || hasCriticalValidityDetailProblem()) return { label: "Specimen-limited", tone: "warning" };
     if (!hasResultInput) return { label: "Incomplete", tone: "neutral" };
     if (notExplained.length && !state.expected.length) return { label: "Detected finding without expected medication context", tone: "caution" };
     if (notExplained.length) return { label: "Unexpected positive", tone: "warning" };
@@ -1331,7 +1347,7 @@
 
   function nextStepFor({ label, confirmationLevel, notExplained, contextNeeded, absentConcerns, panelWarnings, validityWarnings }) {
     if (confirmationLevel === "Confirm before action") return "Because the result may change care or has high consequence, obtain definitive confirmation or lab/toxicology input before major management changes.";
-    if (["invalid", "adulterated"].includes(state.validityFlag)) return "Do not interpret this result as final. Repeat collection per policy or consult the laboratory.";
+    if (["invalid", "adulterated"].includes(state.validityFlag) || hasCriticalValidityDetailProblem()) return "Do not interpret this result as final. Repeat collection per policy or consult the laboratory.";
     if (!state.detected.length && !state.absent.length) return "Add detected positive/present findings or verified tested-but-absent findings to complete the reconciliation.";
     if (notExplained.length && !state.expected.length) return "Add expected medications/substances, recent administered medications, or reported exposures if known; otherwise review as a detected finding requiring clinical context.";
     if (notExplained.length && state.method === "immunoassay") return "Discuss nonjudgmentally, review medication/OTC exposures, and confirm unexpected positives with definitive testing before changing care.";
@@ -1659,6 +1675,13 @@
         state.absentVerified = false;
         state.validityFlag = "unknown";
         state.validityDetails = blankValidityDetails();
+        state.validityDetailsOpen = false;
+        render();
+        return;
+      }
+      if (actionName === "reset-validity-details") {
+        state.validityDetails = blankValidityDetails();
+        state.validityDetailsOpen = true;
         render();
         return;
       }
@@ -1716,12 +1739,24 @@
       }
     });
 
+    root.addEventListener(
+      "toggle",
+      (event) => {
+        const details = event.target.closest?.("[data-validity-details]");
+        if (details) {
+          state.validityDetailsOpen = details.open;
+        }
+      },
+      true,
+    );
+
     root.addEventListener("change", (event) => {
       const target = event.target;
       if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
       const validityDetail = target.dataset.validityDetail;
       if (validityDetail) {
         state.validityDetails[validityDetail] = target.value;
+        state.validityDetailsOpen = true;
         render();
         return;
       }
@@ -1818,6 +1853,7 @@
       absentVerified: state.absentVerified,
       validityFlag: state.validityFlag,
       validityDetails: { ...state.validityDetails },
+      validityDetailsOpen: state.validityDetailsOpen,
     };
   }
 
@@ -1828,6 +1864,7 @@
       detected: [...snapshot.detected],
       absent: [...snapshot.absent],
       validityDetails: { ...snapshot.validityDetails },
+      validityDetailsOpen: snapshot.validityDetailsOpen,
     });
   }
 
@@ -1846,6 +1883,7 @@
       absent: [],
       absentVerified: false,
       validityDetails: blankValidityDetails(),
+      validityDetailsOpen: false,
       context: "chronic_opioid",
       consequence: "moderate",
       resultSource: "unknown",
@@ -2000,6 +2038,20 @@
           validityDetails: { ...blankValidityDetails(), creatinine: "12" },
         },
         (result) => result.validityWarnings.some((line) => /Creatinine is low/i.test(line)),
+      ),
+      runCase(
+        "Abnormal oxidants create specimen-limited result",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["oxycodone"],
+          detected: ["oxycodone"],
+          validityFlag: "normal",
+          validityDetails: { ...blankValidityDetails(), oxidants: "abnormal" },
+        },
+        (result) =>
+          /Specimen-limited/i.test(result.label) &&
+          /Repeat|consult/i.test(result.nextStep),
       ),
       runCase(
         "OUD fentanyl finding creates context-specific safety flag",
@@ -2159,6 +2211,7 @@
       absentVerified: state.absentVerified,
       validityFlag: state.validityFlag,
       validityDetails: { ...state.validityDetails },
+      validityDetailsOpen: state.validityDetailsOpen,
       label: result.label,
       confirmationLevel: result.confirmationLevel,
       nextStep: result.nextStep,

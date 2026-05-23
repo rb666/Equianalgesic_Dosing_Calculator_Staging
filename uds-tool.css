@@ -191,6 +191,12 @@
   margin-top: 10px;
 }
 
+.uds-mini-action-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
 .uds-card label,
 .uds-input-section,
 .uds-output-block {

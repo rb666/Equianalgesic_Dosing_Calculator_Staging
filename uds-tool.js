@@ -710,6 +710,7 @@
           </section>
           ${state.panelDraftError ? `<div class="uds-warning-box">${escapeHtml(state.panelDraftError)}</div>` : ""}
           <button class="uds-primary-button" data-action="save-panel" type="button">Save local profile</button>
+          <p class="uds-muted">Saved profiles stay in this browser only and should contain no patient or order identifiers.</p>
         </form>
       </section>
     `;
@@ -717,12 +718,13 @@
 
   function renderPanelSummary(profile) {
     const isLocal = state.localProfiles.some((row) => row.id === profile.id);
-    const analyteCount = profile.analytes?.filter((row) => row.status === "included" || row.status === "class_screen" || row.status === "assay_dependent").length || 0;
+    const mappedCount = profile.analytes?.length || 0;
+    const knownGaps = profile.analytes?.filter((row) => row.status === "not_included").length || 0;
     return `
       <article class="uds-list-item uds-profile-row">
         <div class="uds-list-content">
           <strong class="uds-list-main">${escapeHtml(profile.label)}</strong>
-          <span class="uds-list-meta">${escapeHtml(profile.method)} · ${analyteCount} mapped analytes · validity ${profile.validityIncluded ? "included" : "not mapped"}</span>
+          <span class="uds-list-meta">${escapeHtml(profile.method)} · ${mappedCount} mapped entries${knownGaps ? ` · ${knownGaps} known gaps` : ""} · validity ${profile.validityIncluded ? "included" : "not mapped"}</span>
           ${profile.note ? `<p class="uds-list-note">${escapeHtml(profile.note)}</p>` : ""}
         </div>
         ${isLocal ? `<button class="uds-text-button" data-action="delete-panel" data-id="${escapeHtml(profile.id)}" type="button">Delete</button>` : `<span class="uds-list-badge">Built-in</span>`}
@@ -736,7 +738,7 @@
     const contextNeeded = [];
     const notExplained = [];
     const methodNotes = buildMethodNotes();
-    const panelWarnings = buildPanelWarnings(profile);
+    const panelWarnings = [...buildPanelWarnings(profile), ...buildResultSourceWarnings()];
     const safetyFlags = buildSafetyFlags();
 
     if (state.context === "forensic_nonclinical") {
@@ -968,10 +970,26 @@
 
     [...state.detected, ...state.absent].forEach((id) => {
       const cov = getCoverage(profile, id);
-      if (!cov && profile.id !== "unknown" && profile.id !== "targeted_definitive") return;
-      if (cov?.status === "not_included") warnings.push(`${itemLabel(id)} is marked not included in the selected panel profile.`);
-      if (cov?.status === "assay_dependent") warnings.push(`${itemLabel(id)} coverage is assay-dependent in the selected panel profile.`);
-      if (cov?.status === "class_screen") warnings.push(`${itemLabel(id)} may be represented only by a class screen; source-specific interpretation may require definitive testing.`);
+
+      if (!cov && profile.id === "unknown") {
+        return;
+      }
+
+      if (!cov && profile.id === "targeted_definitive") {
+        if (state.absent.includes(id)) {
+          warnings.push(`${itemLabel(id)} is absent on an unmapped definitive profile; verify the reportable analyte list before interpreting absence.`);
+        }
+        return;
+      }
+
+      if (!cov) {
+        warnings.push(`${itemLabel(id)} is not mapped in the selected panel profile. Update the profile or verify that the correct panel profile is selected.`);
+        return;
+      }
+
+      if (cov.status === "not_included") warnings.push(`${itemLabel(id)} is marked not included in the selected panel profile.`);
+      if (cov.status === "assay_dependent") warnings.push(`${itemLabel(id)} coverage is assay-dependent in the selected panel profile.`);
+      if (cov.status === "class_screen") warnings.push(`${itemLabel(id)} may be represented only by a class screen; source-specific interpretation may require definitive testing.`);
     });
 
     const hasFentanylQuestion = [...state.expected, ...state.detected, ...state.absent].some((id) => ["fentanyl", "norfentanyl"].includes(id));
@@ -994,6 +1012,24 @@
     if (state.panelId === "benzodiazepine_screen" && hasClonazepamQuestion) warnings.push("Some benzodiazepine screens under-detect clonazepam/7-aminoclonazepam.");
     const hasLorazepamQuestion = [...state.expected, ...state.absent].some((id) => id === "lorazepam");
     if (state.panelId === "benzodiazepine_screen" && hasLorazepamQuestion) warnings.push("Some benzodiazepine screens under-detect lorazepam or glucuronidated metabolites.");
+    return warnings;
+  }
+
+  function buildResultSourceWarnings() {
+    const warnings = [];
+
+    if (state.resultSource === "poc" && state.method === "definitive") {
+      warnings.push("Result source is point-of-care, but method is set to definitive. Verify whether this was actually a lab confirmation.");
+    }
+
+    if (state.resultSource === "lab_screen" && state.method === "definitive") {
+      warnings.push("Result source is laboratory immunoassay, but method is set to definitive. Verify the report method.");
+    }
+
+    if (state.resultSource === "lab_definitive" && state.method === "immunoassay") {
+      warnings.push("Result source is laboratory definitive LC/GC-MS, but method is set to immunoassay. Verify the report method.");
+    }
+
     return warnings;
   }
 
@@ -1568,6 +1604,12 @@
 
   function runCase(name, patch, assertFn) {
     const previous = snapshotState();
+    const previousLocalProfiles = [...state.localProfiles];
+    const { localProfileForTest, ...casePatch } = patch;
+
+    if (localProfileForTest) {
+      state.localProfiles = [...state.localProfiles, localProfileForTest];
+    }
 
     Object.assign(state, {
       expected: [],
@@ -1580,19 +1622,25 @@
       method: "unknown",
       panelId: "unknown",
       validityFlag: "unknown",
-      ...patch,
+      ...casePatch,
     });
 
-    const result = analyzeInterpretation();
-    const passed = Boolean(assertFn(result));
-    restoreState(previous);
+    let result;
+    let passed = false;
+    try {
+      result = analyzeInterpretation();
+      passed = Boolean(assertFn(result));
+    } finally {
+      restoreState(previous);
+      state.localProfiles = previousLocalProfiles;
+    }
 
     return {
       name,
       passed,
-      label: result.label,
-      confirmationLevel: result.confirmationLevel,
-      nextStep: result.nextStep,
+      label: result?.label || "Validation failed before result",
+      confirmationLevel: result?.confirmationLevel || "Unavailable",
+      nextStep: result?.nextStep || "Review validation case.",
     };
   }
 
@@ -1608,6 +1656,25 @@
           validityFlag: "normal",
         },
         (result) => /without expected medication context/i.test(result.label),
+      ),
+      runCase(
+        "Detected analyte not mapped in selected local profile warns",
+        {
+          method: "definitive",
+          panelId: "test_local_missing_fentanyl",
+          expected: ["fentanyl"],
+          detected: ["norfentanyl"],
+          validityFlag: "normal",
+          localProfileForTest: {
+            id: "test_local_missing_fentanyl",
+            label: "Test local profile missing norfentanyl",
+            method: "definitive",
+            note: "Temporary test profile",
+            validityIncluded: true,
+            analytes: [coverage("fentanyl", "included")],
+          },
+        },
+        (result) => /not mapped|selected panel profile/i.test(result.panelWarnings.join(" ")),
       ),
       runCase(
         "Compatible definitive expected result should not require verify panel",

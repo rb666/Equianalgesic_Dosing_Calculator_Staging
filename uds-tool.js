@@ -147,7 +147,7 @@
       coverage("diazepam", "class_screen"), coverage("nordiazepam", "class_screen"), coverage("temazepam", "class_screen"), coverage("oxazepam", "class_screen"), coverage("alprazolam", "assay_dependent"), coverage("alpha_hydroxyalprazolam", "assay_dependent"), coverage("clonazepam", "assay_dependent"), coverage("aminoclonazepam7", "assay_dependent"), coverage("lorazepam", "assay_dependent"),
     ]),
     profile("targeted_definitive", "Unmapped targeted definitive panel", "definitive", "Use when the report says definitive testing was performed but the exact included analytes have not been mapped here. Absent findings still require verified report coverage.", true, []),
-    profile("example_broad_definitive", "Example broad definitive profile", "definitive", "Example profile for demonstration only; replace with local non-identifying panel profiles.", true, [
+    profile("example_broad_definitive", "Demo only - broad definitive profile", "definitive", "Demonstration profile only. Create a local non-identifying panel profile before relying on absent or panel-coverage interpretation.", true, [
       "morphine", "codeine", "6mam", "hydrocodone", "norhydrocodone", "hydromorphone", "oxycodone", "noroxycodone", "oxymorphone", "fentanyl", "norfentanyl", "buprenorphine", "norbuprenorphine", "methadone", "eddp", "tramadol", "odesmethyltramadol", "diazepam", "nordiazepam", "temazepam", "oxazepam", "clonazepam", "aminoclonazepam7", "lorazepam", "alprazolam", "alpha_hydroxyalprazolam", "amphetamine", "methamphetamine", "methylphenidate", "ritalinic_acid", "benzoylecgonine", "thc_cooh", "etg", "ets", "gabapentin", "pregabalin", "zolpidem", "mitragynine", "xylazine"
     ].map((id) => coverage(id, "included"))),
   ];
@@ -181,14 +181,6 @@
     lastShortSummary: "",
     lastPatientScript: "",
   };
-
-  const lookupPointer = {
-    active: false,
-    x: 0,
-    y: 0,
-  };
-  let lookupHoverRow = null;
-  let lookupHoverFrame = 0;
 
   function item(id, name, group, type, aliases, window, note, bestTest, tags) {
     return { id, name, group, type, aliases, window, note, bestTest, tags };
@@ -611,6 +603,7 @@
           placeholder="${escapeHtml(placeholder)}"
           type="search"
         />
+        <span class="uds-picker-hint">Select a match or press Enter for an exact single match.</span>
         <div class="uds-picker-panel is-hidden" data-chip-picker="${escapeHtml(key)}" id="${escapeHtml(pickerId)}" role="listbox"></div>
       </div>
     `;
@@ -1091,6 +1084,10 @@
     return profile.analytes?.find((entry) => entry.id === id) || null;
   }
 
+  function isDemoProfile(profile) {
+    return profile?.id === "example_broad_definitive";
+  }
+
   function coverageText(status) {
     return {
       included: "included",
@@ -1191,6 +1188,9 @@
   function buildPanelWarnings(profile) {
     const warnings = [];
     if (profile.id === "unknown") warnings.push("Panel profile is unknown. Do not rely on absent findings until included analytes/cutoffs are verified.");
+    if (isDemoProfile(profile)) {
+      warnings.push("The selected broad definitive profile is a demonstration profile, not a verified local laboratory panel. Do not rely on it for clinical interpretation unless it has been replaced with a local non-identifying profile that matches the actual report.");
+    }
     if (
       profile.id !== "unknown" &&
       profile.id !== "targeted_definitive" &&
@@ -1789,90 +1789,7 @@
     return added;
   }
 
-  function setLookupHoverRow(row) {
-    if (lookupHoverRow === row) return;
-    lookupHoverRow?.classList.remove("is-pointer-hovered");
-    lookupHoverRow = row;
-    lookupHoverRow?.classList.add("is-pointer-hovered");
-  }
-
-  function syncLookupHoverFromPointer() {
-    lookupHoverFrame = 0;
-
-    if (!lookupPointer.active) {
-      setLookupHoverRow(null);
-      return;
-    }
-
-    const list = root.querySelector("#udsLookupResults");
-    const element = document.elementFromPoint(lookupPointer.x, lookupPointer.y);
-
-    if (!list || !element || !list.contains(element)) {
-      setLookupHoverRow(null);
-      return;
-    }
-
-    const row = element.closest(".uds-row-button");
-    setLookupHoverRow(row && list.contains(row) ? row : null);
-  }
-
-  function scheduleLookupHoverSync() {
-    if (lookupHoverFrame) return;
-    lookupHoverFrame = window.requestAnimationFrame(syncLookupHoverFromPointer);
-  }
-
   function attachEvents() {
-    root.addEventListener("pointermove", (event) => {
-      const target = event.target instanceof Element ? event.target : null;
-      const list = target?.closest("#udsLookupResults");
-
-      if (!list) {
-        lookupPointer.active = false;
-        setLookupHoverRow(null);
-        return;
-      }
-
-      lookupPointer.active = true;
-      lookupPointer.x = event.clientX;
-      lookupPointer.y = event.clientY;
-      syncLookupHoverFromPointer();
-    });
-
-    root.addEventListener("pointerout", (event) => {
-      const target = event.target instanceof Element ? event.target : null;
-      const list = target?.closest("#udsLookupResults");
-      const related = event.relatedTarget instanceof Element ? event.relatedTarget : null;
-
-      if (list && (!related || !list.contains(related))) {
-        lookupPointer.active = false;
-        setLookupHoverRow(null);
-      }
-    });
-
-    root.addEventListener(
-      "scroll",
-      (event) => {
-        const target = event.target instanceof Element ? event.target : null;
-
-        if (target?.id === "udsLookupResults") {
-          scheduleLookupHoverSync();
-        }
-      },
-      true,
-    );
-
-    root.addEventListener(
-      "wheel",
-      (event) => {
-        const target = event.target instanceof Element ? event.target : null;
-
-        if (target?.closest("#udsLookupResults")) {
-          window.setTimeout(scheduleLookupHoverSync, 0);
-        }
-      },
-      { passive: true },
-    );
-
     root.addEventListener("click", (event) => {
       const modeButton = event.target.closest("[data-mode]");
       if (modeButton) {
@@ -2061,7 +1978,6 @@
         const results = root.querySelector("#udsLookupResults");
         if (results) {
           results.innerHTML = renderLookupResults();
-          scheduleLookupHoverSync();
         }
         return;
       }
@@ -2176,12 +2092,46 @@
   }
 
   window.runUdsGoldenCases = function runUdsGoldenCases() {
+    const testBroadDefinitiveProfile = {
+      id: "test_broad_definitive",
+      label: "Test broad definitive profile",
+      method: "definitive",
+      note: "Temporary test profile",
+      validityIncluded: true,
+      analytes: [
+        "morphine", "codeine", "6mam", "hydrocodone", "norhydrocodone",
+        "hydromorphone", "oxycodone", "noroxycodone", "oxymorphone",
+        "fentanyl", "norfentanyl", "buprenorphine", "norbuprenorphine",
+        "methadone", "eddp", "tramadol", "odesmethyltramadol",
+        "diazepam", "nordiazepam", "temazepam", "oxazepam",
+        "clonazepam", "aminoclonazepam7", "lorazepam", "alprazolam",
+        "alpha_hydroxyalprazolam", "amphetamine", "methamphetamine",
+        "methylphenidate", "ritalinic_acid", "benzoylecgonine",
+        "thc_cooh", "etg", "ets", "gabapentin", "pregabalin",
+        "zolpidem", "mitragynine", "xylazine",
+      ].map((id) => coverage(id, "included")),
+    };
+
     return [
+      runCase(
+        "Demo broad definitive profile warns before clinical reliance",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["oxycodone"],
+          detected: ["oxycodone"],
+          validityFlag: "normal",
+        },
+        (result) =>
+          /demonstration|demo|verified local/i.test(result.panelWarnings.join(" ")) &&
+          /Verify panel|Confirm|High-consequence|panel/i.test(`${result.confirmationLevel} ${result.label}`),
+      ),
       runCase(
         "Detected finding without expected context uses softer label",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: [],
           detected: ["thc_cooh"],
           validityFlag: "normal",
@@ -2192,7 +2142,8 @@
         "Detected finding without expected context has non-accusatory support line",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: [],
           detected: ["benzoylecgonine"],
           validityFlag: "normal",
@@ -2264,7 +2215,8 @@
         {
           resultSource: "poc",
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           detected: ["oxycodone"],
           validityFlag: "normal",
@@ -2275,7 +2227,8 @@
         "Absent-only interpretation gives cautious support",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           detected: [],
           absent: ["oxycodone"],
@@ -2291,7 +2244,8 @@
         "Compatible definitive expected result should not require verify panel",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           detected: ["oxycodone"],
           absent: [],
@@ -2307,7 +2261,8 @@
         "Low creatinine with positive-only compatible result stays compatible",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           detected: ["oxycodone"],
           validityFlag: "normal",
@@ -2321,7 +2276,8 @@
         "Expected opioid plus detected alcohol marker creates safety flag",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           detected: ["etg"],
           validityFlag: "normal",
@@ -2333,7 +2289,8 @@
         {
           context: "oud",
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["buprenorphine"],
           absent: ["buprenorphine"],
           absentVerified: true,
@@ -2346,7 +2303,8 @@
         {
           context: "oud",
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["buprenorphine"],
           absent: ["norbuprenorphine"],
           absentVerified: true,
@@ -2358,7 +2316,8 @@
         "Strong supportive metabolite suppresses expected parent reminder",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["buprenorphine"],
           detected: ["norbuprenorphine"],
           validityFlag: "normal",
@@ -2370,7 +2329,8 @@
         "Absent supportive metabolite does not suppress expected parent reminder",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["buprenorphine"],
           absent: ["norbuprenorphine"],
           absentVerified: true,
@@ -2383,7 +2343,8 @@
         "Low creatinine validity detail cautions absent findings",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           absent: ["oxycodone"],
           absentVerified: true,
@@ -2396,7 +2357,8 @@
         "Abnormal oxidants create specimen-limited result",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           detected: ["oxycodone"],
           validityFlag: "normal",
@@ -2410,7 +2372,8 @@
         "Critical validity detail without result remains incomplete",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           detected: [],
           absent: [],
           validityFlag: "normal",
@@ -2425,7 +2388,8 @@
         {
           context: "oud",
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           detected: ["norfentanyl"],
           validityFlag: "normal",
         },
@@ -2435,7 +2399,8 @@
         "Unknown validity with compatible positive does not overpower compatibility",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           detected: ["oxycodone"],
           validityFlag: "unknown",
@@ -2461,7 +2426,8 @@
         {
           context: "forensic_nonclinical",
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           detected: ["oxycodone"],
           validityFlag: "normal",
         },
@@ -2522,7 +2488,8 @@
         "Invalid specimen is specimen-limited",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           detected: ["oxycodone"],
           validityFlag: "invalid",
@@ -2535,7 +2502,8 @@
         "Oxycodone detected and fentanyl absent should not become unexpected negative",
         {
           method: "definitive",
-          panelId: "example_broad_definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
           expected: ["oxycodone"],
           detected: ["oxycodone"],
           absent: ["fentanyl"],

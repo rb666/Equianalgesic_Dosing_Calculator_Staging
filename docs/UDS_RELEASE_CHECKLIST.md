@@ -40,6 +40,9 @@ Use this checklist before promoting UDS changes from staging to production.
 - Local panel profile rows allow copying non-identifying profile JSON for lab/pharmacy review.
 - Local panel profiles with zero mapped analytes or known gaps show a visible warning.
 - `Clear result inputs` clears result-related fields; `Reset all` restores the full interpret workflow defaults.
+- Selecting `Demo only - broad definitive profile` warns that it is a demonstration profile and returns panel-dependent/verify-panel style output before clinical reliance.
+- Compatible definitive golden cases use a temporary test profile or a local non-identifying profile, not the built-in demo profile.
+- Lookup rows use ordinary CSS hover behavior after scrolling; no custom pointer-hover state is required.
 - Manual: Open UDS, click an Expected input so the picker opens, then press Escape. The picker closes and the UDS screen remains open.
 - Manual: Open UDS, enter an absent finding, expand Optional validity details, enter creatinine `12`, then click outside. The section remains open and output includes a low-creatinine warning for absent/negative interpretation.
 - Manual: Click `Clear validity details`. Optional details reset and the low-creatinine warning disappears.
@@ -55,7 +58,7 @@ Use this checklist before promoting UDS changes from staging to production.
 - Detected analyte missing from a selected local profile warns that the selected profile may be incomplete or wrong.
 - Expected analyte missing from a selected local profile warns after detected or absent result input exists.
 - Absent-only interpretation returns cautious support language tied to panel coverage, timing, cutoff, and specimen validity.
-- Compatible definitive case: expected oxycodone, detected oxycodone, example broad definitive panel, normal validity returns `Consistent / expected` and `Routine documentation`.
+- Compatible definitive case: expected oxycodone, detected oxycodone, test/local broad definitive profile, normal validity returns `Consistent / expected` and `Routine documentation`.
 - Expected opioid plus detected alcohol marker creates an opioid/alcohol safety flag.
 - OUD context with expected buprenorphine or methadone absent creates a non-punitive workflow safety flag.
 - OUD context with expected norbuprenorphine or EDDP absent creates a non-punitive supportive-metabolite workflow flag.

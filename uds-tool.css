@@ -300,6 +300,15 @@
   min-width: 0;
 }
 
+.uds-picker-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted, #5b6673);
+  font-size: 0.74rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
 .uds-picker-panel {
   position: absolute;
   z-index: 12;
@@ -446,7 +455,6 @@
 .uds-secondary-button:hover,
 .uds-text-button:hover,
 .uds-row-button:hover,
-.uds-row-button.is-pointer-hovered,
 .uds-profile-row:hover {
   box-shadow: none;
   transform: none;
@@ -580,8 +588,7 @@
   transform: none;
 }
 
-.uds-row-button:hover,
-.uds-row-button.is-pointer-hovered {
+.uds-row-button:hover {
   border-color: color-mix(in srgb, var(--accent, #276749) 46%, var(--border, #cbd5df));
   background: color-mix(in srgb, var(--accent, #276749) 9%, var(--surface, #fff));
 }

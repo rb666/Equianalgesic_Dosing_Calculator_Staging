@@ -32,6 +32,14 @@ Use this checklist before promoting UDS changes from staging to production.
 
 ## Manual Golden Scenarios
 
+- Console: `window.runUdsGoldenCases()` returns all `passed: true`.
+- Console: `window.copyFailedUdsGoldenCases()` copies `All UDS golden cases passed.` when no regression is present.
+- Compatible definitive case: expected oxycodone, detected oxycodone, example broad definitive panel, normal validity returns `Consistent / expected` and `Routine documentation`.
+- Expected opioid plus detected alcohol marker creates an opioid/alcohol safety flag.
+- Unknown validity with a positive compatible finding does not automatically become specimen-limited.
+- Unknown validity with an absent finding cautions that absent/negative interpretation is less secure.
+- Generic opiate immunoassay with methadone, buprenorphine, tramadol, or tapentadol warns that targeted or definitive testing is needed when those drugs matter.
+- Legal/employment/forensic context returns a hard stop because the tool is clinical reference only.
 - Fentanyl expected with negative/absent finding on a generic opiate immunoassay warns that the screen does not exclude fentanyl.
 - Oxycodone expected with oxymorphone and noroxycodone on definitive testing returns compatible or source-context language.
 - Clonazepam expected with absent 7-aminoclonazepam on benzodiazepine immunoassay warns about method and panel coverage.

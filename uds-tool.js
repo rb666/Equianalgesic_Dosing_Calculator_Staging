@@ -1191,6 +1191,7 @@
       psychiatry: "psychiatry",
       pregnancy: "pregnancy / perinatal",
       adolescent: "adolescent",
+      forensic_nonclinical: "legal / employment / forensic - not supported",
       other: "other clinical context",
     }[value] || value;
   }
@@ -1286,6 +1287,9 @@
     if (label.length > 80) return "Profile label should be 80 characters or fewer.";
     if ([label, note].some(hasIdentifierLikeText)) {
       return "Remove identifiers. Do not enter patient names, DOBs, MRNs, accession numbers, order numbers, account numbers, or encounter numbers.";
+    }
+    if (!state.panelDraft.analytes.length) {
+      return "Add at least one analyte or known panel gap before saving a local profile.";
     }
 
     return "";
@@ -1538,6 +1542,7 @@
     return {
       context: state.context,
       consequence: state.consequence,
+      resultSource: state.resultSource,
       method: state.method,
       panelId: state.panelId,
       expected: [...state.expected],
@@ -1565,6 +1570,11 @@
       detected: [],
       absent: [],
       absentVerified: false,
+      context: "chronic_opioid",
+      consequence: "moderate",
+      resultSource: "unknown",
+      method: "unknown",
+      panelId: "unknown",
       validityFlag: "unknown",
       ...patch,
     });
@@ -1584,6 +1594,69 @@
 
   window.runUdsGoldenCases = function runUdsGoldenCases() {
     return [
+      runCase(
+        "Compatible definitive expected result should not require verify panel",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["oxycodone"],
+          detected: ["oxycodone"],
+          absent: [],
+          absentVerified: false,
+          validityFlag: "normal",
+          consequence: "moderate",
+        },
+        (result) =>
+          /Consistent|expected/i.test(result.label) &&
+          /Routine documentation/i.test(result.confirmationLevel),
+      ),
+      runCase(
+        "Expected opioid plus detected alcohol marker creates safety flag",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["oxycodone"],
+          detected: ["etg"],
+          validityFlag: "normal",
+        },
+        (result) => result.safetyFlags.some((line) => /opioid.*alcohol|alcohol.*opioid/i.test(line)),
+      ),
+      runCase(
+        "Unknown validity with compatible positive does not overpower compatibility",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["oxycodone"],
+          detected: ["oxycodone"],
+          validityFlag: "unknown",
+        },
+        (result) => /Consistent|expected/i.test(result.label),
+      ),
+      runCase(
+        "Generic opiate screen with methadone is a panel blind spot",
+        {
+          method: "immunoassay",
+          panelId: "generic_opiate_screen",
+          expected: ["methadone"],
+          absent: ["methadone"],
+          absentVerified: true,
+          validityFlag: "normal",
+        },
+        (result) => /methadone|EDDP|targeted|definitive/i.test(
+          [...result.panelWarnings, result.nextStep].join(" "),
+        ),
+      ),
+      runCase(
+        "Forensic context returns hard stop",
+        {
+          context: "forensic_nonclinical",
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          detected: ["oxycodone"],
+          validityFlag: "normal",
+        },
+        (result) => /not supported/i.test(result.label) && /Do not use/i.test(result.confirmationLevel),
+      ),
       runCase(
         "Fentanyl absent on generic opiate screen is panel-limited",
         {
@@ -1662,6 +1735,22 @@
         (result) => !/Unexpected negative/i.test(result.label),
       ),
     ];
+  };
+
+  window.copyFailedUdsGoldenCases = async function copyFailedUdsGoldenCases() {
+    const results = window.runUdsGoldenCases();
+    const failed = results.filter((row) => !row.passed);
+    const text = failed.length
+      ? failed.map((row) => [
+        `FAILED: ${row.name}`,
+        `Label: ${row.label}`,
+        `Confirmation: ${row.confirmationLevel}`,
+        `Next step: ${row.nextStep}`,
+      ].join("\n")).join("\n\n")
+      : "All UDS golden cases passed.";
+
+    await copyText(text);
+    return { failed: failed.length, results };
   };
 
   setRootShell();

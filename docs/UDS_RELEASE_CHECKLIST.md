@@ -35,12 +35,17 @@ Use this checklist before promoting UDS changes from staging to production.
 - Console: `window.runUdsGoldenCases()` returns all `passed: true`.
 - Console: `window.copyFailedUdsGoldenCases()` copies `All UDS golden cases passed.` when no regression is present.
 - Console: `window.copyUdsDebugState()` copies a non-identifying JSON snapshot of the current UDS inputs and interpretation.
+- Manual: Open UDS, click an Expected input so the picker opens, then press Escape. The picker closes and the UDS screen remains open.
 - Detected finding with no expected medication context uses the softer `Detected finding without expected medication context` label.
+- Detected finding with no expected medication context uses a non-accusatory support line that says clinical meaning requires medication/exposure/panel/timing context.
 - Detected analyte missing from a selected local profile warns that the selected profile may be incomplete or wrong.
+- Absent-only interpretation returns cautious support language tied to panel coverage, timing, cutoff, and specimen validity.
 - Compatible definitive case: expected oxycodone, detected oxycodone, example broad definitive panel, normal validity returns `Consistent / expected` and `Routine documentation`.
 - Expected opioid plus detected alcohol marker creates an opioid/alcohol safety flag.
 - OUD context with expected buprenorphine or methadone absent creates a non-punitive workflow safety flag.
+- OUD context with expected norbuprenorphine or EDDP absent creates a non-punitive supportive-metabolite workflow flag.
 - OUD context with fentanyl/norfentanyl detected creates a treatment-adequacy and overdose-prevention safety flag.
+- Optional validity details: low creatinine, abnormal specific gravity/pH, or abnormal oxidants add specimen-validity warnings without requiring patient identifiers.
 - Unknown validity with a positive compatible finding does not automatically become specimen-limited.
 - Unknown validity with an absent finding cautions that absent/negative interpretation is less secure.
 - Generic opiate immunoassay with methadone, buprenorphine, tramadol, or tapentadol warns that targeted or definitive testing is needed when those drugs matter.

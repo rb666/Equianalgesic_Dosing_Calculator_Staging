@@ -187,6 +187,10 @@
   grid-column: 1 / -1;
 }
 
+.uds-field-grid--compact {
+  margin-top: 10px;
+}
+
 .uds-card label,
 .uds-input-section,
 .uds-output-block {

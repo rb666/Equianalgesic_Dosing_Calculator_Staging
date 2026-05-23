@@ -159,6 +159,7 @@
     absent: [],
     absentVerified: false,
     validityFlag: "unknown",
+    validityDetails: blankValidityDetails(),
     localProfiles: loadProfiles(),
     lookupQuery: "",
     lookupId: "fentanyl",
@@ -222,6 +223,15 @@
     } catch {
       return [];
     }
+  }
+
+  function blankValidityDetails() {
+    return {
+      creatinine: "",
+      specificGravity: "",
+      ph: "",
+      oxidants: "unknown",
+    };
   }
 
   function normalizeCoverageEntry(row) {
@@ -583,7 +593,34 @@
           ${option("invalid", "Invalid / do not interpret", state.validityFlag)}
           ${option("adulterated", "Possible adulteration / consult lab", state.validityFlag)}
         </select>
+        ${renderValidityDetails()}
       </section>
+    `;
+  }
+
+  function renderValidityDetails() {
+    return `
+      <details class="uds-details">
+        <summary>Optional validity details</summary>
+        <div class="uds-field-grid uds-field-grid--compact">
+          <label>Creatinine, mg/dL
+            <input data-validity-detail="creatinine" inputmode="decimal" placeholder="Optional" value="${escapeHtml(state.validityDetails.creatinine)}" />
+          </label>
+          <label>Specific gravity
+            <input data-validity-detail="specificGravity" inputmode="decimal" placeholder="Optional" value="${escapeHtml(state.validityDetails.specificGravity)}" />
+          </label>
+          <label>pH
+            <input data-validity-detail="ph" inputmode="decimal" placeholder="Optional" value="${escapeHtml(state.validityDetails.ph)}" />
+          </label>
+          <label>Oxidants/adulterants
+            <select data-validity-detail="oxidants">
+              ${option("unknown", "Unknown / not reported", state.validityDetails.oxidants)}
+              ${option("normal", "Normal / negative", state.validityDetails.oxidants)}
+              ${option("abnormal", "Abnormal / positive", state.validityDetails.oxidants)}
+            </select>
+          </label>
+        </div>
+      </details>
     `;
   }
 
@@ -870,6 +907,9 @@
     const validity = classifyValidity();
     const validityNotes = validity.note ? [validity.note] : [];
     const validityWarnings = validity.warning ? [validity.warning] : [];
+    const detailValidity = deriveValidityDetailWarnings();
+    validityNotes.push(...detailValidity.notes);
+    validityWarnings.push(...detailValidity.warnings);
     if (state.validityFlag === "unknown" && state.absent.length) {
       validityWarnings.push("Specimen validity is unknown; absent/negative findings are less secure than positive detected findings.");
     }
@@ -1152,6 +1192,36 @@
     };
   }
 
+  function deriveValidityDetailWarnings() {
+    const warnings = [];
+    const notes = [];
+    const creatinine = Number.parseFloat(state.validityDetails.creatinine);
+    const specificGravity = Number.parseFloat(state.validityDetails.specificGravity);
+    const ph = Number.parseFloat(state.validityDetails.ph);
+
+    if (Number.isFinite(creatinine)) {
+      if (creatinine < 20) {
+        warnings.push("Creatinine is low; negative or absent findings may be less reliable.");
+      } else {
+        notes.push("Creatinine detail entered and does not trigger the low-creatinine warning threshold.");
+      }
+    }
+
+    if (Number.isFinite(specificGravity) && (specificGravity < 1.003 || specificGravity > 1.035)) {
+      warnings.push("Specific gravity is outside a typical expected urine range; interpret with laboratory validity comments.");
+    }
+
+    if (Number.isFinite(ph) && (ph < 4.5 || ph > 9)) {
+      warnings.push("Urine pH is outside a typical expected range; consider specimen validity or lab consultation.");
+    }
+
+    if (state.validityDetails.oxidants === "abnormal") {
+      warnings.push("Oxidants/adulterants are reported abnormal; consult the lab and avoid relying on the result without repeat or confirmation.");
+    }
+
+    return { notes, warnings };
+  }
+
   function buildSafetyFlags() {
     const detected = state.detected.map(getItem).filter(Boolean);
     const expected = state.expected.map(getItem).filter(Boolean);
@@ -1170,15 +1240,27 @@
       state.absentVerified &&
       absent.some((entry) => ["buprenorphine", "methadone"].includes(entry.id)) &&
       state.expected.some((id) => ["buprenorphine", "methadone"].includes(id));
+    const hasExpectedOudSupportiveMetaboliteAbsent =
+      state.context === "oud" &&
+      state.absentVerified &&
+      (
+        (state.expected.includes("buprenorphine") && state.absent.includes("norbuprenorphine")) ||
+        (state.expected.includes("methadone") && state.absent.includes("eddp"))
+      );
 
     if (hasExpectedOrDetectedOpioid && hasDetectedBenzo) flags.push("Opioid therapy/exposure + benzodiazepine detected: assess sedation/overdose risk and naloxone access.");
     if (hasDetectedOpioid && hasExpectedBenzo) flags.push("Opioid detected with expected benzodiazepine therapy: assess sedation/overdose risk and coordination of prescribing.");
     if (hasExpectedOrDetectedOpioid && hasDetectedAlcohol) flags.push("Opioid therapy/exposure + alcohol marker detected: assess respiratory depression and safety risk.");
     if (hasExpectedOrDetectedOpioid && hasDetectedSedative && !hasDetectedBenzo) flags.push("Opioid therapy/exposure + sedating co-exposure detected: assess sedation/overdose risk.");
     if (hasExpectedOudMedicationAbsent) flags.push("OUD treatment context with expected buprenorphine or methadone absent: assess adherence barriers, withdrawal/craving risk, recurrence risk, and whether repeat or definitive testing is needed.");
-    if (fentanylDetected) flags.push("Fentanyl/norfentanyl detected: review overdose prevention, naloxone, and treatment adequacy.");
-    if (fentanylDetected && state.context === "oud") flags.push("OUD treatment context with fentanyl/norfentanyl detected: review buprenorphine/methadone adequacy, overdose prevention, naloxone, and follow-up intensity.");
-    if (fentanylDetected && state.context === "chronic_opioid") flags.push("Chronic opioid therapy context with fentanyl/norfentanyl detected: assess overdose risk, medication interactions, nonprescribed exposure, and confirm if the result affects prescribing.");
+    if (hasExpectedOudSupportiveMetaboliteAbsent) flags.push("OUD treatment context with expected supportive metabolite absent: review timing, cutoff, specimen validity, panel coverage, adherence barriers, and whether repeat or definitive testing is needed.");
+    if (fentanylDetected && state.context === "oud") {
+      flags.push("OUD treatment context with fentanyl/norfentanyl detected: review buprenorphine/methadone adequacy, overdose prevention, naloxone, and follow-up intensity.");
+    } else if (fentanylDetected && state.context === "chronic_opioid") {
+      flags.push("Chronic opioid therapy context with fentanyl/norfentanyl detected: assess overdose risk, medication interactions, nonprescribed exposure, and confirm if the result affects prescribing.");
+    } else if (fentanylDetected) {
+      flags.push("Fentanyl/norfentanyl detected: review overdose prevention, naloxone, and treatment adequacy.");
+    }
     if (detected.some((entry) => entry.id === "xylazine")) flags.push("Xylazine detected or suspected: routine UDS usually misses it; naloxone still treats opioid co-exposure, but xylazine effects require supportive care.");
     if (state.context === "pregnancy") flags.push("Pregnancy/perinatal context: confirm unexpected results before high-consequence action and follow local policy/law.");
     if (state.context === "adolescent") flags.push("Adolescent context: consider consent/confidentiality rules and avoid punitive use.");
@@ -1559,6 +1641,7 @@
         state.absent = [];
         state.absentVerified = false;
         state.validityFlag = "unknown";
+        state.validityDetails = blankValidityDetails();
         render();
         return;
       }
@@ -1615,6 +1698,12 @@
     root.addEventListener("change", (event) => {
       const target = event.target;
       if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
+      const validityDetail = target.dataset.validityDetail;
+      if (validityDetail) {
+        state.validityDetails[validityDetail] = target.value;
+        render();
+        return;
+      }
       const field = target.dataset.field;
       if (field) {
         if (field === "absentVerified") state.absentVerified = target.checked;
@@ -1640,6 +1729,11 @@
     root.addEventListener("input", (event) => {
       const target = event.target;
       if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
+      const validityDetail = target.dataset.validityDetail;
+      if (validityDetail) {
+        state.validityDetails[validityDetail] = target.value;
+        return;
+      }
       if (target.dataset.chipInput) {
         refreshChipPicker(target);
         return;
@@ -1702,6 +1796,7 @@
       absent: [...state.absent],
       absentVerified: state.absentVerified,
       validityFlag: state.validityFlag,
+      validityDetails: { ...state.validityDetails },
     };
   }
 
@@ -1711,6 +1806,7 @@
       expected: [...snapshot.expected],
       detected: [...snapshot.detected],
       absent: [...snapshot.absent],
+      validityDetails: { ...snapshot.validityDetails },
     });
   }
 
@@ -1728,6 +1824,7 @@
       detected: [],
       absent: [],
       absentVerified: false,
+      validityDetails: blankValidityDetails(),
       context: "chronic_opioid",
       consequence: "moderate",
       resultSource: "unknown",
@@ -1856,6 +1953,32 @@
           validityFlag: "normal",
         },
         (result) => result.safetyFlags.some((line) => /adherence barriers|withdrawal|recurrence/i.test(line)),
+      ),
+      runCase(
+        "OUD expected supportive metabolite absent creates workflow flag",
+        {
+          context: "oud",
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["buprenorphine"],
+          absent: ["norbuprenorphine"],
+          absentVerified: true,
+          validityFlag: "normal",
+        },
+        (result) => result.safetyFlags.some((line) => /supportive metabolite|timing|adherence/i.test(line)),
+      ),
+      runCase(
+        "Low creatinine validity detail cautions absent findings",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["oxycodone"],
+          absent: ["oxycodone"],
+          absentVerified: true,
+          validityFlag: "normal",
+          validityDetails: { ...blankValidityDetails(), creatinine: "12" },
+        },
+        (result) => result.validityWarnings.some((line) => /Creatinine is low/i.test(line)),
       ),
       runCase(
         "OUD fentanyl finding creates context-specific safety flag",
@@ -2014,6 +2137,7 @@
       absent: [...state.absent],
       absentVerified: state.absentVerified,
       validityFlag: state.validityFlag,
+      validityDetails: { ...state.validityDetails },
       label: result.label,
       confirmationLevel: result.confirmationLevel,
       nextStep: result.nextStep,
@@ -2022,6 +2146,7 @@
       validityWarnings: result.validityWarnings,
       absentConcerns: result.absentConcerns,
       expectedNegatives: result.expectedNegatives,
+      expectedParentNotEntered: result.expectedParentNotEntered,
       safetyFlags: result.safetyFlags,
     };
 

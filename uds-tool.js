@@ -432,6 +432,7 @@
           ])}
           ${renderDetails("Method notes", result.methodNotes)}
           ${renderDetails("Optional supportive findings to check", result.supportiveNotEntered)}
+          ${renderDetails("Expected parent findings to check", result.expectedParentNotEntered)}
           <div class="uds-copy-grid">
             <button class="uds-primary-button" data-action="copy-summary" type="button">Copy chart note</button>
             <button class="uds-secondary-button" data-action="copy-patient" type="button">Copy patient script</button>
@@ -805,6 +806,7 @@
         absentReviews: [],
         expectedNegatives: [],
         supportiveNotEntered: [],
+        expectedParentNotEntered: [],
         methodNotes: [],
         panelWarnings: [],
         validityNotes: [],
@@ -826,8 +828,11 @@
       const match = findExpectedRelationship(detectedId);
       if (match) {
         const line = `${itemLabel(detectedId)} can fit ${itemLabel(match.from)}: ${match.note}`;
-        if (match.strength === "strong") explained.push(line);
-        else contextNeeded.push(line);
+        if (match.strength === "strong") {
+          explained.push(line);
+        } else {
+          contextNeeded.push(`${line} Quantitative values, cutoff, timing, and full pattern may help interpretation but do not prove dose, exact timing, impairment, or intent.`);
+        }
         return;
       }
       const entry = getItem(detectedId);
@@ -847,6 +852,7 @@
       .map((row) => row.message);
 
     const supportiveNotEntered = [];
+    const expectedParentNotEntered = [];
 
     state.expected.forEach((expectedId) => {
       const supportive = (relationshipsByFrom.get(expectedId) || []).filter((row) => row.strength === "strong");
@@ -855,6 +861,10 @@
           supportiveNotEntered.push(`${itemLabel(row.to)} may support ${itemLabel(expectedId)} if included and reported. Do not treat it as absent unless verified.`);
         }
       });
+
+      if (!state.detected.includes(expectedId) && !state.absent.includes(expectedId)) {
+        expectedParentNotEntered.push(`${itemLabel(expectedId)} is expected but was not entered as detected or absent. Check whether the report includes the parent drug or only metabolites.`);
+      }
     });
 
     const validity = classifyValidity();
@@ -897,6 +907,7 @@
       absentReviews,
       expectedNegatives: [...new Set(expectedNegatives)].slice(0, 8),
       supportiveNotEntered: [...new Set(supportiveNotEntered)].slice(0, 8),
+      expectedParentNotEntered: [...new Set(expectedParentNotEntered)].slice(0, 8),
       methodNotes,
       panelWarnings: [...new Set(panelWarnings)].slice(0, 8),
       validityNotes,
@@ -1239,11 +1250,34 @@
 
   function buildCanSupport(explained, contextNeeded, notExplained) {
     const rows = [];
-    if (explained.length) rows.push(...explained.slice(0, 3));
-    if (contextNeeded.length) rows.push("Some findings may be compatible but require source/timing/cutoff context.");
-    if (notExplained.length) rows.push("The entered pattern identifies at least one unexpected finding that needs clarification.");
-    if (!rows.length) rows.push("A structured review once expected medications, detected findings, method, panel, and validity are entered.");
+
+    if (hasAbsentOnlyInput()) {
+      rows.push("Absent-only interpretation can support limited conclusions only when panel coverage, timing, cutoff, and specimen validity are verified.");
+    }
+
+    if (explained.length) {
+      rows.push(...explained.slice(0, 3));
+    }
+
+    if (contextNeeded.length) {
+      rows.push("Some findings may be compatible but require source/timing/cutoff context.");
+    }
+
+    if (notExplained.length && !state.expected.length) {
+      rows.push("Detected finding(s) can be documented as present, but clinical meaning requires medication, administration, exposure, panel, and timing context.");
+    } else if (notExplained.length) {
+      rows.push("The entered pattern identifies at least one unexpected finding that needs clarification.");
+    }
+
+    if (!rows.length) {
+      rows.push("A structured review once expected medications, detected findings, method, panel, and validity are entered.");
+    }
+
     return rows;
+  }
+
+  function hasAbsentOnlyInput() {
+    return state.absent.length > 0 && state.detected.length === 0;
   }
 
   function standardCannotConclude() {
@@ -1736,6 +1770,19 @@
         (result) => /without expected medication context/i.test(result.label),
       ),
       runCase(
+        "Detected finding without expected context has non-accusatory support line",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: [],
+          detected: ["benzoylecgonine"],
+          validityFlag: "normal",
+        },
+        (result) =>
+          /without expected medication context/i.test(result.label) &&
+          result.canSupport.some((line) => /clinical meaning requires/i.test(line)),
+      ),
+      runCase(
         "Detected analyte not mapped in selected local profile warns",
         {
           method: "definitive",
@@ -1753,6 +1800,22 @@
           },
         },
         (result) => /not mapped|selected panel profile/i.test(result.panelWarnings.join(" ")),
+      ),
+      runCase(
+        "Absent-only interpretation gives cautious support",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["oxycodone"],
+          detected: [],
+          absent: ["oxycodone"],
+          absentVerified: true,
+          validityFlag: "normal",
+        },
+        (result) =>
+          /Unexpected negative|absent/i.test(result.label) &&
+          /timing|cutoff|validity|meaningful/i.test(result.nextStep) &&
+          result.canSupport.some((line) => /Absent-only interpretation/i.test(line)),
       ),
       runCase(
         "Compatible definitive expected result should not require verify panel",

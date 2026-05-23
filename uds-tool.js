@@ -423,8 +423,8 @@
     return `
       <section class="uds-input-section">
         <div class="uds-section-label"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(hint)}</span></div>
-        <div class="uds-add-line">
-          <input data-chip-input="${key}" list="udsItemOptions" placeholder="Type drug, metabolite, brand, or finding..." />
+        <div class="uds-add-line uds-add-line--picker">
+          ${renderPickerInput(key, "Type drug, metabolite, brand, or finding...")}
           <button class="uds-secondary-button" data-action="add-chip" data-key="${key}" type="button">Add</button>
         </div>
         <div class="uds-chip-list">${renderChips(key)}</div>
@@ -440,13 +440,57 @@
           <input data-field="absentVerified" type="checkbox" ${state.absentVerified ? "checked" : ""} />
           <span>I verified these absent analytes were included and reportable on the selected panel.</span>
         </label>
-        <div class="uds-add-line">
-          <input data-chip-input="absent" list="udsItemOptions" placeholder="Example: norfentanyl, 7-aminoclonazepam" />
+        <div class="uds-add-line uds-add-line--picker">
+          ${renderPickerInput("absent", "Example: norfentanyl, 7-aminoclonazepam")}
           <button class="uds-secondary-button" data-action="add-chip" data-key="absent" type="button">Add</button>
         </div>
         <div class="uds-chip-list">${renderChips("absent")}</div>
       </section>
     `;
+  }
+
+  function renderPickerInput(key, placeholder) {
+    const pickerId = `udsPicker-${key}`;
+    return `
+      <div class="uds-picker-shell">
+        <input
+          aria-controls="${escapeHtml(pickerId)}"
+          aria-expanded="false"
+          autocomplete="off"
+          data-chip-input="${escapeHtml(key)}"
+          placeholder="${escapeHtml(placeholder)}"
+          type="search"
+        />
+        <div class="uds-picker-panel is-hidden" data-chip-picker="${escapeHtml(key)}" id="${escapeHtml(pickerId)}" role="listbox"></div>
+      </div>
+    `;
+  }
+
+  function renderPickerOptions(key, query = "") {
+    const selected = selectedIdsForPicker(key);
+    const matches = searchItems(query, query.trim() ? 12 : 10).filter((entry) => !selected.has(entry.id));
+    if (!matches.length) {
+      return `<div class="uds-picker-empty">No available matches. Try a drug, metabolite, brand, or finding.</div>`;
+    }
+
+    return matches.map((entry) => `
+      <button
+        class="uds-picker-option"
+        data-action="pick-chip"
+        data-id="${escapeHtml(entry.id)}"
+        data-key="${escapeHtml(key)}"
+        role="option"
+        type="button"
+      >
+        <span class="uds-picker-name">${escapeHtml(entry.name)}</span>
+        <span class="uds-picker-meta">${escapeHtml(entry.group)} · ${escapeHtml(entry.type.replaceAll("_", " "))}</span>
+      </button>
+    `).join("");
+  }
+
+  function selectedIdsForPicker(key) {
+    if (key === "panelAnalyte") return new Set(state.panelDraft.analytes.map((row) => row.id));
+    return new Set(state[key] || []);
   }
 
   function renderValidityControls() {
@@ -622,8 +666,8 @@
                 ${option("not_included", "Known not included", state.panelDraftCoverageStatus)}
               </select>
             </label>
-            <div class="uds-add-line">
-              <input data-chip-input="panelAnalyte" list="udsItemOptions" placeholder="Example: fentanyl, norfentanyl, 7-aminoclonazepam" />
+            <div class="uds-add-line uds-add-line--picker">
+              ${renderPickerInput("panelAnalyte", "Example: fentanyl, norfentanyl, 7-aminoclonazepam")}
               <button class="uds-secondary-button" data-action="add-panel-analyte" type="button">Add</button>
             </div>
             <div class="uds-chip-list">
@@ -1077,6 +1121,11 @@
 
   function addChip(key, rawValue) {
     const entry = findItem(rawValue);
+    return addChipById(key, entry?.id);
+  }
+
+  function addChipById(key, id) {
+    const entry = getItem(id);
     if (!entry || state[key].includes(entry.id)) return false;
     state[key] = [...state[key], entry.id];
     render();
@@ -1090,6 +1139,11 @@
 
   function addPanelAnalyte(rawValue) {
     const entry = findItem(rawValue);
+    return addPanelAnalyteById(entry?.id);
+  }
+
+  function addPanelAnalyteById(id) {
+    const entry = getItem(id);
     if (!entry || state.panelDraft.analytes.some((row) => row.id === entry.id)) return false;
     state.panelDraft.analytes.push(coverage(entry.id, state.panelDraftCoverageStatus || "included"));
     render();
@@ -1149,6 +1203,41 @@
     render();
   }
 
+  function refreshChipPicker(input) {
+    const key = input?.dataset?.chipInput;
+    if (!key) return;
+    const picker = root.querySelector(`[data-chip-picker="${key}"]`);
+    if (!picker) return;
+    picker.innerHTML = renderPickerOptions(key, input.value || "");
+    picker.classList.remove("is-hidden");
+    input.setAttribute("aria-expanded", "true");
+  }
+
+  function hideChipPickers() {
+    root.querySelectorAll("[data-chip-picker]").forEach((picker) => {
+      picker.classList.add("is-hidden");
+    });
+    root.querySelectorAll("[data-chip-input]").forEach((input) => {
+      input.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function clearAndRefocusPickerInput(key) {
+    window.setTimeout(() => {
+      const nextInput = root.querySelector(`[data-chip-input="${key}"]`);
+      if (!(nextInput instanceof HTMLInputElement)) return;
+      nextInput.value = "";
+      nextInput.focus();
+      refreshChipPicker(nextInput);
+    }, 0);
+  }
+
+  function addFromPicker(key, id) {
+    const added = key === "panelAnalyte" ? addPanelAnalyteById(id) : addChipById(key, id);
+    clearAndRefocusPickerInput(key);
+    return added;
+  }
+
   function attachEvents() {
     const openButton = document.querySelector("#udsOpenButton");
     if (openButton) {
@@ -1177,18 +1266,25 @@
       }
 
       const action = event.target.closest("[data-action]");
-      if (!action) return;
+      if (!action) {
+        const chipInput = event.target.closest("[data-chip-input]");
+        if (chipInput instanceof HTMLInputElement) {
+          refreshChipPicker(chipInput);
+          return;
+        }
+        if (!event.target.closest("[data-chip-picker]")) hideChipPickers();
+        return;
+      }
       const actionName = action.dataset.action;
+      if (actionName === "pick-chip") {
+        addFromPicker(action.dataset.key, action.dataset.id);
+        return;
+      }
       if (actionName === "add-chip") {
         const key = action.dataset.key;
         const input = root.querySelector(`[data-chip-input="${key}"]`);
         const added = addChip(key, input?.value || "");
-        if (added) {
-          window.setTimeout(() => {
-            const nextInput = root.querySelector(`[data-chip-input="${key}"]`);
-            nextInput?.focus();
-          }, 0);
-        }
+        if (added) clearAndRefocusPickerInput(key);
         return;
       }
       if (actionName === "remove-chip") {
@@ -1230,12 +1326,7 @@
       if (actionName === "add-panel-analyte") {
         const input = root.querySelector(`[data-chip-input="panelAnalyte"]`);
         const added = addPanelAnalyte(input?.value || "");
-        if (added) {
-          window.setTimeout(() => {
-            const nextInput = root.querySelector(`[data-chip-input="panelAnalyte"]`);
-            nextInput?.focus();
-          }, 0);
-        }
+        if (added) clearAndRefocusPickerInput("panelAnalyte");
         return;
       }
       if (actionName === "remove-panel-analyte") {
@@ -1282,6 +1373,10 @@
     root.addEventListener("input", (event) => {
       const target = event.target;
       if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
+      if (target.dataset.chipInput) {
+        refreshChipPicker(target);
+        return;
+      }
       if (target.dataset.field === "lookupQuery") {
         state.lookupQuery = target.value;
         const results = root.querySelector("#udsLookupResults");
@@ -1296,19 +1391,23 @@
       else if (panelField) state.panelDraft[panelField] = target.value;
     });
 
+    root.addEventListener("focusin", (event) => {
+      const input = event.target.closest("[data-chip-input]");
+      if (input instanceof HTMLInputElement) refreshChipPicker(input);
+    });
+
     root.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter") return;
       const input = event.target.closest("[data-chip-input]");
       if (!input) return;
+      if (event.key === "Escape") {
+        hideChipPickers();
+        return;
+      }
+      if (event.key !== "Enter") return;
       event.preventDefault();
       const key = input.dataset.chipInput;
       const added = key === "panelAnalyte" ? addPanelAnalyte(input.value) : addChip(key, input.value);
-      if (added) {
-        window.setTimeout(() => {
-          const nextInput = root.querySelector(`[data-chip-input="${key}"]`);
-          nextInput?.focus();
-        }, 0);
-      }
+      if (added) clearAndRefocusPickerInput(key);
     });
   }
 

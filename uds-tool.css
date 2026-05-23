@@ -252,6 +252,71 @@
   gap: 8px;
 }
 
+.uds-add-line--picker {
+  align-items: start;
+}
+
+.uds-picker-shell {
+  position: relative;
+  min-width: 0;
+}
+
+.uds-picker-panel {
+  position: absolute;
+  z-index: 12;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  display: grid;
+  gap: 4px;
+  max-height: 235px;
+  overflow: auto;
+  padding: 7px;
+  border: 1px solid color-mix(in srgb, var(--border, #cbd5df) 90%, #000 10%);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.16);
+}
+
+.uds-picker-option {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 9px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink, #1f2933);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.uds-picker-option:hover,
+.uds-picker-option:focus-visible {
+  border-color: color-mix(in srgb, var(--accent, #276749) 45%, var(--border, #cbd5df));
+  background: color-mix(in srgb, var(--accent, #276749) 8%, var(--surface, #fff));
+  outline: none;
+}
+
+.uds-picker-name {
+  font-size: 0.9rem;
+  font-weight: 850;
+  line-height: 1.15;
+}
+
+.uds-picker-meta,
+.uds-picker-empty {
+  color: var(--muted, #5b6673);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.uds-picker-empty {
+  padding: 9px;
+}
+
 .uds-chip-list {
   display: flex;
   flex-wrap: wrap;
@@ -536,10 +601,16 @@
 :root[data-theme="dark"] .uds-output-block,
 :root[data-theme="dark"] .uds-row-button,
 :root[data-theme="dark"] .uds-profile-row,
+:root[data-theme="dark"] .uds-picker-panel,
 :root[data-theme="dark"] .uds-note-preview {
   background: #111827;
   color: #e5e7eb;
   border-color: #374151;
+}
+
+:root[data-theme="dark"] .uds-picker-option:hover,
+:root[data-theme="dark"] .uds-picker-option:focus-visible {
+  background: color-mix(in srgb, var(--accent, #7dd3a8) 14%, #111827);
 }
 
 :root[data-theme="dark"] .uds-header,
@@ -555,6 +626,8 @@
 :root[data-theme="dark"] .uds-row-button span,
 :root[data-theme="dark"] .uds-profile-row span,
 :root[data-theme="dark"] .uds-profile-row p,
+:root[data-theme="dark"] .uds-picker-meta,
+:root[data-theme="dark"] .uds-picker-empty,
 :root[data-theme="dark"] .uds-version {
   color: #9ca3af;
 }

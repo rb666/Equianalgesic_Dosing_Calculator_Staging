@@ -12,6 +12,15 @@
     "assay_dependent",
     "not_included",
   ]);
+  const EXPECTED_PARENT_PROMPT_EXCLUSIONS = new Set([
+    "heroin",
+    "lisdexamfetamine",
+    "methylphenidate",
+    "ethanol",
+    "delta9_thc",
+    "cbd",
+    "synthetic_cannabinoids",
+  ]);
   const REVIEW_METADATA = {
     lastReviewed: "2026-05-23",
     status: "staging clinical-content review",
@@ -219,9 +228,19 @@
         return [];
       }
 
-      return parsed
+      const normalized = parsed
         .map(normalizeLocalProfile)
         .filter(Boolean);
+
+      if (normalized.length !== parsed.length) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+        } catch {
+          // Ignore cleanup persistence failure.
+        }
+      }
+
+      return normalized;
     } catch {
       return [];
     }
@@ -250,6 +269,13 @@
       return null;
     }
 
+    const label = String(raw.label || "").slice(0, 80);
+    const note = String(raw.note || "");
+
+    if ([label, note].some(hasIdentifierLikeText)) {
+      return null;
+    }
+
     const method = ["immunoassay", "definitive", "mixed", "unknown"].includes(raw.method)
       ? raw.method
       : "unknown";
@@ -259,9 +285,9 @@
 
     return {
       id: String(raw.id),
-      label: String(raw.label).slice(0, 80),
+      label,
       method,
-      note: String(raw.note || ""),
+      note,
       validityIncluded: Boolean(raw.validityIncluded),
       analytes,
       reviewDate: raw.reviewDate || "",
@@ -915,7 +941,7 @@
         }
       });
 
-      if (!state.detected.includes(expectedId) && !state.absent.includes(expectedId)) {
+      if (shouldPromptExpectedParent(expectedId) && !state.detected.includes(expectedId) && !state.absent.includes(expectedId)) {
         expectedParentNotEntered.push(`${itemLabel(expectedId)} is expected but was not entered as detected or absent. Check whether the report includes the parent drug or only metabolites.`);
       }
     });
@@ -990,6 +1016,15 @@
     return state.expected
       .flatMap((expectedId) => (relationshipsByFrom.get(expectedId) || []).map((row) => ({ ...row })))
       .find((row) => row.to === detectedId) || null;
+  }
+
+  function shouldPromptExpectedParent(expectedId) {
+    const entry = getItem(expectedId);
+    if (!entry || !entry.type.includes("drug")) {
+      return false;
+    }
+
+    return !EXPECTED_PARENT_PROMPT_EXCLUSIONS.has(expectedId);
   }
 
   function getCoverage(profile, id) {
@@ -1096,6 +1131,7 @@
   function buildPanelWarnings(profile) {
     const warnings = [];
     if (profile.id === "unknown") warnings.push("Panel profile is unknown. Do not rely on absent findings until included analytes/cutoffs are verified.");
+    if (state.absent.length && profile.id !== "unknown" && !profile.validityIncluded) warnings.push("Selected panel profile does not map specimen validity; absent/negative findings should be interpreted cautiously.");
     if (profile.method !== "unknown" && state.method !== "unknown" && profile.method !== state.method && profile.method !== "mixed") warnings.push(`Selected profile method (${profile.method}) does not match selected result method (${state.method}).`);
 
     [...state.detected, ...state.absent].forEach((id) => {
@@ -1937,6 +1973,26 @@
         (result) =>
           /without expected medication context/i.test(result.label) &&
           result.canSupport.some((line) => /clinical meaning requires/i.test(line)),
+      ),
+      runCase(
+        "Absent finding with profile missing validity mapping warns",
+        {
+          method: "definitive",
+          panelId: "test_local_no_validity",
+          expected: ["oxycodone"],
+          absent: ["oxycodone"],
+          absentVerified: true,
+          validityFlag: "unknown",
+          localProfileForTest: {
+            id: "test_local_no_validity",
+            label: "Test local profile without validity",
+            method: "definitive",
+            note: "Temporary test profile",
+            validityIncluded: false,
+            analytes: [coverage("oxycodone", "included")],
+          },
+        },
+        (result) => /validity/i.test(result.panelWarnings.join(" ")),
       ),
       runCase(
         "Detected analyte not mapped in selected local profile warns",

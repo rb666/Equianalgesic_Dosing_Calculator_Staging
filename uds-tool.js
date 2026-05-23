@@ -272,18 +272,25 @@
   }
 
   function dedupeCoverageEntries(entries) {
-    const seen = new Set();
-    const deduped = [];
+    const byAnalyte = new Map();
 
     entries.forEach((entry) => {
       if (!entry || !entry.id) return;
-      const key = `${entry.id}:${entry.status}`;
-      if (seen.has(key)) return;
-      seen.add(key);
-      deduped.push(entry);
+
+      if (!byAnalyte.has(entry.id)) {
+        byAnalyte.set(entry.id, new Set());
+      }
+
+      byAnalyte.get(entry.id).add(entry.status || "included");
     });
 
-    return deduped;
+    return Array.from(byAnalyte.entries()).map(([id, statuses]) => {
+      if (statuses.size === 1) {
+        return coverage(id, Array.from(statuses)[0]);
+      }
+
+      return coverage(id, "assay_dependent");
+    });
   }
 
   function normalizeLocalProfile(raw) {
@@ -460,7 +467,7 @@
               <h3>Interpret a result</h3>
             </div>
             <div class="uds-header-actions">
-              <button class="uds-text-button" data-action="clear-interpret" type="button">Clear findings</button>
+              <button class="uds-text-button" data-action="clear-interpret" type="button">Clear result inputs</button>
               <button class="uds-text-button" data-action="reset-interpret-all" type="button">Reset all</button>
             </div>
           </div>
@@ -870,8 +877,14 @@
           <strong class="uds-list-main">${escapeHtml(profile.label)}</strong>
           <span class="uds-list-meta">${escapeHtml(profile.method)} · ${mappedCount} mapped entries${knownGaps ? ` · ${knownGaps} known gaps` : ""} · validity ${profile.validityIncluded ? "included" : "not mapped"}</span>
           ${profile.note ? `<p class="uds-list-note">${escapeHtml(profile.note)}</p>` : ""}
+          ${mappedCount === 0 && isLocal ? `<p class="uds-warning-text">No mapped analytes or known gaps.</p>` : ""}
         </div>
-        ${isLocal ? `<button class="uds-text-button" data-action="delete-panel" data-id="${escapeHtml(profile.id)}" type="button">Delete</button>` : `<span class="uds-list-badge">Built-in</span>`}
+        ${isLocal ? `
+          <div class="uds-profile-actions">
+            <button class="uds-text-button" data-action="copy-panel-json" data-id="${escapeHtml(profile.id)}" type="button">Copy JSON</button>
+            <button class="uds-text-button" data-action="delete-panel" data-id="${escapeHtml(profile.id)}" type="button">Delete</button>
+          </div>
+        ` : `<span class="uds-list-badge">Built-in</span>`}
       </article>
     `;
   }
@@ -970,7 +983,7 @@
         shouldPromptExpectedParent(expectedId) &&
         !state.detected.includes(expectedId) &&
         !state.absent.includes(expectedId) &&
-        !hasStrongSupportiveFindingEntered(expectedId)
+        !hasStrongSupportiveFindingDetected(expectedId)
       ) {
         expectedParentNotEntered.push(`${itemLabel(expectedId)} is expected but was not entered as detected or absent. Check whether the report includes the parent drug or only metabolites.`);
       }
@@ -1016,6 +1029,7 @@
       safetyFlags.length ? `Safety: ${safetyFlags.slice(0, 2).join("; ")}.` : "",
       panelWarnings.length ? `Panel/profile: ${panelWarnings.slice(0, 2).join("; ")}.` : "",
       validityWarnings.length ? `Validity: ${validityWarnings.slice(0, 2).join("; ")}.` : "",
+      validityWarnings.length && buildValidityDetailSummary().length ? `Validity details: ${buildValidityDetailSummary().join("; ")}.` : "",
       `Next: ${nextStep}`,
     ].filter(Boolean).join("\n");
     const patientScript = buildPatientScript({ label, nextStep });
@@ -1061,10 +1075,10 @@
     return !EXPECTED_PARENT_PROMPT_EXCLUSIONS.has(expectedId);
   }
 
-  function hasStrongSupportiveFindingEntered(expectedId) {
+  function hasStrongSupportiveFindingDetected(expectedId) {
     return (relationshipsByFrom.get(expectedId) || [])
       .filter((row) => row.strength === "strong")
-      .some((row) => state.detected.includes(row.to) || state.absent.includes(row.to));
+      .some((row) => state.detected.includes(row.to));
   }
 
   function getCoverage(profile, id) {
@@ -1171,6 +1185,14 @@
   function buildPanelWarnings(profile) {
     const warnings = [];
     if (profile.id === "unknown") warnings.push("Panel profile is unknown. Do not rely on absent findings until included analytes/cutoffs are verified.");
+    if (
+      profile.id !== "unknown" &&
+      profile.id !== "targeted_definitive" &&
+      Array.isArray(profile.analytes) &&
+      profile.analytes.length === 0
+    ) {
+      warnings.push("Selected panel profile has no mapped analytes or known gaps; update the profile before interpreting coverage.");
+    }
     if (state.absent.length && profile.id !== "unknown" && !profile.validityIncluded) warnings.push("Selected panel profile does not map specimen validity; absent/negative findings should be interpreted cautiously.");
     if (profile.method !== "unknown" && state.method !== "unknown" && profile.method !== state.method && profile.method !== "mixed") warnings.push(`Selected profile method (${profile.method}) does not match selected result method (${state.method}).`);
 
@@ -1197,6 +1219,18 @@
       if (cov.status === "assay_dependent") warnings.push(`${itemLabel(id)} coverage is assay-dependent in the selected panel profile.`);
       if (cov.status === "class_screen") warnings.push(`${itemLabel(id)} may be represented only by a class screen; source-specific interpretation may require definitive testing.`);
     });
+
+    if (
+      (state.detected.length || state.absent.length) &&
+      profile.id !== "unknown" &&
+      profile.id !== "targeted_definitive"
+    ) {
+      state.expected.forEach((id) => {
+        if (!getCoverage(profile, id)) {
+          warnings.push(`${itemLabel(id)} is expected but not mapped in the selected panel profile; verify the selected profile answers the clinical question.`);
+        }
+      });
+    }
 
     const hasFentanylQuestion = [...state.expected, ...state.detected, ...state.absent].some((id) => ["fentanyl", "norfentanyl"].includes(id));
     if (state.panelId === "generic_opiate_screen" && hasFentanylQuestion) warnings.push("Generic opiate screens do not exclude fentanyl/norfentanyl exposure.");
@@ -1491,6 +1525,32 @@
     ];
   }
 
+  function buildValidityDetailSummary() {
+    const details = [];
+    const creatinine = state.validityDetails.creatinine.trim();
+    const specificGravity = state.validityDetails.specificGravity.trim();
+    const ph = state.validityDetails.ph.trim();
+    const oxidants = state.validityDetails.oxidants;
+
+    if (creatinine) {
+      details.push(`creatinine ${creatinine} mg/dL`);
+    }
+
+    if (specificGravity) {
+      details.push(`specific gravity ${specificGravity}`);
+    }
+
+    if (ph) {
+      details.push(`pH ${ph}`);
+    }
+
+    if (oxidants && oxidants !== "unknown") {
+      details.push(`oxidants/adulterants ${oxidants}`);
+    }
+
+    return details;
+  }
+
   function buildChartNote({
     label,
     confirmationLevel,
@@ -1506,10 +1566,12 @@
     const expected = state.expected.map(itemLabel).join(", ") || "none entered";
     const detected = state.detected.map(itemLabel).join(", ") || "none entered";
     const absent = state.absent.map(itemLabel).join(", ") || "none entered";
+    const validityDetailSummary = buildValidityDetailSummary();
     return [
       "UDS clinical reference review, no patient identifiers entered.",
       `Context: ${formatContext(state.context)}. Decision impact: ${state.consequence}.`,
       `Result source: ${formatResultSource(state.resultSource)}. Method/panel: ${formatMethod(state.method)} / ${selectedProfile().label}. Specimen validity: ${formatValidity(state.validityFlag)}.`,
+      validityDetailSummary.length ? `Optional validity details entered: ${validityDetailSummary.join("; ")}.` : "",
       `Expected: ${expected}. Detected: ${detected}. Tested-but-absent: ${absent}. Absent coverage verified: ${state.absentVerified ? "yes" : "no"}.`,
       absentConcerns.length ? `Absent-finding concerns: ${absentConcerns.slice(0, 3).join("; ")}.` : "Absent-finding concerns: none generated from entered findings.",
       expectedNegatives.length ? `Expected negative/absent findings: ${expectedNegatives.slice(0, 3).join("; ")}.` : "Expected negative/absent findings: none generated from entered findings.",
@@ -1835,6 +1897,13 @@
         deletePanel(action.dataset.id);
         return;
       }
+      if (actionName === "copy-panel-json") {
+        const profile = state.localProfiles.find((row) => row.id === action.dataset.id);
+        if (profile) {
+          copyText(JSON.stringify(profile, null, 2));
+        }
+        return;
+      }
       if (actionName === "reset-panel-draft") {
         state.panelDraft = blankPanelDraft();
         state.panelDraftCoverageStatus = "included";
@@ -2082,6 +2151,37 @@
         (result) => /not mapped|selected panel profile/i.test(result.panelWarnings.join(" ")),
       ),
       runCase(
+        "Expected analyte missing from local profile warns after result input",
+        {
+          method: "definitive",
+          panelId: "test_local_missing_expected_parent",
+          expected: ["oxycodone"],
+          detected: ["oxymorphone"],
+          validityFlag: "normal",
+          localProfileForTest: {
+            id: "test_local_missing_expected_parent",
+            label: "Test local profile missing oxycodone",
+            method: "definitive",
+            note: "Temporary test profile",
+            validityIncluded: true,
+            analytes: [coverage("oxymorphone", "included")],
+          },
+        },
+        (result) => /expected but not mapped/i.test(result.panelWarnings.join(" ")),
+      ),
+      runCase(
+        "POC source with definitive method warns",
+        {
+          resultSource: "poc",
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["oxycodone"],
+          detected: ["oxycodone"],
+          validityFlag: "normal",
+        },
+        (result) => /point-of-care.*definitive|lab confirmation/i.test(result.panelWarnings.join(" ")),
+      ),
+      runCase(
         "Absent-only interpretation gives cautious support",
         {
           method: "definitive",
@@ -2175,6 +2275,19 @@
         },
         (result) =>
           !result.expectedParentNotEntered.some((line) => /Buprenorphine is expected/i.test(line)),
+      ),
+      runCase(
+        "Absent supportive metabolite does not suppress expected parent reminder",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: ["buprenorphine"],
+          absent: ["norbuprenorphine"],
+          absentVerified: true,
+          validityFlag: "normal",
+        },
+        (result) =>
+          result.expectedParentNotEntered.some((line) => /Buprenorphine is expected/i.test(line)),
       ),
       runCase(
         "Low creatinine validity detail cautions absent findings",
@@ -2391,6 +2504,13 @@
 
     await copyText(JSON.stringify(payload, null, 2));
     return payload;
+  };
+
+  window.testUdsCoverageDedupe = function testUdsCoverageDedupe() {
+    return dedupeCoverageEntries([
+      coverage("fentanyl", "included"),
+      coverage("fentanyl", "not_included"),
+    ]);
   };
 
   setRootShell();

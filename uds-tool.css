@@ -204,6 +204,20 @@
   margin-top: 10px;
 }
 
+.uds-profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.uds-warning-text {
+  color: #991b1b;
+  font-size: 0.8rem;
+  font-weight: 760;
+  margin: 5px 0 0;
+}
+
 .uds-card label,
 .uds-input-section,
 .uds-output-block {
@@ -698,6 +712,10 @@
 
 :root[data-theme="dark"] .uds-list-main {
   color: #e5e7eb;
+}
+
+:root[data-theme="dark"] .uds-warning-text {
+  color: #fecaca;
 }
 
 :root[data-theme="dark"] .uds-privacy-strip {

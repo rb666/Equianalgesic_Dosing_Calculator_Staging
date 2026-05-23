@@ -35,7 +35,11 @@ Use this checklist before promoting UDS changes from staging to production.
 - Console: `window.runUdsGoldenCases()` returns all `passed: true`.
 - Console: `window.copyFailedUdsGoldenCases()` copies `All UDS golden cases passed.` when no regression is present.
 - Console: `window.copyUdsDebugState()` copies a non-identifying JSON snapshot of the current UDS inputs and interpretation.
+- Console: `window.testUdsCoverageDedupe()` returns fentanyl as `assay_dependent` when contradictory local profile coverage statuses are merged.
 - Copy short summary produces a concise consult-style summary with interpretation, confirmation threshold, key warnings, and next step.
+- Local panel profile rows allow copying non-identifying profile JSON for lab/pharmacy review.
+- Local panel profiles with zero mapped analytes or known gaps show a visible warning.
+- `Clear result inputs` clears result-related fields; `Reset all` restores the full interpret workflow defaults.
 - Manual: Open UDS, click an Expected input so the picker opens, then press Escape. The picker closes and the UDS screen remains open.
 - Manual: Open UDS, enter an absent finding, expand Optional validity details, enter creatinine `12`, then click outside. The section remains open and output includes a low-creatinine warning for absent/negative interpretation.
 - Manual: Click `Clear validity details`. Optional details reset and the low-creatinine warning disappears.
@@ -43,9 +47,13 @@ Use this checklist before promoting UDS changes from staging to production.
 - Critical validity details without detected or absent findings still return `Incomplete` and `Needs result input`.
 - Low creatinine with a positive-only compatible definitive result does not override compatibility or routine documentation.
 - Strong supportive metabolite entry suppresses the expected-parent-not-entered reminder.
+- Absent supportive metabolite does not suppress the expected-parent-not-entered reminder.
+- Optional validity detail values appear in the chart note when entered, and in the short summary when validity warnings are present.
+- POC result source paired with definitive method creates a source/method mismatch warning.
 - Detected finding with no expected medication context uses the softer `Detected finding without expected medication context` label.
 - Detected finding with no expected medication context uses a non-accusatory support line that says clinical meaning requires medication/exposure/panel/timing context.
 - Detected analyte missing from a selected local profile warns that the selected profile may be incomplete or wrong.
+- Expected analyte missing from a selected local profile warns after detected or absent result input exists.
 - Absent-only interpretation returns cautious support language tied to panel coverage, timing, cutoff, and specimen validity.
 - Compatible definitive case: expected oxycodone, detected oxycodone, example broad definitive panel, normal validity returns `Consistent / expected` and `Routine documentation`.
 - Expected opioid plus detected alcohol marker creates an opioid/alcohol safety flag.

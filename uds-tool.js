@@ -910,7 +910,7 @@
         if (match.strength === "strong") {
           explained.push(line);
         } else {
-          contextNeeded.push(`${line} Quantitative values, cutoff, timing, and full pattern may help interpretation but do not prove dose, exact timing, impairment, or intent.`);
+          contextNeeded.push(`${line} This finding is not source-specific by itself. Quantitative values, cutoff, timing, and the full pattern may help interpretation but do not prove exact source, dose, timing, impairment, or intent.`);
         }
         return;
       }
@@ -978,6 +978,8 @@
     });
     const shortSummary = [
       `UDS interpretation: ${label}.`,
+      `Method/panel: ${formatMethod(state.method)} / ${selectedProfile().label}.`,
+      `Result source: ${formatResultSource(state.resultSource)}.`,
       `Confirmation threshold: ${confirmationLevel}.`,
       safetyFlags.length ? `Safety: ${safetyFlags.slice(0, 2).join("; ")}.` : "",
       panelWarnings.length ? `Panel/profile: ${panelWarnings.slice(0, 2).join("; ")}.` : "",

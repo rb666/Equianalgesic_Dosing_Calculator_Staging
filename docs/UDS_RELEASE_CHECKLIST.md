@@ -58,6 +58,7 @@ Use this checklist before promoting UDS changes from staging to production.
 - Oxycodone expected with oxymorphone and noroxycodone on definitive testing returns compatible or source-context language.
 - Clonazepam expected with absent 7-aminoclonazepam on benzodiazepine immunoassay warns about method and panel coverage.
 - Hydrocodone expected with hydromorphone detected returns source-ambiguous/context-dependent language.
+- Source-ambiguous relationships state that the finding is not source-specific by itself.
 - Morphine detected without 6-MAM does not label heroin exposure as proven.
 - 6-MAM detected is treated as a specific recent heroin marker while still avoiding timing, dose, and impairment conclusions.
 - THC-COOH detected does not infer current impairment or exact timing.

@@ -600,13 +600,13 @@
           .map(
             (entry) => `
               <button
-                class="uds-row-button"
+                class="uds-list-item uds-row-button"
                 data-action="select-lookup"
                 data-id="${escapeHtml(entry.id)}"
                 type="button"
               >
-                <strong>${escapeHtml(entry.name)}</strong>
-                <span>${escapeHtml(entry.group)}</span>
+                <span class="uds-list-main">${escapeHtml(entry.name)}</span>
+                <span class="uds-list-meta">${escapeHtml(entry.group)} · ${escapeHtml(entry.type.replaceAll("_", " "))}</span>
               </button>
             `,
           )
@@ -685,9 +685,13 @@
     const isLocal = state.localProfiles.some((row) => row.id === profile.id);
     const analyteCount = profile.analytes?.filter((row) => row.status === "included" || row.status === "class_screen" || row.status === "assay_dependent").length || 0;
     return `
-      <article class="uds-profile-row">
-        <div><strong>${escapeHtml(profile.label)}</strong><span>${escapeHtml(profile.method)} · ${analyteCount} mapped analytes · validity ${profile.validityIncluded ? "included" : "not mapped"}</span><p>${escapeHtml(profile.note || "")}</p></div>
-        ${isLocal ? `<button class="uds-text-button" data-action="delete-panel" data-id="${escapeHtml(profile.id)}" type="button">Delete</button>` : `<span class="uds-muted">Built-in</span>`}
+      <article class="uds-list-item uds-profile-row">
+        <div class="uds-list-content">
+          <strong class="uds-list-main">${escapeHtml(profile.label)}</strong>
+          <span class="uds-list-meta">${escapeHtml(profile.method)} · ${analyteCount} mapped analytes · validity ${profile.validityIncluded ? "included" : "not mapped"}</span>
+          ${profile.note ? `<p class="uds-list-note">${escapeHtml(profile.note)}</p>` : ""}
+        </div>
+        ${isLocal ? `<button class="uds-text-button" data-action="delete-panel" data-id="${escapeHtml(profile.id)}" type="button">Delete</button>` : `<span class="uds-list-badge">Built-in</span>`}
       </article>
     `;
   }
@@ -1222,19 +1226,24 @@
     });
   }
 
-  function clearAndRefocusPickerInput(key) {
+  function clearAndClosePickerInput(key) {
     window.setTimeout(() => {
       const nextInput = root.querySelector(`[data-chip-input="${key}"]`);
       if (!(nextInput instanceof HTMLInputElement)) return;
       nextInput.value = "";
       nextInput.focus();
-      refreshChipPicker(nextInput);
+      const picker = root.querySelector(`[data-chip-picker="${key}"]`);
+      if (picker) {
+        picker.innerHTML = "";
+        picker.classList.add("is-hidden");
+      }
+      nextInput.setAttribute("aria-expanded", "false");
     }, 0);
   }
 
   function addFromPicker(key, id) {
     const added = key === "panelAnalyte" ? addPanelAnalyteById(id) : addChipById(key, id);
-    clearAndRefocusPickerInput(key);
+    clearAndClosePickerInput(key);
     return added;
   }
 
@@ -1284,7 +1293,7 @@
         const key = action.dataset.key;
         const input = root.querySelector(`[data-chip-input="${key}"]`);
         const added = addChip(key, input?.value || "");
-        if (added) clearAndRefocusPickerInput(key);
+        if (added) clearAndClosePickerInput(key);
         return;
       }
       if (actionName === "remove-chip") {
@@ -1326,7 +1335,7 @@
       if (actionName === "add-panel-analyte") {
         const input = root.querySelector(`[data-chip-input="panelAnalyte"]`);
         const added = addPanelAnalyte(input?.value || "");
-        if (added) clearAndRefocusPickerInput("panelAnalyte");
+        if (added) clearAndClosePickerInput("panelAnalyte");
         return;
       }
       if (actionName === "remove-panel-analyte") {
@@ -1407,7 +1416,7 @@
       event.preventDefault();
       const key = input.dataset.chipInput;
       const added = key === "panelAnalyte" ? addPanelAnalyte(input.value) : addChip(key, input.value);
-      if (added) clearAndRefocusPickerInput(key);
+      if (added) clearAndClosePickerInput(key);
     });
   }
 

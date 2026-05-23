@@ -1183,6 +1183,7 @@
     if (notExplained.length && state.method === "immunoassay") return "Discuss nonjudgmentally, review medication/OTC exposures, and confirm unexpected positives with definitive testing before changing care.";
     if (notExplained.length) return "Review medication/substance history, timing, and panel details; consult the lab or confirm if the result affects management.";
     if (absentConcerns.length && !state.absentVerified) return "Verify panel coverage and reportable analytes before interpreting any absent result.";
+    if (absentConcerns.length) return "Review timing, cutoff, specimen validity, medication history, and whether repeat testing or lab input is needed before treating absent expected findings as clinically meaningful.";
     if (panelWarnings.length) return "Resolve panel/profile limitations before relying on absent or class-screen findings.";
     if (validityWarnings.length && state.absent.length) return "Interpret absent findings cautiously because specimen validity is incomplete or limited.";
     if (validityWarnings.length) return "Address specimen-validity limitations before relying on the result.";

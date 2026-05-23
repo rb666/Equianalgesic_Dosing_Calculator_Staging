@@ -415,7 +415,7 @@
             ${option("other", "Other clinical context", state.context)}
           </select>
         </label>
-        <label>Consequence if wrong
+        <label>Decision impact
           <select data-field="consequence">
             ${option("low", "Low", state.consequence)}
             ${option("moderate", "Moderate", state.consequence)}
@@ -1105,6 +1105,7 @@
     const hasResultInput = state.detected.length > 0 || state.absent.length > 0;
     if (["invalid", "adulterated"].includes(state.validityFlag)) return { label: "Specimen-limited", tone: "warning" };
     if (!hasResultInput) return { label: "Incomplete", tone: "neutral" };
+    if (notExplained.length && !state.expected.length) return { label: "Detected finding without expected medication context", tone: "caution" };
     if (notExplained.length) return { label: "Unexpected positive", tone: "warning" };
     if (absentReviews.some((row) => row.severity === "unexpected_negative")) return { label: "Unexpected negative", tone: "caution" };
     if (absentReviews.some((row) => row.severity === "supportive_absent")) return { label: "Supportive finding absent / context-dependent", tone: "caution" };
@@ -1121,6 +1122,7 @@
     if (confirmationLevel === "Confirm before action") return "Because the result may change care or has high consequence, obtain definitive confirmation or lab/toxicology input before major management changes.";
     if (["invalid", "adulterated"].includes(state.validityFlag)) return "Do not interpret this result as final. Repeat collection per policy or consult the laboratory.";
     if (!state.detected.length && !state.absent.length) return "Add detected positive/present findings or verified tested-but-absent findings to complete the reconciliation.";
+    if (notExplained.length && !state.expected.length) return "Add expected medications/substances, recent administered medications, or reported exposures if known; otherwise review as a detected finding requiring clinical context.";
     if (notExplained.length && state.method === "immunoassay") return "Discuss nonjudgmentally, review medication/OTC exposures, and confirm unexpected positives with definitive testing before changing care.";
     if (notExplained.length) return "Review medication/substance history, timing, and panel details; consult the lab or confirm if the result affects management.";
     if (absentConcerns.length && !state.absentVerified) return "Verify panel coverage and reportable analytes before interpreting any absent result.";
@@ -1517,6 +1519,8 @@
       const input = event.target.closest("[data-chip-input]");
       if (!input) return;
       if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
         hideChipPickers();
         return;
       }
@@ -1594,6 +1598,17 @@
 
   window.runUdsGoldenCases = function runUdsGoldenCases() {
     return [
+      runCase(
+        "Detected finding without expected context uses softer label",
+        {
+          method: "definitive",
+          panelId: "example_broad_definitive",
+          expected: [],
+          detected: ["thc_cooh"],
+          validityFlag: "normal",
+        },
+        (result) => /without expected medication context/i.test(result.label),
+      ),
       runCase(
         "Compatible definitive expected result should not require verify panel",
         {

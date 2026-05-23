@@ -65,17 +65,18 @@ pharmacist review, or specialist consultation.
 - Reference table for onset, peak, duration, half-life, metabolism, and source
   review.
 
-### Urine Drug Screen Reference and Pattern Check
+### Urine Drug Screen Workflow Reference
 
-- Search-first UDS lookup by drug, metabolite, brand name, finding, or class.
-- Method context for immunoassay screening versus definitive LC/GC-MS testing.
-- Related-finding display for parent drugs, expected metabolites, shared
-  metabolites, supportive findings, assay caveats, and source ambiguity.
-- Pattern Check workflow comparing expected medications, detected analytes, and
-  known-tested absent findings.
-- Common UDS scenario shortcuts for frequent interpretation questions such as
-  fentanyl-negative opiate screens, hydromorphone source ambiguity, and
-  benzodiazepine metabolite overlap.
+- Four PHI-safe workflows: Interpret, Choose test, Lookup, and Panels.
+- Interpret workflow comparing expected medications/substances, detected
+  analytes, and known-tested absent findings with method, panel profile,
+  consequence level, and specimen-validity context.
+- Choose-test workflow for selecting an appropriate UDS method before ordering.
+- Lookup workflow by drug, metabolite, brand name, finding, or class.
+- Local panel profile builder for non-identifying panel labels and included
+  analytes, stored client-side only.
+- Output language emphasizes compatibility, panel dependence, specimen limits,
+  source ambiguity, confirmation needs, and practical next steps.
 
 ## Clinical Safety Position
 
@@ -164,7 +165,8 @@ Before production promotion, reviewers should focus on:
 - Benzodiazepine equivalence values and route-specific assumptions.
 - Pharmacokinetic text accuracy, graph behavior, and source labeling.
 - UDS parent/metabolite relationships, shared-metabolite ambiguity, assay
-  limitations, and Pattern Check wording.
+  limitations, specimen-validity handling, local panel profiles, and workflow
+  output wording.
 - Accessibility, mobile responsiveness, and dark-mode readability.
 
 ## Disclaimer

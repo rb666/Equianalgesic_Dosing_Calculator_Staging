@@ -405,6 +405,7 @@
 .uds-text-button:hover,
 .uds-row-button:hover,
 .uds-profile-row:hover {
+  box-shadow: none;
   transform: none;
   filter: brightness(0.98);
 }
@@ -512,37 +513,50 @@
 }
 
 .uds-list-item {
+  box-sizing: border-box;
   display: grid;
   gap: 4px;
+  align-items: start;
   width: 100%;
-  min-height: 46px;
+  min-height: 64px;
   padding: 11px 12px;
   border: 1px solid color-mix(in srgb, var(--border, #cbd5df) 82%, transparent);
   border-radius: 11px;
   background: color-mix(in srgb, var(--surface, #fff) 96%, #eef2f7 4%);
   color: var(--ink, #1f2933);
+  box-shadow: none;
+  line-height: normal;
+  overflow: hidden;
   text-align: left;
+  white-space: normal;
 }
 
 .uds-row-button {
   appearance: none;
   cursor: pointer;
+  transform: none;
 }
 
 .uds-list-main {
   display: block;
+  min-width: 0;
   color: var(--ink, #1f2933);
   font-size: 0.94rem;
   font-weight: 850;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .uds-list-meta {
   display: block;
+  min-width: 0;
   color: var(--muted, #5b6673);
   font-size: 0.78rem;
   font-weight: 700;
   line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .uds-list-content {

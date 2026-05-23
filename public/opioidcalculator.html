@@ -55,7 +55,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260522-uds-value" />
+    <link rel="stylesheet" href="/styles.css?v=20260523-uds-workflow-redesign" />
   </head>
   <body>
     <div class="environment-banner">
@@ -313,7 +313,7 @@
             </div>
 
             <p class="basis-note">
-              This build treats the reduction as a configurable safety
+              This staging build treats the reduction as a configurable safety
               adjustment from 0% to 100% after the raw target daily dose is
               calculated.
             </p>
@@ -362,7 +362,7 @@
                 </div>
 
                 <p class="context-summary note-box" id="renalBandNote">
-                  Enter eGFR to apply the renal guidance bands.
+                  Enter eGFR to apply the staging renal guidance bands.
                 </p>
               </section>
 
@@ -455,7 +455,7 @@
               <span class="summary-label">Renal advice</span>
               <h3 id="renalAdviceTitle">No renal band selected</h3>
               <p id="renalAdviceBody">
-                Enter eGFR to turn on the renal adjustment guidance.
+                Enter eGFR to turn on the staging renal adjustment guidance.
               </p>
             </section>
 
@@ -488,7 +488,7 @@
               <li>Multi-drug totals are intended for regimen-level review; they do not replace opioid-specific bedside assessment.</li>
               <li>Patch entries are treated as standing 24-hour exposure estimates and not as initiation or titration instructions.</li>
               <li>Methadone totals are especially approximate; use the methadone tab and specialist input when rotating to methadone.</li>
-              <li>Renal and hepatic cards show configured guidance and local advisory rules; they are not validated severity scores.</li>
+              <li>Renal and hepatic cards show staging guidance and local advisory rules; they are not validated severity scores.</li>
               <li>Reassess analgesia, respiratory rate, sedation, organ function, and adverse effects after conversion.</li>
             </ul>
           </div>
@@ -849,7 +849,7 @@
           <span class="compact-title">
             <span class="eyebrow">Reference</span>
             <strong>Configured tables and sources</strong>
-            <span>Open when you need to audit the current build.</span>
+            <span>Open when you need to audit the staging build.</span>
           </span>
           <span class="summary-action" aria-hidden="true"></span>
         </summary>
@@ -876,10 +876,10 @@
           </div>
 
           <p class="reference-copy">
-            This build uses a configured hybrid table: current local
+            This staging build uses a configured hybrid table: current local
             morphine and hydromorphone relationships are preserved, while
             hydrocodone, codeine, oral methadone, and expanded fentanyl patch
-            entries are updated to the configured values.
+            entries are updated to the requested staging values.
           </p>
 
           <div class="section-heading methadone-reference-heading">
@@ -901,7 +901,7 @@
           </div>
 
           <p class="reference-copy">
-            Renal logic configured in this build: eGFR above 50 mL/min
+            Renal logic configured in this staging build: eGFR above 50 mL/min
             uses no automatic reduction; eGFR 30-50 mL/min applies a 25%
             reduction for uncontrolled pain or 50% for well controlled pain to
             morphine, codeine, and meperidine; eGFR below 30 mL/min marks
@@ -913,7 +913,7 @@
 
           <div class="section-heading methadone-reference-heading">
             <p class="eyebrow">Sources</p>
-            <h2>References used to build this table</h2>
+            <h2>References used to build this staging table</h2>
           </div>
           <div class="table-wrap">
             <table class="source-table">
@@ -1032,6 +1032,6 @@
       </div>
     </div>
 
-    <script src="/script.js?v=20260522-uds-value"></script>
+    <script src="/script.js?v=20260523-uds-workflow-redesign"></script>
   </body>
 </html>

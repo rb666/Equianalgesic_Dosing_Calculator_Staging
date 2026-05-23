@@ -622,7 +622,7 @@ const sourceReferences = [
     title: "Calculation of Oral Morphine Equivalents (OME) | Pain Management Education at UCSF",
     url: "https://pain.ucsf.edu/opioid-analgesics/calculation-oral-morphine-equivalents-ome",
     note:
-      "Background source for IV codeine and additional route-level OME cross-checks. This build still preserves selected local conversion relationships where requested.",
+      "Background source for IV codeine and additional route-level OME cross-checks. This staging build still preserves selected local conversion relationships where requested.",
   },
   {
     title: "A synthesis of oral morphine equivalents (OME) for opioid utilisation studies",
@@ -643,20 +643,20 @@ const sourceReferences = [
     url:
       "https://www.westmidspallcare.co.uk/wmpcp/guide/renal-disease/renal-analgesia/",
     note:
-      "Background source for renal cautions and alternative opioid groupings; the eGFR rules in this build follow the client-requested configuration.",
+      "Background source for renal cautions and alternative opioid groupings; the eGFR rules in this staging build follow the client-requested configuration.",
   },
   {
     title: "Use of the Child-Pugh Score in Liver Disease – StatPearls",
     url: "https://www.ncbi.nlm.nih.gov/books/NBK542308/",
     note:
-      "Background source for liver function markers. This build now leaves mild, moderate, or severe hepatic classification to clinical judgment rather than calculating a lab-derived score.",
+      "Background source for liver function markers. This staging build now leaves mild, moderate, or severe hepatic classification to clinical judgment rather than calculating a lab-derived score.",
   },
   {
     title: "Liver failure pain management – West Midlands Palliative Care",
     url:
       "https://www.westmidspallcare.co.uk/wmpcp/guide/liver-failure/liver-failure-pain-management/",
     note:
-      "Background source for hepatic caution language; the mild/moderate/severe percentage ranges are the configured local rules.",
+      "Background source for hepatic caution language; the mild/moderate/severe percentage ranges are the client-requested staging rules.",
   },
   {
     title: "Choosing equivalent doses of oral benzodiazepines – NHS Specialist Pharmacy Service",
@@ -669,7 +669,7 @@ const sourceReferences = [
     title: "Benzodiazepine equivalence table – Ashton Manual",
     url: "https://www.benzo.org.uk/bzequiv.htm",
     note:
-      "Supplemental reference for benzodiazepine equivalence values and tapering context. This build applies the client's reviewed benzodiazepine ratios.",
+      "Supplemental reference for benzodiazepine equivalence values and tapering context. This staging build applies the client's reviewed benzodiazepine ratios.",
   },
   {
     title: "Urine Drug Tests: Ordering and Interpretation – American Family Physician",
@@ -684,16 +684,16 @@ const sourceReferences = [
       "Reference for UDS test selection, confirmatory testing, and limitations of opiate, oxycodone, benzodiazepine, and synthetic opioid immunoassays.",
   },
   {
-    title: "Configured local rules",
+    title: "Configured local staging rules",
     url: "",
     note:
-      "This build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested oral methadone 4.7 MME factor, 3.0 conservative oral methadone estimate, and hepatic advisory bands.",
+      "This staging build preserves the local IV morphine baseline and legacy hydromorphone or meperidine values while adding the requested oral methadone 4.7 MME factor, 3.0 conservative oral methadone estimate, and hepatic advisory bands.",
   },
   {
     title: "Configured methadone ratio table",
     url: "",
     note:
-      "Local configuration for the specialty morphine:methadone bands: 0-30 mg 2:1, 31-99 mg 4:1, 100-299 mg 8:1, 300-499 mg 12:1, 500-999 mg 15:1, and 1000 mg/day or more 20:1.",
+      "Local staging configuration for the specialty morphine:methadone bands: 0-30 mg 2:1, 31-99 mg 4:1, 100-299 mg 8:1, 300-499 mg 12:1, 500-999 mg 15:1, and 1000 mg/day or more 20:1.",
   },
 ];
 
@@ -2285,24 +2285,24 @@ const updateRenalBandNote = () => {
 
   if (!band) {
     renalBandNote.textContent =
-      "Enter eGFR to apply the renal guidance bands.";
+      "Enter eGFR to apply the staging renal guidance bands.";
     return;
   }
 
   if (band.id === "over50") {
     renalBandNote.textContent =
-      "eGFR above 50 mL/min: this build applies no automatic renal reduction.";
+      "eGFR above 50 mL/min: this staging build applies no automatic renal reduction.";
     return;
   }
 
   if (band.id === "30to50") {
     renalBandNote.textContent =
-      "eGFR 30-50 mL/min: this build applies a 25% reduction for uncontrolled pain or a 50% reduction for well controlled pain to morphine, codeine, and meperidine.";
+      "eGFR 30-50 mL/min: this staging build applies a 25% reduction for uncontrolled pain or a 50% reduction for well controlled pain to morphine, codeine, and meperidine.";
     return;
   }
 
   renalBandNote.textContent =
-    "eGFR below 30 mL/min: this build marks morphine, codeine, and meperidine as avoid and highlights alternative opioid groups.";
+    "eGFR below 30 mL/min: this staging build marks morphine, codeine, and meperidine as avoid and highlights alternative opioid groups.";
 };
 
 const renderRegimenSummaryTable = (parsedEntries) => {
@@ -2385,7 +2385,7 @@ const getRenalAdvice = ({
     return {
       summary: "Renal guidance off",
       title: "No renal band selected",
-      body: "Enter eGFR to turn on the renal adjustment guidance.",
+      body: "Enter eGFR to turn on the staging renal adjustment guidance.",
       resultLabel: "Not applied",
     };
   }
@@ -2395,7 +2395,7 @@ const getRenalAdvice = ({
       summary: "Renal: eGFR >50 mL/min",
       title: "eGFR >50 mL/min",
       body:
-        "No automatic renal dose reduction is configured in this build above 50 mL/min." +
+        "No automatic renal dose reduction is configured in this staging build above 50 mL/min." +
         currentNote,
       resultLabel: "No renal reduction",
     };
@@ -2438,7 +2438,7 @@ const getRenalAdvice = ({
           summary: `Renal: ${band.label}; moderate-kidney-effect alternative`,
           title: `${targetOption.label} is a moderate-kidney-effect alternative`,
           body:
-            "No explicit percentage reduction is auto-applied for oxycodone or hydromorphone in this build. Use lower starting doses and cautious titration in renal dysfunction." +
+            "No explicit percentage reduction is auto-applied for oxycodone or hydromorphone in this staging build. Use lower starting doses and cautious titration in renal dysfunction." +
             currentNote,
           resultLabel: "Use caution",
         };
@@ -2449,7 +2449,7 @@ const getRenalAdvice = ({
           summary: `Renal: ${band.label}; minimal-kidney-effect alternative`,
           title: `${targetOption.label} is a lower-kidney-effect alternative`,
           body:
-            "Methadone, fentanyl, and buprenorphine are listed here as lower-kidney-effect alternatives. No automatic percentage reduction is applied in this build, but monitoring and formulation review remain necessary." +
+            "Methadone, fentanyl, and buprenorphine are listed here as lower-kidney-effect alternatives. No automatic percentage reduction is applied in this staging build, but monitoring and formulation review remain necessary." +
             currentNote,
           resultLabel: "Preferred class",
         };
@@ -2458,9 +2458,9 @@ const getRenalAdvice = ({
 
     return {
       summary: `Renal: ${band.label}; ${reductionLabel}`,
-      title: "Renal configured rule for eGFR 30-50 mL/min",
+      title: "Renal staging rule for eGFR 30-50 mL/min",
       body:
-        `This build applies ${reductionLabel} to morphine, codeine, and meperidine in the 30-50 mL/min band.` +
+        `This staging build applies ${reductionLabel} to morphine, codeine, and meperidine in the 30-50 mL/min band.` +
         currentNote,
       resultLabel: "Guidance only",
     };
@@ -2472,7 +2472,7 @@ const getRenalAdvice = ({
         summary: "Renal: eGFR <30 mL/min; avoid selected target agent",
         title: `Avoid ${targetOption.label} at eGFR <30 mL/min`,
         body:
-          "Morphine, codeine, and meperidine are marked as avoid in this build below 30 mL/min. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
+          "Morphine, codeine, and meperidine are marked as avoid in this staging build below 30 mL/min. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
           currentNote,
         resultLabel: "Avoid selected target agent",
       };
@@ -2494,7 +2494,7 @@ const getRenalAdvice = ({
         summary: "Renal: eGFR <30 mL/min; lower-kidney-effect alternative",
         title: `${targetOption.label} is a lower-kidney-effect alternative`,
         body:
-          "Methadone, fentanyl, and buprenorphine are highlighted here as lower-kidney-effect alternatives. No automatic percentage reduction is added in this build, but specialist review and close monitoring remain important." +
+          "Methadone, fentanyl, and buprenorphine are highlighted here as lower-kidney-effect alternatives. No automatic percentage reduction is added in this staging build, but specialist review and close monitoring remain important." +
           currentNote,
         resultLabel: "Preferred class",
       };
@@ -2503,9 +2503,9 @@ const getRenalAdvice = ({
 
   return {
     summary: "Renal: eGFR <30 mL/min; avoid morphine, codeine, and meperidine",
-    title: "Renal configured rule for eGFR <30 mL/min",
+    title: "Renal staging rule for eGFR <30 mL/min",
     body:
-      "Morphine, codeine, and meperidine are marked as avoid below 30 mL/min in this build. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
+      "Morphine, codeine, and meperidine are marked as avoid below 30 mL/min in this staging build. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
       currentNote,
     resultLabel: "Guidance only",
   };
@@ -2566,10 +2566,10 @@ const getHepaticAdvice = ({
     }
 
     return {
-      summary: `Hepatic: ${severityLabel} (clinical judgment); no target-specific configured rule`,
+      summary: `Hepatic: ${severityLabel} (clinical judgment); no target-specific staging rule`,
       title: `No configured hepatic percentage rule for ${targetOption.label}`,
       body:
-        `${sourcePrefix}. This build does not apply a medication-specific hepatic percentage rule to the selected target. Use bedside assessment and the reference sources below.`,
+        `${sourcePrefix}. This staging build does not apply a medication-specific hepatic percentage rule to the selected target. Use bedside assessment and the reference sources below.`,
       resultLabel: "Guidance only",
     };
   }
@@ -2580,7 +2580,7 @@ const getHepaticAdvice = ({
     return {
       summary: `Hepatic: ${severityLabel} (clinical judgment); avoid ${targetOption.medication}`,
       title: `${severityLabel} hepatic impairment: avoid ${targetOption.label}`,
-      body: `${sourcePrefix}. The configured hepatic guide for this build marks ${targetOption.label} as avoid in ${severityLabel.toLowerCase()} hepatic impairment.`,
+      body: `${sourcePrefix}. The configured hepatic guide for this staging build marks ${targetOption.label} as avoid in ${severityLabel.toLowerCase()} hepatic impairment.`,
       resultLabel: "Avoid target",
     };
   }
@@ -3111,7 +3111,10 @@ document.addEventListener("keydown", (event) => {
 
   if (isModalVisible(pharmacokineticsModal)) {
     setPharmacokineticsModalVisible(false);
+    return;
   }
+
+
 });
 
 exampleButton.addEventListener("click", () => {

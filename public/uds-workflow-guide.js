@@ -61,7 +61,6 @@
       kicker: "Local setup",
       summary: "Create non-identifying local profiles so absent findings are judged against actual reportable analytes.",
       steps: [
-        ["Use no identifiers", "Do not enter names, DOBs, MRNs, accession numbers, order numbers, or encounter details."],
         ["Map coverage honestly", "Use included, class screen only, assay-dependent, or known not included for each analyte."],
         ["Prefer local profiles over demos", "Demo profiles are orientation aids, not verified clinical panels."],
       ],
@@ -257,7 +256,7 @@
               <p class="uds-eyebrow">Orientation</p>
               <h3 id="udsWorkflowGuideTitle">UDS workflow guide</h3>
               <p id="udsWorkflowGuideDescription">
-                Pick a workflow below. The matching UDS tab updates behind this drawer while the guide stays open.
+                Pick a workflow below.
               </p>
             </div>
             <button class="uds-text-button uds-guide-close" data-uds-guide-close type="button">
@@ -404,7 +403,6 @@
         <div class="uds-guide-safety-card">
           <strong>Boundaries</strong>
           <ul>
-            <li>Do not enter identifiers.</li>
             <li>Absent findings require verified panel coverage.</li>
             <li>UDS review does not prove dose, timing, impairment, intent, misuse, diversion, or forensic conclusions.</li>
           </ul>

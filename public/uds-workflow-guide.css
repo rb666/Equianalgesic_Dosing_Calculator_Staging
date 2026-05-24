@@ -1,0 +1,483 @@
+/* UDS workflow guide: compact onboarding layer for the runtime-rendered UDS tool */
+
+.uds-header-guide-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+  justify-self: end;
+  min-width: max-content;
+}
+
+.uds-guide-button {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
+.uds-guide-button-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.uds-guide-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;
+  background: rgba(6, 18, 16, 0.46);
+}
+
+.uds-guide-overlay.is-hidden {
+  display: none !important;
+}
+
+#udsModal.uds-guide-is-open {
+  overflow: hidden;
+}
+
+.uds-guide-drawer {
+  display: flex;
+  flex-direction: column;
+  width: min(540px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow: hidden;
+  border: 1.5px solid var(--line, #b8ccc6);
+  border-radius: 16px;
+  background: var(--surface, #ffffff);
+  color: var(--ink, #1f2a27);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+}
+
+.uds-guide-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  padding: 18px 20px 16px;
+  border-bottom: 1.5px solid var(--line, #b8ccc6);
+  background: var(--surface-soft, #eef5f3);
+}
+
+.uds-guide-header h3,
+.uds-guide-header p {
+  margin: 0;
+}
+
+.uds-guide-header h3 {
+  font-size: 1.28rem;
+  letter-spacing: -0.02em;
+}
+
+.uds-guide-header p:not(.uds-eyebrow) {
+  margin-top: 4px;
+  color: var(--muted, #66736f);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.38;
+}
+
+.uds-guide-close {
+  min-width: 0;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.uds-guide-body {
+  display: grid;
+  gap: 16px;
+  overflow: auto;
+  padding: 16px 18px 20px;
+}
+
+.uds-guide-section {
+  display: grid;
+  gap: 10px;
+}
+
+.uds-guide-section h4,
+.uds-guide-section p {
+  margin: 0;
+}
+
+.uds-guide-section h4 {
+  color: var(--eyebrow, #3f625d);
+  font-size: 0.8rem;
+  font-weight: 950;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.uds-guide-section > p {
+  color: var(--muted, #66736f);
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.42;
+}
+
+.uds-guide-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.uds-guide-workflow-card {
+  display: grid;
+  gap: 4px;
+  min-height: 116px;
+  padding: 11px;
+  border: 1px solid color-mix(in srgb, var(--line, #b8ccc6) 86%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface, #ffffff) 94%, var(--surface-soft, #eef5f3));
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.uds-guide-workflow-card:hover,
+.uds-guide-workflow-card:focus-visible,
+.uds-guide-workflow-card.is-active {
+  border-color: color-mix(in srgb, var(--accent, #28706a) 72%, var(--line, #b8ccc6));
+  background: color-mix(in srgb, var(--accent-soft, #e5f4ef) 62%, var(--surface, #ffffff));
+}
+
+.uds-guide-workflow-card:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent, #28706a) 34%, transparent);
+  outline-offset: 2px;
+}
+
+.uds-guide-workflow-card:hover {
+  transform: translateY(-1px);
+}
+
+.uds-guide-workflow-card.is-active {
+  box-shadow: inset 3px 0 0 var(--accent, #28706a);
+}
+
+.uds-guide-workflow-label {
+  color: var(--ink, #1f2a27);
+  font-size: 0.96rem;
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+.uds-guide-workflow-kicker {
+  color: var(--eyebrow, #3f625d);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.uds-guide-workflow-summary {
+  color: var(--muted, #66736f);
+  font-size: 0.79rem;
+  font-weight: 650;
+  line-height: 1.32;
+}
+
+.uds-guide-focus-panel {
+  display: grid;
+  gap: 14px;
+  scroll-margin-top: 8px;
+}
+
+.uds-guide-focus-panel:focus {
+  outline: none;
+}
+
+.uds-guide-focus-head {
+  display: grid;
+  gap: 5px;
+  padding: 13px;
+  border: 1px solid color-mix(in srgb, var(--accent, #28706a) 28%, var(--line, #b8ccc6));
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--accent-soft, #e5f4ef) 55%, var(--surface, #ffffff));
+}
+
+.uds-guide-focus-head h4,
+.uds-guide-focus-head p {
+  margin: 0;
+}
+
+.uds-guide-focus-head h4 {
+  color: var(--ink, #1f2a27);
+  font-size: 1.02rem;
+  font-weight: 950;
+  line-height: 1.18;
+}
+
+.uds-guide-focus-head p:not(.uds-eyebrow) {
+  color: var(--muted, #66736f);
+  font-size: 0.9rem;
+  font-weight: 680;
+  line-height: 1.38;
+}
+
+.uds-guide-loaded-note {
+  padding: 9px 11px;
+  border: 1px solid color-mix(in srgb, var(--uds-compatible-border, #10b981) 70%, var(--line, #b8ccc6));
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--uds-compatible-bg, #ecfdf5) 72%, var(--surface, #ffffff));
+  color: var(--uds-compatible-fg, #065f46);
+  font-size: 0.86rem;
+  font-weight: 820;
+  line-height: 1.35;
+}
+
+.uds-guide-step-list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.uds-guide-step {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 7px;
+  align-items: start;
+  padding: 5px 0;
+  border: 0;
+  background: transparent;
+}
+
+.uds-guide-step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent, #28706a) 88%, #000 4%);
+  color: #ffffff;
+  font-size: 0.66rem;
+  font-weight: 950;
+}
+
+.uds-guide-step strong {
+  display: block;
+  color: var(--ink, #1f2a27);
+  font-size: 0.84rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.uds-guide-step span {
+  display: block;
+  margin-top: 1px;
+  color: var(--muted, #66736f);
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.uds-guide-key-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.uds-guide-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
+.uds-guide-key-card,
+.uds-guide-example-card,
+.uds-guide-safety-card {
+  display: grid;
+  gap: 7px;
+  padding: 11px;
+  border: 1px solid color-mix(in srgb, var(--line, #b8ccc6) 86%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface, #ffffff) 92%, var(--surface-soft, #eef5f3));
+}
+
+.uds-guide-key-card strong,
+.uds-guide-example-card strong,
+.uds-guide-safety-card strong {
+  color: var(--ink, #1f2a27);
+  font-size: 0.92rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.uds-guide-key-card span,
+.uds-guide-example-card span,
+.uds-guide-safety-card span {
+  color: var(--muted, #66736f);
+  font-size: 0.82rem;
+  font-weight: 670;
+  line-height: 1.34;
+}
+
+.uds-guide-example-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.uds-guide-example-card button {
+  min-height: 34px;
+  white-space: nowrap;
+}
+
+.uds-guide-safety-card {
+  border-color: color-mix(in srgb, var(--warning, #6f470d) 42%, var(--line, #b8ccc6));
+  background: color-mix(in srgb, var(--warning-soft, #fff6de) 68%, var(--surface, #ffffff));
+}
+
+.uds-guide-safety-card strong {
+  color: var(--warning, #6f470d);
+}
+
+.uds-guide-safety-card ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.uds-guide-safety-card li {
+  margin: 4px 0;
+  color: var(--ink, #1f2a27);
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.38;
+}
+
+@media (max-width: 900px) {
+  .uds-header-guide-slot {
+    align-items: flex-start;
+    justify-self: start;
+  }
+
+  .uds-guide-key-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .uds-guide-overlay {
+    align-items: flex-end;
+    padding: 10px;
+  }
+
+  .uds-guide-drawer {
+    width: 100%;
+    max-height: min(88vh, 760px);
+    border-radius: 16px 16px 10px 10px;
+  }
+
+  .uds-guide-header,
+  .uds-guide-body {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .uds-guide-selector-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .uds-guide-workflow-card {
+    min-height: 0;
+  }
+
+  .uds-guide-example-card {
+    grid-template-columns: 1fr;
+  }
+
+  .uds-guide-example-card button {
+    width: max-content;
+  }
+}
+
+:root[data-theme="dark"] .uds-guide-overlay {
+  background: rgba(0, 0, 0, 0.62);
+}
+
+:root[data-theme="dark"] .uds-guide-drawer,
+:root[data-theme="dark"] .uds-guide-key-card,
+:root[data-theme="dark"] .uds-guide-example-card {
+  border-color: #374151;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+:root[data-theme="dark"] .uds-guide-header {
+  border-color: #374151;
+  background: #0f172a;
+}
+
+:root[data-theme="dark"] .uds-guide-workflow-card {
+  border-color: #374151;
+  background: #111827;
+}
+
+:root[data-theme="dark"] .uds-guide-workflow-card:hover,
+:root[data-theme="dark"] .uds-guide-workflow-card:focus-visible,
+:root[data-theme="dark"] .uds-guide-workflow-card.is-active,
+:root[data-theme="dark"] .uds-guide-focus-head {
+  border-color: #2dd4bf;
+  background: #0f2f2c;
+}
+
+:root[data-theme="dark"] .uds-guide-header p:not(.uds-eyebrow),
+:root[data-theme="dark"] .uds-guide-section > p,
+:root[data-theme="dark"] .uds-guide-workflow-summary,
+:root[data-theme="dark"] .uds-guide-focus-head p:not(.uds-eyebrow),
+:root[data-theme="dark"] .uds-guide-key-card span,
+:root[data-theme="dark"] .uds-guide-example-card span,
+:root[data-theme="dark"] .uds-guide-step span {
+  color: #9ca3af;
+}
+
+:root[data-theme="dark"] .uds-guide-workflow-label,
+:root[data-theme="dark"] .uds-guide-focus-head h4,
+:root[data-theme="dark"] .uds-guide-key-card strong,
+:root[data-theme="dark"] .uds-guide-example-card strong,
+:root[data-theme="dark"] .uds-guide-step strong {
+  color: #e5e7eb;
+}
+
+:root[data-theme="dark"] .uds-guide-workflow-kicker {
+  color: #99f6e4;
+}
+
+:root[data-theme="dark"] .uds-guide-loaded-note {
+  border-color: #34d399;
+  background: #052e24;
+  color: #a7f3d0;
+}
+
+:root[data-theme="dark"] .uds-guide-safety-card {
+  border-color: #92400e;
+  background: #292016;
+}
+
+:root[data-theme="dark"] .uds-guide-safety-card strong {
+  color: #fcd34d;
+}
+
+:root[data-theme="dark"] .uds-guide-safety-card li {
+  color: #e5e7eb;
+}

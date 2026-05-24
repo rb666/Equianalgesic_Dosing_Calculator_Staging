@@ -246,7 +246,7 @@
 
 .uds-guide-step-list {
   display: grid;
-  gap: 8px;
+  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -254,42 +254,41 @@
 
 .uds-guide-step {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 9px;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 7px;
   align-items: start;
-  padding: 10px;
-  border: 1px solid color-mix(in srgb, var(--line, #b8ccc6) 76%, transparent);
-  border-radius: 11px;
-  background: var(--surface, #ffffff);
+  padding: 5px 0;
+  border: 0;
+  background: transparent;
 }
 
 .uds-guide-step-number {
   display: inline-grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 18px;
+  height: 18px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent, #28706a) 88%, #000 4%);
   color: #ffffff;
-  font-size: 0.78rem;
+  font-size: 0.66rem;
   font-weight: 950;
 }
 
 .uds-guide-step strong {
   display: block;
   color: var(--ink, #1f2a27);
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   font-weight: 900;
   line-height: 1.2;
 }
 
 .uds-guide-step span {
   display: block;
-  margin-top: 2px;
+  margin-top: 1px;
   color: var(--muted, #66736f);
-  font-size: 0.84rem;
+  font-size: 0.78rem;
   font-weight: 650;
-  line-height: 1.35;
+  line-height: 1.3;
 }
 
 .uds-guide-key-grid {
@@ -417,7 +416,6 @@
 }
 
 :root[data-theme="dark"] .uds-guide-drawer,
-:root[data-theme="dark"] .uds-guide-step,
 :root[data-theme="dark"] .uds-guide-key-card,
 :root[data-theme="dark"] .uds-guide-example-card {
   border-color: #374151;

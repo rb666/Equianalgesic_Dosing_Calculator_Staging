@@ -2,7 +2,7 @@
 
 This repo is a static site. There is no build step.
 
-## Current State
+## Production Reference
 
 - GitHub repo: `https://github.com/rb666/calc-med`
 - Production branch: `main`
@@ -14,9 +14,18 @@ This repo is a static site. There is no build step.
 - Root URL redirect: `https://calc.med/` -> `https://calc.med/opioidcalculator`
 - Custom domain `calc.med` is attached to the Pages project. Cloudflare may continue showing the validation status as pending for a short period after the DNS change, even while the site is already reachable.
 
+## Staging State
+
+- GitHub repo: `https://github.com/rb666/Equianalgesic_Dosing_Calculator_Staging`
+- Staging branch: `main`
+- Cloudflare Pages project: `calc-med-staging`
+- Pages deployment URL: `https://calc-med-staging.pages.dev`
+- Staging deploy command: `npx wrangler pages deploy public --project-name calc-med-staging --branch main`
+- Source-controlled Pages config: `wrangler.jsonc`
+
 ## Deployed Setup
 
-This site uses Cloudflare Pages on the free tier as a direct-upload static site.
+Production and staging use Cloudflare Pages on the free tier as direct-upload static sites. Deploy the `public/` directory as the site root. This preserves Cloudflare Pages clean-route behavior and `_redirects` handling.
 
 The public deployment should contain only:
 
@@ -31,7 +40,7 @@ Repo documentation files do not need to be uploaded to Pages.
 
 ## DNS State
 
-The apex domain should point to Pages:
+The production apex domain should point to Pages:
 
 - Type: `CNAME`
 - Name: `calc.med` or `@`
@@ -42,9 +51,15 @@ Optional: remove the wildcard `*.calc.med` record unless wildcard subdomains sho
 
 ## Direct Upload Deploy
 
-To redeploy from this folder:
+To redeploy staging from this folder:
 
 ```powershell
 npx wrangler login
+npx wrangler pages deploy public --project-name calc-med-staging --branch main
+```
+
+To redeploy production from the production repo:
+
+```powershell
 npx wrangler pages deploy public --project-name calc-med --branch main
 ```

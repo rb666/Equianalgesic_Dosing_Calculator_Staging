@@ -479,7 +479,7 @@
               <h3>Interpret a result</h3>
             </div>
             <div class="uds-header-actions">
-              <button class="uds-text-button" data-action="clear-interpret" type="button">Clear result inputs</button>
+              <button class="uds-text-button" data-action="clear-interpret" type="button">Clear entries</button>
             </div>
           </div>
           ${renderContextControls()}

@@ -365,6 +365,16 @@
     return getItem(id)?.name || id;
   }
 
+  function sortByLabel(rows, getLabel) {
+    return [...rows].sort((a, b) =>
+      getLabel(a).localeCompare(getLabel(b), undefined, { sensitivity: "base" }),
+    );
+  }
+
+  function sortedProfiles() {
+    return sortByLabel(allProfiles(), (profile) => profile.label);
+  }
+
   function groupToneForItem(entry) {
     if (!entry) return "other";
     if (entry.tags.includes("high_risk") || entry.tags.includes("emerging")) return "risk";
@@ -404,7 +414,7 @@
 
   function searchItems(query, limit = 20) {
     const q = normalize(query);
-    if (!q) return items.slice(0, limit);
+    if (!q) return sortByLabel(items, (entry) => entry.name).slice(0, limit);
     return items
       .map((entry) => {
         const fields = [entry.name, entry.group, entry.type, entry.note, entry.bestTest, ...entry.aliases].map(normalize);
@@ -479,8 +489,7 @@
               <h3>Interpret a result</h3>
             </div>
             <div class="uds-header-actions">
-              <button class="uds-text-button" data-action="clear-interpret" type="button">Clear result inputs</button>
-              <button class="uds-text-button" data-action="reset-interpret-all" type="button">Reset all</button>
+              <button class="uds-text-button" data-action="clear-interpret" type="button">Clear entries</button>
             </div>
           </div>
           ${renderContextControls()}
@@ -536,12 +545,12 @@
             ${option("oud", "OUD treatment", state.context)}
             ${option("benzo", "Benzodiazepine prescribing", state.context)}
             ${option("stimulant", "Stimulant prescribing", state.context)}
-            ${option("ed", "ED / urgent care", state.context)}
             ${option("psychiatry", "Psychiatry", state.context)}
+            ${option("ed", "ED / urgent care", state.context)}
             ${option("pregnancy", "Pregnancy / perinatal", state.context)}
             ${option("adolescent", "Adolescent", state.context)}
-            ${option("forensic_nonclinical", "Legal / employment / forensic - not supported", state.context)}
             ${option("other", "Other clinical context", state.context)}
+            ${option("forensic_nonclinical", "Legal / employment / forensic - not supported", state.context)}
           </select>
         </label>
         <label>Decision impact
@@ -568,7 +577,7 @@
         </label>
         <label class="uds-field-wide">Panel profile
           <select data-field="panelId">
-            ${allProfiles().map((profile) => option(profile.id, profile.label, state.panelId)).join("")}
+            ${sortedProfiles().map((profile) => option(profile.id, profile.label, state.panelId)).join("")}
           </select>
         </label>
       </div>
@@ -813,7 +822,7 @@
           <div class="uds-card-head"><div><p class="uds-eyebrow">Before ordering</p><h3>Choose the right test</h3></div></div>
           <label>Clinical question
             <select data-field="questionId">
-              ${clinicalQuestions.map((entry) => option(entry.id, entry.label, state.questionId)).join("")}
+              ${sortByLabel(clinicalQuestions, (entry) => entry.label).map((entry) => option(entry.id, entry.label, state.questionId)).join("")}
             </select>
           </label>
           <p class="uds-muted">This module recommends a test type based on the question. It does not use order numbers, accession numbers, or subject identifiers.</p>
@@ -847,22 +856,28 @@
             ${renderLookupResults()}
           </div>
         </div>
-        <div class="uds-card uds-output-card">
-          <div class="uds-card-head"><div><p class="uds-eyebrow">Lookup result</p><h3>${escapeHtml(selected.name)}</h3></div><span class="uds-tag uds-tag--${escapeHtml(groupToneForItem(selected))}">${escapeHtml(selected.group)}</span></div>
-          ${renderOutputBlock("Bottom line", [selected.note])}
-          ${renderOutputBlock("Best test concept", [selected.bestTest])}
-          ${renderOutputBlock("Approximate urine window", [selected.window])}
-          ${renderOutputBlock("Expected / related findings", getRelatedLines(selected.id))}
-          ${renderOutputBlock("Do not conclude", [standardCannotConclude().join("; ")])}
-          ${renderDetails("Reference / governance", [
-            `Last reviewed: ${REVIEW_METADATA.lastReviewed}`,
-            `Status: ${REVIEW_METADATA.status}`,
-            REVIEW_METADATA.note,
-            ...referenceCategories,
-          ])}
-          <button class="uds-secondary-button" data-action="copy-lookup" type="button">Copy lookup summary</button>
+        <div class="uds-card uds-output-card" id="udsLookupOutput">
+          ${renderLookupOutput(selected)}
         </div>
       </section>
+    `;
+  }
+
+  function renderLookupOutput(selected = getItem(state.lookupId) || items[0]) {
+    return `
+      <div class="uds-card-head"><div><p class="uds-eyebrow">Lookup result</p><h3>${escapeHtml(selected.name)}</h3></div><span class="uds-tag uds-tag--${escapeHtml(groupToneForItem(selected))}">${escapeHtml(selected.group)}</span></div>
+      ${renderOutputBlock("Bottom line", [selected.note])}
+      ${renderOutputBlock("Best test concept", [selected.bestTest])}
+      ${renderOutputBlock("Approximate urine window", [selected.window])}
+      ${renderOutputBlock("Expected / related findings", getRelatedLines(selected.id))}
+      ${renderOutputBlock("Do not conclude", [standardCannotConclude().join("; ")])}
+      ${renderDetails("Reference / governance", [
+        `Last reviewed: ${REVIEW_METADATA.lastReviewed}`,
+        `Status: ${REVIEW_METADATA.status}`,
+        REVIEW_METADATA.note,
+        ...referenceCategories,
+      ])}
+      <button class="uds-secondary-button" data-action="copy-lookup" type="button">Copy lookup summary</button>
     `;
   }
 
@@ -897,7 +912,7 @@
   }
 
   function renderPanels() {
-    const profiles = allProfiles();
+    const profiles = sortedProfiles();
     return `
       <section class="uds-simple-grid uds-panel-manager">
         <div class="uds-card">
@@ -1949,22 +1964,6 @@
         render();
         return;
       }
-      if (actionName === "reset-interpret-all") {
-        state.context = "chronic_opioid";
-        state.consequence = "moderate";
-        state.resultSource = "unknown";
-        state.method = "unknown";
-        state.panelId = "unknown";
-        state.expected = [];
-        state.detected = [];
-        state.absent = [];
-        state.absentVerified = false;
-        state.validityFlag = "unknown";
-        state.validityDetails = blankValidityDetails();
-        state.validityDetailsOpen = false;
-        render();
-        return;
-      }
       if (actionName === "reset-validity-details") {
         state.validityDetails = blankValidityDetails();
         state.validityDetailsOpen = true;
@@ -1990,7 +1989,12 @@
       }
       if (actionName === "select-lookup") {
         state.lookupId = action.dataset.id;
-        render();
+        const output = root.querySelector("#udsLookupOutput");
+        if (output) {
+          output.innerHTML = renderLookupOutput();
+        } else {
+          render();
+        }
         return;
       }
       if (actionName === "copy-lookup") {

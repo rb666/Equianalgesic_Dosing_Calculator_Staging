@@ -1,45 +1,41 @@
-# Publishing to GitHub Pages
+# Publishing and Staging
 
-This folder is already prepared as a static GitHub Pages site. The local Git
-repository and first commit are expected to be ready before publishing.
+This repository is a private staging/source repository. It is not intended to be
+served by GitHub Pages.
 
-## 1. Create the GitHub repository
+## Deployment Model
 
-1. Open <https://github.com/new?name=Equianalgesic_Dosing_Calculator&description=Static%20equianalgesic%20dose%20calculator&visibility=public>.
-2. Owner: `rb666`.
-3. Repository name: `Equianalgesic_Dosing_Calculator`.
-4. Visibility: `Public`.
-5. Leave `Add a README file`, `.gitignore`, and `license` unchecked.
-6. Click `Create repository`.
+The website is deployed from the `public/` directory through Cloudflare Pages.
+This matches the production `calc.med` deployment model and keeps clean routes
+such as `/opioidcalculator` and `/UDS` working through Cloudflare `_redirects`.
 
-## 2. Push this local site
+## Staging Deploy
 
-From PowerShell in this folder, run:
+From this folder:
 
 ```powershell
-.\publish-to-github.ps1 https://github.com/rb666/Equianalgesic_Dosing_Calculator.git
+npx wrangler login
+npx wrangler pages deploy public --project-name calc-med-staging --branch main
 ```
 
-If PowerShell blocks the script, run:
+Current staging URL:
+
+<https://calc-med-staging.pages.dev>
+
+## Production Deploy
+
+Production should be deployed from the production repo, not this staging repo:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\publish-to-github.ps1 https://github.com/rb666/Equianalgesic_Dosing_Calculator.git
+npx wrangler pages deploy public --project-name calc-med --branch main
 ```
 
-If Git asks you to sign in, complete the browser login and rerun the command if
-needed.
+Production URL:
 
-## 3. Turn on GitHub Pages
+<https://calc.med/opioidcalculator>
 
-1. Open the repository on GitHub.
-2. Go to `Settings`.
-3. In the left sidebar, open `Pages`.
-4. Under `Build and deployment`, set `Source` to `Deploy from a branch`.
-5. Set `Branch` to `main` and folder to `/(root)`.
-6. Click `Save`.
+## GitHub Settings
 
-The site should publish at:
-
-<https://rb666.github.io/Equianalgesic_Dosing_Calculator/>
-
-GitHub says publication can take up to 10 minutes after pushing changes.
+GitHub Pages should stay disabled for this repository. The repo can be private
+because Cloudflare Pages deploys from the uploaded `public/` directory, not from
+GitHub Pages.

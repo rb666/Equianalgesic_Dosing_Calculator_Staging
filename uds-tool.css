@@ -15,6 +15,7 @@
   --uds-warning-fg: #991b1b;
   --uds-warning-bg: #fef2f2;
   --uds-warning-border: #ef4444;
+  --uds-content-padding-x: 24px;
 }
 
 .uds-screen {
@@ -103,7 +104,7 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
-  padding: 12px 20px;
+  padding: 12px var(--uds-content-padding-x);
   border-bottom: 1px solid color-mix(in srgb, var(--border, #cbd5df) 86%, transparent);
   background: color-mix(in srgb, var(--surface, #fff) 92%, #eaf0f6 8%);
 }
@@ -149,7 +150,11 @@
 }
 
 .uds-main {
-  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 20px var(--uds-content-padding-x);
 }
 
 .uds-workflow-grid,

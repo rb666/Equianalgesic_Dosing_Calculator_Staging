@@ -480,7 +480,6 @@
             </div>
             <div class="uds-header-actions">
               <button class="uds-text-button" data-action="clear-interpret" type="button">Clear result inputs</button>
-              <button class="uds-text-button" data-action="reset-interpret-all" type="button">Reset all</button>
             </div>
           </div>
           ${renderContextControls()}
@@ -847,22 +846,28 @@
             ${renderLookupResults()}
           </div>
         </div>
-        <div class="uds-card uds-output-card">
-          <div class="uds-card-head"><div><p class="uds-eyebrow">Lookup result</p><h3>${escapeHtml(selected.name)}</h3></div><span class="uds-tag uds-tag--${escapeHtml(groupToneForItem(selected))}">${escapeHtml(selected.group)}</span></div>
-          ${renderOutputBlock("Bottom line", [selected.note])}
-          ${renderOutputBlock("Best test concept", [selected.bestTest])}
-          ${renderOutputBlock("Approximate urine window", [selected.window])}
-          ${renderOutputBlock("Expected / related findings", getRelatedLines(selected.id))}
-          ${renderOutputBlock("Do not conclude", [standardCannotConclude().join("; ")])}
-          ${renderDetails("Reference / governance", [
-            `Last reviewed: ${REVIEW_METADATA.lastReviewed}`,
-            `Status: ${REVIEW_METADATA.status}`,
-            REVIEW_METADATA.note,
-            ...referenceCategories,
-          ])}
-          <button class="uds-secondary-button" data-action="copy-lookup" type="button">Copy lookup summary</button>
+        <div class="uds-card uds-output-card" id="udsLookupOutput">
+          ${renderLookupOutput(selected)}
         </div>
       </section>
+    `;
+  }
+
+  function renderLookupOutput(selected = getItem(state.lookupId) || items[0]) {
+    return `
+      <div class="uds-card-head"><div><p class="uds-eyebrow">Lookup result</p><h3>${escapeHtml(selected.name)}</h3></div><span class="uds-tag uds-tag--${escapeHtml(groupToneForItem(selected))}">${escapeHtml(selected.group)}</span></div>
+      ${renderOutputBlock("Bottom line", [selected.note])}
+      ${renderOutputBlock("Best test concept", [selected.bestTest])}
+      ${renderOutputBlock("Approximate urine window", [selected.window])}
+      ${renderOutputBlock("Expected / related findings", getRelatedLines(selected.id))}
+      ${renderOutputBlock("Do not conclude", [standardCannotConclude().join("; ")])}
+      ${renderDetails("Reference / governance", [
+        `Last reviewed: ${REVIEW_METADATA.lastReviewed}`,
+        `Status: ${REVIEW_METADATA.status}`,
+        REVIEW_METADATA.note,
+        ...referenceCategories,
+      ])}
+      <button class="uds-secondary-button" data-action="copy-lookup" type="button">Copy lookup summary</button>
     `;
   }
 
@@ -1949,22 +1954,6 @@
         render();
         return;
       }
-      if (actionName === "reset-interpret-all") {
-        state.context = "chronic_opioid";
-        state.consequence = "moderate";
-        state.resultSource = "unknown";
-        state.method = "unknown";
-        state.panelId = "unknown";
-        state.expected = [];
-        state.detected = [];
-        state.absent = [];
-        state.absentVerified = false;
-        state.validityFlag = "unknown";
-        state.validityDetails = blankValidityDetails();
-        state.validityDetailsOpen = false;
-        render();
-        return;
-      }
       if (actionName === "reset-validity-details") {
         state.validityDetails = blankValidityDetails();
         state.validityDetailsOpen = true;
@@ -1990,7 +1979,12 @@
       }
       if (actionName === "select-lookup") {
         state.lookupId = action.dataset.id;
-        render();
+        const output = root.querySelector("#udsLookupOutput");
+        if (output) {
+          output.innerHTML = renderLookupOutput();
+        } else {
+          render();
+        }
         return;
       }
       if (actionName === "copy-lookup") {

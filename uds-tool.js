@@ -371,12 +371,6 @@
     );
   }
 
-  function alphaOptions(rows, selectedValue) {
-    return sortByLabel(rows, (row) => row.label)
-      .map((row) => option(row.value, row.label, selectedValue))
-      .join("");
-  }
-
   function sortedProfiles() {
     return sortByLabel(allProfiles(), (profile) => profile.label);
   }
@@ -455,8 +449,8 @@
         </header>
         <div class="uds-privacy-strip">Do not enter patient names, DOBs, MRNs, accession numbers, order numbers, addresses, or other identifiers.</div>
         <nav class="uds-nav" aria-label="UDS workflows">
-          ${navButton("test", "Choose test", "Before ordering")}
           ${navButton("interpret", "Interpret", "Result workflow")}
+          ${navButton("test", "Choose test", "Before ordering")}
           ${navButton("lookup", "Lookup", "Drug/analyte")}
           ${navButton("panels", "Panels", "Local profiles")}
         </nav>
@@ -547,46 +541,38 @@
       <div class="uds-field-grid">
         <label>Clinical setting
           <select data-field="context">
-            ${alphaOptions([
-              { value: "adolescent", label: "Adolescent" },
-              { value: "benzo", label: "Benzodiazepine prescribing" },
-              { value: "chronic_opioid", label: "Chronic opioid therapy" },
-              { value: "ed", label: "ED / urgent care" },
-              { value: "forensic_nonclinical", label: "Legal / employment / forensic - not supported" },
-              { value: "other", label: "Other clinical context" },
-              { value: "oud", label: "OUD treatment" },
-              { value: "pregnancy", label: "Pregnancy / perinatal" },
-              { value: "psychiatry", label: "Psychiatry" },
-              { value: "stimulant", label: "Stimulant prescribing" },
-            ], state.context)}
+            ${option("chronic_opioid", "Chronic opioid therapy", state.context)}
+            ${option("oud", "OUD treatment", state.context)}
+            ${option("benzo", "Benzodiazepine prescribing", state.context)}
+            ${option("stimulant", "Stimulant prescribing", state.context)}
+            ${option("psychiatry", "Psychiatry", state.context)}
+            ${option("ed", "ED / urgent care", state.context)}
+            ${option("pregnancy", "Pregnancy / perinatal", state.context)}
+            ${option("adolescent", "Adolescent", state.context)}
+            ${option("other", "Other clinical context", state.context)}
+            ${option("forensic_nonclinical", "Legal / employment / forensic - not supported", state.context)}
           </select>
         </label>
         <label>Decision impact
           <select data-field="consequence">
-            ${alphaOptions([
-              { value: "high", label: "High / changes care" },
-              { value: "low", label: "Low" },
-              { value: "moderate", label: "Moderate" },
-            ], state.consequence)}
+            ${option("low", "Low", state.consequence)}
+            ${option("moderate", "Moderate", state.consequence)}
+            ${option("high", "High / changes care", state.consequence)}
           </select>
         </label>
         <label>Method
           <select data-field="method">
-            ${alphaOptions([
-              { value: "definitive", label: "Definitive LC/GC-MS" },
-              { value: "immunoassay", label: "Immunoassay screen" },
-              { value: "unknown", label: "Unknown" },
-            ], state.method)}
+            ${option("unknown", "Unknown", state.method)}
+            ${option("immunoassay", "Immunoassay screen", state.method)}
+            ${option("definitive", "Definitive LC/GC-MS", state.method)}
           </select>
         </label>
         <label>Result source
           <select data-field="resultSource">
-            ${alphaOptions([
-              { value: "lab_definitive", label: "Laboratory definitive LC/GC-MS" },
-              { value: "lab_screen", label: "Laboratory immunoassay" },
-              { value: "poc", label: "Point-of-care cup/card" },
-              { value: "unknown", label: "Unknown" },
-            ], state.resultSource)}
+            ${option("unknown", "Unknown", state.resultSource)}
+            ${option("poc", "Point-of-care cup/card", state.resultSource)}
+            ${option("lab_screen", "Laboratory immunoassay", state.resultSource)}
+            ${option("lab_definitive", "Laboratory definitive LC/GC-MS", state.resultSource)}
           </select>
         </label>
         <label class="uds-field-wide">Panel profile
@@ -683,13 +669,11 @@
       <section class="uds-input-section">
         <div class="uds-section-label"><strong>Specimen validity</strong><span>No values required. Use the report's validity flag if available.</span></div>
         <select data-field="validityFlag">
-          ${alphaOptions([
-            { value: "normal", label: "Appears interpretable" },
-            { value: "dilute", label: "Dilute - negatives less reliable" },
-            { value: "invalid", label: "Invalid / do not interpret" },
-            { value: "adulterated", label: "Possible adulteration / consult lab" },
-            { value: "unknown", label: "Unknown / not reported" },
-          ], state.validityFlag)}
+          ${option("unknown", "Unknown / not reported", state.validityFlag)}
+          ${option("normal", "Appears interpretable", state.validityFlag)}
+          ${option("dilute", "Dilute - negatives less reliable", state.validityFlag)}
+          ${option("invalid", "Invalid / do not interpret", state.validityFlag)}
+          ${option("adulterated", "Possible adulteration / consult lab", state.validityFlag)}
         </select>
         ${renderValidityDetails()}
       </section>
@@ -716,11 +700,9 @@
           </label>
           <label>Oxidants/adulterants
             <select data-validity-detail="oxidants">
-              ${alphaOptions([
-                { value: "abnormal", label: "Abnormal / positive" },
-                { value: "normal", label: "Normal / negative" },
-                { value: "unknown", label: "Unknown / not reported" },
-              ], state.validityDetails.oxidants)}
+              ${option("unknown", "Unknown / not reported", state.validityDetails.oxidants)}
+              ${option("normal", "Normal / negative", state.validityDetails.oxidants)}
+              ${option("abnormal", "Abnormal / positive", state.validityDetails.oxidants)}
             </select>
           </label>
         </div>
@@ -948,12 +930,10 @@
           <div class="uds-field-grid">
             <label>Method
               <select data-panel-field="method">
-                ${alphaOptions([
-                  { value: "definitive", label: "Definitive LC/GC-MS" },
-                  { value: "immunoassay", label: "Immunoassay" },
-                  { value: "mixed", label: "Mixed screen + confirmation" },
-                  { value: "unknown", label: "Unknown" },
-                ], state.panelDraft.method)}
+                ${option("immunoassay", "Immunoassay", state.panelDraft.method)}
+                ${option("definitive", "Definitive LC/GC-MS", state.panelDraft.method)}
+                ${option("mixed", "Mixed screen + confirmation", state.panelDraft.method)}
+                ${option("unknown", "Unknown", state.panelDraft.method)}
               </select>
             </label>
             <label>Reviewed date
@@ -968,12 +948,10 @@
             <div class="uds-section-label"><strong>Included analytes</strong><span>Add only analyte names; no report/order identifiers.</span></div>
             <label>Coverage status
               <select data-panel-field="panelDraftCoverageStatus">
-                ${alphaOptions([
-                  { value: "assay_dependent", label: "Assay-dependent" },
-                  { value: "class_screen", label: "Class screen only" },
-                  { value: "included", label: "Included / reportable" },
-                  { value: "not_included", label: "Known not included" },
-                ], state.panelDraftCoverageStatus)}
+                ${option("included", "Included / reportable", state.panelDraftCoverageStatus)}
+                ${option("class_screen", "Class screen only", state.panelDraftCoverageStatus)}
+                ${option("assay_dependent", "Assay-dependent", state.panelDraftCoverageStatus)}
+                ${option("not_included", "Known not included", state.panelDraftCoverageStatus)}
               </select>
             </label>
             <div class="uds-add-line uds-add-line--picker">

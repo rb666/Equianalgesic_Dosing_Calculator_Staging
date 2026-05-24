@@ -9,38 +9,74 @@
     {
       mode: "interpret",
       label: "Interpret",
-      summary:
-        "Use this for an actual UDS result. Enter context, expected medications, detected findings, verified absent findings, and specimen validity.",
-      action: "Open Interpret",
+      kicker: "Review a result",
+      summary: "Reconcile expected medications, detected findings, verified absent findings, panel coverage, and validity.",
+      steps: [
+        ["Set report context", "Choose clinical setting, decision impact, result source, method, panel profile, and validity first."],
+        ["Enter expected and detected findings", "Expected entries are the comparison set; detected entries are what the report says is present."],
+        ["Use absent findings only when verified", "Only enter tested-but-absent analytes when the report included and reported them as absent or negative."],
+        ["Read the output by severity", "Safety, validity, panel/profile limits, and next step should guide what needs action before charting."],
+      ],
+      keys: [
+        ["Consistent / expected", "Compatible with current entries, assuming timing, cutoff, and validity fit."],
+        ["Panel-dependent", "The selected test/profile may not answer the clinical question."],
+        ["Unexpected positive/negative", "Clarify context or confirm when the result affects care."],
+      ],
     },
     {
       mode: "test",
       label: "Choose test",
-      summary:
-        "Use this before ordering when the clinical question is what test or analyte set is needed.",
-      action: "Open Choose test",
+      kicker: "Before ordering",
+      summary: "Match the test to the clinical question before relying on a class screen or absent result.",
+      steps: [
+        ["Start with the question", "Identify whether you need a class screen, a specific analyte, a metabolite, or a definitive confirmation."],
+        ["Check known blind spots", "Generic opiate and benzodiazepine screens may miss important synthetic or assay-dependent targets."],
+        ["Escalate when consequences are high", "Use targeted or definitive testing when the result may change care, safety planning, or prescribing."],
+      ],
+      keys: [
+        ["Screening", "Fast and useful for broad triage, but presumptive."],
+        ["Definitive", "Specific but still limited to included and reportable analytes."],
+        ["Panel fit", "The right test is the one that answers the specific clinical question."],
+      ],
     },
     {
       mode: "lookup",
       label: "Lookup",
-      summary:
-        "Use this for a focused question about one drug, metabolite, class screen, detection window, or assay limitation.",
-      action: "Open Lookup",
+      kicker: "Focused reference",
+      summary: "Search a drug, metabolite, class, or assay issue when you need a quick interpretation anchor.",
+      steps: [
+        ["Search one concept", "Use the lookup for a single drug, metabolite, class screen, or finding."],
+        ["Check what it supports", "Review metabolism, assay limitations, and detection-window caveats before applying it to a result."],
+        ["Return to Interpret for reconciliation", "Lookup is reference context; Interpret is where the full pattern and panel profile are reconciled."],
+      ],
+      keys: [
+        ["Metabolites", "Can support exposure or metabolism, but may not be source-specific."],
+        ["Class screens", "May not map to individual analytes."],
+        ["Detection windows", "Support rough context only, not exact timing or impairment."],
+      ],
     },
     {
       mode: "panels",
       label: "Panels",
-      summary:
-        "Use this to create non-identifying local panel profiles so absent findings are interpreted against the actual reportable analytes.",
-      action: "Open Panels",
+      kicker: "Local setup",
+      summary: "Create non-identifying local profiles so absent findings are judged against actual reportable analytes.",
+      steps: [
+        ["Use no identifiers", "Do not enter names, DOBs, MRNs, accession numbers, order numbers, or encounter details."],
+        ["Map coverage honestly", "Use included, class screen only, assay-dependent, or known not included for each analyte."],
+        ["Prefer local profiles over demos", "Demo profiles are orientation aids, not verified clinical panels."],
+      ],
+      keys: [
+        ["Included", "Reportable analyte."],
+        ["Assay-dependent", "Verify exact method, cutoff, and reporting rules."],
+        ["Not included", "Do not interpret absence as clinically meaningful."],
+      ],
     },
   ];
 
   const EXAMPLES = {
     hydrocodoneHydromorphone: {
       label: "Hydrocodone expected; hydromorphone detected",
-      summary:
-        "Shows source-ambiguous compatibility: hydromorphone can fit hydrocodone metabolism, but is not source-specific alone.",
+      summary: "Shows source-ambiguous compatibility without treating the finding as proof of source.",
       fields: {
         context: "chronic_opioid",
         consequence: "moderate",
@@ -56,8 +92,7 @@
     },
     fentanylGenericOpiate: {
       label: "Fentanyl question on a generic opiate screen",
-      summary:
-        "Shows why a negative generic opiate screen should not be treated as excluding fentanyl or norfentanyl.",
+      summary: "Shows why a negative generic opiate screen should not be treated as excluding fentanyl.",
       fields: {
         context: "chronic_opioid",
         consequence: "moderate",
@@ -73,8 +108,7 @@
     },
     clonazepamMetabolite: {
       label: "Clonazepam expected; 7-aminoclonazepam detected",
-      summary:
-        "Shows supportive metabolite logic for a benzodiazepine that may be under-detected by some immunoassays.",
+      summary: "Shows supportive metabolite logic and why benzodiazepine screens can be assay-dependent.",
       fields: {
         context: "benzo",
         consequence: "moderate",
@@ -88,6 +122,11 @@
       absent: [],
       absentVerified: false,
     },
+  };
+
+  let guideState = {
+    mode: "interpret",
+    loadedMessage: "",
   };
 
   let lastFocusedBeforeGuide = null;
@@ -118,6 +157,16 @@
     return new Promise((resolve) => {
       window.requestAnimationFrame(() => resolve());
     });
+  }
+
+  function currentUdsMode() {
+    const root = getRoot();
+    const active = root?.querySelector(".uds-nav-button.is-active");
+    return active instanceof HTMLElement ? active.dataset.mode || "interpret" : "interpret";
+  }
+
+  function workflowForMode(mode) {
+    return WORKFLOWS.find((workflow) => workflow.mode === mode) || WORKFLOWS[0];
   }
 
   function installWorkflowGuide() {
@@ -170,10 +219,7 @@
     button.type = "button";
     button.setAttribute("aria-controls", GUIDE_ID);
     button.setAttribute("aria-expanded", "false");
-    button.setAttribute(
-      "aria-label",
-      "Open UDS workflow guide for feature orientation and normal workflow usage",
-    );
+    button.setAttribute("aria-label", "Open UDS workflow guide");
     button.innerHTML = `
       <span class="uds-guide-button-mark" aria-hidden="true">?</span>
       <span>Workflow guide</span>
@@ -211,7 +257,7 @@
               <p class="uds-eyebrow">Orientation</p>
               <h3 id="udsWorkflowGuideTitle">UDS workflow guide</h3>
               <p id="udsWorkflowGuideDescription">
-                Use this guide to orient new users without adding permanent clutter to the UDS workspace.
+                Pick a workflow below. The matching UDS tab updates behind this drawer while the guide stays open.
               </p>
             </div>
             <button class="uds-text-button uds-guide-close" data-uds-guide-close type="button">
@@ -220,124 +266,73 @@
           </header>
 
           <div class="uds-guide-body">
-            <section class="uds-guide-section">
-              <h4>Start with the right workflow</h4>
-              <p>
-                The UDS page is split by task. Pick the workflow that matches what the reviewer is trying to do right now.
-              </p>
-              <div class="uds-guide-card-grid">
-                ${WORKFLOWS.map(renderWorkflowCard).join("")}
-              </div>
-            </section>
-
-            <section class="uds-guide-section">
-              <h4>Normal result-review workflow</h4>
-              <ol class="uds-guide-step-list">
-                ${renderWorkflowStep(
-                  "0",
-                  "Confirm report context first",
-                  "Set clinical setting, decision impact, result source, method, and panel profile before relying on interpretation.",
-                )}
-                ${renderWorkflowStep(
-                  "1",
-                  "Enter expected medications or substances",
-                  "Add what is prescribed, reported, administered, or otherwise expected. This gives the tool a comparison set.",
-                )}
-                ${renderWorkflowStep(
-                  "2",
-                  "Enter detected or positive findings",
-                  "Add what the report lists as present, positive, or detected. Include metabolites when the report provides them.",
-                )}
-                ${renderWorkflowStep(
-                  "3",
-                  "Use tested-but-absent only when verified",
-                  "Only add negative or absent analytes when the report actually included them and reported them as absent or negative.",
-                )}
-                ${renderWorkflowStep(
-                  "4",
-                  "Check specimen validity",
-                  "Use the validity flag or optional validity details when the report provides them. This matters most for negative or absent findings.",
-                )}
-                ${renderWorkflowStep(
-                  "5",
-                  "Review the output and copy only what fits",
-                  "Use the output as reconciliation support. It should not be treated as proof of dose, timing, impairment, intent, misuse, or diversion.",
-                )}
-              </ol>
-            </section>
-
-            <section class="uds-guide-section">
-              <h4>How to read the output</h4>
-              <div class="uds-guide-key-grid">
-                ${renderKeyCard(
-                  "Consistent / expected",
-                  "Entered findings can be explained by the expected medication or supportive metabolite pattern.",
-                )}
-                ${renderKeyCard(
-                  "Source-ambiguous",
-                  "A finding may be compatible but not source-specific by itself. Timing, cutoff, quantitative pattern, and full report context matter.",
-                )}
-                ${renderKeyCard(
-                  "Unexpected positive",
-                  "A detected finding is not explained by the entered expected list and should be clarified or confirmed when consequential.",
-                )}
-                ${renderKeyCard(
-                  "Unexpected negative",
-                  "An expected parent or supportive finding is absent on a verified panel. Interpret with timing, cutoff, and validity.",
-                )}
-                ${renderKeyCard(
-                  "Panel / method limitation",
-                  "The selected screen or profile may not answer the question. Generic class screens are not definitive analyte lists.",
-                )}
-                ${renderKeyCard(
-                  "Specimen-limited",
-                  "Validity issues can make negative or absent findings unreliable, and severe validity problems may require repeat testing or lab input.",
-                )}
-              </div>
-            </section>
-
-            <section class="uds-guide-section">
-              <h4>Try safe examples</h4>
-              <p>
-                These examples use non-identifying demonstration inputs and load directly into Interpret mode.
-              </p>
-              <div class="uds-guide-card-grid">
-                ${Object.entries(EXAMPLES).map(([key, example]) => renderExampleCard(key, example)).join("")}
-              </div>
-            </section>
-
-            <section class="uds-guide-section">
-              <div class="uds-guide-safety-card">
-                <strong>Clinical-use boundaries</strong>
-                <ul>
-                  <li>Do not enter patient names, DOBs, MRNs, accession numbers, order numbers, or other identifiers.</li>
-                  <li>Immunoassay results are presumptive and may need definitive confirmation.</li>
-                  <li>Absent findings are only meaningful when the analyte was included and reportable.</li>
-                  <li>UDS review does not independently prove dose, exact timing, impairment, diversion, misuse, intent, or forensic conclusions.</li>
-                </ul>
-              </div>
-            </section>
+            ${renderGuideBody()}
           </div>
         </aside>
       </div>
     `;
   }
 
-  function renderWorkflowCard(workflow) {
+  function renderGuideBody() {
     return `
-      <article class="uds-guide-workflow-card">
-        <div>
-          <strong>${escapeHtml(workflow.label)}</strong>
-          <span>${escapeHtml(workflow.summary)}</span>
+      ${renderWorkflowSelector()}
+      ${renderFocusedGuide()}
+      ${renderGuideSafety()}
+    `;
+  }
+
+  function renderWorkflowSelector() {
+    return `
+      <section class="uds-guide-section uds-guide-picker" aria-label="Workflow guide selector">
+        <h4>Choose a guide</h4>
+        <p>Use these as tutorial selectors, not close-and-navigate links.</p>
+        <div class="uds-guide-selector-grid">
+          ${WORKFLOWS.map(renderWorkflowCard).join("")}
         </div>
-        <button
-          class="uds-text-button"
-          data-uds-guide-go="${escapeHtml(workflow.mode)}"
-          type="button"
-        >
-          ${escapeHtml(workflow.action)}
-        </button>
-      </article>
+      </section>
+    `;
+  }
+
+  function renderWorkflowCard(workflow) {
+    const active = workflow.mode === guideState.mode;
+
+    return `
+      <button
+        class="uds-guide-workflow-card${active ? " is-active" : ""}"
+        data-uds-guide-go="${escapeHtml(workflow.mode)}"
+        type="button"
+        aria-pressed="${active ? "true" : "false"}"
+      >
+        <span class="uds-guide-workflow-label">${escapeHtml(workflow.label)}</span>
+        <span class="uds-guide-workflow-kicker">${escapeHtml(workflow.kicker)}</span>
+        <span class="uds-guide-workflow-summary">${escapeHtml(workflow.summary)}</span>
+      </button>
+    `;
+  }
+
+  function renderFocusedGuide() {
+    const workflow = workflowForMode(guideState.mode);
+
+    return `
+      <section class="uds-guide-focus-panel" data-uds-guide-focus-panel tabindex="-1">
+        <div class="uds-guide-focus-head">
+          <p class="uds-eyebrow">Current tutorial</p>
+          <h4>${escapeHtml(workflow.label)}: ${escapeHtml(workflow.kicker)}</h4>
+          <p>${escapeHtml(workflow.summary)}</p>
+        </div>
+
+        ${guideState.loadedMessage ? `<div class="uds-guide-loaded-note">${escapeHtml(guideState.loadedMessage)}</div>` : ""}
+
+        <div class="uds-guide-section">
+          <h4>Do this first</h4>
+          <ol class="uds-guide-step-list">
+            ${workflow.steps.map(([title, body], index) => renderWorkflowStep(index + 1, title, body)).join("")}
+          </ol>
+        </div>
+
+        ${renderWorkflowKeys(workflow)}
+        ${workflow.mode === "interpret" ? renderExampleSection() : ""}
+      </section>
     `;
   }
 
@@ -353,12 +348,35 @@
     `;
   }
 
+  function renderWorkflowKeys(workflow) {
+    return `
+      <div class="uds-guide-section">
+        <h4>What to watch</h4>
+        <div class="uds-guide-key-grid">
+          ${workflow.keys.map(([title, body]) => renderKeyCard(title, body)).join("")}
+        </div>
+      </div>
+    `;
+  }
+
   function renderKeyCard(title, body) {
     return `
       <article class="uds-guide-key-card">
         <strong>${escapeHtml(title)}</strong>
         <span>${escapeHtml(body)}</span>
       </article>
+    `;
+  }
+
+  function renderExampleSection() {
+    return `
+      <div class="uds-guide-section">
+        <h4>Load a safe example</h4>
+        <p>Examples use non-identifying demonstration inputs and keep this guide open.</p>
+        <div class="uds-guide-card-grid">
+          ${Object.entries(EXAMPLES).map(([key, example]) => renderExampleCard(key, example)).join("")}
+        </div>
+      </div>
     `;
   }
 
@@ -380,6 +398,88 @@
     `;
   }
 
+  function renderGuideSafety() {
+    return `
+      <section class="uds-guide-section">
+        <div class="uds-guide-safety-card">
+          <strong>Boundaries</strong>
+          <ul>
+            <li>Do not enter identifiers.</li>
+            <li>Absent findings require verified panel coverage.</li>
+            <li>UDS review does not prove dose, timing, impairment, intent, misuse, diversion, or forensic conclusions.</li>
+          </ul>
+        </div>
+      </section>
+    `;
+  }
+
+  function updateGuideBody(options = {}) {
+    const { scrollToFocus = false } = options;
+    const overlay = getGuideOverlay();
+    const body = overlay?.querySelector(".uds-guide-body");
+
+    if (!body) {
+      return;
+    }
+
+    const template = document.createElement("template");
+    template.innerHTML = renderGuideBody().trim();
+    body.replaceChildren(...template.content.childNodes);
+
+    if (scrollToFocus) {
+      scrollGuideToFocus();
+    }
+  }
+
+  function scrollGuideToFocus() {
+    const overlay = getGuideOverlay();
+    const body = overlay?.querySelector(".uds-guide-body");
+    const panel = overlay?.querySelector("[data-uds-guide-focus-panel]");
+
+    if (!(body instanceof HTMLElement) || !(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      const bodyRect = body.getBoundingClientRect();
+      const panelRect = panel.getBoundingClientRect();
+      const top = body.scrollTop + panelRect.top - bodyRect.top - 6;
+      body.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
+      panel.focus({ preventScroll: true });
+    });
+  }
+
+  function syncUnderlyingWorkflow(mode) {
+    const root = getRoot();
+
+    if (!root || !mode) {
+      return;
+    }
+
+    if (currentUdsMode() === mode) {
+      return;
+    }
+
+    const navButton = root.querySelector(`[data-mode="${mode}"]`);
+    if (navButton instanceof HTMLButtonElement) {
+      navButton.click();
+    }
+  }
+
+  function setGuideMode(mode) {
+    if (!mode || !WORKFLOWS.some((workflow) => workflow.mode === mode)) {
+      return;
+    }
+
+    guideState = {
+      mode,
+      loadedMessage: "",
+    };
+
+    syncUnderlyingWorkflow(mode);
+    updateGuideBody({ scrollToFocus: true });
+  }
+
   function openGuide() {
     const overlay = getGuideOverlay();
     const button = getGuideButton();
@@ -389,6 +489,12 @@
       return;
     }
 
+    guideState = {
+      mode: currentUdsMode(),
+      loadedMessage: "",
+    };
+    updateGuideBody();
+
     lastFocusedBeforeGuide =
       document.activeElement instanceof HTMLElement ? document.activeElement : button;
 
@@ -397,12 +503,12 @@
     root.classList.add("uds-guide-is-open");
     button?.setAttribute("aria-expanded", "true");
 
-    const closeButton = overlay.querySelector("[data-uds-guide-close]");
+    const firstWorkflow = overlay.querySelector("[data-uds-guide-go]");
     const drawer = overlay.querySelector(".uds-guide-drawer");
 
     window.setTimeout(() => {
-      if (closeButton instanceof HTMLElement) {
-        closeButton.focus();
+      if (firstWorkflow instanceof HTMLElement) {
+        firstWorkflow.focus();
       } else if (drawer instanceof HTMLElement) {
         drawer.focus();
       }
@@ -478,6 +584,7 @@
 
     if (event.key === "Escape") {
       event.preventDefault();
+      event.stopPropagation();
       closeGuide();
       return;
     }
@@ -531,7 +638,7 @@
 
     const workflowButton = target.closest("[data-uds-guide-go]");
     if (workflowButton instanceof HTMLElement) {
-      goToWorkflow(workflowButton.dataset.udsGuideGo);
+      setGuideMode(workflowButton.dataset.udsGuideGo);
       return;
     }
 
@@ -539,34 +646,6 @@
     if (exampleButton instanceof HTMLElement) {
       loadExample(exampleButton.dataset.udsGuideExample);
     }
-  }
-
-  function goToWorkflow(mode) {
-    const root = getRoot();
-    if (!root || !mode) {
-      return;
-    }
-
-    const navButton = root.querySelector(`[data-mode="${mode}"]`);
-    if (navButton instanceof HTMLButtonElement) {
-      navButton.click();
-    }
-
-    closeGuide({ restoreFocus: false });
-    focusUdsMain();
-  }
-
-  function focusUdsMain() {
-    const root = getRoot();
-    const main = root?.querySelector("#udsMain");
-
-    if (main instanceof HTMLElement) {
-      main.setAttribute("tabindex", "-1");
-      window.setTimeout(() => main.focus({ preventScroll: true }), 0);
-      return;
-    }
-
-    root?.querySelector(".uds-nav-button.is-active")?.focus?.();
   }
 
   function dispatchChange(control) {
@@ -620,6 +699,23 @@
 
     input.value = visibleValue;
     dispatchInput(input);
+    await waitForFrame();
+
+    const options = Array.from(
+      root.querySelectorAll(`[data-action="pick-chip"][data-key="${key}"]`),
+    );
+    const normalizedValue = visibleValue.trim().toLowerCase();
+    const exactOption = options.find((option) => {
+      const optionName = option.querySelector(".uds-picker-name")?.textContent || "";
+      return optionName.trim().toLowerCase() === normalizedValue;
+    });
+    const pickerOption = exactOption || (options.length === 1 ? options[0] : null);
+
+    if (pickerOption instanceof HTMLButtonElement) {
+      pickerOption.click();
+      await waitForFrame();
+      return true;
+    }
 
     input.dispatchEvent(
       new KeyboardEvent("keydown", {
@@ -646,33 +742,21 @@
   async function loadExample(exampleKey) {
     const example = EXAMPLES[exampleKey];
 
-    if (!example) {
+    if (!example || !getRoot()) {
       return;
     }
 
-    const root = getRoot();
-    if (!root) {
-      return;
-    }
+    guideState = {
+      mode: "interpret",
+      loadedMessage: "",
+    };
 
-    closeGuide({ restoreFocus: false });
-
-    const interpretButton = root.querySelector('[data-mode="interpret"]');
-    if (interpretButton instanceof HTMLButtonElement) {
-      interpretButton.click();
-      await waitForFrame();
-    }
-
+    syncUnderlyingWorkflow("interpret");
+    await waitForFrame();
     await clearInterpretEntries();
 
     await setField("context", example.fields.context);
     await setField("consequence", example.fields.consequence);
-
-    /*
-      In uds-tool.js, changing resultSource may auto-set method.
-      Set resultSource first, then method, so the example always ends
-      in the intended method state.
-    */
     await setField("resultSource", example.fields.resultSource);
     await setField("method", example.fields.method);
     await setField("panelId", example.fields.panelId);
@@ -693,7 +777,12 @@
     }
 
     await setAbsentVerified(example.absentVerified);
-    focusUdsMain();
+
+    guideState = {
+      mode: "interpret",
+      loadedMessage: `Loaded example: ${example.label}.`,
+    };
+    updateGuideBody({ scrollToFocus: true });
   }
 
   if (document.readyState === "loading") {

@@ -1,4 +1,4 @@
-/* UDS workflow guide: optional onboarding layer for the runtime-rendered UDS tool */
+/* UDS workflow guide: compact onboarding layer for the runtime-rendered UDS tool */
 
 .uds-header-guide-slot {
   display: flex;
@@ -98,9 +98,9 @@
 
 .uds-guide-body {
   display: grid;
-  gap: 18px;
+  gap: 16px;
   overflow: auto;
-  padding: 18px 20px 22px;
+  padding: 16px 18px 20px;
 }
 
 .uds-guide-section {
@@ -115,7 +115,7 @@
 
 .uds-guide-section h4 {
   color: var(--eyebrow, #3f625d);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 950;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -123,60 +123,125 @@
 
 .uds-guide-section > p {
   color: var(--muted, #66736f);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 650;
-  line-height: 1.45;
+  line-height: 1.42;
 }
 
-.uds-guide-card-grid {
+.uds-guide-selector-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 9px;
-}
-
-.uds-guide-workflow-card,
-.uds-guide-example-card,
-.uds-guide-key-card,
-.uds-guide-safety-card {
-  display: grid;
-  gap: 7px;
-  padding: 12px;
-  border: 1px solid color-mix(in srgb, var(--line, #b8ccc6) 86%, transparent);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--surface, #ffffff) 92%, var(--surface-soft, #eef5f3));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .uds-guide-workflow-card {
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px 12px;
-  align-items: start;
+  display: grid;
+  gap: 4px;
+  min-height: 116px;
+  padding: 11px;
+  border: 1px solid color-mix(in srgb, var(--line, #b8ccc6) 86%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface, #ffffff) 94%, var(--surface-soft, #eef5f3));
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
 }
 
-.uds-guide-workflow-card strong,
-.uds-guide-example-card strong,
-.uds-guide-key-card strong,
-.uds-guide-safety-card strong {
+.uds-guide-workflow-card:hover,
+.uds-guide-workflow-card:focus-visible,
+.uds-guide-workflow-card.is-active {
+  border-color: color-mix(in srgb, var(--accent, #28706a) 72%, var(--line, #b8ccc6));
+  background: color-mix(in srgb, var(--accent-soft, #e5f4ef) 62%, var(--surface, #ffffff));
+}
+
+.uds-guide-workflow-card:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent, #28706a) 34%, transparent);
+  outline-offset: 2px;
+}
+
+.uds-guide-workflow-card:hover {
+  transform: translateY(-1px);
+}
+
+.uds-guide-workflow-card.is-active {
+  box-shadow: inset 3px 0 0 var(--accent, #28706a);
+}
+
+.uds-guide-workflow-label {
   color: var(--ink, #1f2a27);
-  font-size: 0.98rem;
+  font-size: 0.96rem;
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+.uds-guide-workflow-kicker {
+  color: var(--eyebrow, #3f625d);
+  font-size: 0.75rem;
   font-weight: 900;
+  letter-spacing: 0.04em;
   line-height: 1.2;
+  text-transform: uppercase;
 }
 
-.uds-guide-workflow-card span,
-.uds-guide-example-card span,
-.uds-guide-key-card span,
-.uds-guide-safety-card span {
+.uds-guide-workflow-summary {
   color: var(--muted, #66736f);
-  font-size: 0.85rem;
-  font-weight: 680;
-  line-height: 1.35;
+  font-size: 0.79rem;
+  font-weight: 650;
+  line-height: 1.32;
 }
 
-.uds-guide-workflow-card .uds-text-button {
-  align-self: center;
-  min-height: 32px;
-  padding: 5px 9px;
-  font-size: 0.82rem;
+.uds-guide-focus-panel {
+  display: grid;
+  gap: 14px;
+  scroll-margin-top: 8px;
+}
+
+.uds-guide-focus-panel:focus {
+  outline: none;
+}
+
+.uds-guide-focus-head {
+  display: grid;
+  gap: 5px;
+  padding: 13px;
+  border: 1px solid color-mix(in srgb, var(--accent, #28706a) 28%, var(--line, #b8ccc6));
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--accent-soft, #e5f4ef) 55%, var(--surface, #ffffff));
+}
+
+.uds-guide-focus-head h4,
+.uds-guide-focus-head p {
+  margin: 0;
+}
+
+.uds-guide-focus-head h4 {
+  color: var(--ink, #1f2a27);
+  font-size: 1.02rem;
+  font-weight: 950;
+  line-height: 1.18;
+}
+
+.uds-guide-focus-head p:not(.uds-eyebrow) {
+  color: var(--muted, #66736f);
+  font-size: 0.9rem;
+  font-weight: 680;
+  line-height: 1.38;
+}
+
+.uds-guide-loaded-note {
+  padding: 9px 11px;
+  border: 1px solid color-mix(in srgb, var(--uds-compatible-border, #10b981) 70%, var(--line, #b8ccc6));
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--uds-compatible-bg, #ecfdf5) 72%, var(--surface, #ffffff));
+  color: var(--uds-compatible-fg, #065f46);
+  font-size: 0.86rem;
+  font-weight: 820;
+  line-height: 1.35;
 }
 
 .uds-guide-step-list {
@@ -229,20 +294,54 @@
 
 .uds-guide-key-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.uds-guide-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 9px;
 }
 
-.uds-guide-key-card {
-  min-height: 92px;
+.uds-guide-key-card,
+.uds-guide-example-card,
+.uds-guide-safety-card {
+  display: grid;
+  gap: 7px;
+  padding: 11px;
+  border: 1px solid color-mix(in srgb, var(--line, #b8ccc6) 86%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface, #ffffff) 92%, var(--surface-soft, #eef5f3));
+}
+
+.uds-guide-key-card strong,
+.uds-guide-example-card strong,
+.uds-guide-safety-card strong {
+  color: var(--ink, #1f2a27);
+  font-size: 0.92rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.uds-guide-key-card span,
+.uds-guide-example-card span,
+.uds-guide-safety-card span {
+  color: var(--muted, #66736f);
+  font-size: 0.82rem;
+  font-weight: 670;
+  line-height: 1.34;
 }
 
 .uds-guide-example-card {
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
+  align-items: center;
 }
 
 .uds-guide-example-card button {
-  justify-self: start;
+  min-height: 34px;
+  white-space: nowrap;
 }
 
 .uds-guide-safety-card {
@@ -262,9 +361,9 @@
 .uds-guide-safety-card li {
   margin: 4px 0;
   color: var(--ink, #1f2a27);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 700;
-  line-height: 1.42;
+  line-height: 1.38;
 }
 
 @media (max-width: 900px) {
@@ -296,11 +395,18 @@
     padding-left: 14px;
   }
 
-  .uds-guide-workflow-card {
+  .uds-guide-selector-grid {
     grid-template-columns: 1fr;
   }
 
-  .uds-guide-workflow-card .uds-text-button,
+  .uds-guide-workflow-card {
+    min-height: 0;
+  }
+
+  .uds-guide-example-card {
+    grid-template-columns: 1fr;
+  }
+
   .uds-guide-example-card button {
     width: max-content;
   }
@@ -312,9 +418,8 @@
 
 :root[data-theme="dark"] .uds-guide-drawer,
 :root[data-theme="dark"] .uds-guide-step,
-:root[data-theme="dark"] .uds-guide-workflow-card,
-:root[data-theme="dark"] .uds-guide-example-card,
-:root[data-theme="dark"] .uds-guide-key-card {
+:root[data-theme="dark"] .uds-guide-key-card,
+:root[data-theme="dark"] .uds-guide-example-card {
   border-color: #374151;
   background: #111827;
   color: #e5e7eb;
@@ -325,20 +430,45 @@
   background: #0f172a;
 }
 
+:root[data-theme="dark"] .uds-guide-workflow-card {
+  border-color: #374151;
+  background: #111827;
+}
+
+:root[data-theme="dark"] .uds-guide-workflow-card:hover,
+:root[data-theme="dark"] .uds-guide-workflow-card:focus-visible,
+:root[data-theme="dark"] .uds-guide-workflow-card.is-active,
+:root[data-theme="dark"] .uds-guide-focus-head {
+  border-color: #2dd4bf;
+  background: #0f2f2c;
+}
+
 :root[data-theme="dark"] .uds-guide-header p:not(.uds-eyebrow),
 :root[data-theme="dark"] .uds-guide-section > p,
-:root[data-theme="dark"] .uds-guide-workflow-card span,
-:root[data-theme="dark"] .uds-guide-example-card span,
+:root[data-theme="dark"] .uds-guide-workflow-summary,
+:root[data-theme="dark"] .uds-guide-focus-head p:not(.uds-eyebrow),
 :root[data-theme="dark"] .uds-guide-key-card span,
+:root[data-theme="dark"] .uds-guide-example-card span,
 :root[data-theme="dark"] .uds-guide-step span {
   color: #9ca3af;
 }
 
-:root[data-theme="dark"] .uds-guide-workflow-card strong,
-:root[data-theme="dark"] .uds-guide-example-card strong,
+:root[data-theme="dark"] .uds-guide-workflow-label,
+:root[data-theme="dark"] .uds-guide-focus-head h4,
 :root[data-theme="dark"] .uds-guide-key-card strong,
+:root[data-theme="dark"] .uds-guide-example-card strong,
 :root[data-theme="dark"] .uds-guide-step strong {
   color: #e5e7eb;
+}
+
+:root[data-theme="dark"] .uds-guide-workflow-kicker {
+  color: #99f6e4;
+}
+
+:root[data-theme="dark"] .uds-guide-loaded-note {
+  border-color: #34d399;
+  background: #052e24;
+  color: #a7f3d0;
 }
 
 :root[data-theme="dark"] .uds-guide-safety-card {

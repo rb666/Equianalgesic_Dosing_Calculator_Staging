@@ -7,9 +7,43 @@
       name="description"
       content="A static equianalgesic opioid dose conversion calculator for clinical decision support."
     />
-    <meta name="robots" content="noindex, nofollow" />
-    <title>Equianalgesic Dose Calculator | Staging</title>
-    <link rel="icon" href="favicon.svg?v=20260520-staging" type="image/svg+xml" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://calc.med/opioidcalculator" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://calc.med/opioidcalculator" />
+    <meta property="og:title" content="Equianalgesic Dose Calculator" />
+    <meta
+      property="og:description"
+      content="A static equianalgesic opioid dose conversion calculator for clinical decision support."
+    />
+    <meta property="og:image" content="https://calc.med/OpioidConversionSite.png" />
+    <meta property="og:site_name" content="calc.med" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Equianalgesic Dose Calculator" />
+    <meta
+      name="twitter:description"
+      content="A static equianalgesic opioid dose conversion calculator for clinical decision support."
+    />
+    <meta name="twitter:image" content="https://calc.med/OpioidConversionSite.png" />
+    <title>Equianalgesic Dose Calculator</title>
+    <link rel="icon" href="/favicon.svg?v=20260523-production" type="image/svg+xml" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Equianalgesic Dose Calculator",
+        "url": "https://calc.med/opioidcalculator",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "Any",
+        "description": "A static equianalgesic opioid dose conversion calculator for clinical decision support.",
+        "isAccessibleForFree": true,
+        "publisher": {
+          "@type": "Organization",
+          "name": "calc.med",
+          "url": "https://calc.med"
+        }
+      }
+    </script>
     <script>
       (() => {
         try {
@@ -21,9 +55,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260523-uds-workflow-redesign" />
-    <link rel="stylesheet" href="uds-tool.css?v=20260524-uds-order-review" />
-    <link rel="stylesheet" href="uds-workflow-guide.css?v=20260524-uds-guide-rebuild" />
+    <link rel="stylesheet" href="/styles.css?v=20260524-uds-order-review-2" />
   </head>
   <body>
     <div class="environment-banner">
@@ -44,15 +76,7 @@
             >
               PK
             </button>
-            <button
-              aria-controls="udsModal"
-              aria-expanded="false"
-              class="topbar-reference-button"
-              id="udsOpenButton"
-              type="button"
-            >
-              UDS
-            </button>
+            <a class="topbar-reference-button" href="/UDS">UDS</a>
           </div>
           <button
             aria-pressed="false"
@@ -101,7 +125,7 @@
         </div>
         <div class="brand-logo-card" aria-label="Opioid Conversion logo">
           <img
-            src="OpioidConversionSite.png"
+            src="/OpioidConversionSite.png"
             alt="Opioid Conversion"
             width="1254"
             height="1254"
@@ -1008,344 +1032,6 @@
       </div>
     </div>
 
-    <section
-      aria-labelledby="udsModalTitle"
-      class="uds-screen is-hidden"
-      id="udsModal"
-    >
-      <div class="uds-screen-shell">
-        <div class="uds-screen-header">
-          <button
-            class="secondary-button uds-back-button"
-            id="udsCloseButton"
-            type="button"
-          >
-            Back
-          </button>
-          <div>
-            <p class="eyebrow">Clinical reference</p>
-            <h2 id="udsModalTitle">Urine Drug Screen (UDS) reference</h2>
-            <p>
-              Detection windows, expected metabolites, immunoassay limitations,
-              false-positive patterns, and interpretation rules.
-            </p>
-          </div>
-          <button
-            aria-controls="udsValueModal"
-            aria-expanded="false"
-            class="secondary-button uds-value-button"
-            id="udsValueOpenButton"
-            type="button"
-          >
-            Why use this tool?
-          </button>
-        </div>
-
-        <div class="uds-screen-body uds-modal-body">
-          <section class="uds-tool" aria-label="Interactive urine drug screen reference tool">
-            <div class="uds-toolbar">
-              <div class="uds-search-block">
-                <label for="udsSearchInput">Search drug, metabolite, brand, finding, or class</label>
-                <div class="uds-search-wrap">
-                  <input
-                    autocomplete="off"
-                    id="udsSearchInput"
-                    placeholder="Try Dilaudid, Xanax, EDDP, THC-COOH, benzoylecgonine..."
-                    type="search"
-                  />
-                  <button class="secondary-button uds-search-clear" id="udsSearchClear" type="button">
-                    Clear
-                  </button>
-                  <div class="uds-search-results is-hidden" id="udsSearchResults"></div>
-                </div>
-              </div>
-              <div class="uds-controls">
-                <div class="uds-mode-toggle" aria-label="UDS tool mode" role="group">
-                  <span class="uds-mode-toggle-label">Mode</span>
-                  <button aria-pressed="true" class="is-active" data-uds-mode="lookup" type="button">Lookup</button>
-                  <button aria-pressed="false" data-uds-mode="pattern" type="button">Pattern Check</button>
-                </div>
-                <label class="uds-method-label" for="udsMethodSelect">
-                  Method
-                  <select id="udsMethodSelect">
-                    <option value="any">Any</option>
-                    <option value="immunoassay">Immunoassay screen</option>
-                    <option value="definitive">Definitive LC/GC-MS</option>
-                  </select>
-                </label>
-                <button class="secondary-button" id="udsStartButton" type="button">Reset view</button>
-              </div>
-            </div>
-
-            <div class="uds-view" id="udsLookupView">
-              <section class="uds-panel uds-focus-panel">
-                <div class="uds-panel-head">
-                  <div>
-                    <p class="eyebrow">Lookup</p>
-                    <h3 id="udsLookupTitle">Start with a common item or search</h3>
-                  </div>
-                  <button class="secondary-button" id="udsCopyLookupButton" type="button">
-                    Copy summary
-                  </button>
-                </div>
-                <div id="udsLookupContent"></div>
-              </section>
-
-              <aside class="uds-panel uds-relations-panel">
-                <div class="uds-panel-head">
-                  <div>
-                    <p class="eyebrow">Clinical details</p>
-                    <h3>UDS interpretation</h3>
-                  </div>
-                </div>
-                <div id="udsRelationsContent"></div>
-              </aside>
-            </div>
-
-            <div class="uds-view uds-pattern-view is-hidden" id="udsPatternView">
-              <section class="uds-panel">
-                <div class="uds-panel-head">
-                  <div>
-                    <p class="eyebrow">UDS reconciliation</p>
-                    <h3>Can this UDS result be explained?</h3>
-                    <p class="uds-panel-intro">
-                      Add report context, expected medications, and detected findings. Use absent findings only when panel coverage is verified.
-                    </p>
-                  </div>
-                  <div class="uds-panel-head-actions">
-                    <button
-                      aria-controls="udsPatternGuide"
-                      aria-expanded="false"
-                      class="secondary-button"
-                      id="udsPatternGuideButton"
-                      type="button"
-                    >
-                      Quick guide
-                    </button>
-                    <button class="secondary-button" id="udsCopyPatternButton" type="button">
-                      Copy summary
-                    </button>
-                  </div>
-                </div>
-                <section class="uds-pattern-guide is-hidden" id="udsPatternGuide">
-                  <h4>Why use Pattern Check?</h4>
-                  <p>
-                    Standard UDS review requires manual cross-checking of the medication list,
-                    expected metabolites, assay limits, panel coverage, and unexpected findings.
-                    Pattern Check turns that into one reconciliation workflow.
-                  </p>
-                  <p>
-                    Add expected medications first, then detected analytes, then only confirmed
-                    tested-absent analytes. The output prioritizes method/panel coverage,
-                    medication compatibility, source ambiguity, absent-finding risk, and the next
-                    safest review step.
-                  </p>
-                </section>
-                <div class="uds-pattern-grid">
-                  <div class="uds-chip-input uds-workflow-step uds-report-context">
-                    <div class="uds-step-heading">
-                      <span class="uds-step-number">0</span>
-                      <label for="udsPanelSelect">Report context</label>
-                    </div>
-                    <p class="uds-field-help">
-                      Panel context controls whether absent findings can be used safely.
-                    </p>
-                    <label class="uds-field-stack" for="udsPanelSelect">
-                      Ordered panel
-                      <select id="udsPanelSelect">
-                        <option value="unknown_panel">Unknown / report not reviewed</option>
-                        <option value="generic_opiate_immunoassay">Generic opiate immunoassay</option>
-                        <option value="benzodiazepine_immunoassay_panel">Benzodiazepine immunoassay screen</option>
-                        <option value="targeted_definitive_panel">Targeted definitive LC/GC-MS panel</option>
-                      </select>
-                    </label>
-                    <label class="uds-checkbox-row" for="udsPanelCoverageConfirmed">
-                      <input id="udsPanelCoverageConfirmed" type="checkbox" />
-                      <span>I verified absent analytes were included and reportable.</span>
-                    </label>
-                  </div>
-
-                  <div class="uds-chip-input uds-workflow-step" data-uds-chip-group="expected">
-                    <div class="uds-step-heading">
-                      <span class="uds-step-number">1</span>
-                      <label for="udsExpectedInput">Expected medications</label>
-                    </div>
-                    <p class="uds-field-help">What is prescribed, reported, or otherwise expected?</p>
-                    <div class="uds-add-row">
-                      <input id="udsExpectedInput" autocomplete="off" placeholder="Search expected medication..." type="search" />
-                      <button class="secondary-button" data-uds-add="expected" type="button">Add</button>
-                    </div>
-                    <div class="uds-pattern-picker" id="udsExpectedPicker" role="listbox" aria-label="Expected medication matches"></div>
-                    <div class="uds-pattern-selected" id="udsExpectedSelected" aria-live="polite"></div>
-                    <div class="uds-pattern-input-feedback is-hidden" id="udsExpectedFeedback" aria-live="polite"></div>
-                    <div class="uds-chip-list" id="udsExpectedChips"></div>
-                  </div>
-
-                  <div class="uds-chip-input uds-workflow-step" data-uds-chip-group="detected">
-                    <div class="uds-step-heading">
-                      <span class="uds-step-number">2</span>
-                      <label for="udsDetectedInput">Detected on UDS</label>
-                    </div>
-                    <p class="uds-field-help">What did the report list as present or positive?</p>
-                    <div class="uds-add-row">
-                      <input id="udsDetectedInput" autocomplete="off" placeholder="Search detected finding..." type="search" />
-                      <button class="secondary-button" data-uds-add="detected" type="button">Add</button>
-                    </div>
-                    <div class="uds-pattern-picker" id="udsDetectedPicker" role="listbox" aria-label="Detected finding matches"></div>
-                    <div class="uds-pattern-selected" id="udsDetectedSelected" aria-live="polite"></div>
-                    <div class="uds-pattern-input-feedback is-hidden" id="udsDetectedFeedback" aria-live="polite"></div>
-                    <div class="uds-chip-list" id="udsDetectedChips"></div>
-                  </div>
-
-                  <div class="uds-chip-input uds-workflow-step" data-uds-chip-group="absent">
-                    <div class="uds-step-heading">
-                      <span class="uds-step-number">3</span>
-                      <label for="udsAbsentInput">Tested but absent</label>
-                    </div>
-                    <p class="uds-field-help">
-                      Only add absent findings if the analyte was included in the ordered panel and reported as absent.
-                    </p>
-                    <label class="uds-field-stack" for="udsAbsentStatus">
-                      Absent entry status
-                      <select id="udsAbsentStatus">
-                        <option value="unknown">Unknown whether tested</option>
-                        <option value="not_reported">Not reported / not shown</option>
-                        <option value="reported_absent">Reported absent / negative</option>
-                      </select>
-                    </label>
-                    <div class="uds-add-row">
-                      <input id="udsAbsentInput" autocomplete="off" placeholder="Search absent finding..." type="search" />
-                      <button class="secondary-button" data-uds-add="absent" type="button">Add</button>
-                    </div>
-                    <div class="uds-pattern-picker" id="udsAbsentPicker" role="listbox" aria-label="Absent finding matches"></div>
-                    <div class="uds-pattern-selected" id="udsAbsentSelected" aria-live="polite"></div>
-                    <div class="uds-pattern-input-feedback is-hidden" id="udsAbsentFeedback" aria-live="polite"></div>
-                    <div class="uds-chip-list" id="udsAbsentChips"></div>
-                  </div>
-                </div>
-
-                <div class="uds-scenario-panel" id="udsPatternScenarios" aria-label="Common UDS scenarios"></div>
-
-                <div class="uds-pattern-actions">
-                  <button class="secondary-button" id="udsClearPatternButton" type="button">Clear pattern</button>
-                </div>
-              </section>
-
-              <section class="uds-panel">
-                <div class="uds-panel-head">
-                  <div>
-                    <p class="eyebrow">Interpretation</p>
-                    <h3>Pattern output</h3>
-                  </div>
-                </div>
-                <div
-                  aria-atomic="false"
-                  aria-live="polite"
-                  id="udsPatternOutput"
-                  tabindex="-1"
-                ></div>
-              </section>
-            </div>
-          </section>
-        </div>
-      </div>
-    </section>
-
-    <div
-      aria-labelledby="udsValueModalTitle"
-      aria-modal="true"
-      class="reference-modal uds-value-modal is-hidden"
-      id="udsValueModal"
-      role="dialog"
-    >
-      <div class="reference-dialog uds-value-dialog">
-        <div class="reference-modal-header">
-          <div>
-            <p class="eyebrow">Workflow value</p>
-            <h2 id="udsValueModalTitle">Why use this UDS tool?</h2>
-            <p>
-              A concise overview of how the tool improves UDS review compared with
-              fragmented manual lookup.
-            </p>
-          </div>
-          <button
-            class="secondary-button modal-close-button"
-            id="udsValueCloseButton"
-            type="button"
-          >
-            Close
-          </button>
-        </div>
-
-        <div class="reference-modal-body uds-value-body">
-          <section class="uds-value-summary-card">
-            <h3>Structured workflow instead of fragmented lookup</h3>
-            <p>
-              This UDS reference and reconciliation tool turns a traditionally
-              fragmented review process into a single structured workflow. Instead of
-              manually cross-checking medication lists, metabolites, assay limitations,
-              panel coverage, detection windows, false-positive risks, and
-              confirmatory testing needs across multiple references, clinicians can
-              work through one guided interface.
-            </p>
-          </section>
-
-          <section class="uds-value-grid" aria-label="UDS tool benefits">
-            <article>
-              <h3>Faster clinical answers</h3>
-              <p>
-                Lookup answers focused questions such as whether fentanyl appears on a
-                routine opiate screen, whether 7-aminoclonazepam supports clonazepam
-                exposure, or why hydromorphone may appear with hydrocodone.
-              </p>
-            </article>
-            <article>
-              <h3>Real report reconciliation</h3>
-              <p>
-                Pattern Check lets the user enter expected medications, detected
-                findings, and only confirmed tested-absent analytes, then organizes the
-                output around method/panel coverage, compatibility, source ambiguity,
-                absent-finding risk, and next steps.
-              </p>
-            </article>
-            <article>
-              <h3>Fewer missed pitfalls</h3>
-              <p>
-                The tool highlights when a finding is compatible, unexpected,
-                assay-dependent, panel-dependent, or not source-specific by itself.
-                This is especially useful for shared metabolites such as
-                hydromorphone, oxymorphone, morphine, oxazepam, temazepam, and
-                nordiazepam.
-              </p>
-            </article>
-            <article>
-              <h3>Cleaner documentation</h3>
-              <p>
-                Copyable summaries support faster chart review, pharmacist review,
-                consult notes, and communication around unexpected positives,
-                unexpected negatives, and metabolite ambiguity.
-              </p>
-            </article>
-          </section>
-
-          <section class="uds-value-impact">
-            <h3>Workflow impact</h3>
-            <p>
-              The practical impact is less time spent searching separate references,
-              more consistent interpretation between reviewers, more cautious handling
-              of presumptive immunoassay results, and clearer identification of when
-              definitive testing or lab consultation is appropriate. The tool helps
-              reduce premature conclusions about adherence, misuse, diversion, timing,
-              or impairment when the urine result alone cannot support those
-              conclusions.
-            </p>
-          </section>
-        </div>
-      </div>
-    </div>
-
-    <script src="script.js?v=20260522-uds-value"></script>
-    <script src="uds-tool.js?v=20260524-uds-order-review"></script>
-    <script src="uds-workflow-guide.js?v=20260524-uds-guide-rebuild"></script>
+    <script src="/script.js?v=20260524-uds-order-review-2"></script>
   </body>
 </html>

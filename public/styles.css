@@ -272,6 +272,11 @@ a:focus-visible {
 }
 
 .topbar-reference-button {
+  display: inline-flex;
+  flex: 0 0 62px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   width: 62px;
   position: relative;
   min-height: 38px;
@@ -281,8 +286,18 @@ a:focus-visible {
   background: transparent;
   color: var(--reference-text);
   box-shadow: none;
+  font-family: inherit;
   font-size: 0.88rem;
   font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+.topbar-reference-button:visited {
+  color: var(--reference-text);
 }
 
 .topbar-reference-button:hover {

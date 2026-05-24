@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A static urine drug screen reference and reconciliation tool for clinical decision support."
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://calc.med/UDS" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://calc.med/UDS" />
+    <meta property="og:title" content="Urine Drug Screen (UDS) Tool" />
+    <meta
+      property="og:description"
+      content="A static urine drug screen reference and reconciliation tool for clinical decision support."
+    />
+    <meta property="og:image" content="https://calc.med/OpioidConversionSite.png" />
+    <meta property="og:site_name" content="calc.med" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Urine Drug Screen (UDS) Tool" />
+    <meta
+      name="twitter:description"
+      content="A static urine drug screen reference and reconciliation tool for clinical decision support."
+    />
+    <meta name="twitter:image" content="https://calc.med/OpioidConversionSite.png" />
+    <title>Urine Drug Screen (UDS) Tool</title>
+    <link rel="icon" href="/favicon.svg?v=20260523-production" type="image/svg+xml" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Urine Drug Screen (UDS) Tool",
+        "url": "https://calc.med/UDS",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "Any",
+        "description": "A static urine drug screen reference and reconciliation tool for clinical decision support.",
+        "isAccessibleForFree": true,
+        "publisher": {
+          "@type": "Organization",
+          "name": "calc.med",
+          "url": "https://calc.med"
+        }
+      }
+    </script>
+    <script>
+      (() => {
+        try {
+          const storedTheme = localStorage.getItem("opioid-conversion-theme");
+          const theme = storedTheme || "light";
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="/styles.css?v=20260524-uds-order-review-2" />
+    <link rel="stylesheet" href="/uds-tool.css?v=20260524-uds-order-review-2" />
+    <link rel="stylesheet" href="/uds-workflow-guide.css?v=20260524-uds-guide-rebuild" />
+  </head>
+  <body>
+    <section aria-labelledby="udsModalTitle" class="uds-screen" id="udsModal">
+      <noscript>Enable JavaScript to use the UDS workflow tool.</noscript>
+    </section>
+
+    <script src="/uds-tool.js?v=20260524-uds-order-review-2"></script>
+    <script src="/uds-workflow-guide.js?v=20260524-uds-guide-rebuild"></script>
+  </body>
+</html>

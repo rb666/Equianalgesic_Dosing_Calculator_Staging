@@ -434,12 +434,12 @@
 
   function setRootShell() {
     root.setAttribute("aria-labelledby", "udsModalTitle");
-    root.setAttribute("role", "dialog");
-    root.setAttribute("aria-modal", "true");
+    root.removeAttribute("role");
+    root.removeAttribute("aria-modal");
     root.innerHTML = `
       <div class="uds-shell">
         <header class="uds-header">
-          <button class="uds-text-button" id="udsCloseButton" type="button">Back</button>
+          <a class="uds-text-button" id="udsCloseButton" href="/opioidcalculator">Back to calculator</a>
           <div class="uds-title-block">
             <p class="uds-eyebrow">Clinical reference only</p>
             <h2 id="udsModalTitle">UDS workflow tool</h2>

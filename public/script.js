@@ -1322,12 +1322,6 @@ const pharmacokineticsModal = document.querySelector("#pharmacokineticsModal");
 const pharmacokineticsCloseButton = document.querySelector(
   "#pharmacokineticsCloseButton",
 );
-const udsOpenButton = document.querySelector("#udsOpenButton");
-const udsModal = document.querySelector("#udsModal");
-const udsCloseButton = document.querySelector("#udsCloseButton");
-const udsValueOpenButton = document.querySelector("#udsValueOpenButton");
-const udsValueModal = document.querySelector("#udsValueModal");
-const udsValueCloseButton = document.querySelector("#udsValueCloseButton");
 const mainCalculatorSection = document.querySelector("#mainCalculatorSection");
 const specialtyCalculatorSection = document.querySelector("#specialtyCalculatorSection");
 const mainCalculatorHeading = document.querySelector("#mainCalculatorHeading");
@@ -1463,10 +1457,7 @@ const isModalVisible = (modalElement) =>
   Boolean(modalElement && !modalElement.classList.contains("is-hidden"));
 
 const updateModalOpenState = () => {
-  document.body.classList.toggle(
-    "modal-open",
-    isModalVisible(pharmacokineticsModal) || isModalVisible(udsValueModal),
-  );
+  document.body.classList.toggle("modal-open", isModalVisible(pharmacokineticsModal));
 };
 
 const setPharmacokineticsModalVisible = (visible) => {
@@ -1480,44 +1471,6 @@ const setPharmacokineticsModalVisible = (visible) => {
 
   if (visible && pharmacokineticsCloseButton) {
     window.setTimeout(() => pharmacokineticsCloseButton.focus(), 0);
-  }
-};
-
-const setUdsValueModalVisible = (visible) => {
-  if (!udsValueModal) {
-    return;
-  }
-
-  udsValueModal.classList.toggle("is-hidden", !visible);
-  udsValueOpenButton?.setAttribute("aria-expanded", String(visible));
-  updateModalOpenState();
-
-  if (visible && udsValueCloseButton) {
-    window.setTimeout(() => udsValueCloseButton.focus(), 0);
-  } else if (!visible && udsValueOpenButton) {
-    window.setTimeout(() => udsValueOpenButton.focus(), 0);
-  }
-};
-
-const setUdsModalVisible = (visible) => {
-  if (!udsModal) {
-    return;
-  }
-
-  udsModal.classList.toggle("is-hidden", !visible);
-  document.body.classList.toggle("uds-screen-open", visible);
-  udsOpenButton?.setAttribute("aria-expanded", String(visible));
-  updateModalOpenState();
-
-  if (visible) {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    const currentCloseButton = udsModal.querySelector("#udsCloseButton");
-    if (currentCloseButton) {
-      window.setTimeout(() => currentCloseButton.focus(), 0);
-    }
-  } else if (udsOpenButton) {
-    window.setTimeout(() => udsOpenButton.focus(), 0);
   }
 };
 
@@ -3138,40 +3091,6 @@ if (pharmacokineticsModal) {
   });
 }
 
-if (udsValueOpenButton) {
-  udsValueOpenButton.addEventListener("click", () => {
-    setUdsValueModalVisible(true);
-  });
-}
-
-if (udsValueCloseButton) {
-  udsValueCloseButton.addEventListener("click", () => {
-    setUdsValueModalVisible(false);
-  });
-}
-
-if (udsValueModal) {
-  udsValueModal.addEventListener("click", (event) => {
-    if (event.target === udsValueModal) {
-      setUdsValueModalVisible(false);
-    }
-  });
-}
-
-if (udsOpenButton) {
-  udsOpenButton.addEventListener("click", () => {
-    setUdsModalVisible(true);
-  });
-}
-
-if (udsModal) {
-  udsModal.addEventListener("click", (event) => {
-    if (event.target.closest("#udsCloseButton")) {
-      setUdsModalVisible(false);
-    }
-  });
-}
-
 if (pharmacokineticsGraphGrid) {
   pharmacokineticsGraphGrid.addEventListener("click", (event) => {
     const selectedCard = event.target.closest("[data-pk-index]");
@@ -3195,15 +3114,6 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
-  if (isModalVisible(udsValueModal)) {
-    setUdsValueModalVisible(false);
-    return;
-  }
-
-  if (isModalVisible(udsModal)) {
-    setUdsModalVisible(false);
-    return;
-  }
 
 });
 

@@ -527,6 +527,10 @@
 }
 
 .uds-text-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   border: 1px solid var(--border, #cbd5df);
   background: transparent;
   color: var(--ink, #1f2933);

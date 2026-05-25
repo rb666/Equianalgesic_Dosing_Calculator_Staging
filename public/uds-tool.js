@@ -30,7 +30,7 @@
     "Laboratory method references",
     "Clinical UDS interpretation reviews",
     "Detection-window references",
-    "Local laboratory policy and panel validation",
+    "Local laboratory policy / panel validation",
   ];
 
   const items = [
@@ -139,7 +139,7 @@
   ];
 
   const builtInProfiles = [
-    profile("unknown", "Unknown; report not reviewed", "unknown", "Use when the exact method, included analytes, and cutoffs are unknown.", false, []),
+    profile("unknown", "Unknown / report not reviewed", "unknown", "Use when the exact method, included analytes, and cutoffs are unknown.", false, []),
     profile("generic_opiate_screen", "Generic opiate immunoassay", "immunoassay", "Morphine-like class screen. Synthetic and many semisynthetic opioids require targeted testing.", false, [
       coverage("morphine", "class_screen"), coverage("codeine", "class_screen"), coverage("hydrocodone", "assay_dependent"), coverage("hydromorphone", "assay_dependent"), coverage("oxycodone", "assay_dependent"), coverage("oxymorphone", "assay_dependent"), coverage("fentanyl", "not_included"), coverage("norfentanyl", "not_included"), coverage("methadone", "not_included"), coverage("eddp", "not_included"), coverage("buprenorphine", "not_included"), coverage("norbuprenorphine", "not_included"), coverage("tramadol", "not_included"), coverage("tapentadol", "not_included"),
     ]),
@@ -510,9 +510,9 @@
           ${renderOutputBlock("Specimen validity", [...result.validityNotes, ...result.validityWarnings], validityOutputTone(result))}
           ${renderOutputBlock("What this can support", result.canSupport, result.explained.length ? "compatible" : "neutral")}
           ${renderOutputBlock("What this cannot support", result.cannotSupport, "neutral")}
-          ${result.panelWarnings.length ? renderOutputBlock("Panel and profile limitations", result.panelWarnings, "method") : ""}
+          ${result.panelWarnings.length ? renderOutputBlock("Panel / profile limitations", result.panelWarnings, "method") : ""}
           ${renderOutputBlock("Recommended next step", [result.nextStep], nextStepOutputTone(result))}
-          ${result.expectedNegatives.length ? renderDetails("Expected negative and absent findings", result.expectedNegatives) : ""}
+          ${result.expectedNegatives.length ? renderDetails("Expected negative / absent findings", result.expectedNegatives) : ""}
           ${renderDetails("Reasoning details", [
             ...result.explained.map((line) => `Compatible: ${line}`),
             ...result.contextNeeded.map((line) => `Context: ${line}`),
@@ -520,7 +520,7 @@
             ...result.absentConcerns.map((line) => `Absent review: ${line}`),
             ...result.expectedNegatives.map((line) => `Expected negative: ${line}`),
             ...result.validityWarnings.map((line) => `Specimen validity: ${line}`),
-            ...result.panelWarnings.map((line) => `Panel and profile: ${line}`),
+            ...result.panelWarnings.map((line) => `Panel / profile: ${line}`),
           ])}
           ${renderDetails("Method notes", result.methodNotes)}
           ${renderDetails("Optional supportive findings to check", result.supportiveNotEntered)}
@@ -669,11 +669,11 @@
       <section class="uds-input-section">
         <div class="uds-section-label"><strong>Specimen validity</strong><span>No values required. Use the report's validity flag if available.</span></div>
         <select data-field="validityFlag">
-          ${option("unknown", "Unknown or not reported", state.validityFlag)}
+          ${option("unknown", "Unknown / not reported", state.validityFlag)}
           ${option("normal", "Appears interpretable", state.validityFlag)}
           ${option("dilute", "Dilute - negatives less reliable", state.validityFlag)}
-          ${option("invalid", "Invalid: do not interpret", state.validityFlag)}
-          ${option("adulterated", "Possible adulteration: consult lab", state.validityFlag)}
+          ${option("invalid", "Invalid / do not interpret", state.validityFlag)}
+          ${option("adulterated", "Possible adulteration / consult lab", state.validityFlag)}
         </select>
         ${renderValidityDetails()}
       </section>
@@ -700,7 +700,7 @@
           </label>
           <label>Oxidants or adulterants
             <select data-validity-detail="oxidants">
-              ${option("unknown", "Unknown or not reported", state.validityDetails.oxidants)}
+              ${option("unknown", "Unknown / not reported", state.validityDetails.oxidants)}
               ${option("normal", "Normal or negative", state.validityDetails.oxidants)}
               ${option("abnormal", "Abnormal or positive", state.validityDetails.oxidants)}
             </select>
@@ -752,7 +752,7 @@
     return {
       compatible: "Compatible",
       caution: "Caution",
-      method: "Panel and method",
+      method: "Panel / method",
       warning: "Action needed",
       neutral: "Info",
     }[tone] || "Info";
@@ -843,7 +843,7 @@
     return `
       <section class="uds-simple-grid uds-lookup-grid">
         <div class="uds-card">
-          <div class="uds-card-head"><div><p class="uds-eyebrow">Reference</p><h3>Look up drug and metabolite</h3></div></div>
+          <div class="uds-card-head"><div><p class="uds-eyebrow">Reference</p><h3>Look up drug / metabolite</h3></div></div>
           <input
             autocomplete="off"
             data-field="lookupQuery"
@@ -871,7 +871,7 @@
       ${renderOutputBlock("Approximate urine window", [selected.window])}
       ${renderOutputBlock("Expected and related findings", getRelatedLines(selected.id))}
       ${renderOutputBlock("Do not conclude", [standardCannotConclude().join("; ")])}
-      ${renderDetails("Reference and governance", [
+      ${renderDetails("Reference / governance", [
         `Last reviewed: ${REVIEW_METADATA.lastReviewed}`,
         `Status: ${REVIEW_METADATA.status}`,
         REVIEW_METADATA.note,
@@ -1144,11 +1144,11 @@
     });
     const shortSummary = [
       `UDS interpretation: ${label}.`,
-      `Method and panel: ${formatMethod(state.method)}; ${selectedProfile().label}.`,
+      `Method / panel: ${formatMethod(state.method)}; ${selectedProfile().label}.`,
       `Result source: ${formatResultSource(state.resultSource)}.`,
       `Confirmation threshold: ${confirmationLevel}.`,
       safetyFlags.length ? `Safety: ${safetyFlags.slice(0, 2).join("; ")}.` : "",
-      panelWarnings.length ? `Panel and profile: ${panelWarnings.slice(0, 2).join("; ")}.` : "",
+      panelWarnings.length ? `Panel / profile: ${panelWarnings.slice(0, 2).join("; ")}.` : "",
       validityWarnings.length ? `Validity: ${validityWarnings.slice(0, 2).join("; ")}.` : "",
       validityWarnings.length && buildValidityDetailSummary().length ? `Validity details: ${buildValidityDetailSummary().join("; ")}.` : "",
       `Next: ${nextStep}`,
@@ -1705,11 +1705,11 @@
     return [
       "UDS clinical reference review, no patient identifiers entered.",
       `Context: ${formatContext(state.context)}. Decision impact: ${state.consequence}.`,
-      `Result source: ${formatResultSource(state.resultSource)}. Method and panel: ${formatMethod(state.method)}; ${selectedProfile().label}. Specimen validity: ${formatValidity(state.validityFlag)}.`,
+      `Result source: ${formatResultSource(state.resultSource)}. Method / panel: ${formatMethod(state.method)}; ${selectedProfile().label}. Specimen validity: ${formatValidity(state.validityFlag)}.`,
       validityDetailSummary.length ? `Optional validity details entered: ${validityDetailSummary.join("; ")}.` : "",
       `Expected: ${expected}. Detected: ${detected}. Tested-but-absent: ${absent}. Absent coverage verified: ${state.absentVerified ? "yes" : "no"}.`,
       absentConcerns.length ? `Absent-finding concerns: ${absentConcerns.slice(0, 3).join("; ")}.` : "Absent-finding concerns: none generated from entered findings.",
-      expectedNegatives.length ? `Expected negative and absent findings: ${expectedNegatives.slice(0, 3).join("; ")}.` : "Expected negative and absent findings: none generated from entered findings.",
+      expectedNegatives.length ? `Expected negative / absent findings: ${expectedNegatives.slice(0, 3).join("; ")}.` : "Expected negative / absent findings: none generated from entered findings.",
       expectedParentNotEntered.length ? `Expected parent findings to check: ${expectedParentNotEntered.slice(0, 3).join("; ")}.` : "",
       `Interpretation label: ${label}. Confirmation threshold: ${confirmationLevel}.`,
       safetyFlags.length ? `Safety flags: ${safetyFlags.join("; ")}.` : "Safety flags: none generated from entered findings.",
@@ -1757,11 +1757,11 @@
 
   function formatValidity(value) {
     return {
-      unknown: "unknown or not reported",
+      unknown: "unknown / not reported",
       normal: "appears interpretable",
       dilute: "dilute - negatives less reliable",
-      invalid: "invalid: do not interpret",
-      adulterated: "possible adulteration: consult lab",
+      invalid: "invalid / do not interpret",
+      adulterated: "possible adulteration / consult lab",
     }[value] || value;
   }
 

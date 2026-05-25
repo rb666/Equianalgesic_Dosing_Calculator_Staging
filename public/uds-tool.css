@@ -146,7 +146,7 @@
 .uds-nav-button.is-active,
 .uds-nav-button:hover {
   border-color: color-mix(in srgb, var(--accent, #276749) 70%, #000 10%);
-  background: color-mix(in srgb, var(--accent, #276749) 9%, var(--surface, #fff));
+  background: color-mix(in srgb, var(--accent, #276749) 13%, var(--surface, #fff));
 }
 
 .uds-main {
@@ -536,14 +536,22 @@
   color: var(--ink, #1f2933);
 }
 
-.uds-primary-button:hover,
+.uds-primary-button:hover {
+  box-shadow: none;
+  transform: none;
+  border-color: color-mix(in srgb, var(--accent, #276749) 82%, #000 10%);
+  background: color-mix(in srgb, var(--accent, #276749) 88%, #000 8%);
+}
+
 .uds-secondary-button:hover,
 .uds-text-button:hover,
 .uds-row-button:hover,
 .uds-profile-row:hover {
   box-shadow: none;
   transform: none;
-  filter: brightness(0.98);
+  border-color: color-mix(in srgb, var(--accent, #276749) 54%, var(--border, #cbd5df));
+  background: color-mix(in srgb, var(--accent, #276749) 13%, var(--surface, #fff));
+  color: color-mix(in srgb, var(--accent, #276749) 88%, #000 10%);
 }
 
 .uds-status {
@@ -706,11 +714,6 @@
   appearance: none;
   cursor: pointer;
   transform: none;
-}
-
-.uds-row-button:hover {
-  border-color: color-mix(in srgb, var(--accent, #276749) 46%, var(--border, #cbd5df));
-  background: color-mix(in srgb, var(--accent, #276749) 9%, var(--surface, #fff));
 }
 
 .uds-list-main {
@@ -971,6 +974,17 @@
 :root[data-theme="dark"] .uds-text-button {
   color: #e5e7eb;
   border-color: #374151;
+}
+
+:root[data-theme="dark"] .uds-nav-button.is-active,
+:root[data-theme="dark"] .uds-nav-button:hover,
+:root[data-theme="dark"] .uds-secondary-button:hover,
+:root[data-theme="dark"] .uds-text-button:hover,
+:root[data-theme="dark"] .uds-row-button:hover,
+:root[data-theme="dark"] .uds-profile-row:hover {
+  border-color: #2dd4bf;
+  background: color-mix(in srgb, var(--accent, #7dd3a8) 18%, #111827);
+  color: #d1fae5;
 }
 
 :root[data-theme="dark"] .uds-warning-box {

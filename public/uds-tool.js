@@ -30,7 +30,7 @@
     "Laboratory method references",
     "Clinical UDS interpretation reviews",
     "Detection-window references",
-    "Local laboratory policy / panel validation",
+    "Local laboratory policy and panel validation",
   ];
 
   const items = [
@@ -38,22 +38,22 @@
     item("codeine", "Codeine", "Opioids", "drug", ["Tylenol #3"], "1-3 days", "Can produce morphine and sometimes minor hydrocodone; interpret with full opiate pattern.", "Definitive opiate panel when source matters", ["opioid"]),
     item("heroin", "Heroin", "Opioids", "drug", ["diacetylmorphine"], "6-MAM usually <1 day", "Urine evidence is usually indirect; 6-MAM is the specific short-window heroin marker.", "6-MAM plus opiate definitive testing", ["opioid"]),
     item("6mam", "6-MAM", "Opioids", "finding", ["6-acetylmorphine", "6-monoacetylmorphine"], "Usually <1 day", "Specific marker of recent heroin exposure when detected; absence does not exclude heroin after the short window.", "Definitive heroin marker assay", ["opioid"]),
-    item("hydrocodone", "Hydrocodone", "Opioids", "drug", ["Norco", "Vicodin", "Lortab"], "1-3 days", "May produce norhydrocodone and hydromorphone; hydromorphone alone is not source-specific.", "Hydrocodone/norhydrocodone definitive testing", ["opioid"]),
+    item("hydrocodone", "Hydrocodone", "Opioids", "drug", ["Norco", "Vicodin", "Lortab"], "1-3 days", "May produce norhydrocodone and hydromorphone; hydromorphone alone is not source-specific.", "Hydrocodone and norhydrocodone definitive testing", ["opioid"]),
     item("norhydrocodone", "Norhydrocodone", "Opioids", "finding", [], "1-3 days", "Supportive hydrocodone metabolite when included on the panel.", "Definitive opiate panel", ["opioid"]),
-    item("hydromorphone", "Hydromorphone", "Opioids", "drug_or_finding", ["Dilaudid"], "1-4 days", "May reflect hydromorphone exposure, hydrocodone metabolism, or minor morphine metabolism.", "Definitive opiate panel with parent/metabolites", ["opioid"]),
-    item("oxycodone", "Oxycodone", "Opioids", "drug", ["OxyContin", "Percocet", "Roxicodone"], "1-3 days", "Generic opiate screens may miss oxycodone; oxymorphone can be a metabolite or separate drug.", "Oxycodone/oxymorphone-specific or definitive testing", ["opioid"]),
+    item("hydromorphone", "Hydromorphone", "Opioids", "drug_or_finding", ["Dilaudid"], "1-4 days", "May reflect hydromorphone exposure, hydrocodone metabolism, or minor morphine metabolism.", "Definitive opiate panel with parent and metabolites", ["opioid"]),
+    item("oxycodone", "Oxycodone", "Opioids", "drug", ["OxyContin", "Percocet", "Roxicodone"], "1-3 days", "Generic opiate screens may miss oxycodone; oxymorphone can be a metabolite or separate drug.", "Oxycodone and oxymorphone-specific or definitive testing", ["opioid"]),
     item("noroxycodone", "Noroxycodone", "Opioids", "finding", [], "1-3 days", "Supportive oxycodone metabolite when included.", "Oxycodone definitive panel", ["opioid"]),
-    item("oxymorphone", "Oxymorphone", "Opioids", "drug_or_finding", ["Opana"], "1-3 days", "Can be prescribed directly or appear as an oxycodone metabolite.", "Oxycodone/oxymorphone definitive testing", ["opioid"]),
-    item("fentanyl", "Fentanyl", "Opioids", "drug", ["Duragesic", "Sublimaze"], "1-7 days", "Not detected by a routine opiate immunoassay; norfentanyl is often the more useful urine finding.", "Fentanyl/norfentanyl-specific or definitive testing", ["opioid", "high_risk"]),
-    item("norfentanyl", "Norfentanyl", "Opioids", "finding", [], "1-7 days", "Supportive fentanyl metabolite; routine opiate screens do not exclude it.", "Fentanyl/norfentanyl-specific or definitive testing", ["opioid", "high_risk"]),
-    item("buprenorphine", "Buprenorphine", "Opioids", "drug", ["Suboxone", "Subutex", "Belbuca", "Butrans"], "1-10 days", "Requires buprenorphine-specific testing; norbuprenorphine supports metabolism/exposure.", "Buprenorphine + norbuprenorphine with specimen validity", ["opioid", "oud"]),
-    item("norbuprenorphine", "Norbuprenorphine", "Opioids", "finding", [], "1-10 days", "Supports buprenorphine metabolism/exposure; interpret with parent drug, timing, naloxone when relevant, and validity.", "Buprenorphine + norbuprenorphine definitive testing", ["opioid", "oud"]),
-    item("naloxone", "Naloxone", "Opioids", "drug_or_finding", ["Narcan"], "1-2 days", "May appear with naloxone exposure or buprenorphine/naloxone products; does not prove route manipulation by itself.", "Targeted naloxone testing only when clinically relevant", ["opioid_context"]),
-    item("methadone", "Methadone", "Opioids", "drug", ["Dolophine"], "1-14 days", "Generic opiate screens do not reliably detect methadone; EDDP supports ingestion/metabolism.", "Methadone + EDDP-specific or definitive testing", ["opioid"]),
-    item("eddp", "EDDP", "Opioids", "finding", ["methadone metabolite"], "1-14 days", "Supports methadone ingestion/metabolism when included.", "Methadone + EDDP definitive testing", ["opioid"]),
-    item("tramadol", "Tramadol", "Opioids", "drug", ["Ultram"], "1-4 days", "Not reliably detected by routine opiate immunoassay; requires targeted/definitive testing.", "Tramadol + O-desmethyltramadol", ["opioid"]),
+    item("oxymorphone", "Oxymorphone", "Opioids", "drug_or_finding", ["Opana"], "1-3 days", "Can be prescribed directly or appear as an oxycodone metabolite.", "Oxycodone and oxymorphone definitive testing", ["opioid"]),
+    item("fentanyl", "Fentanyl", "Opioids", "drug", ["Duragesic", "Sublimaze"], "1-7 days", "Not detected by a routine opiate immunoassay; norfentanyl is often the more useful urine finding.", "Fentanyl and norfentanyl-specific or definitive testing", ["opioid", "high_risk"]),
+    item("norfentanyl", "Norfentanyl", "Opioids", "finding", [], "1-7 days", "Supportive fentanyl metabolite; routine opiate screens do not exclude it.", "Fentanyl and norfentanyl-specific or definitive testing", ["opioid", "high_risk"]),
+    item("buprenorphine", "Buprenorphine", "Opioids", "drug", ["Suboxone", "Subutex", "Belbuca", "Butrans"], "1-10 days", "Requires buprenorphine-specific testing; norbuprenorphine supports metabolism and exposure.", "Buprenorphine and norbuprenorphine with specimen validity", ["opioid", "oud"]),
+    item("norbuprenorphine", "Norbuprenorphine", "Opioids", "finding", [], "1-10 days", "Supports buprenorphine metabolism and exposure; interpret with parent drug, timing, naloxone when relevant, and validity.", "Buprenorphine and norbuprenorphine definitive testing", ["opioid", "oud"]),
+    item("naloxone", "Naloxone", "Opioids", "drug_or_finding", ["Narcan"], "1-2 days", "May appear with naloxone exposure or buprenorphine and naloxone products; does not prove route manipulation by itself.", "Targeted naloxone testing only when clinically relevant", ["opioid_context"]),
+    item("methadone", "Methadone", "Opioids", "drug", ["Dolophine"], "1-14 days", "Generic opiate screens do not reliably detect methadone; EDDP supports ingestion and metabolism.", "Methadone and EDDP-specific or definitive testing", ["opioid"]),
+    item("eddp", "EDDP", "Opioids", "finding", ["methadone metabolite"], "1-14 days", "Supports methadone ingestion and metabolism when included.", "Methadone and EDDP definitive testing", ["opioid"]),
+    item("tramadol", "Tramadol", "Opioids", "drug", ["Ultram"], "1-4 days", "Not reliably detected by routine opiate immunoassay; requires targeted or definitive testing.", "Tramadol and O-desmethyltramadol", ["opioid"]),
     item("odesmethyltramadol", "O-desmethyltramadol", "Opioids", "finding", ["M1 tramadol metabolite"], "1-4 days", "Supportive tramadol metabolite when included.", "Tramadol definitive testing", ["opioid"]),
-    item("tapentadol", "Tapentadol", "Opioids", "drug", ["Nucynta"], "1-3 days", "Not detected by routine opiate screens; requires targeted/definitive testing.", "Tapentadol-specific definitive testing", ["opioid"]),
+    item("tapentadol", "Tapentadol", "Opioids", "drug", ["Nucynta"], "1-3 days", "Not detected by routine opiate screens; requires targeted or definitive testing.", "Tapentadol-specific definitive testing", ["opioid"]),
 
     item("diazepam", "Diazepam", "Benzodiazepines", "drug", ["Valium"], "1-7 days; metabolites may persist longer", "Produces shared metabolites; source often requires full benzodiazepine pattern.", "Definitive benzodiazepine panel", ["benzodiazepine", "sedative"]),
     item("nordiazepam", "Nordiazepam", "Benzodiazepines", "finding", ["desmethyldiazepam"], "1-20 days", "Shared diazepam-type metabolite; not source-specific alone.", "Definitive benzodiazepine panel", ["benzodiazepine", "sedative"]),
@@ -61,53 +61,53 @@
     item("oxazepam", "Oxazepam", "Benzodiazepines", "drug_or_finding", ["Serax"], "1-7 days", "Common terminal benzodiazepine metabolite; not source-specific alone.", "Definitive benzodiazepine panel", ["benzodiazepine", "sedative"]),
     item("clonazepam", "Clonazepam", "Benzodiazepines", "drug", ["Klonopin"], "1-12 days", "Some benzodiazepine immunoassays under-detect clonazepam; 7-aminoclonazepam is the key urine target.", "Definitive benzodiazepine panel including 7-aminoclonazepam", ["benzodiazepine", "sedative"]),
     item("aminoclonazepam7", "7-aminoclonazepam", "Benzodiazepines", "finding", ["7-amino-clonazepam"], "1-12 days", "Supportive clonazepam metabolite when included.", "Definitive benzodiazepine panel", ["benzodiazepine", "sedative"]),
-    item("lorazepam", "Lorazepam", "Benzodiazepines", "drug", ["Ativan"], "1-7 days", "May be missed by some benzodiazepine screens if glucuronide sensitivity is poor.", "Definitive benzodiazepine panel that detects lorazepam/glucuronides", ["benzodiazepine", "sedative"]),
+    item("lorazepam", "Lorazepam", "Benzodiazepines", "drug", ["Ativan"], "1-7 days", "May be missed by some benzodiazepine screens if glucuronide sensitivity is poor.", "Definitive benzodiazepine panel that detects lorazepam and glucuronides", ["benzodiazepine", "sedative"]),
     item("alprazolam", "Alprazolam", "Benzodiazepines", "drug", ["Xanax"], "1-5 days", "Alpha-hydroxyalprazolam supports alprazolam exposure.", "Definitive benzodiazepine panel", ["benzodiazepine", "sedative"]),
     item("alpha_hydroxyalprazolam", "Alpha-hydroxyalprazolam", "Benzodiazepines", "finding", ["alprazolam metabolite"], "1-5 days", "Supportive alprazolam metabolite when included.", "Definitive benzodiazepine panel", ["benzodiazepine", "sedative"]),
 
-    item("amphetamine", "Amphetamine", "Stimulants", "drug_or_finding", ["Adderall component", "amphetamine salts"], "1-7 days", "May reflect prescribed amphetamine, lisdexamfetamine, methamphetamine metabolism, or immunoassay ambiguity.", "Definitive amphetamine/methamphetamine confirmation when unexpected", ["stimulant"]),
-    item("methamphetamine", "Methamphetamine", "Stimulants", "drug", ["Desoxyn"], "1-4 days", "Can produce amphetamine; d/l isomer testing may help source interpretation if available.", "Definitive amphetamine/methamphetamine +/- isomer testing", ["stimulant"]),
-    item("lisdexamfetamine", "Lisdexamfetamine", "Stimulants", "drug", ["Vyvanse"], "Interpreted through amphetamine", "Explains amphetamine findings when medication history supports use.", "Amphetamine definitive testing when adherence/source matters", ["stimulant"]),
-    item("methylphenidate", "Methylphenidate", "Stimulants", "drug", ["Ritalin", "Concerta"], "Usually <1 day for parent; metabolite varies", "Routine amphetamine screens do not answer methylphenidate adherence questions.", "Methylphenidate/ritalinic acid-specific testing", ["stimulant"]),
-    item("ritalinic_acid", "Ritalinic acid", "Stimulants", "finding", ["methylphenidate metabolite"], "Panel-specific", "Supportive methylphenidate metabolite when included.", "Methylphenidate/ritalinic acid-specific testing", ["stimulant"]),
+    item("amphetamine", "Amphetamine", "Stimulants", "drug_or_finding", ["Adderall component", "amphetamine salts"], "1-7 days", "May reflect prescribed amphetamine, lisdexamfetamine, methamphetamine metabolism, or immunoassay ambiguity.", "Definitive amphetamine and methamphetamine confirmation when unexpected", ["stimulant"]),
+    item("methamphetamine", "Methamphetamine", "Stimulants", "drug", ["Desoxyn"], "1-4 days", "Can produce amphetamine; d- and l-isomer testing may help source interpretation if available.", "Definitive amphetamine and methamphetamine plus isomer testing", ["stimulant"]),
+    item("lisdexamfetamine", "Lisdexamfetamine", "Stimulants", "drug", ["Vyvanse"], "Interpreted through amphetamine", "Explains amphetamine findings when medication history supports use.", "Amphetamine definitive testing when adherence and source matters", ["stimulant"]),
+    item("methylphenidate", "Methylphenidate", "Stimulants", "drug", ["Ritalin", "Concerta"], "Usually <1 day for parent; metabolite varies", "Routine amphetamine screens do not answer methylphenidate adherence questions.", "Methylphenidate and ritalinic acid-specific testing", ["stimulant"]),
+    item("ritalinic_acid", "Ritalinic acid", "Stimulants", "finding", ["methylphenidate metabolite"], "Panel-specific", "Supportive methylphenidate metabolite when included.", "Methylphenidate and ritalinic acid-specific testing", ["stimulant"]),
     item("bupropion", "Bupropion", "Assay caveats", "drug_or_context", ["Wellbutrin"], "Not a target UDS drug in most workflows", "Important medication context for unexpected amphetamine immunoassay positives.", "Definitive amphetamine confirmation if screen is unexpected", ["assay_context"]),
     item("pseudoephedrine", "Pseudoephedrine", "Assay caveats", "drug_or_context", ["Sudafed"], "Not usually a definitive target", "OTC context for unexpected amphetamine-class immunoassay results.", "Definitive amphetamine confirmation if screen is unexpected", ["assay_context"]),
     item("phentermine", "Phentermine", "Stimulants", "drug", ["Adipex-P"], "1-5 days", "Can complicate amphetamine-class screen interpretation depending on assay.", "Definitive stimulant testing when unexpected", ["stimulant", "assay_context"]),
-    item("cocaine", "Cocaine", "Cocaine", "drug", [], "Parent is short-lived", "Usually interpreted through benzoylecgonine in urine; does not prove impairment/timing.", "Cocaine metabolite definitive confirmation if high consequence", ["stimulant"]),
+    item("cocaine", "Cocaine", "Cocaine", "drug", [], "Parent is short-lived", "Usually interpreted through benzoylecgonine in urine; does not prove impairment or timing.", "Cocaine metabolite definitive confirmation if high consequence", ["stimulant"]),
     item("benzoylecgonine", "Benzoylecgonine", "Cocaine", "finding", ["cocaine metabolite", "BE"], "1-2 days typical", "Primary urine metabolite supporting cocaine exposure; does not establish impairment or exact timing.", "Cocaine metabolite confirmation when high consequence", ["stimulant"]),
 
-    item("delta9_thc", "Delta-9 THC / Cannabis", "Cannabinoids", "drug_or_context", ["cannabis", "marijuana"], "Urine interpretation usually through THC-COOH", "Urine cannabinoid testing supports exposure but not impairment or exact timing.", "Cannabinoid confirmation when clinically consequential", ["cannabinoid"]),
+    item("delta9_thc", "Delta-9 THC and cannabis", "Cannabinoids", "drug_or_context", ["cannabis", "marijuana"], "Urine interpretation usually through THC-COOH", "Urine cannabinoid testing supports exposure but not impairment or exact timing.", "Cannabinoid confirmation when clinically consequential", ["cannabinoid"]),
     item("thc_cooh", "THC-COOH", "Cannabinoids", "finding", ["carboxy THC", "THC metabolite"], "1-45 days depending on use pattern", "Supports cannabinoid exposure; single urine value does not determine impairment, exact timing, or new vs residual use.", "Definitive cannabinoid testing; serial creatinine-normalized values only for specific reuse questions", ["cannabinoid"]),
     item("delta8_thc", "Delta-8 THC", "Cannabinoids", "drug_or_context", ["delta 8"], "Panel-specific", "Generic cannabinoid screens may not distinguish delta-8 from delta-9 metabolites.", "Definitive cannabinoid isomer-specific testing if distinction matters", ["cannabinoid"]),
     item("cbd", "CBD product", "Cannabinoids", "drug_or_context", ["cannabidiol"], "Product-dependent", "CBD products can complicate THC interpretation if THC contamination or product labeling problems are possible.", "Confirm THC metabolite and review product context", ["cannabinoid_context"]),
-    item("synthetic_cannabinoids", "Synthetic cannabinoids", "Emerging / expanded", "drug_or_context", ["K2", "Spice"], "Panel-specific", "Routine THC screens generally do not exclude synthetic cannabinoids.", "Targeted synthetic cannabinoid testing if clinically relevant", ["emerging"]),
+    item("synthetic_cannabinoids", "Synthetic cannabinoids", "Emerging and expanded", "drug_or_context", ["K2", "Spice"], "Panel-specific", "Routine THC screens generally do not exclude synthetic cannabinoids.", "Targeted synthetic cannabinoid testing if clinically relevant", ["emerging"]),
 
-    item("ethanol", "Ethanol", "Alcohol markers", "drug_or_context", ["alcohol"], "Short for urine ethanol", "Urine ethanol is short-window; EtG/EtS are longer-window markers but require cutoff/context.", "EtG/EtS or other alcohol marker based on clinical question", ["alcohol"]),
+    item("ethanol", "Ethanol", "Alcohol markers", "drug_or_context", ["alcohol"], "Short for urine ethanol", "Urine ethanol is short-window; EtG and EtS are longer-window markers but require cutoff and context.", "EtG and EtS or other alcohol marker based on clinical question", ["alcohol"]),
     item("etg", "EtG", "Alcohol markers", "finding", ["ethyl glucuronide"], "1-4 days", "Sensitive alcohol exposure marker; cutoff, timing, and incidental exposure context matter.", "EtG with EtS when alcohol exposure matters", ["alcohol"]),
-    item("ets", "EtS", "Alcohol markers", "finding", ["ethyl sulfate"], "1-4 days", "Alcohol exposure marker often interpreted with EtG; cutoff/context matter.", "EtG/EtS panel", ["alcohol"]),
+    item("ets", "EtS", "Alcohol markers", "finding", ["ethyl sulfate"], "1-4 days", "Alcohol exposure marker often interpreted with EtG; cutoff and context matter.", "EtG and EtS panel", ["alcohol"]),
 
-    item("gabapentin", "Gabapentin", "Expanded / other", "drug", ["Neurontin"], "1-2 days", "Not included on many standard panels; order specifically if co-use affects safety.", "Gabapentin-specific or expanded definitive panel", ["gabapentinoid", "sedative"]),
-    item("pregabalin", "Pregabalin", "Expanded / other", "drug", ["Lyrica"], "1-2 days", "Not included on many standard panels; order specifically if co-use affects safety.", "Pregabalin-specific or expanded definitive panel", ["gabapentinoid", "sedative"]),
-    item("zolpidem", "Zolpidem", "Expanded / other", "drug", ["Ambien"], "1-3 days", "Often not included on standard panels; metabolite testing may be more useful than parent depending on timing.", "Zolpidem-specific definitive testing", ["sedative"]),
+    item("gabapentin", "Gabapentin", "Expanded and other", "drug", ["Neurontin"], "1-2 days", "Not included on many standard panels; order specifically if co-use affects safety.", "Gabapentin-specific or expanded definitive panel", ["gabapentinoid", "sedative"]),
+    item("pregabalin", "Pregabalin", "Expanded and other", "drug", ["Lyrica"], "1-2 days", "Not included on many standard panels; order specifically if co-use affects safety.", "Pregabalin-specific or expanded definitive panel", ["gabapentinoid", "sedative"]),
+    item("zolpidem", "Zolpidem", "Expanded and other", "drug", ["Ambien"], "1-3 days", "Often not included on standard panels; metabolite testing may be more useful than parent depending on timing.", "Zolpidem-specific definitive testing", ["sedative"]),
     item("pcp", "PCP", "Dissociatives", "drug_or_finding", ["phencyclidine"], "1-7 days", "PCP immunoassays can have false positives; confirm unexpected positives.", "Definitive PCP confirmation when unexpected", ["dissociative"]),
-    item("xylazine", "Xylazine", "Emerging / expanded", "drug", ["tranq"], "Targeted testing only", "Routine UDS generally does not detect xylazine; clinical suspicion requires targeted testing and supportive care.", "Targeted xylazine testing if available", ["emerging", "sedative", "high_risk"]),
-    item("mitragynine", "Mitragynine / kratom", "Emerging / expanded", "drug", ["kratom"], "Panel-specific", "Not included on many standard panels; order specifically if clinically relevant.", "Mitragynine/7-hydroxymitragynine targeted testing", ["emerging"]),
+    item("xylazine", "Xylazine", "Emerging and expanded", "drug", ["tranq"], "Targeted testing only", "Routine UDS generally does not detect xylazine; clinical suspicion requires targeted testing and supportive care.", "Targeted xylazine testing if available", ["emerging", "sedative", "high_risk"]),
+    item("mitragynine", "Mitragynine and kratom", "Emerging and expanded", "drug", ["kratom"], "Panel-specific", "Not included on many standard panels; order specifically if clinically relevant.", "Mitragynine and 7-hydroxymitragynine targeted testing", ["emerging"]),
   ];
 
   const relationships = [
     rel("codeine", "morphine", "expected metabolite", "shared", "Morphine can be compatible with codeine metabolism, but morphine is not codeine-specific."),
     rel("codeine", "hydrocodone", "minor metabolite", "context", "Small hydrocodone may occur in some codeine contexts; quantitative context matters."),
     rel("heroin", "6mam", "specific marker", "strong", "6-MAM supports recent heroin exposure when detected."),
-    rel("heroin", "morphine", "downstream metabolite", "shared", "Morphine can fit heroin pathway but is not heroin-specific without 6-MAM/timing context."),
+    rel("heroin", "morphine", "downstream metabolite", "shared", "Morphine can fit heroin pathway but is not heroin-specific without 6-MAM and timing context."),
     rel("hydrocodone", "norhydrocodone", "supportive metabolite", "strong", "Norhydrocodone supports hydrocodone exposure when included."),
     rel("hydrocodone", "hydromorphone", "expected metabolite", "shared", "Hydromorphone can be a hydrocodone metabolite but is not source-specific alone."),
     rel("morphine", "hydromorphone", "minor metabolite", "context", "Hydromorphone may occur as a minor morphine metabolite in some contexts."),
     rel("oxycodone", "noroxycodone", "supportive metabolite", "strong", "Noroxycodone supports oxycodone exposure when included."),
     rel("oxycodone", "oxymorphone", "expected metabolite", "shared", "Oxymorphone can be an oxycodone metabolite or prescribed separately."),
     rel("fentanyl", "norfentanyl", "supportive metabolite", "strong", "Norfentanyl supports fentanyl exposure when included."),
-    rel("buprenorphine", "norbuprenorphine", "supportive metabolite", "strong", "Norbuprenorphine supports buprenorphine metabolism/exposure."),
-    rel("buprenorphine", "naloxone", "combination product context", "context", "Naloxone may appear with buprenorphine/naloxone products; does not prove route manipulation alone."),
-    rel("methadone", "eddp", "supportive metabolite", "strong", "EDDP supports methadone ingestion/metabolism."),
+    rel("buprenorphine", "norbuprenorphine", "supportive metabolite", "strong", "Norbuprenorphine supports buprenorphine metabolism and exposure."),
+    rel("buprenorphine", "naloxone", "combination product context", "context", "Naloxone may appear with buprenorphine and naloxone products; does not prove route manipulation alone."),
+    rel("methadone", "eddp", "supportive metabolite", "strong", "EDDP supports methadone ingestion and metabolism."),
     rel("tramadol", "odesmethyltramadol", "supportive metabolite", "strong", "O-desmethyltramadol supports tramadol exposure."),
     rel("diazepam", "nordiazepam", "metabolite", "shared", "Nordiazepam supports diazepam-type exposure but is not source-specific alone."),
     rel("diazepam", "temazepam", "metabolite", "shared", "Temazepam may be prescribed directly or appear in a diazepam-type pathway."),
@@ -115,31 +115,31 @@
     rel("temazepam", "oxazepam", "metabolite", "shared", "Oxazepam can follow temazepam exposure, but source requires the full pattern."),
     rel("clonazepam", "aminoclonazepam7", "supportive metabolite", "strong", "7-aminoclonazepam supports clonazepam exposure."),
     rel("alprazolam", "alpha_hydroxyalprazolam", "supportive metabolite", "strong", "Alpha-hydroxyalprazolam supports alprazolam exposure."),
-    rel("methamphetamine", "amphetamine", "metabolite", "shared", "Amphetamine can be a methamphetamine metabolite or separate/prescribed exposure."),
+    rel("methamphetamine", "amphetamine", "metabolite", "shared", "Amphetamine can be a methamphetamine metabolite or separate prescribed exposure."),
     rel("lisdexamfetamine", "amphetamine", "expected finding", "strong", "Lisdexamfetamine explains amphetamine findings when medication history supports use."),
     rel("methylphenidate", "ritalinic_acid", "supportive metabolite", "strong", "Ritalinic acid supports methylphenidate exposure when included."),
     rel("cocaine", "benzoylecgonine", "supportive metabolite", "strong", "Benzoylecgonine supports cocaine exposure."),
     rel("delta9_thc", "thc_cooh", "supportive metabolite", "strong", "THC-COOH supports cannabinoid exposure but not impairment or exact timing."),
-    rel("ethanol", "etg", "alcohol marker", "context", "EtG supports recent alcohol exposure but requires cutoff/timing context."),
+    rel("ethanol", "etg", "alcohol marker", "context", "EtG supports recent alcohol exposure but requires cutoff and timing context."),
     rel("ethanol", "ets", "alcohol marker", "context", "EtS supports recent alcohol exposure and is commonly interpreted with EtG."),
   ];
 
   const clinicalQuestions = [
-    question("oxy_presence", "Is prescribed oxycodone present?", "Order oxycodone + oxymorphone, preferably definitive if the result affects care.", "Do not rely on a generic opiate screen.", "Oxycodone, noroxycodone, oxymorphone."),
-    question("fentanyl_presence", "Could fentanyl exposure be present?", "Order fentanyl + norfentanyl-specific or definitive testing.", "A negative routine opiate screen does not exclude fentanyl.", "Fentanyl, norfentanyl."),
-    question("bupe_adherence", "Is buprenorphine being taken?", "Order buprenorphine + norbuprenorphine with specimen validity.", "Do not use a generic opiate screen for buprenorphine adherence.", "Buprenorphine, norbuprenorphine, naloxone if product context matters."),
-    question("methadone_adherence", "Is methadone being taken?", "Order methadone + EDDP.", "Do not assume generic opiate coverage includes methadone.", "Methadone, EDDP."),
+    question("oxy_presence", "Is prescribed oxycodone present?", "Order oxycodone and oxymorphone, preferably definitive if the result affects care.", "Do not rely on a generic opiate screen.", "Oxycodone, noroxycodone, oxymorphone."),
+    question("fentanyl_presence", "Could fentanyl exposure be present?", "Order fentanyl and norfentanyl-specific or definitive testing.", "A negative routine opiate screen does not exclude fentanyl.", "Fentanyl, norfentanyl."),
+    question("bupe_adherence", "Is buprenorphine being taken?", "Order buprenorphine and norbuprenorphine with specimen validity.", "Do not use a generic opiate screen for buprenorphine adherence.", "Buprenorphine, norbuprenorphine, naloxone if product context matters."),
+    question("methadone_adherence", "Is methadone being taken?", "Order methadone and EDDP.", "Do not assume generic opiate coverage includes methadone.", "Methadone, EDDP."),
     question("clonazepam_adherence", "Is clonazepam being taken?", "Order definitive benzodiazepine testing that includes 7-aminoclonazepam.", "A benzodiazepine immunoassay may miss clonazepam.", "7-aminoclonazepam."),
-    question("lorazepam_adherence", "Is lorazepam being taken?", "Order definitive benzodiazepine testing with lorazepam/glucuronide sensitivity.", "Some screens under-detect lorazepam or glucuronidated metabolites.", "Lorazepam and/or lorazepam-glucuronide depending on method."),
-    question("methylphenidate_adherence", "Is methylphenidate being taken?", "Order methylphenidate/ritalinic acid-specific testing.", "A routine amphetamine screen does not answer methylphenidate adherence.", "Ritalinic acid."),
-    question("amphetamine_confirm", "Is an amphetamine screen real?", "Confirm with definitive amphetamine/methamphetamine testing before major action.", "Bupropion, pseudoephedrine, phentermine, and assay effects can complicate screens.", "Amphetamine, methamphetamine; consider isomer testing if source matters."),
-    question("alcohol_exposure", "Is alcohol exposure relevant?", "Order EtG/EtS and interpret with cutoff, timing, and exposure history.", "Do not infer impairment or exact timing from EtG/EtS alone.", "EtG, EtS."),
+    question("lorazepam_adherence", "Is lorazepam being taken?", "Order definitive benzodiazepine testing with lorazepam and glucuronide sensitivity.", "Some screens under-detect lorazepam or glucuronidated metabolites.", "Lorazepam or lorazepam-glucuronide depending on method."),
+    question("methylphenidate_adherence", "Is methylphenidate being taken?", "Order methylphenidate and ritalinic acid-specific testing.", "A routine amphetamine screen does not answer methylphenidate adherence.", "Ritalinic acid."),
+    question("amphetamine_confirm", "Is an amphetamine screen real?", "Confirm with definitive amphetamine and methamphetamine testing before major action.", "Bupropion, pseudoephedrine, phentermine, and assay effects can complicate screens.", "Amphetamine, methamphetamine; consider isomer testing if source matters."),
+    question("alcohol_exposure", "Is alcohol exposure relevant?", "Order EtG and EtS and interpret with cutoff, timing, and exposure history.", "Do not infer impairment or exact timing from EtG and EtS alone.", "EtG, EtS."),
     question("xylazine", "Could xylazine be involved?", "Order targeted xylazine testing if available and clinically relevant.", "Routine UDS generally does not detect xylazine.", "Xylazine requires targeted testing; clinical management is supportive."),
-    question("gabapentin", "Is gabapentin/pregabalin co-use relevant?", "Order gabapentin or pregabalin specifically or use an expanded definitive panel.", "Most standard UDS panels do not include gabapentinoids.", "Gabapentin, pregabalin."),
+    question("gabapentin", "Is gabapentin or pregabalin co-use relevant?", "Order gabapentin or pregabalin specifically or use an expanded definitive panel.", "Most standard UDS panels do not include gabapentinoids.", "Gabapentin, pregabalin."),
   ];
 
   const builtInProfiles = [
-    profile("unknown", "Unknown / report not reviewed", "unknown", "Use when the exact method, included analytes, and cutoffs are unknown.", false, []),
+    profile("unknown", "Unknown; report not reviewed", "unknown", "Use when the exact method, included analytes, and cutoffs are unknown.", false, []),
     profile("generic_opiate_screen", "Generic opiate immunoassay", "immunoassay", "Morphine-like class screen. Synthetic and many semisynthetic opioids require targeted testing.", false, [
       coverage("morphine", "class_screen"), coverage("codeine", "class_screen"), coverage("hydrocodone", "assay_dependent"), coverage("hydromorphone", "assay_dependent"), coverage("oxycodone", "assay_dependent"), coverage("oxymorphone", "assay_dependent"), coverage("fentanyl", "not_included"), coverage("norfentanyl", "not_included"), coverage("methadone", "not_included"), coverage("eddp", "not_included"), coverage("buprenorphine", "not_included"), coverage("norbuprenorphine", "not_included"), coverage("tramadol", "not_included"), coverage("tapentadol", "not_included"),
     ]),
@@ -451,7 +451,7 @@
         <nav class="uds-nav" aria-label="UDS workflows">
           ${navButton("interpret", "Interpret", "Result workflow")}
           ${navButton("test", "Choose test", "Before ordering")}
-          ${navButton("lookup", "Lookup", "Drug/analyte")}
+          ${navButton("lookup", "Lookup", "Drug and analyte")}
           ${navButton("panels", "Panels", "Local profiles")}
         </nav>
         <main class="uds-main" id="udsMain"></main>
@@ -493,8 +493,8 @@
             </div>
           </div>
           ${renderContextControls()}
-          ${renderChipEditor("expected", "Expected medications/substances", "Prescribed, reported, administered, or otherwise expected")}
-          ${renderChipEditor("detected", "Detected / positive findings", "What the report lists as present")}
+          ${renderChipEditor("expected", "Expected medications and substances", "Prescribed, reported, administered, or otherwise expected")}
+          ${renderChipEditor("detected", "Detected positive findings", "What the report lists as present")}
           ${renderAbsentEditor()}
           ${renderValidityControls()}
         </form>
@@ -510,9 +510,9 @@
           ${renderOutputBlock("Specimen validity", [...result.validityNotes, ...result.validityWarnings], validityOutputTone(result))}
           ${renderOutputBlock("What this can support", result.canSupport, result.explained.length ? "compatible" : "neutral")}
           ${renderOutputBlock("What this cannot support", result.cannotSupport, "neutral")}
-          ${result.panelWarnings.length ? renderOutputBlock("Panel/profile limitations", result.panelWarnings, "method") : ""}
+          ${result.panelWarnings.length ? renderOutputBlock("Panel and profile limitations", result.panelWarnings, "method") : ""}
           ${renderOutputBlock("Recommended next step", [result.nextStep], nextStepOutputTone(result))}
-          ${result.expectedNegatives.length ? renderDetails("Expected negative / absent findings", result.expectedNegatives) : ""}
+          ${result.expectedNegatives.length ? renderDetails("Expected negative and absent findings", result.expectedNegatives) : ""}
           ${renderDetails("Reasoning details", [
             ...result.explained.map((line) => `Compatible: ${line}`),
             ...result.contextNeeded.map((line) => `Context: ${line}`),
@@ -520,7 +520,7 @@
             ...result.absentConcerns.map((line) => `Absent review: ${line}`),
             ...result.expectedNegatives.map((line) => `Expected negative: ${line}`),
             ...result.validityWarnings.map((line) => `Specimen validity: ${line}`),
-            ...result.panelWarnings.map((line) => `Panel/profile: ${line}`),
+            ...result.panelWarnings.map((line) => `Panel and profile: ${line}`),
           ])}
           ${renderDetails("Method notes", result.methodNotes)}
           ${renderDetails("Optional supportive findings to check", result.supportiveNotEntered)}
@@ -546,18 +546,18 @@
             ${option("benzo", "Benzodiazepine prescribing", state.context)}
             ${option("stimulant", "Stimulant prescribing", state.context)}
             ${option("psychiatry", "Psychiatry", state.context)}
-            ${option("ed", "ED / urgent care", state.context)}
-            ${option("pregnancy", "Pregnancy / perinatal", state.context)}
+            ${option("ed", "ED and urgent care", state.context)}
+            ${option("pregnancy", "Pregnancy and perinatal", state.context)}
             ${option("adolescent", "Adolescent", state.context)}
             ${option("other", "Other clinical context", state.context)}
-            ${option("forensic_nonclinical", "Legal / employment / forensic - not supported", state.context)}
+            ${option("forensic_nonclinical", "Legal, employment, or forensic - not supported", state.context)}
           </select>
         </label>
         <label>Decision impact
           <select data-field="consequence">
             ${option("low", "Low", state.consequence)}
             ${option("moderate", "Moderate", state.consequence)}
-            ${option("high", "High / changes care", state.consequence)}
+            ${option("high", "High: changes care", state.consequence)}
           </select>
         </label>
         <label>Method
@@ -570,7 +570,7 @@
         <label>Result source
           <select data-field="resultSource">
             ${option("unknown", "Unknown", state.resultSource)}
-            ${option("poc", "Point-of-care cup/card", state.resultSource)}
+            ${option("poc", "Point-of-care cup or card", state.resultSource)}
             ${option("lab_screen", "Laboratory immunoassay", state.resultSource)}
             ${option("lab_definitive", "Laboratory definitive LC/GC-MS", state.resultSource)}
           </select>
@@ -599,7 +599,7 @@
   function renderAbsentEditor() {
     return `
       <section class="uds-input-section">
-        <div class="uds-section-label"><strong>Tested but absent</strong><span>Use only when the analyte was included and reported negative/absent.</span></div>
+        <div class="uds-section-label"><strong>Tested but absent</strong><span>Use only when the analyte was included and reported negative or absent.</span></div>
         <label class="uds-checkbox-line">
           <input data-field="absentVerified" type="checkbox" ${state.absentVerified ? "checked" : ""} />
           <span>I verified these absent analytes were included and reportable on the selected panel.</span>
@@ -669,11 +669,11 @@
       <section class="uds-input-section">
         <div class="uds-section-label"><strong>Specimen validity</strong><span>No values required. Use the report's validity flag if available.</span></div>
         <select data-field="validityFlag">
-          ${option("unknown", "Unknown / not reported", state.validityFlag)}
+          ${option("unknown", "Unknown or not reported", state.validityFlag)}
           ${option("normal", "Appears interpretable", state.validityFlag)}
           ${option("dilute", "Dilute - negatives less reliable", state.validityFlag)}
-          ${option("invalid", "Invalid / do not interpret", state.validityFlag)}
-          ${option("adulterated", "Possible adulteration / consult lab", state.validityFlag)}
+          ${option("invalid", "Invalid: do not interpret", state.validityFlag)}
+          ${option("adulterated", "Possible adulteration: consult lab", state.validityFlag)}
         </select>
         ${renderValidityDetails()}
       </section>
@@ -698,11 +698,11 @@
           <label>pH
             <input data-validity-detail="ph" inputmode="decimal" placeholder="Optional" value="${escapeHtml(state.validityDetails.ph)}" />
           </label>
-          <label>Oxidants/adulterants
+          <label>Oxidants or adulterants
             <select data-validity-detail="oxidants">
-              ${option("unknown", "Unknown / not reported", state.validityDetails.oxidants)}
-              ${option("normal", "Normal / negative", state.validityDetails.oxidants)}
-              ${option("abnormal", "Abnormal / positive", state.validityDetails.oxidants)}
+              ${option("unknown", "Unknown or not reported", state.validityDetails.oxidants)}
+              ${option("normal", "Normal or negative", state.validityDetails.oxidants)}
+              ${option("abnormal", "Abnormal or positive", state.validityDetails.oxidants)}
             </select>
           </label>
         </div>
@@ -752,7 +752,7 @@
     return {
       compatible: "Compatible",
       caution: "Caution",
-      method: "Panel/method",
+      method: "Panel and method",
       warning: "Action needed",
       neutral: "Info",
     }[tone] || "Info";
@@ -778,7 +778,7 @@
   }
 
   function nextStepOutputTone(result) {
-    if (/Confirm before action|Repeat \/ consult lab|Do not use/i.test(result.confirmationLevel)) {
+    if (/Confirm before action|Repeat or consult lab|Do not use/i.test(result.confirmationLevel)) {
       return "warning";
     }
 
@@ -843,7 +843,7 @@
     return `
       <section class="uds-simple-grid uds-lookup-grid">
         <div class="uds-card">
-          <div class="uds-card-head"><div><p class="uds-eyebrow">Reference</p><h3>Look up drug / metabolite</h3></div></div>
+          <div class="uds-card-head"><div><p class="uds-eyebrow">Reference</p><h3>Look up drug and metabolite</h3></div></div>
           <input
             autocomplete="off"
             data-field="lookupQuery"
@@ -869,9 +869,9 @@
       ${renderOutputBlock("Bottom line", [selected.note])}
       ${renderOutputBlock("Best test concept", [selected.bestTest])}
       ${renderOutputBlock("Approximate urine window", [selected.window])}
-      ${renderOutputBlock("Expected / related findings", getRelatedLines(selected.id))}
+      ${renderOutputBlock("Expected and related findings", getRelatedLines(selected.id))}
       ${renderOutputBlock("Do not conclude", [standardCannotConclude().join("; ")])}
-      ${renderDetails("Reference / governance", [
+      ${renderDetails("Reference and governance", [
         `Last reviewed: ${REVIEW_METADATA.lastReviewed}`,
         `Status: ${REVIEW_METADATA.status}`,
         REVIEW_METADATA.note,
@@ -942,13 +942,13 @@
           </div>
           <label class="uds-checkbox-line"><input data-panel-field="validityIncluded" type="checkbox" ${state.panelDraft.validityIncluded ? "checked" : ""} /><span>Specimen validity is included or routinely reported.</span></label>
           <label>Non-identifying notes
-            <textarea data-panel-field="note" placeholder="Example: Confirm actual analytes/cutoffs with lab before go-live.">${escapeHtml(state.panelDraft.note)}</textarea>
+            <textarea data-panel-field="note" placeholder="Example: Confirm actual analytes and cutoffs with lab before go-live.">${escapeHtml(state.panelDraft.note)}</textarea>
           </label>
           <section class="uds-input-section">
-            <div class="uds-section-label"><strong>Included analytes</strong><span>Add only analyte names; no report/order identifiers.</span></div>
+            <div class="uds-section-label"><strong>Included analytes</strong><span>Add only analyte names; no report or order identifiers.</span></div>
             <label>Coverage status
               <select data-panel-field="panelDraftCoverageStatus">
-                ${option("included", "Included / reportable", state.panelDraftCoverageStatus)}
+                ${option("included", "Included and reportable", state.panelDraftCoverageStatus)}
                 ${option("class_screen", "Class screen only", state.panelDraftCoverageStatus)}
                 ${option("assay_dependent", "Assay-dependent", state.panelDraftCoverageStatus)}
                 ${option("not_included", "Known not included", state.panelDraftCoverageStatus)}
@@ -1020,11 +1020,11 @@
     const safetyFlags = buildSafetyFlags();
 
     if (state.context === "forensic_nonclinical") {
-      const label = "Nonclinical/forensic use not supported";
-      const nextStep = "Use appropriate chain-of-custody, forensic/workplace protocols, certified laboratory processes, and qualified review. This clinical reference tool should not be used for legal, employment, custody, or forensic conclusions.";
+      const label = "Nonclinical or forensic use not supported";
+      const nextStep = "Use appropriate chain-of-custody, forensic or workplace protocols, certified laboratory processes, and qualified review. This clinical reference tool should not be used for legal, employment, custody, or forensic conclusions.";
       const chartNote = [
         "UDS clinical reference review, no patient identifiers entered.",
-        "Selected context is legal/employment/forensic, which is outside this tool's intended use.",
+        "Selected context is legal, employment, or forensic, which is outside this tool's intended use.",
         `Next step: ${nextStep}`,
       ].join("\n");
 
@@ -1074,7 +1074,7 @@
         return;
       }
       const entry = getItem(detectedId);
-      notExplained.push(`${itemLabel(detectedId)} is not explained by the entered expected medications/substances.${entry?.note ? ` ${entry.note}` : ""}`);
+      notExplained.push(`${itemLabel(detectedId)} is not explained by the entered expected medications and substances.${entry?.note ? ` ${entry.note}` : ""}`);
     });
 
     const absentReviews = state.absent.map((id) => classifyAbsent(id, profile));
@@ -1118,7 +1118,7 @@
     validityWarnings.push(...detailValidity.negativeLimitations);
     validityWarnings.push(...detailValidity.criticalWarnings);
     if (state.validityFlag === "unknown" && state.absent.length) {
-      validityWarnings.push("Specimen validity is unknown; absent/negative findings are less secure than positive detected findings.");
+      validityWarnings.push("Specimen validity is unknown; absent or negative findings are less secure than positive detected findings.");
     }
 
     const confirmationLevel = confirmationLevelFor({ notExplained, absentReviews, panelWarnings, validityWarnings });
@@ -1126,7 +1126,7 @@
     const nextStep = nextStepFor({ label, confirmationLevel, notExplained, contextNeeded, absentConcerns, panelWarnings, validityWarnings });
     const canSupport = buildCanSupport(explained, contextNeeded, notExplained);
     const cannotSupport = [...standardCannotConclude()];
-    if (state.absent.length && absentReviews.some((row) => ["non_actionable", "panel_limited"].includes(row.severity))) cannotSupport.push("Absent findings cannot support non-exposure/nonadherence until panel coverage is verified.");
+    if (state.absent.length && absentReviews.some((row) => ["non_actionable", "panel_limited"].includes(row.severity))) cannotSupport.push("Absent findings cannot support non-exposure or nonadherence until panel coverage is verified.");
     if (profile.id === "unknown") cannotSupport.push("A negative or absent result cannot be relied on when the ordered panel is unknown.");
     if (["dilute", "invalid", "adulterated"].includes(state.validityFlag)) cannotSupport.push("Negative results are limited by specimen validity concerns.");
 
@@ -1144,11 +1144,11 @@
     });
     const shortSummary = [
       `UDS interpretation: ${label}.`,
-      `Method/panel: ${formatMethod(state.method)} / ${selectedProfile().label}.`,
+      `Method and panel: ${formatMethod(state.method)}; ${selectedProfile().label}.`,
       `Result source: ${formatResultSource(state.resultSource)}.`,
       `Confirmation threshold: ${confirmationLevel}.`,
       safetyFlags.length ? `Safety: ${safetyFlags.slice(0, 2).join("; ")}.` : "",
-      panelWarnings.length ? `Panel/profile: ${panelWarnings.slice(0, 2).join("; ")}.` : "",
+      panelWarnings.length ? `Panel and profile: ${panelWarnings.slice(0, 2).join("; ")}.` : "",
       validityWarnings.length ? `Validity: ${validityWarnings.slice(0, 2).join("; ")}.` : "",
       validityWarnings.length && buildValidityDetailSummary().length ? `Validity details: ${buildValidityDetailSummary().join("; ")}.` : "",
       `Next: ${nextStep}`,
@@ -1220,7 +1220,7 @@
   function coverageText(status) {
     return {
       included: "included",
-      class_screen: "class screen / not source-specific",
+      class_screen: "class screen, not source-specific",
       assay_dependent: "assay-dependent",
       not_included: "not included",
     }[status] || "unknown";
@@ -1310,13 +1310,13 @@
       id,
       severity: "expected_negative",
       label: "Not expected and absent",
-      message: `${name} was reported absent on a verified panel and was not expected from the entered medication/substance list.`,
+      message: `${name} was reported absent on a verified panel and was not expected from the entered medication and substance list.`,
     };
   }
 
   function buildPanelWarnings(profile) {
     const warnings = [];
-    if (profile.id === "unknown") warnings.push("Panel profile is unknown. Do not rely on absent findings until included analytes/cutoffs are verified.");
+    if (profile.id === "unknown") warnings.push("Panel profile is unknown. Do not rely on absent findings until included analytes and cutoffs are verified.");
     if (isDemoProfile(profile)) {
       warnings.push("The selected broad definitive profile is a demonstration profile, not a verified local laboratory panel. Do not rely on it for clinical interpretation unless it has been replaced with a local non-identifying profile that matches the actual report.");
     }
@@ -1328,7 +1328,7 @@
     ) {
       warnings.push("Selected panel profile has no mapped analytes or known gaps; update the profile before interpreting coverage.");
     }
-    if (state.absent.length && profile.id !== "unknown" && !profile.validityIncluded) warnings.push("Selected panel profile does not map specimen validity; absent/negative findings should be interpreted cautiously.");
+    if (state.absent.length && profile.id !== "unknown" && !profile.validityIncluded) warnings.push("Selected panel profile does not map specimen validity; absent or negative findings should be interpreted cautiously.");
     if (profile.method !== "unknown" && state.method !== "unknown" && profile.method !== state.method && profile.method !== "mixed") warnings.push(`Selected profile method (${profile.method}) does not match selected result method (${state.method}).`);
 
     [...state.detected, ...state.absent].forEach((id) => {
@@ -1368,9 +1368,9 @@
     }
 
     const hasFentanylQuestion = [...state.expected, ...state.detected, ...state.absent].some((id) => ["fentanyl", "norfentanyl"].includes(id));
-    if (state.panelId === "generic_opiate_screen" && hasFentanylQuestion) warnings.push("Generic opiate screens do not exclude fentanyl/norfentanyl exposure.");
+    if (state.panelId === "generic_opiate_screen" && hasFentanylQuestion) warnings.push("Generic opiate screens do not exclude fentanyl or norfentanyl exposure.");
     const hasOxyQuestion = [...state.expected, ...state.absent].some((id) => ["oxycodone", "oxymorphone", "noroxycodone"].includes(id));
-    if (state.panelId === "generic_opiate_screen" && hasOxyQuestion) warnings.push("A generic opiate screen may miss oxycodone/oxymorphone unless oxycodone-specific testing is included.");
+    if (state.panelId === "generic_opiate_screen" && hasOxyQuestion) warnings.push("A generic opiate screen may miss oxycodone or oxymorphone unless oxycodone-specific testing is included.");
     const genericOpiateBlindSpotIds = [
       "buprenorphine",
       "norbuprenorphine",
@@ -1382,9 +1382,9 @@
     ];
     const hasGenericOpiateBlindSpotQuestion = [...state.expected, ...state.detected, ...state.absent]
       .some((id) => genericOpiateBlindSpotIds.includes(id));
-    if (state.panelId === "generic_opiate_screen" && hasGenericOpiateBlindSpotQuestion) warnings.push("Generic opiate screens do not reliably detect buprenorphine, methadone/EDDP, tramadol, or tapentadol; order targeted or definitive testing when those drugs matter.");
+    if (state.panelId === "generic_opiate_screen" && hasGenericOpiateBlindSpotQuestion) warnings.push("Generic opiate screens do not reliably detect buprenorphine, methadone or EDDP, tramadol, or tapentadol; order targeted or definitive testing when those drugs matter.");
     const hasClonazepamQuestion = [...state.expected, ...state.absent].some((id) => ["clonazepam", "aminoclonazepam7"].includes(id));
-    if (state.panelId === "benzodiazepine_screen" && hasClonazepamQuestion) warnings.push("Some benzodiazepine screens under-detect clonazepam/7-aminoclonazepam.");
+    if (state.panelId === "benzodiazepine_screen" && hasClonazepamQuestion) warnings.push("Some benzodiazepine screens under-detect clonazepam or 7-aminoclonazepam.");
     const hasLorazepamQuestion = [...state.expected, ...state.absent].some((id) => id === "lorazepam");
     if (state.panelId === "benzodiazepine_screen" && hasLorazepamQuestion) warnings.push("Some benzodiazepine screens under-detect lorazepam or glucuronidated metabolites.");
     return warnings;
@@ -1496,7 +1496,7 @@
     }
 
     if (state.validityDetails.oxidants === "abnormal") {
-      criticalWarnings.push("Oxidants/adulterants are reported abnormal; consult the lab and avoid relying on the result without repeat or confirmation.");
+      criticalWarnings.push("Oxidants or adulterants are reported abnormal; consult the lab and avoid relying on the result without repeat or confirmation.");
     }
 
     return { notes, negativeLimitations, criticalWarnings };
@@ -1534,21 +1534,21 @@
         (state.expected.includes("methadone") && state.absent.includes("eddp"))
       );
 
-    if (hasExpectedOrDetectedOpioid && hasDetectedBenzo) flags.push("Opioid therapy/exposure + benzodiazepine detected: assess sedation/overdose risk and naloxone access.");
-    if (hasDetectedOpioid && hasExpectedBenzo) flags.push("Opioid detected with expected benzodiazepine therapy: assess sedation/overdose risk and coordination of prescribing.");
-    if (hasExpectedOrDetectedOpioid && hasDetectedAlcohol) flags.push("Opioid therapy/exposure + alcohol marker detected: assess respiratory depression and safety risk.");
-    if (hasExpectedOrDetectedOpioid && hasDetectedSedative && !hasDetectedBenzo) flags.push("Opioid therapy/exposure + sedating co-exposure detected: assess sedation/overdose risk.");
+    if (hasExpectedOrDetectedOpioid && hasDetectedBenzo) flags.push("Opioid therapy or exposure plus benzodiazepine detected: assess sedation and overdose risk and naloxone access.");
+    if (hasDetectedOpioid && hasExpectedBenzo) flags.push("Opioid detected with expected benzodiazepine therapy: assess sedation and overdose risk and coordination of prescribing.");
+    if (hasExpectedOrDetectedOpioid && hasDetectedAlcohol) flags.push("Opioid therapy or exposure plus alcohol marker detected: assess respiratory depression and safety risk.");
+    if (hasExpectedOrDetectedOpioid && hasDetectedSedative && !hasDetectedBenzo) flags.push("Opioid therapy or exposure plus sedating co-exposure detected: assess sedation and overdose risk.");
     if (hasExpectedOudMedicationAbsent) flags.push("OUD treatment context with expected buprenorphine or methadone absent: assess adherence barriers, withdrawal/craving risk, recurrence risk, and whether repeat or definitive testing is needed.");
     if (hasExpectedOudSupportiveMetaboliteAbsent) flags.push("OUD treatment context with expected supportive metabolite absent: review timing, cutoff, specimen validity, panel coverage, adherence barriers, and whether repeat or definitive testing is needed.");
     if (fentanylDetected && state.context === "oud") {
-      flags.push("OUD treatment context with fentanyl/norfentanyl detected: review buprenorphine/methadone adequacy, overdose prevention, naloxone, and follow-up intensity.");
+      flags.push("OUD treatment context with fentanyl or norfentanyl detected: review buprenorphine or methadone adequacy, overdose prevention, naloxone, and follow-up intensity.");
     } else if (fentanylDetected && state.context === "chronic_opioid") {
-      flags.push("Chronic opioid therapy context with fentanyl/norfentanyl detected: assess overdose risk, medication interactions, nonprescribed exposure, and confirm if the result affects prescribing.");
+      flags.push("Chronic opioid therapy context with fentanyl or norfentanyl detected: assess overdose risk, medication interactions, nonprescribed exposure, and confirm if the result affects prescribing.");
     } else if (fentanylDetected) {
-      flags.push("Fentanyl/norfentanyl detected: review overdose prevention, naloxone, and treatment adequacy.");
+      flags.push("Fentanyl or norfentanyl detected: review overdose prevention, naloxone, and treatment adequacy.");
     }
     if (detected.some((entry) => entry.id === "xylazine")) flags.push("Xylazine detected or suspected: routine UDS usually misses it; naloxone still treats opioid co-exposure, but xylazine effects require supportive care.");
-    if (state.context === "pregnancy") flags.push("Pregnancy/perinatal context: confirm unexpected results before high-consequence action and follow local policy/law.");
+    if (state.context === "pregnancy") flags.push("Pregnancy and perinatal context: confirm unexpected results before high-consequence action and follow local policy or law.");
     if (state.context === "adolescent") flags.push("Adolescent context: consider consent/confidentiality rules and avoid punitive use.");
     return [...new Set(flags)];
   }
@@ -1573,11 +1573,11 @@
       state.method === "unknown";
 
     if (!hasResultInput) return "Needs result input";
-    if (hasHardValidityProblem) return "Repeat / consult lab";
+    if (hasHardValidityProblem) return "Repeat or consult lab";
     if (state.consequence === "high" && hasActionableUncertainty) return "Confirm before action";
     if (state.consequence === "high") return "High-consequence review";
     if (state.method === "immunoassay" && (notExplained.length || hasUnexpectedAbsent)) return "Confirmation recommended";
-    if (notExplained.length || hasUnexpectedAbsent) return "Clarify / confirm";
+    if (notExplained.length || hasUnexpectedAbsent) return "Clarify or confirm";
     if (hasPanelLimitedAbsent || panelWarnings.length) return "Verify panel";
     if (validityWarnings.length) return "Interpret cautiously";
     return "Routine documentation";
@@ -1590,31 +1590,31 @@
     if (notExplained.length && !state.expected.length) return { label: "Detected finding without expected medication context", tone: "caution" };
     if (notExplained.length) return { label: "Unexpected positive", tone: "warning" };
     if (absentReviews.some((row) => row.severity === "unexpected_negative")) return { label: "Unexpected negative", tone: "caution" };
-    if (absentReviews.some((row) => row.severity === "supportive_absent")) return { label: "Supportive finding absent / context-dependent", tone: "caution" };
-    if (absentReviews.some((row) => ["panel_limited", "non_actionable"].includes(row.severity))) return { label: "Assay-limited / panel-dependent", tone: "method" };
-    if (contextNeeded.length) return { label: "Source-ambiguous / context-dependent", tone: "caution" };
-    if (panelWarnings.length) return { label: "Assay-limited / panel-dependent", tone: "method" };
+    if (absentReviews.some((row) => row.severity === "supportive_absent")) return { label: "Supportive finding absent, context-dependent", tone: "caution" };
+    if (absentReviews.some((row) => ["panel_limited", "non_actionable"].includes(row.severity))) return { label: "Assay-limited and panel-dependent", tone: "method" };
+    if (contextNeeded.length) return { label: "Source-ambiguous, context-dependent", tone: "caution" };
+    if (panelWarnings.length) return { label: "Assay-limited and panel-dependent", tone: "method" };
     if (validityWarnings.length && state.absent.length) return { label: "Specimen-limited absent finding", tone: "caution" };
-    if (explained.length) return { label: "Consistent / expected", tone: "compatible" };
+    if (explained.length) return { label: "Consistent and expected", tone: "compatible" };
     if (state.detected.length && !state.expected.length) return { label: "Detected finding without expected medication context", tone: "caution" };
     return { label: "Incomplete", tone: "neutral" };
   }
 
   function nextStepFor({ label, confirmationLevel, notExplained, contextNeeded, absentConcerns, panelWarnings, validityWarnings }) {
-    if (confirmationLevel === "Confirm before action") return "Because the result may change care or has high consequence, obtain definitive confirmation or lab/toxicology input before major management changes.";
-    if (!state.detected.length && !state.absent.length) return "Add detected positive/present findings or verified tested-but-absent findings to complete the reconciliation.";
+    if (confirmationLevel === "Confirm before action") return "Because the result may change care or has high consequence, obtain definitive confirmation or lab or toxicology input before major management changes.";
+    if (!state.detected.length && !state.absent.length) return "Add detected positive findings or verified tested-but-absent findings to complete the reconciliation.";
     if (["invalid", "adulterated"].includes(state.validityFlag) || hasCriticalValidityDetailProblem()) return "Do not interpret this result as final. Repeat collection per policy or consult the laboratory.";
-    if (notExplained.length && !state.expected.length) return "Add expected medications/substances, recent administered medications, or reported exposures if known; otherwise review as a detected finding requiring clinical context.";
-    if (notExplained.length && state.method === "immunoassay") return "Discuss nonjudgmentally, review medication/OTC exposures, and confirm unexpected positives with definitive testing before changing care.";
-    if (notExplained.length) return "Review medication/substance history, timing, and panel details; consult the lab or confirm if the result affects management.";
+    if (notExplained.length && !state.expected.length) return "Add expected medications and substances, recent administered medications, or reported exposures if known; otherwise review as a detected finding requiring clinical context.";
+    if (notExplained.length && state.method === "immunoassay") return "Discuss nonjudgmentally, review medication and OTC exposures, and confirm unexpected positives with definitive testing before changing care.";
+    if (notExplained.length) return "Review medication and substance history, timing, and panel details; consult the lab or confirm if the result affects management.";
     if (absentConcerns.length && !state.absentVerified) return "Verify panel coverage and reportable analytes before interpreting any absent result.";
     if (absentConcerns.length) return "Review timing, cutoff, specimen validity, medication history, and whether repeat testing or lab input is needed before treating absent expected findings as clinically meaningful.";
-    if (panelWarnings.length) return "Resolve panel/profile limitations before relying on absent or class-screen findings.";
+    if (panelWarnings.length) return "Resolve panel and profile limitations before relying on absent or class-screen findings.";
     if (validityWarnings.length && state.absent.length) return "Interpret absent findings cautiously because specimen validity is incomplete or limited.";
     if (validityWarnings.length) return "Address specimen-validity limitations before relying on the result.";
-    if (contextNeeded.length) return "Interpret with timing, cutoff, quantitative values if available, and the full parent/metabolite pattern.";
-    if (label === "Consistent / expected") return "Document as compatible with the entered expected medication/substance list, assuming timing, cutoff, and specimen validity fit.";
-    if (label === "Detected finding without expected medication context") return "Add expected medications/substances or review as an unexpected detected finding if no explanation is known.";
+    if (contextNeeded.length) return "Interpret with timing, cutoff, quantitative values if available, and the full parent and metabolite pattern.";
+    if (label === "Consistent and expected") return "Document as compatible with the entered expected medication and substance list, assuming timing, cutoff, and specimen validity fit.";
+    if (label === "Detected finding without expected medication context") return "Add expected medications and substances or review as an unexpected detected finding if no explanation is known.";
     return "Document expected negatives or compatible findings as appropriate, while avoiding dose, timing, impairment, diversion, or intent conclusions.";
   }
 
@@ -1630,7 +1630,7 @@
     }
 
     if (contextNeeded.length) {
-      rows.push("Some findings may be compatible but require source/timing/cutoff context.");
+      rows.push("Some findings may be compatible but require source, timing, and cutoff context.");
     }
 
     if (notExplained.length && !state.expected.length) {
@@ -1680,7 +1680,7 @@
     }
 
     if (oxidants && oxidants !== "unknown") {
-      details.push(`oxidants/adulterants ${oxidants}`);
+      details.push(`oxidants or adulterants ${oxidants}`);
     }
 
     return details;
@@ -1705,11 +1705,11 @@
     return [
       "UDS clinical reference review, no patient identifiers entered.",
       `Context: ${formatContext(state.context)}. Decision impact: ${state.consequence}.`,
-      `Result source: ${formatResultSource(state.resultSource)}. Method/panel: ${formatMethod(state.method)} / ${selectedProfile().label}. Specimen validity: ${formatValidity(state.validityFlag)}.`,
+      `Result source: ${formatResultSource(state.resultSource)}. Method and panel: ${formatMethod(state.method)}; ${selectedProfile().label}. Specimen validity: ${formatValidity(state.validityFlag)}.`,
       validityDetailSummary.length ? `Optional validity details entered: ${validityDetailSummary.join("; ")}.` : "",
       `Expected: ${expected}. Detected: ${detected}. Tested-but-absent: ${absent}. Absent coverage verified: ${state.absentVerified ? "yes" : "no"}.`,
       absentConcerns.length ? `Absent-finding concerns: ${absentConcerns.slice(0, 3).join("; ")}.` : "Absent-finding concerns: none generated from entered findings.",
-      expectedNegatives.length ? `Expected negative/absent findings: ${expectedNegatives.slice(0, 3).join("; ")}.` : "Expected negative/absent findings: none generated from entered findings.",
+      expectedNegatives.length ? `Expected negative and absent findings: ${expectedNegatives.slice(0, 3).join("; ")}.` : "Expected negative and absent findings: none generated from entered findings.",
       expectedParentNotEntered.length ? `Expected parent findings to check: ${expectedParentNotEntered.slice(0, 3).join("; ")}.` : "",
       `Interpretation label: ${label}. Confirmation threshold: ${confirmationLevel}.`,
       safetyFlags.length ? `Safety flags: ${safetyFlags.join("; ")}.` : "Safety flags: none generated from entered findings.",
@@ -1717,7 +1717,7 @@
       methodNotes.length ? `Method notes: ${methodNotes.slice(0, 2).join("; ")}.` : "Method notes: none generated from selected method.",
       panelWarnings.length ? `Panel limitations: ${panelWarnings.slice(0, 3).join("; ")}.` : "Panel limitations: none generated from selected profile.",
       `Next step: ${nextStep}`,
-      "Limits: urine testing alone does not prove dose, exact timing, impairment, diversion, intent, or legal/forensic conclusions.",
+      "Limits: urine testing alone does not prove dose, exact timing, impairment, diversion, intent, or legal or forensic conclusions.",
     ].filter(Boolean).join("\n");
   }
 
@@ -1737,11 +1737,11 @@
       oud: "OUD treatment",
       benzo: "benzodiazepine prescribing",
       stimulant: "stimulant prescribing",
-      ed: "ED / urgent care",
+      ed: "ED and urgent care",
       psychiatry: "psychiatry",
-      pregnancy: "pregnancy / perinatal",
+      pregnancy: "pregnancy and perinatal",
       adolescent: "adolescent",
-      forensic_nonclinical: "legal / employment / forensic - not supported",
+      forensic_nonclinical: "legal, employment, or forensic - not supported",
       other: "other clinical context",
     }[value] || value;
   }
@@ -1757,11 +1757,11 @@
 
   function formatValidity(value) {
     return {
-      unknown: "unknown / not reported",
+      unknown: "unknown or not reported",
       normal: "appears interpretable",
       dilute: "dilute - negatives less reliable",
-      invalid: "invalid / do not interpret",
-      adulterated: "possible adulteration / consult lab",
+      invalid: "invalid: do not interpret",
+      adulterated: "possible adulteration: consult lab",
     }[value] || value;
   }
 
@@ -1790,7 +1790,7 @@
   function formatResultSource(value) {
     return {
       unknown: "unknown source",
-      poc: "point-of-care cup/card",
+      poc: "point-of-care cup or card",
       lab_screen: "laboratory immunoassay",
       lab_definitive: "laboratory definitive LC/GC-MS",
     }[value] || value;

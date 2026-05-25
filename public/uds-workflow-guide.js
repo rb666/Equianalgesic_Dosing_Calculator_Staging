@@ -15,12 +15,12 @@
         ["Set report context", "Choose clinical setting, decision impact, result source, method, panel profile, and validity first."],
         ["Enter expected and detected findings", "Expected entries are the comparison set; detected entries are what the report says is present."],
         ["Use absent findings only when verified", "Only enter tested-but-absent analytes when the report included and reported them as absent or negative."],
-        ["Read the output by severity", "Safety, validity, panel/profile limits, and next step should guide what needs action before charting."],
+        ["Read the output by severity", "Safety, validity, panel and profile limits, and next step should guide what needs action before charting."],
       ],
       keys: [
-        ["Consistent / expected", "Compatible with current entries, assuming timing, cutoff, and validity fit."],
-        ["Panel-dependent", "The selected test/profile may not answer the clinical question."],
-        ["Unexpected positive/negative", "Clarify context or confirm when the result affects care."],
+        ["Consistent and expected", "Compatible with current entries, assuming timing, cutoff, and validity fit."],
+        ["Panel-dependent", "The selected test and profile may not answer the clinical question."],
+        ["Unexpected positive or negative", "Clarify context or confirm when the result affects care."],
       ],
     },
     {

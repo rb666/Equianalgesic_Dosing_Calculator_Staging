@@ -25,18 +25,18 @@
     },
     {
       mode: "test",
-      label: "Choose test",
-      kicker: "Before ordering",
-      summary: "Match the test to the clinical question before relying on a class screen or absent result.",
+      label: "Panel review",
+      kicker: "Reflex limits",
+      summary: "Check whether the current panel and local reflex rules answer the clinical question.",
       steps: [
-        ["Start with the question", "Identify whether you need a class screen, a specific analyte, a metabolite, or a definitive confirmation."],
-        ["Check known blind spots", "Generic opiate and benzodiazepine screens may miss important synthetic or assay-dependent targets."],
-        ["Escalate when consequences are high", "Use targeted or definitive testing when the result may change care, safety planning, or prescribing."],
+        ["Start with the actual panel", "Use the report profile available in the workflow, not an assumed order."],
+        ["Check blind spots and reflex rules", "Generic screens and local reflex protocols determine what is reportable next."],
+        ["Escalate through local process", "When results affect care, follow local confirmation or reflex pathways rather than treating this as manual ordering."],
       ],
       keys: [
-        ["Screening", "Fast and useful for broad triage, but presumptive."],
-        ["Definitive", "Specific but still limited to included and reportable analytes."],
-        ["Panel fit", "The right test is the one that answers the specific clinical question."],
+        ["Current panel", "Only answers analytes, classes, and cutoffs that are included and reportable."],
+        ["Reflex rules", "Determine whether an initial flag triggers confirmation or a more specific result."],
+        ["Question fit", "The panel is useful only if it answers the specific clinical question."],
       ],
     },
     {

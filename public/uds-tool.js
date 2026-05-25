@@ -125,17 +125,17 @@
   ];
 
   const clinicalQuestions = [
-    question("oxy_presence", "Is prescribed oxycodone present?", "Order oxycodone and oxymorphone, preferably definitive if the result affects care.", "Do not rely on a generic opiate screen.", "Oxycodone, noroxycodone, oxymorphone."),
-    question("fentanyl_presence", "Could fentanyl exposure be present?", "Order fentanyl and norfentanyl-specific or definitive testing.", "A negative routine opiate screen does not exclude fentanyl.", "Fentanyl, norfentanyl."),
-    question("bupe_adherence", "Is buprenorphine being taken?", "Order buprenorphine and norbuprenorphine with specimen validity.", "Do not use a generic opiate screen for buprenorphine adherence.", "Buprenorphine, norbuprenorphine, naloxone if product context matters."),
-    question("methadone_adherence", "Is methadone being taken?", "Order methadone and EDDP.", "Do not assume generic opiate coverage includes methadone.", "Methadone, EDDP."),
-    question("clonazepam_adherence", "Is clonazepam being taken?", "Order definitive benzodiazepine testing that includes 7-aminoclonazepam.", "A benzodiazepine immunoassay may miss clonazepam.", "7-aminoclonazepam."),
-    question("lorazepam_adherence", "Is lorazepam being taken?", "Order definitive benzodiazepine testing with lorazepam and glucuronide sensitivity.", "Some screens under-detect lorazepam or glucuronidated metabolites.", "Lorazepam or lorazepam-glucuronide depending on method."),
-    question("methylphenidate_adherence", "Is methylphenidate being taken?", "Order methylphenidate and ritalinic acid-specific testing.", "A routine amphetamine screen does not answer methylphenidate adherence.", "Ritalinic acid."),
-    question("amphetamine_confirm", "Is an amphetamine screen real?", "Confirm with definitive amphetamine and methamphetamine testing before major action.", "Bupropion, pseudoephedrine, phentermine, and assay effects can complicate screens.", "Amphetamine, methamphetamine; consider isomer testing if source matters."),
-    question("alcohol_exposure", "Is alcohol exposure relevant?", "Order EtG and EtS and interpret with cutoff, timing, and exposure history.", "Do not infer impairment or exact timing from EtG and EtS alone.", "EtG, EtS."),
-    question("xylazine", "Could xylazine be involved?", "Order targeted xylazine testing if available and clinically relevant.", "Routine UDS generally does not detect xylazine.", "Xylazine requires targeted testing; clinical management is supportive."),
-    question("gabapentin", "Is gabapentin or pregabalin co-use relevant?", "Order gabapentin or pregabalin specifically or use an expanded definitive panel.", "Most standard UDS panels do not include gabapentinoids.", "Gabapentin, pregabalin."),
+    question("oxy_presence", "Is prescribed oxycodone present?", "Verify that the active panel or reflex pathway covers oxycodone, noroxycodone, and oxymorphone when this question matters.", "Do not rely on a generic opiate screen alone.", "Oxycodone, noroxycodone, oxymorphone."),
+    question("fentanyl_presence", "Could fentanyl exposure be present?", "Verify fentanyl and norfentanyl-specific coverage or local reflex rules before treating the panel as answering this question.", "A negative routine opiate screen does not exclude fentanyl.", "Fentanyl, norfentanyl."),
+    question("bupe_adherence", "Is buprenorphine being taken?", "Verify buprenorphine and norbuprenorphine coverage plus specimen validity reporting in the active panel or reflex workflow.", "Do not use a generic opiate screen for buprenorphine adherence.", "Buprenorphine, norbuprenorphine, naloxone if product context matters."),
+    question("methadone_adherence", "Is methadone being taken?", "Verify methadone and EDDP coverage or reflex rules before using the result for adherence review.", "Do not assume generic opiate coverage includes methadone.", "Methadone, EDDP."),
+    question("clonazepam_adherence", "Is clonazepam being taken?", "Verify that the active panel or confirmation pathway includes 7-aminoclonazepam.", "A benzodiazepine immunoassay may miss clonazepam.", "7-aminoclonazepam."),
+    question("lorazepam_adherence", "Is lorazepam being taken?", "Verify lorazepam and glucuronide-sensitive coverage in the active panel or confirmation pathway.", "Some screens under-detect lorazepam or glucuronidated metabolites.", "Lorazepam or lorazepam-glucuronide depending on method."),
+    question("methylphenidate_adherence", "Is methylphenidate being taken?", "Verify methylphenidate or ritalinic acid-specific coverage when adherence is the clinical question.", "A routine amphetamine screen does not answer methylphenidate adherence.", "Ritalinic acid."),
+    question("amphetamine_confirm", "Is an amphetamine screen real?", "Confirm whether local reflex rules provide definitive amphetamine and methamphetamine confirmation before major action.", "Bupropion, pseudoephedrine, phentermine, and assay effects can complicate screens.", "Amphetamine, methamphetamine; consider isomer testing if source matters."),
+    question("alcohol_exposure", "Is alcohol exposure relevant?", "Verify EtG and EtS coverage and interpret with cutoff, timing, and exposure history.", "Do not infer impairment or exact timing from EtG and EtS alone.", "EtG, EtS."),
+    question("xylazine", "Could xylazine be involved?", "Verify whether targeted xylazine testing is available through local send-out, reflex, or expanded-panel workflow.", "Routine UDS generally does not detect xylazine.", "Xylazine requires targeted testing; clinical management is supportive."),
+    question("gabapentin", "Is gabapentin or pregabalin co-use relevant?", "Verify whether gabapentin or pregabalin are covered by the current panel or local expanded/reflex pathway.", "Most standard UDS panels do not include gabapentinoids.", "Gabapentin, pregabalin."),
   ];
 
   const builtInProfiles = [
@@ -165,6 +165,7 @@
     panelId: "unknown",
     expected: [],
     detected: [],
+    detectedNoneReported: false,
     absent: [],
     absentVerified: false,
     validityFlag: "unknown",
@@ -443,14 +444,14 @@
           <div class="uds-title-block">
             <p class="uds-eyebrow">Clinical reference only</p>
             <h2 id="udsModalTitle">UDS workflow tool</h2>
-            <p>Interpret results, choose tests, look up analytes, and manage non-identifying local panel profiles.</p>
+            <p>Interpret results, review panel fit and reflex limits, look up analytes, and manage non-identifying local panel profiles.</p>
           </div>
           <span class="uds-version">${escapeHtml(APP_VERSION)}</span>
         </header>
         <div class="uds-privacy-strip">Do not enter patient names, DOBs, MRNs, accession numbers, order numbers, addresses, or other identifiers.</div>
         <nav class="uds-nav" aria-label="UDS workflows">
           ${navButton("interpret", "Interpret", "Result workflow")}
-          ${navButton("test", "Choose test", "Before ordering")}
+          ${navButton("test", "Panel review", "Reflex limits")}
           ${navButton("lookup", "Lookup", "Drug and analyte")}
           ${navButton("panels", "Panels", "Local profiles")}
         </nav>
@@ -494,7 +495,7 @@
           </div>
           ${renderContextControls()}
           ${renderChipEditor("expected", "Expected medications and substances", "Prescribed, reported, administered, or otherwise expected")}
-          ${renderChipEditor("detected", "Detected positive findings", "What the report lists as present")}
+          ${renderDetectedEditor()}
           ${renderAbsentEditor()}
           ${renderValidityControls()}
         </form>
@@ -508,6 +509,7 @@
           </div>
           ${renderOutputBlock("Immediate safety flags", result.safetyFlags, safetyOutputTone(result.safetyFlags))}
           ${renderOutputBlock("Specimen validity", [...result.validityNotes, ...result.validityWarnings], validityOutputTone(result))}
+          ${result.expectedReference.length ? renderOutputBlock("Expected medication reference", result.expectedReference, "neutral") : ""}
           ${renderOutputBlock("What this can support", result.canSupport, result.explained.length ? "compatible" : "neutral")}
           ${renderOutputBlock("What this cannot support", result.cannotSupport, "neutral")}
           ${result.panelWarnings.length ? renderOutputBlock("Panel / profile limitations", result.panelWarnings, "method") : ""}
@@ -592,6 +594,26 @@
           ${renderPickerInput(key, "Type drug, metabolite, brand, or finding...")}
         </div>
         <div class="uds-chip-list">${renderChips(key)}</div>
+      </section>
+    `;
+  }
+
+  function renderDetectedEditor() {
+    return `
+      <section class="uds-input-section">
+        <div class="uds-section-label"><strong>Detected positive findings</strong><span>What the report lists as present, positive, or detected.</span></div>
+        <label class="uds-checkbox-line">
+          <input data-field="detectedNoneReported" type="checkbox" ${state.detectedNoneReported ? "checked" : ""} />
+          <span>No detected positive findings were reported.</span>
+        </label>
+        ${state.detectedNoneReported
+          ? `<p class="uds-muted">This records the report state only. Use tested-but-absent entries only for analytes confirmed included and reported absent.</p>`
+          : `
+            <div class="uds-add-line uds-add-line--picker">
+              ${renderPickerInput("detected", "Type drug, metabolite, brand, or finding...")}
+            </div>
+          `}
+        <div class="uds-chip-list">${renderChips("detected")}</div>
       </section>
     `;
   }
@@ -724,6 +746,10 @@
 
   function renderChips(key) {
     const tone = chipToneForKey(key);
+    if (key === "detected" && state.detectedNoneReported && !state.detected.length) {
+      return `<span class="uds-muted">No detected positives reported.</span>`;
+    }
+
     return state[key].length
       ? state[key]
         .map(
@@ -819,20 +845,20 @@
     return `
       <section class="uds-simple-grid">
         <div class="uds-card">
-          <div class="uds-card-head"><div><p class="uds-eyebrow">Before ordering</p><h3>Choose the right test</h3></div></div>
+          <div class="uds-card-head"><div><p class="uds-eyebrow">Panel fit</p><h3>Panel and reflex review</h3></div></div>
           <label>Clinical question
             <select data-field="questionId">
               ${sortByLabel(clinicalQuestions, (entry) => entry.label).map((entry) => option(entry.id, entry.label, state.questionId)).join("")}
             </select>
           </label>
-          <p class="uds-muted">This module recommends a test type based on the question. It does not use order numbers, accession numbers, or subject identifiers.</p>
+          <p class="uds-muted">Use this to check whether the predetermined panel, reporting rules, and local reflex pathway answer the clinical question.</p>
         </div>
         <div class="uds-card uds-output-card">
-          <div class="uds-card-head"><div><p class="uds-eyebrow">Recommendation</p><h3>${escapeHtml(selected.label)}</h3></div></div>
-          ${renderOutputBlock("Recommended order concept", [selected.recommended])}
-          ${renderOutputBlock("Avoid this mistake", [selected.avoid])}
-          ${renderOutputBlock("Expected target analytes", [selected.expected])}
-          <button class="uds-primary-button" data-action="copy-test" type="button">Copy test recommendation</button>
+          <div class="uds-card-head"><div><p class="uds-eyebrow">Coverage review</p><h3>${escapeHtml(selected.label)}</h3></div></div>
+          ${renderOutputBlock("Coverage or reflex to verify", [selected.recommended], "method")}
+          ${renderOutputBlock("Do not rely on", [selected.avoid], "caution")}
+          ${renderOutputBlock("Reportable analytes to verify", [selected.expected], "neutral")}
+          <button class="uds-primary-button" data-action="copy-test" type="button">Copy panel review</button>
         </div>
       </section>
     `;
@@ -1038,6 +1064,7 @@
         absentConcerns: [],
         absentReviews: [],
         expectedNegatives: [],
+        expectedReference: [],
         supportiveNotEntered: [],
         expectedParentNotEntered: [],
         methodNotes: [],
@@ -1089,6 +1116,7 @@
       .filter((row) => row.severity === "expected_negative")
       .map((row) => row.message);
 
+    const expectedReference = buildExpectedReferencePreview();
     const supportiveNotEntered = [];
     const expectedParentNotEntered = [];
 
@@ -1126,6 +1154,9 @@
     const nextStep = nextStepFor({ label, confirmationLevel, notExplained, contextNeeded, absentConcerns, panelWarnings, validityWarnings });
     const canSupport = buildCanSupport(explained, contextNeeded, notExplained);
     const cannotSupport = [...standardCannotConclude()];
+    if (state.detectedNoneReported && state.expected.length && !state.absent.length) {
+      cannotSupport.push("No detected positives alone does not establish nonadherence unless expected analytes were included, reportable, and interpreted with timing and specimen validity.");
+    }
     if (state.absent.length && absentReviews.some((row) => ["non_actionable", "panel_limited"].includes(row.severity))) cannotSupport.push("Absent findings cannot support non-exposure or nonadherence until panel coverage is verified.");
     if (profile.id === "unknown") cannotSupport.push("A negative or absent result cannot be relied on when the ordered panel is unknown.");
     if (["dilute", "invalid", "adulterated"].includes(state.validityFlag)) cannotSupport.push("Negative results are limited by specimen validity concerns.");
@@ -1165,6 +1196,7 @@
       absentConcerns: [...new Set(absentConcerns)].slice(0, 8),
       absentReviews,
       expectedNegatives: [...new Set(expectedNegatives)].slice(0, 8),
+      expectedReference,
       supportiveNotEntered: [...new Set(supportiveNotEntered)].slice(0, 8),
       expectedParentNotEntered: [...new Set(expectedParentNotEntered)].slice(0, 8),
       methodNotes,
@@ -1185,6 +1217,31 @@
     return state.expected
       .flatMap((expectedId) => (relationshipsByFrom.get(expectedId) || []).map((row) => ({ ...row })))
       .find((row) => row.to === detectedId) || null;
+  }
+
+  function buildExpectedReferencePreview() {
+    if (!state.expected.length || state.detected.length || state.absent.length) {
+      return [];
+    }
+
+    const rows = [];
+
+    state.expected.slice(0, 4).forEach((id) => {
+      const entry = getItem(id);
+      if (!entry) return;
+
+      const related = (relationshipsByFrom.get(id) || [])
+        .filter((row) => ["strong", "shared", "context"].includes(row.strength))
+        .slice(0, 4)
+        .map((row) => itemLabel(row.to));
+
+      rows.push(`${entry.name}: ${entry.note}`);
+      if (entry.window) rows.push(`Typical urine window: ${entry.window}.`);
+      if (entry.bestTest) rows.push(`Coverage to verify: ${entry.bestTest}.`);
+      if (related.length) rows.push(`Related reportable findings to look for: ${related.join(", ")}.`);
+    });
+
+    return [...new Set(rows)].slice(0, 8);
   }
 
   function shouldPromptExpectedParent(expectedId) {
@@ -1356,7 +1413,7 @@
     });
 
     if (
-      (state.detected.length || state.absent.length) &&
+      hasResultInput() &&
       profile.id !== "unknown" &&
       profile.id !== "targeted_definitive"
     ) {
@@ -1554,7 +1611,7 @@
   }
 
   function confirmationLevelFor({ notExplained, absentReviews, panelWarnings, validityWarnings }) {
-    const hasResultInput = state.detected.length > 0 || state.absent.length > 0;
+    const hasResultInputValue = hasResultInput();
     const hasUnexpectedAbsent = absentReviews.some((row) =>
       ["unexpected_negative", "supportive_absent"].includes(row.severity),
     );
@@ -1572,10 +1629,11 @@
       validityWarnings.length > 0 ||
       state.method === "unknown";
 
-    if (!hasResultInput) return "Needs result input";
+    if (!hasResultInputValue) return "Needs result input";
     if (hasHardValidityProblem) return "Repeat or consult lab";
     if (state.consequence === "high" && hasActionableUncertainty) return "Confirm before action";
     if (state.consequence === "high") return "High-consequence review";
+    if (state.detectedNoneReported && state.expected.length && !state.absent.length) return "Verify panel";
     if (state.method === "immunoassay" && (notExplained.length || hasUnexpectedAbsent)) return "Confirmation recommended";
     if (notExplained.length || hasUnexpectedAbsent) return "Clarify or confirm";
     if (hasPanelLimitedAbsent || panelWarnings.length) return "Verify panel";
@@ -1584,9 +1642,11 @@
   }
 
   function labelForResult({ explained, contextNeeded, notExplained, absentReviews, panelWarnings, validityWarnings }) {
-    const hasResultInput = state.detected.length > 0 || state.absent.length > 0;
-    if (!hasResultInput) return { label: "Incomplete", tone: "neutral" };
+    const hasResultInputValue = hasResultInput();
+    if (!hasResultInputValue) return { label: "Incomplete", tone: "neutral" };
     if (["invalid", "adulterated"].includes(state.validityFlag) || hasCriticalValidityDetailProblem()) return { label: "Specimen-limited", tone: "warning" };
+    if (state.detectedNoneReported && state.expected.length && !state.absent.length) return { label: "No detected positives reported; verify expected coverage", tone: "method" };
+    if (state.detectedNoneReported && !state.absent.length) return { label: "No detected positives reported", tone: "neutral" };
     if (notExplained.length && !state.expected.length) return { label: "Detected finding without expected medication context", tone: "caution" };
     if (notExplained.length) return { label: "Unexpected positive", tone: "warning" };
     if (absentReviews.some((row) => row.severity === "unexpected_negative")) return { label: "Unexpected negative", tone: "caution" };
@@ -1602,8 +1662,10 @@
 
   function nextStepFor({ label, confirmationLevel, notExplained, contextNeeded, absentConcerns, panelWarnings, validityWarnings }) {
     if (confirmationLevel === "Confirm before action") return "Because the result may change care or has high consequence, obtain definitive confirmation or lab or toxicology input before major management changes.";
-    if (!state.detected.length && !state.absent.length) return "Add detected positive findings or verified tested-but-absent findings to complete the reconciliation.";
+    if (!hasResultInput()) return "Add detected positive findings, select no detected positives reported, or add verified tested-but-absent findings to complete the reconciliation.";
     if (["invalid", "adulterated"].includes(state.validityFlag) || hasCriticalValidityDetailProblem()) return "Do not interpret this result as final. Repeat collection per policy or consult the laboratory.";
+    if (state.detectedNoneReported && state.expected.length && !state.absent.length) return "Verify reportable analytes, cutoffs, timing, specimen validity, and local reflex rules before interpreting no detected positives as expected medication absence.";
+    if (state.detectedNoneReported && !state.expected.length && !state.absent.length) return "Document no detected positives only in context of the selected panel, method, cutoff, and specimen validity.";
     if (notExplained.length && !state.expected.length) return "Add expected medications and substances, recent administered medications, or reported exposures if known; otherwise review as a detected finding requiring clinical context.";
     if (notExplained.length && state.method === "immunoassay") return "Discuss nonjudgmentally, review medication and OTC exposures, and confirm unexpected positives with definitive testing before changing care.";
     if (notExplained.length) return "Review medication and substance history, timing, and panel details; consult the lab or confirm if the result affects management.";
@@ -1620,6 +1682,12 @@
 
   function buildCanSupport(explained, contextNeeded, notExplained) {
     const rows = [];
+
+    if (state.detectedNoneReported) {
+      rows.push(state.expected.length
+        ? "No detected positives can be documented as reported, but clinical meaning requires verified panel coverage, timing, cutoff, and specimen validity."
+        : "No detected positives can be documented for the selected report, panel, and method.");
+    }
 
     if (hasAbsentOnlyInput()) {
       rows.push("Absent-only interpretation can support limited conclusions only when panel coverage, timing, cutoff, and specimen validity are verified.");
@@ -1648,6 +1716,10 @@
 
   function hasAbsentOnlyInput() {
     return state.absent.length > 0 && state.detected.length === 0;
+  }
+
+  function hasResultInput() {
+    return state.detected.length > 0 || state.absent.length > 0 || state.detectedNoneReported;
   }
 
   function standardCannotConclude() {
@@ -1699,7 +1771,9 @@
     expectedParentNotEntered,
   }) {
     const expected = state.expected.map(itemLabel).join(", ") || "none entered";
-    const detected = state.detected.map(itemLabel).join(", ") || "none entered";
+    const detected = state.detectedNoneReported
+      ? "none reported"
+      : state.detected.map(itemLabel).join(", ") || "none entered";
     const absent = state.absent.map(itemLabel).join(", ") || "none entered";
     const validityDetailSummary = buildValidityDetailSummary();
     return [
@@ -1799,6 +1873,7 @@
   function addChipById(key, id) {
     const entry = getItem(id);
     if (!entry || state[key].includes(entry.id)) return false;
+    if (key === "detected") state.detectedNoneReported = false;
     state[key] = [...state[key], entry.id];
     render();
     return true;
@@ -1956,6 +2031,7 @@
       if (actionName === "clear-interpret") {
         state.expected = [];
         state.detected = [];
+        state.detectedNoneReported = false;
         state.absent = [];
         state.absentVerified = false;
         state.validityFlag = "unknown";
@@ -1984,7 +2060,7 @@
       }
       if (actionName === "copy-test") {
         const q = clinicalQuestions.find((entry) => entry.id === state.questionId) || clinicalQuestions[0];
-        copyText(`UDS test selection: ${q.label}\nRecommended: ${q.recommended}\nAvoid: ${q.avoid}\nExpected target analytes: ${q.expected}`);
+        copyText(`UDS panel and reflex review: ${q.label}\nCoverage or reflex to verify: ${q.recommended}\nDo not rely on: ${q.avoid}\nReportable analytes to verify: ${q.expected}`);
         return;
       }
       if (actionName === "select-lookup") {
@@ -2060,6 +2136,10 @@
       const field = target.dataset.field;
       if (field) {
         if (field === "absentVerified") state.absentVerified = target.checked;
+        else if (field === "detectedNoneReported") {
+          state.detectedNoneReported = target.checked;
+          if (target.checked) state.detected = [];
+        }
         else if (field === "resultSource") {
           state.resultSource = target.value;
           if (target.value === "poc" || target.value === "lab_screen") state.method = "immunoassay";
@@ -2136,6 +2216,7 @@
       panelId: state.panelId,
       expected: [...state.expected],
       detected: [...state.detected],
+      detectedNoneReported: state.detectedNoneReported,
       absent: [...state.absent],
       absentVerified: state.absentVerified,
       validityFlag: state.validityFlag,
@@ -2149,6 +2230,7 @@
       ...snapshot,
       expected: [...snapshot.expected],
       detected: [...snapshot.detected],
+      detectedNoneReported: snapshot.detectedNoneReported,
       absent: [...snapshot.absent],
       validityDetails: { ...snapshot.validityDetails },
       validityDetailsOpen: snapshot.validityDetailsOpen,
@@ -2167,6 +2249,7 @@
     Object.assign(state, {
       expected: [],
       detected: [],
+      detectedNoneReported: false,
       absent: [],
       absentVerified: false,
       validityDetails: blankValidityDetails(),
@@ -2364,6 +2447,30 @@
         (result) =>
           /Consistent|expected/i.test(result.label) &&
           /Routine documentation/i.test(result.confirmationLevel),
+      ),
+      runCase(
+        "No detected positives with expected medication requires coverage verification",
+        {
+          method: "definitive",
+          panelId: "test_broad_definitive",
+          localProfileForTest: testBroadDefinitiveProfile,
+          expected: ["oxycodone"],
+          detectedNoneReported: true,
+          validityFlag: "normal",
+        },
+        (result) =>
+          /No detected positives|coverage|panel/i.test(`${result.label} ${result.nextStep}`) &&
+          !/nonadherence/i.test(result.label),
+      ),
+      runCase(
+        "Expected medication alone shows reference preview",
+        {
+          method: "immunoassay",
+          panelId: "generic_opiate_screen",
+          expected: ["fentanyl"],
+          validityFlag: "unknown",
+        },
+        (result) => result.expectedReference.some((line) => /fentanyl|norfentanyl|opiate/i.test(line)),
       ),
       runCase(
         "Low creatinine with positive-only compatible result stays compatible",
@@ -2650,6 +2757,7 @@
       panelId: state.panelId,
       expected: [...state.expected],
       detected: [...state.detected],
+      detectedNoneReported: state.detectedNoneReported,
       absent: [...state.absent],
       absentVerified: state.absentVerified,
       validityFlag: state.validityFlag,
@@ -2664,6 +2772,7 @@
       validityWarnings: result.validityWarnings,
       absentConcerns: result.absentConcerns,
       expectedNegatives: result.expectedNegatives,
+      expectedReference: result.expectedReference,
       expectedParentNotEntered: result.expectedParentNotEntered,
       safetyFlags: result.safetyFlags,
     };

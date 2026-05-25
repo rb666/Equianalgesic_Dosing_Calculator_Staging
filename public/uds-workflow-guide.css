@@ -156,7 +156,7 @@
 .uds-guide-workflow-card:focus-visible,
 .uds-guide-workflow-card.is-active {
   border-color: color-mix(in srgb, var(--accent, #28706a) 72%, var(--line, #b8ccc6));
-  background: color-mix(in srgb, var(--accent-soft, #e5f4ef) 62%, var(--surface, #ffffff));
+  background: color-mix(in srgb, var(--accent, #28706a) 12%, var(--surface, #ffffff));
 }
 
 .uds-guide-workflow-card:focus-visible {

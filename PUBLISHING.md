@@ -1,41 +1,72 @@
-# Publishing and Staging
+# Publishing
 
-This repository is a private staging/source repository. It is not intended to be
-served by GitHub Pages.
+This repository is a public GitHub Pages repository.
 
 ## Deployment Model
 
-The website is deployed from the `public/` directory through Cloudflare Pages.
-This matches the production `calc.med` deployment model and keeps clean routes
-such as `/opioidcalculator` and `/UDS` working through Cloudflare `_redirects`.
+The source website lives in `public/`. GitHub Pages deploys from an Actions
+artifact, not directly from the repository root, so the source layout can stay
+clean while the hosted site gets GitHub Pages-compatible routes.
 
-## Staging Deploy
+The workflow is:
 
-From this folder:
-
-```powershell
-npx wrangler login
-npx wrangler pages deploy public --project-name calc-med-staging --branch main
+```text
+.github/workflows/pages.yml
 ```
 
-Current staging URL:
-
-<https://calc-med-staging.pages.dev>
-
-## Production Deploy
-
-Production should be deployed from the production repo, not this staging repo:
+On each push to `main`, it runs:
 
 ```powershell
-npx wrangler pages deploy public --project-name calc-med --branch main
+node scripts/prepare-github-pages.mjs
 ```
 
-Production URL:
+That script creates `dist/github-pages/` with:
 
-<https://calc.med/opioidcalculator>
+- a root redirect page
+- `/opioidcalculator/`
+- `/UDS/`
+- compatibility redirects for `opioidcalculator.html` and `UDS.html`
+- project-page-safe asset links
+
+`dist/` is generated and ignored by git.
 
 ## GitHub Settings
 
-GitHub Pages should stay disabled for this repository. The repo can be private
-because Cloudflare Pages deploys from the uploaded `public/` directory, not from
-GitHub Pages.
+Repository visibility should be public.
+
+GitHub Pages should be configured as:
+
+- Source: GitHub Actions
+- Branch publishing: disabled/not used
+- Workflow: `Deploy GitHub Pages`
+
+The expected default Pages URL is:
+
+```text
+https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/
+```
+
+If a custom root domain is later attached, set this workflow environment
+variable before the prepare step:
+
+```yaml
+GITHUB_PAGES_BASE_PATH: /
+```
+
+Without that override, the generated site correctly targets the default
+project-page path.
+
+## Local Check
+
+To inspect the generated GitHub Pages artifact locally:
+
+```powershell
+node scripts/prepare-github-pages.mjs
+python -m http.server 4173 -d dist/github-pages
+```
+
+Then open:
+
+```text
+http://127.0.0.1:4173/
+```

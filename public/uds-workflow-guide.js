@@ -29,9 +29,9 @@
       kicker: "Reflex limits",
       summary: "Check whether the current panel and local reflex rules answer the clinical question.",
       steps: [
-        ["Start with the actual panel", "Use the report profile available in the workflow, not an assumed order."],
+        ["Start with the actual panel", "Use the report profile available in the workflow, not an assumed panel."],
         ["Check blind spots and reflex rules", "Generic screens and local reflex protocols determine what is reportable next."],
-        ["Escalate through local process", "When results affect care, follow local confirmation or reflex pathways rather than treating this as manual ordering."],
+        ["Escalate through local process", "When results affect care, follow local confirmation or reflex pathways rather than treating this as a manual panel choice."],
       ],
       keys: [
         ["Current panel", "Only answers analytes, classes, and cutoffs that are included and reportable."],

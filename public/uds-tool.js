@@ -86,12 +86,12 @@
     item("etg", "EtG", "Alcohol markers", "finding", ["ethyl glucuronide"], "1-4 days", "Sensitive alcohol exposure marker; cutoff, timing, and incidental exposure context matter.", "EtG with EtS when alcohol exposure matters", ["alcohol"]),
     item("ets", "EtS", "Alcohol markers", "finding", ["ethyl sulfate"], "1-4 days", "Alcohol exposure marker often interpreted with EtG; cutoff and context matter.", "EtG and EtS panel", ["alcohol"]),
 
-    item("gabapentin", "Gabapentin", "Expanded and other", "drug", ["Neurontin"], "1-2 days", "Not included on many standard panels; order specifically if co-use affects safety.", "Gabapentin-specific or expanded definitive panel", ["gabapentinoid", "sedative"]),
-    item("pregabalin", "Pregabalin", "Expanded and other", "drug", ["Lyrica"], "1-2 days", "Not included on many standard panels; order specifically if co-use affects safety.", "Pregabalin-specific or expanded definitive panel", ["gabapentinoid", "sedative"]),
+    item("gabapentin", "Gabapentin", "Expanded and other", "drug", ["Neurontin"], "1-2 days", "Not included on many standard panels; verify specific coverage if co-use affects safety.", "Gabapentin-specific or expanded definitive coverage", ["gabapentinoid", "sedative"]),
+    item("pregabalin", "Pregabalin", "Expanded and other", "drug", ["Lyrica"], "1-2 days", "Not included on many standard panels; verify specific coverage if co-use affects safety.", "Pregabalin-specific or expanded definitive coverage", ["gabapentinoid", "sedative"]),
     item("zolpidem", "Zolpidem", "Expanded and other", "drug", ["Ambien"], "1-3 days", "Often not included on standard panels; metabolite testing may be more useful than parent depending on timing.", "Zolpidem-specific definitive testing", ["sedative"]),
     item("pcp", "PCP", "Dissociatives", "drug_or_finding", ["phencyclidine"], "1-7 days", "PCP immunoassays can have false positives; confirm unexpected positives.", "Definitive PCP confirmation when unexpected", ["dissociative"]),
     item("xylazine", "Xylazine", "Emerging and expanded", "drug", ["tranq"], "Targeted testing only", "Routine UDS generally does not detect xylazine; clinical suspicion requires targeted testing and supportive care.", "Targeted xylazine testing if available", ["emerging", "sedative", "high_risk"]),
-    item("mitragynine", "Mitragynine and kratom", "Emerging and expanded", "drug", ["kratom"], "Panel-specific", "Not included on many standard panels; order specifically if clinically relevant.", "Mitragynine and 7-hydroxymitragynine targeted testing", ["emerging"]),
+    item("mitragynine", "Mitragynine and kratom", "Emerging and expanded", "drug", ["kratom"], "Panel-specific", "Not included on many standard panels; verify targeted coverage if clinically relevant.", "Mitragynine and 7-hydroxymitragynine targeted coverage", ["emerging"]),
   ];
 
   const relationships = [
@@ -893,7 +893,7 @@
     return `
       <div class="uds-card-head"><div><p class="uds-eyebrow">Lookup result</p><h3>${escapeHtml(selected.name)}</h3></div><span class="uds-tag uds-tag--${escapeHtml(groupToneForItem(selected))}">${escapeHtml(selected.group)}</span></div>
       ${renderOutputBlock("Bottom line", [selected.note])}
-      ${renderOutputBlock("Best test concept", [selected.bestTest])}
+      ${renderOutputBlock("Coverage and assay context", [selected.bestTest])}
       ${renderOutputBlock("Approximate urine window", [selected.window])}
       ${renderOutputBlock("Expected and related findings", getRelatedLines(selected.id))}
       ${renderOutputBlock("Do not conclude", [standardCannotConclude().join("; ")])}
@@ -1439,7 +1439,7 @@
     ];
     const hasGenericOpiateBlindSpotQuestion = [...state.expected, ...state.detected, ...state.absent]
       .some((id) => genericOpiateBlindSpotIds.includes(id));
-    if (state.panelId === "generic_opiate_screen" && hasGenericOpiateBlindSpotQuestion) warnings.push("Generic opiate screens do not reliably detect buprenorphine, methadone or EDDP, tramadol, or tapentadol; order targeted or definitive testing when those drugs matter.");
+    if (state.panelId === "generic_opiate_screen" && hasGenericOpiateBlindSpotQuestion) warnings.push("Generic opiate screens do not reliably detect buprenorphine, methadone or EDDP, tramadol, or tapentadol; use a targeted, reflex, or definitive pathway when those drugs matter.");
     const hasClonazepamQuestion = [...state.expected, ...state.absent].some((id) => ["clonazepam", "aminoclonazepam7"].includes(id));
     if (state.panelId === "benzodiazepine_screen" && hasClonazepamQuestion) warnings.push("Some benzodiazepine screens under-detect clonazepam or 7-aminoclonazepam.");
     const hasLorazepamQuestion = [...state.expected, ...state.absent].some((id) => id === "lorazepam");
@@ -2075,7 +2075,7 @@
       }
       if (actionName === "copy-lookup") {
         const selected = getItem(state.lookupId) || items[0];
-        copyText(`UDS lookup: ${selected.name}\nBottom line: ${selected.note}\nBest test: ${selected.bestTest}\nApproximate window: ${selected.window}\nLimits: ${standardCannotConclude().join("; ")}`);
+        copyText(`UDS lookup: ${selected.name}\nBottom line: ${selected.note}\nCoverage and assay context: ${selected.bestTest}\nApproximate window: ${selected.window}\nLimits: ${standardCannotConclude().join("; ")}`);
         return;
       }
       if (actionName === "add-panel-analyte") {

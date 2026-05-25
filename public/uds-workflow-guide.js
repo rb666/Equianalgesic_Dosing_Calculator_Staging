@@ -8,26 +8,26 @@
   const WORKFLOWS = [
     {
       mode: "interpret",
-      label: "Interpret",
+      label: "Review UDS",
       kicker: "Review a result",
       summary: "Reconcile expected medications, detected findings, verified absent findings, panel coverage, and validity.",
       steps: [
         ["Set report context", "Choose clinical setting, decision impact, result source, method, panel profile, and validity first."],
         ["Enter expected and detected findings", "Expected entries are the comparison set; detected entries are what the report says is present."],
-        ["Use absent findings only when verified", "Only enter tested-but-absent analytes when the report included and reported them as absent or negative."],
+        ["Use absent findings only when verified", "Only enter specifically tested-but-absent analytes when the report included and reported them as absent or negative."],
         ["Read the output by severity", "Safety, validity, panel and profile limits, and next step should guide what needs action before charting."],
       ],
       keys: [
         ["Consistent and expected", "Compatible with current entries, assuming timing, cutoff, and validity fit."],
-        ["Panel-dependent", "The selected test and profile may not answer the clinical question."],
+        ["Panel-dependent", "The selected panel or profile may not answer the clinical question."],
         ["Unexpected positive or negative", "Clarify context or confirm when the result affects care."],
       ],
     },
     {
       mode: "test",
-      label: "Panel review",
+      label: "Panel / reflex limits",
       kicker: "Reflex limits",
-      summary: "Check whether the current panel and local reflex rules answer the clinical question.",
+      summary: "Check whether the predetermined panel and local reflex pathway answer the clinical question.",
       steps: [
         ["Start with the actual panel", "Use the report profile available in the workflow, not an assumed panel."],
         ["Check blind spots and reflex rules", "Generic screens and local reflex protocols determine what is reportable next."],
@@ -41,13 +41,13 @@
     },
     {
       mode: "lookup",
-      label: "Lookup",
+      label: "Drug / metabolite lookup",
       kicker: "Focused reference",
       summary: "Search a drug, metabolite, class, or assay issue when you need a quick interpretation anchor.",
       steps: [
         ["Search one concept", "Use the lookup for a single drug, metabolite, class screen, or finding."],
         ["Check what it supports", "Review metabolism, assay limitations, and detection-window caveats before applying it to a result."],
-        ["Return to Interpret for reconciliation", "Lookup is reference context; Interpret is where the full pattern and panel profile are reconciled."],
+        ["Return to Review UDS for reconciliation", "Lookup is reference context; Review UDS is where the full pattern and panel profile are reconciled."],
       ],
       keys: [
         ["Metabolites", "Can support exposure or metabolism, but may not be source-specific."],
@@ -57,8 +57,8 @@
     },
     {
       mode: "panels",
-      label: "Panels",
-      kicker: "Local setup",
+      label: "Panel profiles",
+      kicker: "Advanced setup",
       summary: "Create non-identifying local profiles so absent findings are judged against actual reportable analytes.",
       steps: [
         ["Map coverage honestly", "Use included, class screen only, assay-dependent, or known not included for each analyte."],

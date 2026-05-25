@@ -444,16 +444,16 @@
           <div class="uds-title-block">
             <p class="uds-eyebrow">Clinical reference only</p>
             <h2 id="udsModalTitle">UDS workflow tool</h2>
-            <p>Interpret results, review panel fit and reflex limits, look up analytes, and manage non-identifying local panel profiles.</p>
+            <p>Review predetermined UDS panels, reconcile expected medications against reported findings, check panel/reflex limits, and look up drugs or metabolites.</p>
           </div>
           <span class="uds-version">${escapeHtml(APP_VERSION)}</span>
         </header>
         <div class="uds-privacy-strip">Do not enter patient names, DOBs, MRNs, accession numbers, order numbers, addresses, or other identifiers.</div>
         <nav class="uds-nav" aria-label="UDS workflows">
-          ${navButton("interpret", "Interpret", "Result workflow")}
-          ${navButton("test", "Panel review", "Reflex limits")}
-          ${navButton("lookup", "Lookup", "Drug and analyte")}
-          ${navButton("panels", "Panels", "Local profiles")}
+          ${navButton("interpret", "Review UDS", "Result workflow")}
+          ${navButton("test", "Panel / reflex limits", "Coverage review")}
+          ${navButton("lookup", "Drug / metabolite lookup", "Focused reference")}
+          ${navButton("panels", "Panel profiles", "Advanced setup")}
         </nav>
         <main class="uds-main" id="udsMain"></main>
       </div>
@@ -487,7 +487,7 @@
           <div class="uds-card-head">
             <div>
               <p class="uds-eyebrow">Primary workflow</p>
-              <h3>Interpret a result</h3>
+              <h3>Review a UDS result</h3>
             </div>
             <div class="uds-header-actions">
               <button class="uds-text-button" data-action="clear-interpret" type="button">Clear entries</button>
@@ -509,7 +509,7 @@
           </div>
           ${renderOutputBlock("Immediate safety flags", result.safetyFlags, safetyOutputTone(result.safetyFlags))}
           ${renderOutputBlock("Specimen validity", [...result.validityNotes, ...result.validityWarnings], validityOutputTone(result))}
-          ${result.expectedReference.length ? renderOutputBlock("Expected medication reference", result.expectedReference, "neutral") : ""}
+          ${result.expectedReference.length ? renderOutputBlock("What to look for on the report", result.expectedReference, "neutral") : ""}
           ${renderOutputBlock("What this can support", result.canSupport, result.explained.length ? "compatible" : "neutral")}
           ${renderOutputBlock("What this cannot support", result.cannotSupport, "neutral")}
           ${result.panelWarnings.length ? renderOutputBlock("Panel / profile limitations", result.panelWarnings, "method") : ""}
@@ -621,7 +621,7 @@
   function renderAbsentEditor() {
     return `
       <section class="uds-input-section">
-        <div class="uds-section-label"><strong>Tested but absent</strong><span>Use only when the analyte was included and reported negative or absent.</span></div>
+        <div class="uds-section-label"><strong>Specifically tested but absent</strong><span>Only add analytes that the report specifically included and reported negative or absent.</span></div>
         <label class="uds-checkbox-line">
           <input data-field="absentVerified" type="checkbox" ${state.absentVerified ? "checked" : ""} />
           <span>I verified these absent analytes were included and reportable on the selected panel.</span>
@@ -942,7 +942,7 @@
     return `
       <section class="uds-simple-grid uds-panel-manager">
         <div class="uds-card">
-          <div class="uds-card-head"><div><p class="uds-eyebrow">Local setup</p><h3>Panel profiles</h3></div></div>
+          <div class="uds-card-head"><div><p class="uds-eyebrow">Advanced setup</p><h3>Panel profiles</h3></div></div>
           <p class="uds-muted">Create non-identifying profiles only. Use labels like “Clinic broad definitive profile.” Do not enter EHR order names, order numbers, accession numbers, lab account numbers, or patient identifiers.</p>
           <div class="uds-search-list">
             ${profiles.map((profile) => renderPanelSummary(profile)).join("")}

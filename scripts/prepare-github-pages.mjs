@@ -64,10 +64,6 @@ function rewriteHtmlForRoute(html) {
       /<meta name="robots" content="[^"]*"\s*\/>/,
       '<meta name="robots" content="noindex, nofollow" />',
     )
-    .replace(
-      /<body>/,
-      `<body>\n    <aside class="staging-environment-notice" data-staging-environment role="note"><strong>Staging environment</strong><span>For verification only; not the production clinical site.</span></aside>`,
-    )
     .replace(/href="\/favicon\.svg/g, 'href="../favicon.svg')
     .replace(/href="\/styles\.css/g, 'href="../styles.css')
     .replace(/href="\/uds-tool\.css/g, 'href="../uds-tool.css')

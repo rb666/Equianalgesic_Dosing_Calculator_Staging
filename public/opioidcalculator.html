@@ -55,7 +55,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260808-calculator-assurance-4" />
+    <link rel="stylesheet" href="/styles.css?v=20260808-consumer-ui-1" />
   </head>
   <body>
     <div class="environment-banner">
@@ -115,7 +115,7 @@
                 Verify opioid tolerance, indication, organ function, sedation risk,
                 concomitant CNS depressants, formulation constraints, transdermal
                 product rules, and monitoring before prescribing. This educational
-                aid uses configured medical references and does not replace
+                aid draws on cited medical references and does not replace
                 professional clinical judgment, institutional policy, pharmacist
                 review, or patient-specific assessment. Final dosing and patient
                 safety remain the responsibility of the prescribing clinician.
@@ -135,12 +135,6 @@
     </header>
 
     <main>
-      <aside class="clinical-data-status" aria-label="Clinical data governance">
-        <strong>Clinical data <span id="clinicalDataVersion">loading</span></strong>
-        <span id="clinicalDataReviewStatus">
-          Checking provenance and review status.
-        </span>
-      </aside>
       <nav
         aria-label="Calculator sections"
         aria-orientation="horizontal"
@@ -321,7 +315,7 @@
             </div>
 
             <p class="basis-note">
-              This calculator treats the reduction as a configured safety adjustment
+              This calculator treats the reduction as a selected safety adjustment
               from 0% to 100% after the raw target daily dose is calculated.
             </p>
           </section>
@@ -369,7 +363,7 @@
                 </div>
 
                 <p class="context-summary note-box" id="renalBandNote">
-                  Enter eGFR to apply the configured renal guidance bands.
+                  Enter eGFR to apply the renal guidance bands.
                 </p>
               </section>
 
@@ -469,7 +463,7 @@
             </div>
             <div class="wrap-step" id="organGuidanceStep">
               <dt>Organ guidance summary</dt>
-              <dd id="organGuidanceSummary">Awaiting calculator initialization</dd>
+              <dd id="organGuidanceSummary">Organ guidance is not available until the calculator loads</dd>
             </div>
           </dl>
 
@@ -483,7 +477,7 @@
               <span class="summary-label">Renal advice</span>
               <h3 id="renalAdviceTitle">No renal band selected</h3>
               <p id="renalAdviceBody">
-                Enter eGFR to turn on the configured renal adjustment guidance.
+                Enter eGFR to turn on the renal adjustment guidance.
               </p>
             </section>
 
@@ -492,7 +486,7 @@
               <h3 id="hepaticAdviceTitle">No hepatic class selected</h3>
               <p id="hepaticAdviceBody">
                 Select mild, moderate, or severe hepatic impairment to show the
-                configured liver dosing guidance for the target opioid.
+                liver dosing guidance for the target opioid.
               </p>
             </section>
           </div>
@@ -516,7 +510,7 @@
               <li>Multi-drug totals are intended for regimen-level review; they do not replace opioid-specific bedside assessment.</li>
               <li>Patch entries are treated as standing 24-hour exposure estimates and not as initiation or titration instructions.</li>
               <li>Methadone totals are especially approximate; use the methadone tab and specialist input when rotating to methadone.</li>
-              <li>Renal and hepatic cards show configured local advisory rules; they are not validated severity scores.</li>
+              <li>Renal and hepatic cards show dose-guidance estimates; they are not validated severity scores.</li>
               <li>Reassess analgesia, respiratory rate, sedation, organ function, and adverse effects after conversion.</li>
             </ul>
           </div>
@@ -704,10 +698,10 @@
               withdrawal are controlled.
             </p>
             <p class="note-box" role="note">
-              <strong>Unreviewed off-label local protocol.</strong> These overlap
-              schedules differ from the cited Belbuca and Suboxone product-label
-              initiation instructions. No named clinical approval record or
-              protocol citation is present for this exact schedule version.
+              <strong>Off-label transition schedule.</strong> These overlap schedules
+              differ from the cited Belbuca and Suboxone product-label initiation
+              instructions. Confirm the approach against institutional protocol and
+              specialist review before use.
             </p>
           </form>
 
@@ -914,8 +908,8 @@
         <summary>
           <span class="compact-title">
             <span class="eyebrow">Reference</span>
-            <strong>Configured tables and sources</strong>
-            <span>Open when you need to audit configured rules and evidence.</span>
+            <strong>Conversion tables and sources</strong>
+            <span>Open to review conversion values, organ guidance, and references.</span>
           </span>
           <span class="summary-action" aria-hidden="true"></span>
         </summary>
@@ -923,7 +917,7 @@
         <section class="reference-section compact-section-body">
           <div class="section-heading">
             <p class="eyebrow">Reference</p>
-            <h2>Configured equianalgesic values used</h2>
+            <h2>Equianalgesic values used</h2>
           </div>
 
           <div class="table-wrap">
@@ -942,14 +936,14 @@
           </div>
 
           <p class="reference-copy">
-            This calculator uses a configured hybrid table. Some rows align with
-            cited MME references; route conversions, interpolations, and other rows
-            remain explicitly identified as unreviewed local policy in the manifest.
+            Equianalgesic values are approximate and may differ across sources,
+            formulations, routes, and institutional protocols. Independently verify
+            each conversion before clinical use.
           </p>
 
           <div class="section-heading methadone-reference-heading">
             <p class="eyebrow">Hepatic</p>
-            <h2>Configured hepatic adjustment guide</h2>
+            <h2>Hepatic adjustment guide</h2>
           </div>
           <div class="table-wrap">
             <table>
@@ -966,7 +960,7 @@
           </div>
 
           <p class="reference-copy">
-            Configured renal logic: eGFR above 50 mL/min
+            Renal guidance shown here: eGFR above 50 mL/min
             uses no automatic reduction; eGFR 30-50 mL/min applies a 25%
             reduction for uncontrolled pain or 50% for well controlled pain to
             morphine, codeine, and meperidine; eGFR below 30 mL/min marks
@@ -992,29 +986,6 @@
               <tbody id="sourceTable"></tbody>
             </table>
           </div>
-
-          <section class="provenance-summary" aria-labelledby="provenanceSummaryHeading">
-            <div class="section-heading methadone-reference-heading">
-              <p class="eyebrow">Governance</p>
-              <h2 id="provenanceSummaryHeading">Rule-level provenance status</h2>
-            </div>
-            <p class="reference-copy" id="provenanceSummaryCopy">
-              Loading the versioned clinical-data manifest.
-            </p>
-            <div class="table-wrap">
-              <table class="source-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Rule group</th>
-                    <th scope="col">Mapped rules</th>
-                    <th scope="col">Review status</th>
-                    <th scope="col">Important limitation</th>
-                  </tr>
-                </thead>
-                <tbody id="provenanceSummaryTable"></tbody>
-              </table>
-            </div>
-          </section>
         </section>
       </details>
 
@@ -1081,7 +1052,7 @@
           <details class="pk-comparison-details">
             <summary>
               <span>
-                <span class="eyebrow">Audit table</span>
+                <span class="eyebrow">Comparison table</span>
                 <strong>Compare all route behavior rows</strong>
                 <span>Optional full table for side-by-side source review.</span>
               </span>
@@ -1140,7 +1111,7 @@
           if (unit) unit.textContent = "";
           if (qualifier) {
             qualifier.textContent =
-              "The calculator scripts did not finish loading. Reload the page before entering or using clinical data.";
+              "The calculator did not load completely. Reload the page before entering or using clinical information.";
           }
           if (status) status.textContent = "Calculator unavailable. Reload the page.";
         };
@@ -1150,8 +1121,8 @@
         window.setTimeout(showCalculatorLoadFailure, 5000);
       })();
     </script>
-    <script src="/calculator-core.js?v=20260808-calculator-assurance-4"></script>
-    <script src="/calculator-provenance.js?v=20260808-calculator-assurance-4"></script>
-    <script src="/script.js?v=20260808-calculator-assurance-4"></script>
+    <script src="/calculator-core.js?v=20260808-consumer-ui-1"></script>
+    <script src="/calculator-provenance.js?v=20260808-consumer-ui-1"></script>
+    <script src="/script.js?v=20260808-consumer-ui-1"></script>
   </body>
 </html>

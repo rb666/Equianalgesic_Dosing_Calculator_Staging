@@ -629,7 +629,7 @@ const sourceReferences = [
     title: "Calculation of Oral Morphine Equivalents (OME) | Pain Management Education at UCSF",
     url: "https://pain.ucsf.edu/opioid-analgesics/calculation-oral-morphine-equivalents-ome",
     note:
-      "Background source for IV codeine and additional route-level OME cross-checks. Selected route relationships remain explicitly documented as unreviewed local configuration.",
+      "Background source for IV codeine and additional route-level OME comparisons. Product-specific formulation and route limitations still apply.",
   },
   {
     title: "A synthesis of oral morphine equivalents (OME) for opioid utilisation studies",
@@ -650,7 +650,7 @@ const sourceReferences = [
     url:
       "https://www.westmidspallcare.co.uk/wmpcp/guide/renal-disease/renal-analgesia/",
     note:
-      "Background source for renal cautions and alternative opioid groupings. The calculator's numeric eGFR rules remain unreviewed local configuration.",
+      "Background source for renal cautions and alternative opioid groupings. Apply patient-specific renal assessment and institutional guidance.",
   },
   {
     title: "Use of the Child-Pugh Score in Liver Disease – StatPearls",
@@ -663,7 +663,7 @@ const sourceReferences = [
     url:
       "https://www.westmidspallcare.co.uk/wmpcp/guide/liver-failure/liver-failure-pain-management/",
     note:
-      "Background source for hepatic caution language. The numeric mild/moderate/severe ranges remain unreviewed local configuration.",
+      "Background source for hepatic cautions. Apply patient-specific liver assessment and institutional guidance.",
   },
   {
     title: "Choosing equivalent doses of oral benzodiazepines – NHS Specialist Pharmacy Service",
@@ -676,7 +676,7 @@ const sourceReferences = [
     title: "Benzodiazepine equivalence table – Ashton Manual",
     url: "https://www.benzo.org.uk/bzequiv.htm",
     note:
-      "Supplemental reference for benzodiazepine equivalence values and tapering context. Locally configured ratios are separately marked unreviewed where they differ or fall outside the source scope.",
+      "Supplemental reference for benzodiazepine equivalence values and tapering context. Equivalence estimates remain approximate and patient-specific.",
   },
   {
     title: "Urine Drug Tests: Ordering and Interpretation – American Family Physician",
@@ -689,18 +689,6 @@ const sourceReferences = [
     url: "https://www.arupconsult.com/content/drug-testing",
     note:
       "Reference for UDS test selection, confirmatory testing, and limitations of opiate, oxycodone, benzodiazepine, and synthetic opioid immunoassays.",
-  },
-  {
-    title: "Configured local rules",
-    url: "",
-    note:
-      "Repository decision record for local IV morphine, hydromorphone, meperidine, methadone, and hepatic advisory configuration. This is policy metadata, not external clinical evidence.",
-  },
-  {
-    title: "Configured methadone ratio table",
-    url: "",
-    note:
-      "Local configuration for the specialty morphine:methadone bands: 0-30 mg 2:1, 31-99 mg 4:1, 100-299 mg 8:1, 300-499 mg 12:1, 500-999 mg 15:1, and 1000 mg/day or more 20:1. No clinical approval record is present.",
   },
 ];
 
@@ -1464,10 +1452,6 @@ const calculatorTabButtons = document.querySelectorAll("[data-calculator-tab]");
 const calculatorTabs = Array.from(calculatorTabButtons);
 const themeToggle = document.querySelector("#themeToggle");
 const themeToggleLabel = document.querySelector("#themeToggleLabel");
-const clinicalDataVersion = document.querySelector("#clinicalDataVersion");
-const clinicalDataReviewStatus = document.querySelector("#clinicalDataReviewStatus");
-const provenanceSummaryCopy = document.querySelector("#provenanceSummaryCopy");
-const provenanceSummaryTable = document.querySelector("#provenanceSummaryTable");
 const pharmacokineticsOpenButton = document.querySelector("#pharmacokineticsOpenButton");
 const pharmacokineticsModal = document.querySelector("#pharmacokineticsModal");
 const pharmacokineticsCloseButton = document.querySelector(
@@ -2063,7 +2047,6 @@ const renderHepaticGuidanceTable = () => {
 
 const renderSourceTable = () => {
   sourceTable.innerHTML = sourceReferences
-    .filter((item) => item.url)
     .map((item) => {
       return `
         <tr>
@@ -2073,69 +2056,6 @@ const renderSourceTable = () => {
         </tr>
       `;
     })
-    .join("");
-};
-
-const renderProvenanceSummary = () => {
-  if (!provenanceSummaryTable) {
-    return;
-  }
-
-  const ruleIds = Object.keys(calculatorProvenance.rules);
-  const groups = [
-    {
-      label: "Opioid conversion rows",
-      count: ruleIds.filter((id) => id.startsWith("conversion.")).length,
-      limitation:
-        "MME source alignment does not itself validate using a factor for opioid rotation; route and formulation rules may be local.",
-    },
-    {
-      label: "Methadone rules and bands",
-      count: ruleIds.filter((id) => id.startsWith("methadone.")).length,
-      limitation: "Nonlinear bands, route factor, and conservative factor lack a recorded clinical attestation.",
-    },
-    {
-      label: "Benzodiazepine equivalence rows",
-      count: ruleIds.filter((id) => id.startsWith("benzodiazepine.")).length,
-      limitation: "Several local ratios differ from or fall outside the cited NHS oral table.",
-    },
-    {
-      label: "Renal and hepatic rules",
-      count: ruleIds.filter((id) => /^(renal|hepatic)\./.test(id)).length,
-      limitation: "Numeric reductions are local policy; kidney and liver outputs are independent and are not stacked.",
-    },
-    {
-      label: "Buprenorphine schedules and steps",
-      count: ruleIds.filter((id) => id.startsWith("buprenorphine.")).length,
-      limitation: "These are unreviewed off-label overlap protocols that differ from cited product labels.",
-    },
-    {
-      label: "PK claims and graph models",
-      count: ruleIds.filter((id) => id.startsWith("pk.")).length,
-      limitation: "Graph shapes are illustrative normalized models, not validated patient concentration simulations.",
-    },
-    {
-      label: "Input and adjustment policies",
-      count: ruleIds.filter((id) => id.startsWith("policy.")).length,
-      limitation: "No clinical maximum is inferred; finite arithmetic fails closed and tool-specific zero rules are explicit.",
-    },
-  ];
-
-  clinicalDataVersion.textContent = `v${calculatorProvenance.manifestVersion}`;
-  clinicalDataReviewStatus.textContent =
-    "Rule traceability is mapped; a named clinical approval record is not present.";
-  provenanceSummaryCopy.textContent = `${calculatorProvenance.clinicalReview.statement} The manifest maps ${ruleIds.length} rule-level records and is checked by the automated release gate.`;
-  provenanceSummaryTable.innerHTML = groups
-    .map(
-      (group) => `
-        <tr>
-          <td>${group.label}</td>
-          <td>${group.count}</td>
-          <td>Unreviewed</td>
-          <td>${group.limitation}</td>
-        </tr>
-      `,
-    )
     .join("");
 };
 
@@ -2585,24 +2505,24 @@ const updateRenalBandNote = () => {
 
   if (!band) {
     renalBandNote.textContent =
-      "Enter eGFR to apply the configured renal guidance bands.";
+      "Enter eGFR to apply the renal guidance bands.";
     return;
   }
 
   if (band.id === "over50") {
     renalBandNote.textContent =
-      "eGFR above 50 mL/min: no automatic renal reduction is configured.";
+      "eGFR above 50 mL/min: no automatic renal reduction is applied.";
     return;
   }
 
   if (band.id === "30to50") {
     renalBandNote.textContent =
-      "eGFR 30-50 mL/min: the configured rule applies a 25% reduction for uncontrolled pain or a 50% reduction for well controlled pain to morphine, codeine, and meperidine.";
+      "eGFR 30-50 mL/min: this calculator applies a 25% reduction for uncontrolled pain or a 50% reduction for well controlled pain to morphine, codeine, and meperidine.";
     return;
   }
 
   renalBandNote.textContent =
-    "eGFR below 30 mL/min: the configured rule marks morphine, codeine, and meperidine as avoid and highlights alternative opioid groups.";
+    "eGFR below 30 mL/min: the renal guidance marks morphine, codeine, and meperidine as avoid and highlights alternative opioid groups.";
 };
 
 const renderRegimenSummaryTable = (parsedEntries) => {
@@ -2613,7 +2533,7 @@ const renderRegimenSummaryTable = (parsedEntries) => {
       if (!option) {
         return `
           <tr>
-            <td>Unconfigured entry</td>
+            <td>Reference unavailable</td>
             <td>--</td>
             <td>--</td>
           </tr>
@@ -2689,7 +2609,7 @@ const getRenalAdvice = ({
     return {
       summary: "Renal guidance off",
       title: "No renal band selected",
-      body: "Enter eGFR to turn on the configured renal adjustment guidance.",
+      body: "Enter eGFR to turn on the renal adjustment guidance.",
       resultLabel: "Not applied",
     };
   }
@@ -2699,7 +2619,7 @@ const getRenalAdvice = ({
       summary: "Renal: eGFR >50 mL/min",
       title: "eGFR >50 mL/min",
       body:
-        "No automatic renal dose reduction is configured above 50 mL/min." +
+        "No automatic renal dose reduction is applied above 50 mL/min." +
         currentNote,
       resultLabel: "No renal reduction",
     };
@@ -2725,7 +2645,7 @@ const getRenalAdvice = ({
           summary: `Renal: ${band.label}; ${reductionLabel}`,
           title: `${targetOption.label} is in the renal-restriction group`,
           body:
-            `${reductionLabel} is configured here for morphine, codeine, and meperidine when eGFR is 30-50 mL/min. ` +
+            `${reductionLabel} is applied here for morphine, codeine, and meperidine when eGFR is 30-50 mL/min. ` +
             `Applied after the selected safety reduction, ${formatDoseWithUnit(
               adjustedTargetDose,
               getDailyUnitLabel(targetOption),
@@ -2766,9 +2686,9 @@ const getRenalAdvice = ({
 
     return {
       summary: `Renal: ${band.label}; ${reductionLabel}`,
-      title: "Configured renal rule for eGFR 30-50 mL/min",
+      title: "Renal guidance for eGFR 30-50 mL/min",
       body:
-        `The configured rule applies ${reductionLabel} to morphine, codeine, and meperidine in the 30-50 mL/min band.` +
+        `This calculator applies ${reductionLabel} to morphine, codeine, and meperidine in the 30-50 mL/min band.` +
         currentNote,
       resultLabel: "Guidance only",
     };
@@ -2780,7 +2700,7 @@ const getRenalAdvice = ({
         summary: "Renal: eGFR <30 mL/min; avoid selected target agent",
         title: `Avoid ${targetOption.label} at eGFR <30 mL/min`,
         body:
-          "Morphine, codeine, and meperidine are marked as avoid by the configured rule below 30 mL/min. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
+          "The renal guidance marks morphine, codeine, and meperidine as avoid below 30 mL/min. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
           currentNote,
         resultLabel: "Avoid selected target agent",
         avoidTarget: true,
@@ -2812,9 +2732,9 @@ const getRenalAdvice = ({
 
   return {
     summary: "Renal: eGFR <30 mL/min; avoid morphine, codeine, and meperidine",
-    title: "Configured renal rule for eGFR <30 mL/min",
+    title: "Renal guidance for eGFR <30 mL/min",
     body:
-      "Morphine, codeine, and meperidine are marked as avoid below 30 mL/min by the configured rule. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
+      "The renal guidance marks morphine, codeine, and meperidine as avoid below 30 mL/min. Suggested alternatives: oxycodone or hydromorphone with caution, or methadone, fentanyl, or buprenorphine with specialist review and monitoring." +
       currentNote,
     resultLabel: "Guidance only",
   };
@@ -2839,7 +2759,7 @@ const getHepaticAdvice = ({
       summary: "Hepatic guidance off",
       title: "No hepatic class selected",
       body:
-        "Select mild, moderate, or severe hepatic impairment to show the configured liver dosing guidance for the target opioid.",
+        "Select mild, moderate, or severe hepatic impairment to show liver dosing guidance for the target opioid.",
       resultLabel: "Not applied",
     };
   }
@@ -2853,7 +2773,7 @@ const getHepaticAdvice = ({
       summary: `Hepatic: ${severityLabel} (clinical judgment)`,
       title: `${severityLabel} hepatic impairment active`,
       body: currentMedicationsWithGuidance.length
-        ? `${sourcePrefix}. Review the configured hepatic table below for ${formatList(
+        ? `${sourcePrefix}. Review the hepatic table below for ${formatList(
             currentMedicationsWithGuidance,
           )}. Numeric hepatic reductions are only shown here for a selected target opioid.`
         : `${sourcePrefix}. Numeric hepatic reductions are only shown here for a selected target opioid. Use the hepatic reference table below and bedside assessment when reviewing the current regimen.`,
@@ -2869,14 +2789,14 @@ const getHepaticAdvice = ({
         summary: `Hepatic: ${severityLabel} (clinical judgment); no local percent table for codeine`,
         title: `Codeine requires extra caution in ${severityLabel.toLowerCase()} hepatic impairment`,
         body:
-          `${sourcePrefix}. No local percentage reduction table is configured here for codeine. Because codeine relies on hepatic conversion to morphine, use caution and consider avoidance in significant liver dysfunction.`,
+          `${sourcePrefix}. No percentage reduction is provided here for codeine. Because codeine relies on hepatic conversion to morphine, use caution and consider avoidance in significant liver dysfunction.`,
         resultLabel: "Use extra caution",
       };
     }
 
     return {
-      summary: `Hepatic: ${severityLabel} (clinical judgment); no target-specific configured rule`,
-      title: `No configured hepatic percentage rule for ${targetOption.label}`,
+      summary: `Hepatic: ${severityLabel} (clinical judgment); no target-specific percentage guidance`,
+      title: `No hepatic percentage guidance for ${targetOption.label}`,
       body:
         `${sourcePrefix}. This calculator does not apply a medication-specific hepatic percentage rule to the selected target. Use bedside assessment and the reference sources below.`,
       resultLabel: "Guidance only",
@@ -2889,7 +2809,7 @@ const getHepaticAdvice = ({
     return {
       summary: `Hepatic: ${severityLabel} (clinical judgment); avoid ${targetOption.medication}`,
       title: `${severityLabel} hepatic impairment: avoid ${targetOption.label}`,
-      body: `${sourcePrefix}. The configured hepatic guide marks ${targetOption.label} as avoid in ${severityLabel.toLowerCase()} hepatic impairment.`,
+      body: `${sourcePrefix}. The hepatic guide marks ${targetOption.label} as avoid in ${severityLabel.toLowerCase()} hepatic impairment.`,
       resultLabel: "Avoid target",
       avoidTarget: true,
     };
@@ -3091,7 +3011,7 @@ const calculate = () => {
     : formatDose(adjustedTargetDose);
   finalUnit.textContent = organPresentation.avoidTarget ? "" : dailyUnit;
   resultQualifier.textContent = organPresentation.avoidTarget
-    ? "No target dose is displayed. The arithmetic below is pre-organ-guidance and provided for audit only."
+    ? "No target dose is displayed. The pre-organ-guidance arithmetic below is shown only for calculation transparency."
     : "After safety reduction; before kidney and liver guidance.";
 
   targetStepLabel.textContent = `Raw ${targetOption.label.toLowerCase()} dose`;
@@ -3674,7 +3594,6 @@ setTheme(document.documentElement.dataset.theme);
 renderReferenceTable();
 renderHepaticGuidanceTable();
 renderSourceTable();
-renderProvenanceSummary();
 renderPharmacokineticsReference();
 renderBuprenorphineOptions();
 setRegimenEntries([{}]);

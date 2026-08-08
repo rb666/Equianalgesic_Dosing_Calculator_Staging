@@ -4,9 +4,21 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const test = require("node:test");
 
-const { repositoryRoot, scriptText } = require("./calculator-test-helpers.cjs");
+const {
+  evaluateArray,
+  repositoryRoot,
+  scriptText,
+} = require("./calculator-test-helpers.cjs");
 const publicHtml = fs.readFileSync(
   path.join(repositoryRoot, "public", "opioidcalculator.html"),
+  "utf8",
+);
+const udsHtml = fs.readFileSync(
+  path.join(repositoryRoot, "public", "UDS.html"),
+  "utf8",
+);
+const udsToolText = fs.readFileSync(
+  path.join(repositoryRoot, "public", "uds-tool.js"),
   "utf8",
 );
 const stylesText = fs.readFileSync(
@@ -20,10 +32,8 @@ test("calculator HTML fails closed and loads assurance assets before the adapter
     publicHtml.match(/<span id="finalDose">([\s\S]*?)<\/span>/)?.[1] || "",
     /\d/,
   );
-  assert.match(publicHtml, /id="clinicalDataVersion"/);
-  assert.match(publicHtml, /id="provenanceSummaryTable"/);
   assert.match(publicHtml, /showCalculatorLoadFailure/);
-  assert.match(publicHtml, /Reload the page before entering or using clinical data/);
+  assert.match(publicHtml, /Reload the page before entering or using clinical information/);
   assert.match(scriptText, /dataset\.calculatorReady = "true"/);
 
   const coreIndex = publicHtml.indexOf('src="/calculator-core.js');
@@ -36,6 +46,14 @@ test("calculator HTML fails closed and loads assurance assets before the adapter
   );
   assert.equal(assetKeys.length, 4);
   assert.equal(new Set(assetKeys).size, 1);
+
+  const udsAssetKeys = [
+    ...udsHtml.matchAll(
+      /(?:styles\.css|uds-tool\.css|uds-workflow-guide\.css|uds-tool\.js|uds-workflow-guide\.js)\?v=([^"']+)/g,
+    ),
+  ].map((match) => match[1]);
+  assert.equal(udsAssetKeys.length, 5);
+  assert.equal(new Set(udsAssetKeys).size, 1);
 });
 
 test("accessible result and modal contracts are explicit", () => {
@@ -86,7 +104,35 @@ test("organ safety hierarchy and environment-neutral product naming are locked",
   assert.doesNotMatch(publicHtml, /Suboxone\s*\/\s*buprenorphine/i);
   assert.doesNotMatch(publicHtml, /staging build|staging rule|staging table|staging guidance/i);
   assert.doesNotMatch(scriptText, /staging build|staging rule|staging table|staging guidance/i);
-  assert.match(publicHtml, /Unreviewed off-label local protocol/);
+  assert.match(publicHtml, /Off-label transition schedule/);
+  assert.match(publicHtml, /institutional protocol and[\s\S]*specialist review/);
+});
+
+test("consumer-facing routes exclude developer, provenance, and environment notes", () => {
+  const forbiddenVisibleCopy =
+    /clinical data\s+v|rule traceability|named clinical approval record|rule-level provenance|mapped rules|review status|staging environment|for verification only|workflow redesign|reference\s*\/\s*governance|staging clinical-content review|unreviewed off-label local protocol|open when you need to audit|automated release gate|audit table|provided for audit only|unconfigured entry/i;
+
+  assert.doesNotMatch(publicHtml, forbiddenVisibleCopy);
+  assert.doesNotMatch(udsHtml, forbiddenVisibleCopy);
+  assert.doesNotMatch(udsToolText, forbiddenVisibleCopy);
+  assert.doesNotMatch(
+    publicHtml,
+    /clinicalDataVersion|clinicalDataReviewStatus|provenanceSummary|data-staging-environment/,
+  );
+  assert.doesNotMatch(
+    scriptText,
+    /renderProvenanceSummary|clinicalDataVersion|clinicalDataReviewStatus|provenanceSummary/,
+  );
+  assert.doesNotMatch(udsToolText, /class="uds-version"|Reference \/ governance/);
+
+  for (const source of evaluateArray("sourceReferences")) {
+    assert.match(source.url, /^https:\/\//, source.title);
+    assert.doesNotMatch(
+      source.note,
+      /repository|manifest|unreviewed|approval record|local configuration|policy metadata|release gate/i,
+      source.title,
+    );
+  }
 });
 
 test("shared core is the calculation seam and CI blocks deployment on tests", () => {
@@ -115,7 +161,7 @@ test("shared core is the calculation seam and CI blocks deployment on tests", ()
   assert.match(workflow, /deploy:[\s\S]*?permissions:[\s\S]*?pages:\s*write[\s\S]*?id-token:\s*write/);
 });
 
-test("GitHub Pages build is visibly staging-only and production source stays neutral", () => {
+test("GitHub Pages build keeps indexing controls without exposing environment notes", () => {
   const build = spawnSync(process.execPath, ["scripts/prepare-github-pages.mjs"], {
     cwd: repositoryRoot,
     encoding: "utf8",
@@ -127,7 +173,8 @@ test("GitHub Pages build is visibly staging-only and production source stays neu
       path.join(repositoryRoot, "dist", "github-pages", route, "index.html"),
       "utf8",
     );
-    assert.equal((generated.match(/data-staging-environment/g) || []).length, 1, route);
+    assert.equal((generated.match(/data-staging-environment/g) || []).length, 0, route);
+    assert.doesNotMatch(generated, /Staging environment|For verification only/i);
     assert.match(generated, /<meta name="robots" content="noindex, nofollow"/);
   }
 

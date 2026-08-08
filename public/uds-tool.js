@@ -5,7 +5,7 @@
   if (!root) return;
 
   const STORAGE_KEY = "uds-clinical-reference-panels-v1";
-  const APP_VERSION = "2026-05-23 workflow redesign";
+  const APP_VERSION = "2026.05.23";
   const COVERAGE_STATUSES = new Set([
     "included",
     "class_screen",
@@ -21,17 +21,6 @@
     "cbd",
     "synthetic_cannabinoids",
   ]);
-  const REVIEW_METADATA = {
-    lastReviewed: "2026-05-23",
-    status: "staging clinical-content review",
-    note: "Verify against local laboratory method, cutoff, and panel contents before clinical use.",
-  };
-  const referenceCategories = [
-    "Laboratory method references",
-    "Clinical UDS interpretation reviews",
-    "Detection-window references",
-    "Local laboratory policy / panel validation",
-  ];
 
   const items = [
     item("morphine", "Morphine", "Opioids", "drug", ["MS Contin", "Roxanol"], "1-3 days", "Morphine use, codeine metabolism, heroin pathway, or poppy exposure context; not heroin-specific without 6-MAM.", "Definitive opiate panel when source matters", ["opioid"]),
@@ -446,7 +435,6 @@
             <h2 id="udsModalTitle">UDS workflow tool</h2>
             <p>Review predetermined UDS panels, reconcile expected medications against reported findings, check panel/reflex limits, and look up drugs or metabolites.</p>
           </div>
-          <span class="uds-version">${escapeHtml(APP_VERSION)}</span>
         </header>
         <div class="uds-privacy-strip">Do not enter patient names, DOBs, MRNs, accession numbers, order numbers, addresses, or other identifiers.</div>
         <nav class="uds-nav" aria-label="UDS workflows">
@@ -897,12 +885,6 @@
       ${renderOutputBlock("Approximate urine window", [selected.window])}
       ${renderOutputBlock("Expected and related findings", getRelatedLines(selected.id))}
       ${renderOutputBlock("Do not conclude", [standardCannotConclude().join("; ")])}
-      ${renderDetails("Reference / governance", [
-        `Last reviewed: ${REVIEW_METADATA.lastReviewed}`,
-        `Status: ${REVIEW_METADATA.status}`,
-        REVIEW_METADATA.note,
-        ...referenceCategories,
-      ])}
       <button class="uds-secondary-button" data-action="copy-lookup" type="button">Copy lookup summary</button>
     `;
   }

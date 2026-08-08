@@ -51,6 +51,18 @@ node --test tests\calculator-*.test.cjs
 node scripts\prepare-github-pages.mjs
 ```
 
-The generated GitHub Pages artifact receives a visible staging notice and
-`noindex, nofollow`; shared `public/` source remains environment-neutral for a
-deliberate production promotion.
+The generated GitHub Pages artifact receives `noindex, nofollow`; shared
+`public/` source remains environment-neutral for a deliberate production
+promotion.
+
+## Consumer-facing interface boundary
+
+Staging is a client/consumer-facing product surface. Never render developer or
+release metadata in either route, including environment/QA banners, build labels,
+manifest versions, provenance counts, repository state, attestation status, or CI
+status. Those records belong only in repository documentation, machine-readable
+manifests, tests, and controlled review systems.
+
+Clinically important limitations must still be shown, but as plain, actionable
+clinical safety guidance rather than internal governance language. The static
+contract tests enforce this boundary for both source and generated pages.

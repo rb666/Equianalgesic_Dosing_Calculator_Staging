@@ -32,7 +32,7 @@ Traceability and passing tests do not turn a local rule into an approved rule.
 - Renal and hepatic advice are calculated independently from the post-safety,
   pre-organ estimate. They are never automatically stacked. If either configured
   rule says to avoid the selected target, the prominent dose is suppressed while
-  the pre-organ arithmetic remains visible only as an audit detail.
+  the pre-organ arithmetic remains visible only for calculation transparency.
 
 ## Local and off-label policy
 
@@ -67,6 +67,20 @@ The manifest uses `evidenceMatch` values such as `exact`, `representative`,
 be rendered as an approval badge. Rules marked `conflicts` or `none` must remain
 unreviewed and show a limitation.
 
+## Consumer-facing copy boundary
+
+The provenance manifest, rule versions, review/attestation state, rule counts,
+repository details, environment labels, and release-gate status are internal audit
+artifacts. They must never be rendered in the staging or production interface.
+Staging is a client/consumer-facing product surface, not a developer dashboard.
+
+Clinical limitations remain visible when they affect safe use, but they must be
+written as actionable clinical guidance. For example, the buprenorphine overlap
+schedule is labeled off-label and directs users to institutional protocol and
+specialist review; the interface does not expose repository approval metadata.
+Automated static-contract tests fail if internal governance or staging/QA copy is
+reintroduced into either generated route.
+
 ## Automated gate
 
 The dependency-free test suite runs under Node's built-in test runner:
@@ -86,7 +100,8 @@ The gate covers:
 - 13 benzodiazepine, 21 hepatic, 25 schedule-step, and 147 PK claim mappings;
 - repaired PK source URLs and structured representative values;
 - no-JavaScript failure state, accessible status/modal contracts, naming, cache
-  keys, staging-only artifact transformation, and CI deployment ordering; and
+  keys, the consumer-facing copy boundary, generated-route indexing controls,
+  and CI deployment ordering; and
 - a SHA-256 digest over the clinical arrays/constants and the pure calculator core.
   A clinical-data or calculation-policy change requires a deliberate manifest
   version/digest update or CI fails.

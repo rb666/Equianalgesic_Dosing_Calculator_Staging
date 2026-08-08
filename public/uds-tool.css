@@ -1,4 +1,4 @@
-/* UDS workflow redesign: minimal, PHI-safe clinical reference interface */
+/* Minimal, PHI-safe UDS clinical reference interface */
 :root {
   --uds-neutral-fg: #374151;
   --uds-neutral-bg: #f3f4f6;
@@ -81,14 +81,6 @@
   font-weight: 850;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-}
-
-.uds-version {
-  align-self: center;
-  color: var(--muted, #5b6673);
-  font-size: 0.78rem;
-  font-weight: 700;
-  white-space: nowrap;
 }
 
 .uds-privacy-strip {
@@ -861,10 +853,6 @@
     grid-template-columns: 1fr;
   }
 
-  .uds-version {
-    white-space: normal;
-  }
-
   .uds-nav,
   .uds-workflow-grid,
   .uds-simple-grid,
@@ -956,8 +944,7 @@
 :root[data-theme="dark"] .uds-list-note,
 :root[data-theme="dark"] .uds-list-badge,
 :root[data-theme="dark"] .uds-picker-meta,
-:root[data-theme="dark"] .uds-picker-empty,
-:root[data-theme="dark"] .uds-version {
+:root[data-theme="dark"] .uds-picker-empty {
   color: #9ca3af;
 }
 

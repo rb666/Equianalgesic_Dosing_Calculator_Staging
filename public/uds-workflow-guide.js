@@ -208,7 +208,6 @@
       return;
     }
 
-    const existingVersion = header.querySelector(".uds-version");
     const slot = document.createElement("div");
     slot.className = "uds-header-guide-slot";
 
@@ -226,12 +225,7 @@
 
     slot.appendChild(button);
 
-    if (existingVersion) {
-      header.insertBefore(slot, existingVersion);
-      slot.appendChild(existingVersion);
-    } else {
-      header.appendChild(slot);
-    }
+    header.appendChild(slot);
   }
 
   function injectGuideDrawer(root) {

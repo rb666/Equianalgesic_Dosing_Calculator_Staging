@@ -2,7 +2,7 @@
 
 Static clinical decision support website for converting between opioid
 equianalgesic doses, calculating oral morphine equivalents, and opening
-specialty methadone, Suboxone, and UDS workflow tools. The site is published
+specialty methadone, buprenorphine-transition, and UDS workflow tools. The site is published
 with GitHub Pages from the static files in `public/`.
 
 The main converter includes methadone source and route-switching entries:
@@ -20,9 +20,12 @@ methadone safety reduction.
 - `public/UDS.html`, `public/uds-tool.js`, and related UDS assets contain the
   urine drug screen workflow tool.
 - `public/styles.css` contains responsive styling.
-- `public/script.js` contains the conversion table and calculator logic.
+- `public/calculator-core.js` contains browser/Node-compatible pure calculator logic.
+- `public/calculator-provenance.js` contains the versioned rule-level manifest.
+- `public/script.js` contains clinical tables and the browser adapter.
 - `scripts/prepare-github-pages.mjs` prepares GitHub Pages-compatible clean
   routes from the `public/` folder.
+- `CLINICAL_DATA.md` documents input, composition, provenance, and approval status.
 
 ## GitHub Pages
 
@@ -31,3 +34,23 @@ GitHub Pages deploys from `.github/workflows/pages.yml` on every push to
 official GitHub Pages Actions.
 
 The source files stay in `public/`; do not edit generated files under `dist/`.
+
+## Calculator assurance
+
+The manifest is intentionally marked unreviewed because this repository contains
+no named clinical attestation. Traceability and regression coverage do not imply
+clinical approval.
+
+Run the release gate locally with:
+
+```powershell
+node --check public\calculator-core.js
+node --check public\calculator-provenance.js
+node --check public\script.js
+node --test tests\calculator-*.test.cjs
+node scripts\prepare-github-pages.mjs
+```
+
+The generated GitHub Pages artifact receives a visible staging notice and
+`noindex, nofollow`; shared `public/` source remains environment-neutral for a
+deliberate production promotion.

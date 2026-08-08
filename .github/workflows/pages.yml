@@ -4,19 +4,49 @@ on:
   push:
     branches:
       - main
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: github-pages
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check public/calculator-core.js
+          node --check public/calculator-provenance.js
+          node --check public/script.js
+          node --check public/uds-tool.js
+          node --check public/uds-workflow-guide.js
+
+      - name: Run calculator regression and assurance tests
+        run: node --test tests/calculator-*.test.cjs
+
+      - name: Verify GitHub Pages build
+        run: node scripts/prepare-github-pages.mjs
+
   deploy:
+    needs: verify
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

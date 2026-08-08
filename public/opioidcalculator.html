@@ -55,7 +55,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260808-select-caret-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260808-calculator-assurance-4" />
   </head>
   <body>
     <div class="environment-banner">
@@ -100,7 +100,7 @@
             <h1>Equianalgesic Dose Calculator</h1>
             <p>
               Calculate total daily oral morphine equivalent, convert to a target
-              opioid, or open the specialty methadone and Suboxone tools.
+              opioid, or open the specialty methadone and buprenorphine tools.
             </p>
           </div>
           <section class="safety-banner" aria-label="Clinical warning and disclaimer">
@@ -135,6 +135,12 @@
     </header>
 
     <main>
+      <aside class="clinical-data-status" aria-label="Clinical data governance">
+        <strong>Clinical data <span id="clinicalDataVersion">loading</span></strong>
+        <span id="clinicalDataReviewStatus">
+          Checking provenance and review status.
+        </span>
+      </aside>
       <nav
         aria-label="Calculator sections"
         aria-orientation="horizontal"
@@ -190,8 +196,8 @@
           tabindex="-1"
           type="button"
         >
-          <span>Suboxone</span>
-          <small>Transition schedule</small>
+          <span>Buprenorphine</span>
+          <small>Transition schedules</small>
         </button>
         <button
           aria-controls="benzoPanel"
@@ -259,6 +265,7 @@
                 <label for="reductionRange">Safety reduction</label>
                 <div class="percent-input">
                   <input
+                    aria-label="Safety reduction percentage value"
                     id="reductionNumber"
                     name="reductionNumber"
                     type="number"
@@ -267,10 +274,11 @@
                     step="1"
                     value="0"
                   />
-                  <span>%</span>
+                  <span aria-hidden="true">%</span>
                 </div>
               </div>
               <input
+                aria-label="Safety reduction percentage slider"
                 id="reductionRange"
                 name="reductionRange"
                 type="range"
@@ -313,9 +321,8 @@
             </div>
 
             <p class="basis-note">
-              This staging build treats the reduction as a configurable safety
-              adjustment from 0% to 100% after the raw target daily dose is
-              calculated.
+              This calculator treats the reduction as a configured safety adjustment
+              from 0% to 100% after the raw target daily dose is calculated.
             </p>
           </section>
 
@@ -362,7 +369,7 @@
                 </div>
 
                 <p class="context-summary note-box" id="renalBandNote">
-                  Enter eGFR to apply the staging renal guidance bands.
+                  Enter eGFR to apply the configured renal guidance bands.
                 </p>
               </section>
 
@@ -404,7 +411,7 @@
           </div>
         </form>
 
-        <section class="result-panel" aria-live="polite" aria-atomic="true">
+        <section class="result-panel" id="mainResultPanel">
           <noscript>
             <p class="basis-note">
               <strong>Calculator unavailable.</strong> JavaScript is required to
@@ -420,6 +427,16 @@
             <span id="finalDose">&mdash;</span>
             <span id="finalUnit"></span>
           </div>
+          <p class="result-qualifier" id="resultQualifier">
+            No dose is available until the calculator finishes loading.
+          </p>
+          <p
+            class="visually-hidden"
+            id="conversionResultStatus"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          ></p>
           <div class="secondary-dose-card is-hidden" id="methadoneConservativeMme">
             <span class="summary-label">Conservative oral methadone assessment</span>
             <div class="dose-result secondary-dose-result">
@@ -437,6 +454,10 @@
             <div id="reductionStep">
               <dt>Safety reduction applied</dt>
               <dd id="reductionApplied">Not applied</dd>
+            </div>
+            <div id="safetyAdjustedStep">
+              <dt>After safety reduction, before organ guidance</dt>
+              <dd id="safetyAdjustedDose">Not available</dd>
             </div>
             <div class="wrap-step" id="renalAdjustmentStep">
               <dt>Renal-adjusted target</dt>
@@ -462,7 +483,7 @@
               <span class="summary-label">Renal advice</span>
               <h3 id="renalAdviceTitle">No renal band selected</h3>
               <p id="renalAdviceBody">
-                Enter eGFR to turn on the staging renal adjustment guidance.
+                Enter eGFR to turn on the configured renal adjustment guidance.
               </p>
             </section>
 
@@ -495,7 +516,7 @@
               <li>Multi-drug totals are intended for regimen-level review; they do not replace opioid-specific bedside assessment.</li>
               <li>Patch entries are treated as standing 24-hour exposure estimates and not as initiation or titration instructions.</li>
               <li>Methadone totals are especially approximate; use the methadone tab and specialist input when rotating to methadone.</li>
-              <li>Renal and hepatic cards show staging guidance and local advisory rules; they are not validated severity scores.</li>
+              <li>Renal and hepatic cards show configured local advisory rules; they are not validated severity scores.</li>
               <li>Reassess analgesia, respiratory rate, sedation, organ function, and adverse effects after conversion.</li>
             </ul>
           </div>
@@ -506,7 +527,7 @@
         class="specialty-section is-hidden"
         hidden
         id="specialtyCalculatorSection"
-        aria-label="Methadone and Suboxone calculators"
+        aria-label="Methadone and buprenorphine calculators"
       >
         <section
           aria-labelledby="calculatorTabMethadone"
@@ -558,6 +579,7 @@
                   <label for="methadoneReductionRange">Methadone safety reduction</label>
                   <div class="percent-input">
                     <input
+                      aria-label="Methadone safety reduction percentage value"
                       id="methadoneReductionNumber"
                       name="methadoneReductionNumber"
                       type="number"
@@ -566,10 +588,11 @@
                       step="1"
                       value="0"
                     />
-                    <span>%</span>
+                    <span aria-hidden="true">%</span>
                   </div>
                 </div>
                 <input
+                  aria-label="Methadone safety reduction percentage slider"
                   id="methadoneReductionRange"
                   name="methadoneReductionRange"
                   type="range"
@@ -594,7 +617,7 @@
             </p>
           </form>
 
-          <section class="result-panel" aria-live="polite" aria-atomic="true">
+          <section class="result-panel">
             <div class="section-heading">
               <p class="eyebrow">Methadone result</p>
               <h2 id="methadoneResultTitle">Conservative starting estimate</h2>
@@ -604,6 +627,13 @@
               <span id="methadoneFinalDose">&mdash;</span>
               <span id="methadoneFinalUnit"></span>
             </div>
+            <p
+              class="visually-hidden"
+              id="methadoneResultStatus"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            ></p>
 
             <dl class="calculation-steps">
               <div>
@@ -654,7 +684,7 @@
         >
           <form class="calculator-panel" id="buprenorphineForm">
             <div class="section-heading">
-              <p class="eyebrow">Suboxone / buprenorphine</p>
+              <p class="eyebrow">Buprenorphine formulations</p>
               <h2>MEDD-based transition schedule</h2>
             </div>
 
@@ -673,9 +703,15 @@
               transition schedule. Stabilize earlier if pain and
               withdrawal are controlled.
             </p>
+            <p class="note-box" role="note">
+              <strong>Unreviewed off-label local protocol.</strong> These overlap
+              schedules differ from the cited Belbuca and Suboxone product-label
+              initiation instructions. No named clinical approval record or
+              protocol citation is present for this exact schedule version.
+            </p>
           </form>
 
-          <section class="result-panel" aria-live="polite" aria-atomic="true">
+          <section class="result-panel">
             <div class="section-heading">
               <p class="eyebrow">Schedule</p>
               <h2 id="buprenorphineResultTitle">30-59 mg MEDD</h2>
@@ -701,6 +737,13 @@
                 <strong id="buprenorphineEndpoint">450 mcg BID (900 mcg TDD)</strong>
               </div>
             </div>
+            <p
+              class="visually-hidden"
+              id="buprenorphineResultStatus"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            ></p>
 
             <div class="table-wrap schedule-table-wrap">
               <table class="schedule-table">
@@ -783,6 +826,7 @@
                   <label for="benzoReductionRange">Safety reduction</label>
                   <div class="percent-input">
                     <input
+                      aria-label="Benzodiazepine safety reduction percentage value"
                       id="benzoReductionNumber"
                       name="benzoReductionNumber"
                       type="number"
@@ -791,10 +835,11 @@
                       step="1"
                       value="0"
                     />
-                    <span>%</span>
+                    <span aria-hidden="true">%</span>
                   </div>
                 </div>
                 <input
+                  aria-label="Benzodiazepine safety reduction percentage slider"
                   id="benzoReductionRange"
                   name="benzoReductionRange"
                   type="range"
@@ -817,7 +862,7 @@
             </p>
           </form>
 
-          <section class="result-panel" aria-live="polite" aria-atomic="true">
+          <section class="result-panel">
             <div class="section-heading">
               <p class="eyebrow">Benzodiazepine result</p>
               <h2 id="benzoResultTitle">Equivalent starting estimate</h2>
@@ -827,6 +872,13 @@
               <span id="benzoFinalDose">&mdash;</span>
               <span id="benzoFinalUnit"></span>
             </div>
+            <p
+              class="visually-hidden"
+              id="benzoResultStatus"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            ></p>
 
             <dl class="calculation-steps">
               <div>
@@ -863,7 +915,7 @@
           <span class="compact-title">
             <span class="eyebrow">Reference</span>
             <strong>Configured tables and sources</strong>
-            <span>Open when you need to audit the staging build.</span>
+            <span>Open when you need to audit configured rules and evidence.</span>
           </span>
           <span class="summary-action" aria-hidden="true"></span>
         </summary>
@@ -890,10 +942,9 @@
           </div>
 
           <p class="reference-copy">
-            This staging build uses a configured hybrid table: current local
-            morphine and hydromorphone relationships are preserved, while
-            hydrocodone, codeine, oral methadone, and expanded fentanyl patch
-            entries are updated to the requested staging values.
+            This calculator uses a configured hybrid table. Some rows align with
+            cited MME references; route conversions, interpolations, and other rows
+            remain explicitly identified as unreviewed local policy in the manifest.
           </p>
 
           <div class="section-heading methadone-reference-heading">
@@ -915,7 +966,7 @@
           </div>
 
           <p class="reference-copy">
-            Renal logic configured in this staging build: eGFR above 50 mL/min
+            Configured renal logic: eGFR above 50 mL/min
             uses no automatic reduction; eGFR 30-50 mL/min applies a 25%
             reduction for uncontrolled pain or 50% for well controlled pain to
             morphine, codeine, and meperidine; eGFR below 30 mL/min marks
@@ -927,7 +978,7 @@
 
           <div class="section-heading methadone-reference-heading">
             <p class="eyebrow">Sources</p>
-            <h2>References used to build this staging table</h2>
+            <h2>External references</h2>
           </div>
           <div class="table-wrap">
             <table class="source-table">
@@ -941,6 +992,29 @@
               <tbody id="sourceTable"></tbody>
             </table>
           </div>
+
+          <section class="provenance-summary" aria-labelledby="provenanceSummaryHeading">
+            <div class="section-heading methadone-reference-heading">
+              <p class="eyebrow">Governance</p>
+              <h2 id="provenanceSummaryHeading">Rule-level provenance status</h2>
+            </div>
+            <p class="reference-copy" id="provenanceSummaryCopy">
+              Loading the versioned clinical-data manifest.
+            </p>
+            <div class="table-wrap">
+              <table class="source-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Rule group</th>
+                    <th scope="col">Mapped rules</th>
+                    <th scope="col">Review status</th>
+                    <th scope="col">Important limitation</th>
+                  </tr>
+                </thead>
+                <tbody id="provenanceSummaryTable"></tbody>
+              </table>
+            </div>
+          </section>
         </section>
       </details>
 
@@ -958,6 +1032,7 @@
       aria-labelledby="pharmacokineticsModalTitle"
       aria-modal="true"
       class="reference-modal is-hidden"
+      hidden
       id="pharmacokineticsModal"
       role="dialog"
     >
@@ -992,11 +1067,14 @@
             </p>
             <div class="pk-interactive-layout">
               <div class="pk-graph-grid" id="pharmacokineticsGraphGrid"></div>
-              <section
+              <section class="pk-selected-detail" id="pharmacokineticsSelectedDetail"></section>
+              <p
+                class="visually-hidden"
+                id="pharmacokineticsSelectionStatus"
+                role="status"
                 aria-live="polite"
-                class="pk-selected-detail"
-                id="pharmacokineticsSelectedDetail"
-              ></section>
+                aria-atomic="true"
+              ></p>
             </div>
           </section>
 
@@ -1046,6 +1124,34 @@
       </div>
     </div>
 
-    <script src="/script.js?v=20260808-calculator-correctness-3"></script>
+    <script>
+      (() => {
+        const showCalculatorLoadFailure = () => {
+          if (document.documentElement.dataset.calculatorReady === "true") return;
+
+          const title = document.querySelector("#resultTitle");
+          const dose = document.querySelector("#finalDose");
+          const unit = document.querySelector("#finalUnit");
+          const qualifier = document.querySelector("#resultQualifier");
+          const status = document.querySelector("#conversionResultStatus");
+
+          if (title) title.textContent = "Calculator unavailable";
+          if (dose) dose.textContent = "—";
+          if (unit) unit.textContent = "";
+          if (qualifier) {
+            qualifier.textContent =
+              "The calculator scripts did not finish loading. Reload the page before entering or using clinical data.";
+          }
+          if (status) status.textContent = "Calculator unavailable. Reload the page.";
+        };
+
+        window.addEventListener("error", showCalculatorLoadFailure);
+        window.addEventListener("unhandledrejection", showCalculatorLoadFailure);
+        window.setTimeout(showCalculatorLoadFailure, 5000);
+      })();
+    </script>
+    <script src="/calculator-core.js?v=20260808-calculator-assurance-4"></script>
+    <script src="/calculator-provenance.js?v=20260808-calculator-assurance-4"></script>
+    <script src="/script.js?v=20260808-calculator-assurance-4"></script>
   </body>
 </html>

@@ -60,11 +60,21 @@ async function rewriteGeneratedScript(fileName) {
 
 function rewriteHtmlForRoute(html) {
   return html
+    .replace(
+      /<meta name="robots" content="[^"]*"\s*\/>/,
+      '<meta name="robots" content="noindex, nofollow" />',
+    )
+    .replace(
+      /<body>/,
+      `<body>\n    <aside class="staging-environment-notice" data-staging-environment role="note"><strong>Staging environment</strong><span>For verification only; not the production clinical site.</span></aside>`,
+    )
     .replace(/href="\/favicon\.svg/g, 'href="../favicon.svg')
     .replace(/href="\/styles\.css/g, 'href="../styles.css')
     .replace(/href="\/uds-tool\.css/g, 'href="../uds-tool.css')
     .replace(/href="\/uds-workflow-guide\.css/g, 'href="../uds-workflow-guide.css')
     .replace(/src="\/script\.js/g, 'src="../script.js')
+    .replace(/src="\/calculator-core\.js/g, 'src="../calculator-core.js')
+    .replace(/src="\/calculator-provenance\.js/g, 'src="../calculator-provenance.js')
     .replace(/src="\/uds-tool\.js/g, 'src="../uds-tool.js')
     .replace(/src="\/uds-workflow-guide\.js/g, 'src="../uds-workflow-guide.js')
     .replace(/src="\/OpioidConversionSite\.png/g, 'src="../OpioidConversionSite.png')

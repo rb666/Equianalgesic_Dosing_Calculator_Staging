@@ -278,10 +278,14 @@
   padding: 8px 10px;
   border: 1px solid color-mix(in srgb, var(--border, #cbd5df) 85%, #000 10%);
   border-radius: 10px;
-  background: var(--surface, #fff);
+  background-color: var(--surface, #fff);
   color: var(--ink, #1f2933);
   font: inherit;
   font-weight: 650;
+}
+
+.uds-card select {
+  padding-right: 30px;
 }
 
 .uds-card textarea {
@@ -928,7 +932,7 @@
 :root[data-theme="dark"] .uds-list-item,
 :root[data-theme="dark"] .uds-picker-panel,
 :root[data-theme="dark"] .uds-note-preview {
-  background: #111827;
+  background-color: #111827;
   color: #e5e7eb;
   border-color: #374151;
 }

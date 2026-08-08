@@ -56,6 +56,7 @@
   --reference-hover-text: #111615;
   --reference-separator: #c9cfcc;
   --reference-shadow: rgba(31, 42, 39, 0.12);
+  --select-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='m1 1 4 4 4-4' fill='none' stroke='%2366736f' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.75'/%3E%3C/svg%3E");
 }
 
 :root[data-theme="dark"] {
@@ -117,6 +118,7 @@
   --reference-hover-text: #fff9ed;
   --reference-separator: #626b67;
   --reference-shadow: rgba(0, 0, 0, 0.24);
+  --select-caret: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='m1 1 4 4 4-4' fill='none' stroke='%23b7ada3' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.75'/%3E%3C/svg%3E");
 }
 
 * {
@@ -797,7 +799,7 @@ input[type="number"] {
   min-height: 50px;
   border: 1.5px solid var(--line);
   border-radius: 6px;
-  background: var(--surface);
+  background-color: var(--surface);
   color: var(--ink);
   padding: 11px 13px;
   font-size: 1rem;
@@ -811,11 +813,17 @@ input[type="number"] {
 select:hover,
 input[type="number"]:hover {
   border-color: var(--control-hover-border);
-  background: var(--control-hover-bg);
+  background-color: var(--control-hover-bg);
 }
 
 select {
+  appearance: none;
+  background-image: var(--select-caret);
+  background-position: right 7px center;
+  background-repeat: no-repeat;
+  background-size: 10px 6px;
   cursor: pointer;
+  padding-right: 30px;
 }
 
 .subsection {

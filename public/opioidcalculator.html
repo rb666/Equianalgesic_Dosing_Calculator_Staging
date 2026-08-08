@@ -345,7 +345,7 @@
                       name="egfrInput"
                       type="number"
                       min="0"
-                      step="1"
+                      step="any"
                       inputmode="decimal"
                       placeholder="Enter mL/min"
                     />
@@ -405,18 +405,25 @@
         </form>
 
         <section class="result-panel" aria-live="polite" aria-atomic="true">
+          <noscript>
+            <p class="basis-note">
+              <strong>Calculator unavailable.</strong> JavaScript is required to
+              validate the regimen and produce a dose estimate. No calculation
+              is available from the values shown below.
+            </p>
+          </noscript>
           <div class="section-heading">
-            <h2 id="resultTitle">Oxycodone oral estimate</h2>
+            <h2 id="resultTitle">Loading calculator</h2>
           </div>
 
           <div class="dose-result">
-            <span id="finalDose">20</span>
-            <span id="finalUnit">mg/day</span>
+            <span id="finalDose">&mdash;</span>
+            <span id="finalUnit"></span>
           </div>
           <div class="secondary-dose-card is-hidden" id="methadoneConservativeMme">
             <span class="summary-label">Conservative oral methadone assessment</span>
             <div class="dose-result secondary-dose-result">
-              <span id="methadoneConservativeMmeDose">0</span>
+              <span id="methadoneConservativeMmeDose">&mdash;</span>
               <span id="methadoneConservativeMmeUnit">mg MME/day</span>
             </div>
             <p>Uses a 3.0 multiplier for oral methadone only.</p>
@@ -424,12 +431,12 @@
 
           <dl class="calculation-steps" data-conversion-output>
             <div>
-              <dt id="targetStepLabel">Raw oxycodone oral dose</dt>
-              <dd id="rawTargetDose">20 mg/day</dd>
+              <dt id="targetStepLabel">Target calculation</dt>
+              <dd id="rawTargetDose">Not available</dd>
             </div>
             <div id="reductionStep">
               <dt>Safety reduction applied</dt>
-              <dd id="reductionApplied">0% reduction</dd>
+              <dd id="reductionApplied">Not applied</dd>
             </div>
             <div class="wrap-step" id="renalAdjustmentStep">
               <dt>Renal-adjusted target</dt>
@@ -441,7 +448,7 @@
             </div>
             <div class="wrap-step" id="organGuidanceStep">
               <dt>Organ guidance summary</dt>
-              <dd id="organGuidanceSummary">No renal or hepatic class selected</dd>
+              <dd id="organGuidanceSummary">Awaiting calculator initialization</dd>
             </div>
           </dl>
 
@@ -522,13 +529,17 @@
                   id="methadoneMorphineDose"
                   name="methadoneMorphineDose"
                   type="number"
+                  aria-describedby="methadoneDoseHint"
+                  aria-invalid="false"
                   min="0"
                   step="1"
-                  inputmode="decimal"
+                  inputmode="numeric"
                   value="100"
                   required
                 />
-                <span class="field-hint">mg/day OME</span>
+                <span class="field-hint" id="methadoneDoseHint" aria-live="polite">
+                  mg/day OME (whole numbers)
+                </span>
               </label>
 
               <label for="methadoneRoute">
@@ -586,38 +597,38 @@
           <section class="result-panel" aria-live="polite" aria-atomic="true">
             <div class="section-heading">
               <p class="eyebrow">Methadone result</p>
-              <h2>Conservative starting estimate</h2>
+              <h2 id="methadoneResultTitle">Conservative starting estimate</h2>
             </div>
 
             <div class="dose-result">
-              <span id="methadoneFinalDose">12.5</span>
-              <span id="methadoneFinalUnit">mg/day</span>
+              <span id="methadoneFinalDose">&mdash;</span>
+              <span id="methadoneFinalUnit"></span>
             </div>
 
             <dl class="calculation-steps">
               <div>
                 <dt>Morphine:methadone ratio</dt>
-                <dd id="methadoneRatio">8:1</dd>
+                <dd id="methadoneRatio">Not available</dd>
               </div>
               <div>
                 <dt>Raw oral methadone</dt>
-                <dd id="methadoneRawDose">12.5 mg/day</dd>
+                <dd id="methadoneRawDose">Not available</dd>
               </div>
               <div>
                 <dt>Route adjustment</dt>
-                <dd id="methadoneRouteAdjustment">Oral route</dd>
+                <dd id="methadoneRouteAdjustment">Not applied</dd>
               </div>
               <div>
                 <dt>Reduction applied</dt>
-                <dd id="methadoneReductionApplied">0% reduction</dd>
+                <dd id="methadoneReductionApplied">Not applied</dd>
               </div>
               <div>
                 <dt>If divided q8h</dt>
-                <dd id="methadoneQ8Dose">4.17 mg/dose</dd>
+                <dd id="methadoneQ8Dose">Not available</dd>
               </div>
               <div>
                 <dt>If divided q12h</dt>
-                <dd id="methadoneQ12Dose">6.25 mg/dose</dd>
+                <dd id="methadoneQ12Dose">Not available</dd>
               </div>
             </dl>
 
@@ -746,13 +757,16 @@
                   id="benzoSourceDose"
                   name="benzoSourceDose"
                   type="number"
+                  aria-describedby="benzoSourceUnit benzoDoseValidation"
+                  aria-invalid="false"
                   min="0"
-                  step="0.1"
+                  step="any"
                   inputmode="decimal"
                   value="1"
                   required
                 />
                 <span class="field-hint" id="benzoSourceUnit">mg/day</span>
+                <span class="field-hint" id="benzoDoseValidation" aria-live="polite"></span>
               </label>
 
               <label for="benzoTargetDrug">
@@ -806,26 +820,26 @@
           <section class="result-panel" aria-live="polite" aria-atomic="true">
             <div class="section-heading">
               <p class="eyebrow">Benzodiazepine result</p>
-              <h2>Equivalent starting estimate</h2>
+              <h2 id="benzoResultTitle">Equivalent starting estimate</h2>
             </div>
 
             <div class="dose-result">
-              <span id="benzoFinalDose">0</span>
-              <span id="benzoFinalUnit">mg/day</span>
+              <span id="benzoFinalDose">&mdash;</span>
+              <span id="benzoFinalUnit"></span>
             </div>
 
             <dl class="calculation-steps">
               <div>
                 <dt>Source Diazepam equivalent (unreduced)</dt>
-                <dd id="benzoRawDiazepamEquiv">0 mg Diazepam/day</dd>
+                <dd id="benzoRawDiazepamEquiv">Not available</dd>
               </div>
               <div>
                 <dt>Reduced Diazepam equivalent</dt>
-                <dd id="benzoReducedDiazepamEquiv">0 mg Diazepam/day</dd>
+                <dd id="benzoReducedDiazepamEquiv">Not available</dd>
               </div>
               <div>
                 <dt>Safety reduction applied</dt>
-                <dd id="benzoReductionApplied">0% reduction</dd>
+                <dd id="benzoReductionApplied">Not applied</dd>
               </div>
             </dl>
 
@@ -1032,6 +1046,6 @@
       </div>
     </div>
 
-    <script src="/script.js?v=20260524-uds-order-review-2"></script>
+    <script src="/script.js?v=20260808-calculator-correctness-3"></script>
   </body>
 </html>

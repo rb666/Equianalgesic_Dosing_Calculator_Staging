@@ -1092,9 +1092,9 @@ const pharmacokineticsRows = [
   {
     name: "Tapentadol oral (ER)",
     route: "Oral",
-    profile: { type: "absorptive", peakHours: 5, halfLifeHours: 8, scaleHours: 24 },
-    timing: "Slow release; peak plasma concentrations occur around 5-6 hours after administration.",
-    halfLife: "Effective elimination half-life is prolonged, averaging about 5-6 hours, with dosing recommended every 12 hours.",
+    profile: { type: "absorptive", peakHours: 5, halfLifeHours: 5, scaleHours: 24 },
+    timing: "Slow release; peak plasma concentrations occur about 3-6 hours after administration.",
+    halfLife: "Terminal elimination half-life averages about 5 hours, with dosing recommended every 12 hours.",
     metabolism:
       "Primarily metabolized via phase II glucuronidation (UGT1A9, UGT2B7) into inactive conjugates, with minimal CYP450 involvement. Excreted renally.",
     mechanism:
@@ -1106,7 +1106,7 @@ const pharmacokineticsRows = [
     sources: [
       {
         title: "DailyMed Nucynta ER tablets",
-        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=7997e6da-7e98-4520-9d1b-0b8341bac64a",
+        url: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c3d04d70-0155-4147-9ce4-a3b1fad4b373",
       },
     ],
   },
@@ -1160,9 +1160,9 @@ const pharmacokineticsRows = [
   {
     name: "Tramadol oral (ER)",
     route: "Oral",
-    profile: { type: "absorptive", peakHours: 6, halfLifeHours: 12, scaleHours: 36 },
-    timing: "Slow release; peak concentrations are delayed, typically occurring around 12 hours after administration.",
-    halfLife: "Effective elimination half-life is highly prolonged, averaging about 7.9 to 9 hours, allowing for once-daily dosing.",
+    profile: { type: "absorptive", peakHours: 12, halfLifeHours: 7.9, scaleHours: 36 },
+    timing: "Slow release; peak concentrations occur at about 12 hours for tramadol and 15 hours for the active M1 metabolite.",
+    halfLife: "Terminal elimination half-life averages about 7.9 hours for tramadol and 8.8 hours for M1, allowing for once-daily dosing.",
     metabolism:
       "Extensive pre-systemic metabolism. CYP2D6 forms the potent active M1 metabolite; CYP3A4 forms inactive M2. Excreted renally.",
     mechanism:
@@ -1174,7 +1174,7 @@ const pharmacokineticsRows = [
     sources: [
       {
         title: "DailyMed Ultram ER tablets",
-        url: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=d55ad58f-2877-4df3-a12e-fb2cc8a4f933",
+        url: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2fd193e2-7aa7-4119-b540-7e28e82fbd13",
       },
     ],
   },
@@ -1381,9 +1381,11 @@ const conversionOutputDetails = document.querySelectorAll("[data-conversion-outp
 const specialtyPanels = document.querySelectorAll("[data-specialty-panel]");
 const methadoneForm = document.querySelector("#methadoneForm");
 const methadoneMorphineDoseInput = document.querySelector("#methadoneMorphineDose");
+const methadoneDoseHint = document.querySelector("#methadoneDoseHint");
 const methadoneRouteSelect = document.querySelector("#methadoneRoute");
 const methadoneReductionRange = document.querySelector("#methadoneReductionRange");
 const methadoneReductionNumber = document.querySelector("#methadoneReductionNumber");
+const methadoneResultTitle = document.querySelector("#methadoneResultTitle");
 const methadoneFinalDose = document.querySelector("#methadoneFinalDose");
 const methadoneFinalUnit = document.querySelector("#methadoneFinalUnit");
 const methadoneRatioOutput = document.querySelector("#methadoneRatio");
@@ -1415,9 +1417,11 @@ const buprenorphineScheduleTableBody = document.querySelector(
 const benzoForm = document.querySelector("#benzoForm");
 const benzoSourceDrugSelect = document.querySelector("#benzoSourceDrug");
 const benzoSourceDoseInput = document.querySelector("#benzoSourceDose");
+const benzoDoseValidation = document.querySelector("#benzoDoseValidation");
 const benzoTargetDrugSelect = document.querySelector("#benzoTargetDrug");
 const benzoReductionRange = document.querySelector("#benzoReductionRange");
 const benzoReductionNumber = document.querySelector("#benzoReductionNumber");
+const benzoResultTitle = document.querySelector("#benzoResultTitle");
 const benzoFinalDose = document.querySelector("#benzoFinalDose");
 const benzoFinalUnit = document.querySelector("#benzoFinalUnit");
 const benzoRawDiazepamEquiv = document.querySelector("#benzoRawDiazepamEquiv");
@@ -1488,7 +1492,7 @@ const setHiddenState = (element, shouldHide) => {
 
 const formatDose = (value) => {
   if (!Number.isFinite(value)) {
-    return "0";
+    return "—";
   }
 
   if (value >= 100) {
@@ -1506,7 +1510,7 @@ const formatDoseWithUnit = (value, unitLabel) => `${formatDose(value)} ${unitLab
 
 const formatDoseRange = (minimum, maximum, unitLabel) => {
   if (!Number.isFinite(minimum) || !Number.isFinite(maximum)) {
-    return `0 ${unitLabel}`;
+    return "Not available";
   }
 
   if (Math.abs(minimum - maximum) < 0.0001) {
@@ -1605,9 +1609,10 @@ const getEntryFrequencyHint = (option) =>
     ? "Patch rows are treated as continuous 24-hour exposure"
     : "Example: q6h = 4 doses/day";
 
-const clampReduction = (value) => Math.min(100, Math.max(0, Number(value) || 0));
+const clampReduction = (value) =>
+  Math.min(100, Math.max(0, Math.round(Number(value) || 0)));
 const clampMethadoneReduction = (value) =>
-  Math.min(90, Math.max(0, Number(value) || 0));
+  Math.min(90, Math.max(0, Math.round(Number(value) || 0)));
 
 const syncReduction = (source) => {
   const value = clampReduction(source.value);
@@ -1650,69 +1655,99 @@ const getConservativeOralMethadoneMme = (parsedEntries) =>
     0,
   );
 
-const parseRegimenEntries = () =>
-  regimenEntriesState.map((entry) => {
-    const option = findOption(entry.drugId);
-    const patchOption = isPatchOption(option);
-    const doseValue = Number(entry.dose);
-    const frequencyValue = patchOption ? 1 : Number(entry.dosesPerDay);
-    const doseMissing = String(entry.dose).trim() === "";
-    const frequencyMissing =
-      !patchOption && String(entry.dosesPerDay).trim() === "";
-    const valid =
-      Boolean(option) &&
-      !doseMissing &&
-      !frequencyMissing &&
-      Number.isFinite(doseValue) &&
-      Number.isFinite(frequencyValue) &&
-      doseValue >= 0 &&
-      frequencyValue >= 0;
-    const dailyDose = valid ? (patchOption ? doseValue : doseValue * frequencyValue) : 0;
-    const oralMorphineEquivalent = valid
-      ? getCurrentOralMorphineEquivalent(option, dailyDose)
-      : 0;
+const isStepAligned = (value, step) => {
+  const scaledValue = value / step;
 
-    return {
-      ...entry,
-      option,
-      patchOption,
-      doseValue,
-      frequencyValue,
-      valid,
-      dailyDose,
-      oralMorphineEquivalent,
-    };
-  });
+  return (
+    Number.isFinite(scaledValue) &&
+    Math.abs(scaledValue - Math.round(scaledValue)) <=
+      Number.EPSILON * Math.max(1, Math.abs(scaledValue)) * 8
+  );
+};
+
+const getRegimenEntryCalculation = (entry) => {
+  const option = findOption(entry.drugId);
+  const patchOption = isPatchOption(option);
+  const doseValue = Number(entry.dose);
+  const frequencyValue = patchOption ? 1 : Number(entry.dosesPerDay);
+  const doseMissing = String(entry.dose).trim() === "";
+  const frequencyMissing =
+    !patchOption && String(entry.dosesPerDay).trim() === "";
+  const doseInputValid =
+    Boolean(option) &&
+    !doseMissing &&
+    Number.isFinite(doseValue) &&
+    doseValue >= 0 &&
+    (!patchOption || isStepAligned(doseValue, 0.5));
+  const frequencyInputValid =
+    Boolean(option) &&
+    (patchOption ||
+      (!frequencyMissing &&
+        Number.isFinite(frequencyValue) &&
+        frequencyValue >= 0 &&
+        Number.isInteger(frequencyValue)));
+  const inputsValid = doseInputValid && frequencyInputValid;
+  const dailyDose = inputsValid
+    ? patchOption
+      ? doseValue
+      : doseValue * frequencyValue
+    : Number.NaN;
+  const oralMorphineEquivalent = inputsValid
+    ? getCurrentOralMorphineEquivalent(option, dailyDose)
+    : Number.NaN;
+  const calculationFinite =
+    Number.isFinite(dailyDose) && Number.isFinite(oralMorphineEquivalent);
+
+  return {
+    option,
+    patchOption,
+    doseValue,
+    frequencyValue,
+    doseInputValid,
+    frequencyInputValid,
+    inputsValid,
+    calculationFinite,
+    valid: inputsValid && calculationFinite,
+    dailyDose,
+    oralMorphineEquivalent,
+  };
+};
+
+const parseRegimenEntries = () =>
+  regimenEntriesState.map((entry) => ({
+    ...entry,
+    ...getRegimenEntryCalculation(entry),
+  }));
 
 const getEntrySummaryText = (entry) => {
-  const option = findOption(entry.drugId);
+  const calculation = getRegimenEntryCalculation(entry);
+  const { option } = calculation;
 
   if (!option) {
     return "Select a drug and route for this drug.";
   }
 
-  const patchOption = isPatchOption(option);
-  const doseValue = Number(entry.dose);
-  const frequencyValue = patchOption ? 1 : Number(entry.dosesPerDay);
-  const valid =
-    String(entry.dose).trim() !== "" &&
-    (patchOption || String(entry.dosesPerDay).trim() !== "") &&
-    Number.isFinite(doseValue) &&
-    Number.isFinite(frequencyValue) &&
-    doseValue >= 0 &&
-    frequencyValue >= 0;
+  if (!calculation.inputsValid) {
+    if (calculation.patchOption) {
+      return "Enter the number of active patches in 0.5-patch increments.";
+    }
 
-  if (!valid) {
-    return patchOption
-      ? "Enter the number of active patches for this row."
-      : "Enter both dose per administration and doses per day.";
+    return calculation.frequencyInputValid
+      ? "Enter a valid dose per administration."
+      : "Enter a valid dose and a whole number of doses per day.";
   }
 
-  const dailyDose = patchOption ? doseValue : doseValue * frequencyValue;
-  const oralMorphineEquivalent = getCurrentOralMorphineEquivalent(
-    option,
+  if (!calculation.calculationFinite) {
+    return "Entered values exceed the supported calculation range.";
+  }
+
+  const {
+    patchOption,
+    doseValue,
+    frequencyValue,
     dailyDose,
-  );
+    oralMorphineEquivalent,
+  } = calculation;
 
   if (patchOption) {
     const patchNoun = doseValue === 1 ? "patch" : "patches";
@@ -1732,6 +1767,9 @@ const getEntrySummaryText = (entry) => {
 const buildRegimenEntryMarkup = (entry, index) => {
   const option = findOption(entry.drugId);
   const patchOption = isPatchOption(option);
+  const calculation = getRegimenEntryCalculation(entry);
+  const calculationOutOfRange =
+    calculation.inputsValid && !calculation.calculationFinite;
   const canRemove = regimenEntriesState.length > 1;
   const doseValue = patchOption
     ? entry.dose || "1"
@@ -1765,10 +1803,13 @@ const buildRegimenEntryMarkup = (entry, index) => {
         <label>
           ${getEntryDoseLabel(option)}
           <input
+            aria-describedby="entry-summary-${entry.key}"
+            aria-invalid="${!calculation.doseInputValid || calculationOutOfRange}"
             data-field="dose"
             inputmode="decimal"
             min="0"
-            step="${patchOption ? "0.5" : "1"}"
+            required
+            step="${patchOption ? "0.5" : "any"}"
             type="number"
             value="${doseValue}"
           />
@@ -1778,9 +1819,12 @@ const buildRegimenEntryMarkup = (entry, index) => {
         <label>
           ${getEntryFrequencyLabel(option)}
           <input
+            aria-describedby="entry-summary-${entry.key}"
+            aria-invalid="${!calculation.frequencyInputValid || calculationOutOfRange}"
             data-field="dosesPerDay"
             inputmode="decimal"
             min="0"
+            required
             step="1"
             type="number"
             value="${frequencyValue}"
@@ -1790,7 +1834,7 @@ const buildRegimenEntryMarkup = (entry, index) => {
         </label>
       </div>
 
-      <p class="entry-summary">${getEntrySummaryText(entry)}</p>
+      <p class="entry-summary" id="entry-summary-${entry.key}">${getEntrySummaryText(entry)}</p>
     </section>
   `;
 };
@@ -2327,11 +2371,15 @@ const renderRegimenSummaryTable = (parsedEntries) => {
       const frequencyText = patchOption
         ? "Standing 24-hour exposure"
         : `${formatDose(entry.frequencyValue)}/day`;
+      const invalidEntryText =
+        entry.inputsValid && !entry.calculationFinite
+          ? "Outside supported range"
+          : "Incomplete entry";
       const dailyDoseText = entry.valid
         ? patchOption
           ? `${formatDose(entry.doseValue)} active patch${entry.doseValue === 1 ? "" : "es"}`
           : `${formatDose(entry.dailyDose)} ${option.doseUnit}/day`
-        : "Incomplete entry";
+        : invalidEntryText;
       const oralMorphineEquivalentText = entry.valid
         ? `${formatDose(entry.oralMorphineEquivalent)} mg/day`
         : "--";
@@ -2348,7 +2396,7 @@ const renderRegimenSummaryTable = (parsedEntries) => {
             <span class="output-detail">OME: ${oralMorphineEquivalentText}</span>
           </span>
         `
-        : "Incomplete entry";
+        : invalidEntryText;
 
       return `
         <tr>
@@ -2618,23 +2666,34 @@ const getHepaticAdvice = ({
   };
 };
 
-const showInvalidRegimen = (parsedEntries) => {
+const showInvalidRegimen = (parsedEntries, title = "Enter a valid regimen") => {
+  const calculationOutOfRange = title === "Result exceeds supported range";
+  const unavailableReason = calculationOutOfRange
+    ? "Reduce the entered values before calculating"
+    : "Complete the regimen before conversion";
   renderRegimenSummaryTable(parsedEntries);
-  finalDose.textContent = "0";
-  finalUnit.textContent = "mg/day";
+  finalDose.textContent = "—";
+  finalUnit.textContent = "";
   methadoneConservativeMme.classList.add("is-hidden");
-  resultTitle.textContent = "Enter a valid regimen";
-  rawTargetDoseOutput.textContent = "0 mg/day";
-  reductionAppliedOutput.textContent = `${clampReduction(reductionNumber.value)}% reduction`;
+  resultTitle.textContent = title;
+  targetStepLabel.textContent = "Target calculation";
+  rawTargetDoseOutput.textContent = "Not available";
+  reductionAppliedOutput.textContent = "Not applied";
   renalAdjustedDoseOutput.textContent = "Not applied";
   hepaticAdjustedDoseOutput.textContent = "Not applied";
-  organGuidanceSummaryOutput.textContent = "Complete the regimen before conversion";
-  renalAdviceTitle.textContent = "Regimen incomplete";
-  renalAdviceBody.textContent =
-    "Renal advice appears after the regimen entries are complete.";
-  hepaticAdviceTitle.textContent = "Regimen incomplete";
-  hepaticAdviceBody.textContent =
-    "Hepatic advice appears after the regimen entries are complete.";
+  organGuidanceSummaryOutput.textContent = unavailableReason;
+  renalAdviceTitle.textContent = calculationOutOfRange
+    ? "Result unavailable"
+    : "Regimen incomplete";
+  renalAdviceBody.textContent = calculationOutOfRange
+    ? "Renal advice is unavailable while the calculation is outside the supported numeric range."
+    : "Renal advice appears after the regimen entries are complete.";
+  hepaticAdviceTitle.textContent = calculationOutOfRange
+    ? "Result unavailable"
+    : "Regimen incomplete";
+  hepaticAdviceBody.textContent = calculationOutOfRange
+    ? "Hepatic advice is unavailable while the calculation is outside the supported numeric range."
+    : "Hepatic advice appears after the regimen entries are complete.";
 };
 
 const calculate = () => {
@@ -2650,7 +2709,15 @@ const calculate = () => {
   methadoneConservativeMme.classList.add("is-hidden");
 
   if (!parsedEntries.length || parsedEntries.some((entry) => !entry.valid)) {
-    showInvalidRegimen(parsedEntries);
+    const calculationOutOfRange = parsedEntries.some(
+      (entry) => entry.inputsValid && !entry.calculationFinite,
+    );
+    showInvalidRegimen(
+      parsedEntries,
+      calculationOutOfRange
+        ? "Result exceeds supported range"
+        : "Enter a valid regimen",
+    );
     return;
   }
 
@@ -2658,6 +2725,11 @@ const calculate = () => {
     (sum, entry) => sum + entry.oralMorphineEquivalent,
     0,
   );
+
+  if (!Number.isFinite(oralMorphineEquivalent)) {
+    showInvalidRegimen(parsedEntries, "Result exceeds supported range");
+    return;
+  }
 
   if (isMMeMode) {
     const renalAdvice = getRenalAdvice({
@@ -2702,6 +2774,12 @@ const calculate = () => {
 
   const rawTargetDose = getTargetDose(targetOption, oralMorphineEquivalent);
   const adjustedTargetDose = rawTargetDose * (1 - reductionPercentage / 100);
+
+  if (!Number.isFinite(rawTargetDose) || !Number.isFinite(adjustedTargetDose)) {
+    showInvalidRegimen(parsedEntries, "Result exceeds supported range");
+    return;
+  }
+
   const renalAdvice = getRenalAdvice({
     parsedEntries,
     targetOption,
@@ -2755,6 +2833,23 @@ const getMethadoneRoute = () => {
   };
 };
 
+const showInvalidMethadoneResult = (
+  title = "Enter a valid whole-number OME",
+  message = "Enter a whole-number OME of 0 or greater.",
+) => {
+  methadoneMorphineDoseInput.setAttribute("aria-invalid", "true");
+  methadoneDoseHint.textContent = message;
+  methadoneResultTitle.textContent = title;
+  methadoneFinalDose.textContent = "—";
+  methadoneFinalUnit.textContent = "";
+  methadoneRatioOutput.textContent = "Not applied";
+  methadoneRawDoseOutput.textContent = "Not available";
+  methadoneRouteAdjustmentOutput.textContent = "Not applied";
+  methadoneReductionAppliedOutput.textContent = "Not applied";
+  methadoneQ8DoseOutput.textContent = "Not available";
+  methadoneQ12DoseOutput.textContent = "Not available";
+};
+
 const calculateMethadone = () => {
   const oralMorphineDaily = Number(methadoneMorphineDoseInput.value);
   const reductionPercentage = clampMethadoneReduction(
@@ -2764,16 +2859,11 @@ const calculateMethadone = () => {
   if (
     methadoneMorphineDoseInput.value.trim() === "" ||
     !Number.isFinite(oralMorphineDaily) ||
-    oralMorphineDaily < 0
+    oralMorphineDaily < 0 ||
+    !Number.isInteger(oralMorphineDaily) ||
+    !methadoneMorphineDoseInput.checkValidity()
   ) {
-    methadoneFinalDose.textContent = "0";
-    methadoneFinalUnit.textContent = getMethadoneRoute().unitLabel;
-    methadoneRatioOutput.textContent = "Not applied";
-    methadoneRawDoseOutput.textContent = "0 mg/day";
-    methadoneRouteAdjustmentOutput.textContent = "Not applied";
-    methadoneReductionAppliedOutput.textContent = `${reductionPercentage}% reduction`;
-    methadoneQ8DoseOutput.textContent = "0 mg/dose";
-    methadoneQ12DoseOutput.textContent = "0 mg/dose";
+    showInvalidMethadoneResult();
     return;
   }
 
@@ -2786,6 +2876,25 @@ const calculateMethadone = () => {
   const q8Dose = reducedMethadoneDaily / 3;
   const q12Dose = reducedMethadoneDaily / 2;
 
+  if (
+    ![
+      rawOralMethadoneDaily,
+      reducedOralMethadoneDaily,
+      reducedMethadoneDaily,
+      q8Dose,
+      q12Dose,
+    ].every(Number.isFinite)
+  ) {
+    showInvalidMethadoneResult(
+      "Result exceeds supported range",
+      "The entered OME is too large to calculate safely.",
+    );
+    return;
+  }
+
+  methadoneMorphineDoseInput.setAttribute("aria-invalid", "false");
+  methadoneDoseHint.textContent = "mg/day OME (whole numbers)";
+  methadoneResultTitle.textContent = "Conservative starting estimate";
   methadoneFinalDose.textContent = formatDose(reducedMethadoneDaily);
   methadoneFinalUnit.textContent = route.unitLabel;
   methadoneRatioOutput.textContent = `${bracket.ratio}:1`;
@@ -2815,6 +2924,20 @@ const populateBenzoSelects = () => {
   benzoTargetDrugSelect.value = "diazepam_po";
 };
 
+const showInvalidBenzoResult = (
+  title = "Enter a valid daily dose",
+  message = "Enter a finite daily dose greater than 0.",
+) => {
+  benzoSourceDoseInput.setAttribute("aria-invalid", "true");
+  benzoDoseValidation.textContent = message;
+  benzoResultTitle.textContent = title;
+  benzoFinalDose.textContent = "—";
+  benzoFinalUnit.textContent = "";
+  benzoRawDiazepamEquiv.textContent = "Not available";
+  benzoReducedDiazepamEquiv.textContent = "Not available";
+  benzoReductionApplied.textContent = "Not applied";
+};
+
 const calculateBenzo = () => {
   if (!benzoSourceDrugSelect || !benzoTargetDrugSelect) return;
   const sourceId = benzoSourceDrugSelect.value;
@@ -2825,12 +2948,14 @@ const calculateBenzo = () => {
   const sourceBenzo = benzoConversionOptions.find(b => b.id === sourceId);
   const targetBenzo = benzoConversionOptions.find(b => b.id === targetId);
 
-  if (!sourceBenzo || !targetBenzo || isNaN(sourceDose) || sourceDose <= 0) {
-    benzoFinalDose.textContent = "0";
-    benzoFinalUnit.textContent = "mg/day";
-    benzoRawDiazepamEquiv.textContent = "0 mg Diazepam/day";
-    benzoReducedDiazepamEquiv.textContent = "0 mg Diazepam/day";
-    benzoReductionApplied.textContent = "0% reduction";
+  if (
+    !sourceBenzo ||
+    !targetBenzo ||
+    !Number.isFinite(sourceDose) ||
+    sourceDose <= 0 ||
+    !benzoSourceDoseInput.checkValidity()
+  ) {
+    showInvalidBenzoResult();
     return;
   }
 
@@ -2838,11 +2963,46 @@ const calculateBenzo = () => {
   const reducedDiazepamEquiv = rawDiazepamEquiv * (1 - reductionPercentage / 100);
   const targetDose = (reducedDiazepamEquiv / 10) * targetBenzo.equiv;
 
+  if (![rawDiazepamEquiv, reducedDiazepamEquiv, targetDose].every(Number.isFinite)) {
+    showInvalidBenzoResult(
+      "Result exceeds supported range",
+      "The entered daily dose is too large to calculate safely.",
+    );
+    return;
+  }
+
+  benzoSourceDoseInput.setAttribute("aria-invalid", "false");
+  benzoDoseValidation.textContent = "";
+  benzoResultTitle.textContent = "Equivalent starting estimate";
   benzoFinalDose.textContent = formatDose(targetDose);
   benzoFinalUnit.textContent = `${targetBenzo.doseUnit}/day`;
   benzoRawDiazepamEquiv.textContent = `${formatDose(rawDiazepamEquiv)} mg Diazepam/day`;
   benzoReducedDiazepamEquiv.textContent = `${formatDose(reducedDiazepamEquiv)} mg Diazepam/day`;
   benzoReductionApplied.textContent = `${reductionPercentage}% reduction`;
+};
+
+const updateRegimenEntryFeedback = (entryElement, entry) => {
+  const calculation = getRegimenEntryCalculation(entry);
+  const calculationOutOfRange =
+    calculation.inputsValid && !calculation.calculationFinite;
+  const summary = entryElement.querySelector(".entry-summary");
+
+  if (summary) {
+    summary.textContent = getEntrySummaryText(entry);
+  }
+
+  entryElement
+    .querySelectorAll('[data-field="dose"], [data-field="dosesPerDay"]')
+    .forEach((input) => {
+      const fieldValid =
+        input.dataset.field === "dose"
+          ? calculation.doseInputValid
+          : calculation.frequencyInputValid;
+      input.setAttribute(
+        "aria-invalid",
+        String(!fieldValid || calculationOutOfRange),
+      );
+    });
 };
 
 const handleRegimenEntryInput = (event) => {
@@ -2876,6 +3036,8 @@ const handleRegimenEntryInput = (event) => {
     }
 
     renderRegimenEntries();
+  } else {
+    updateRegimenEntryFeedback(entryElement, entry);
   }
 
   calculate();

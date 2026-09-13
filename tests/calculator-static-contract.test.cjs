@@ -14,11 +14,11 @@ const publicHtml = fs.readFileSync(
   "utf8",
 );
 const udsHtml = fs.readFileSync(
-  path.join(repositoryRoot, "public", "UDS.html"),
+  path.join(repositoryRoot, "archive", "uds", "UDS.html"),
   "utf8",
 );
 const udsToolText = fs.readFileSync(
-  path.join(repositoryRoot, "public", "uds-tool.js"),
+  path.join(repositoryRoot, "archive", "uds", "uds-tool.js"),
   "utf8",
 );
 const stylesText = fs.readFileSync(
@@ -154,7 +154,7 @@ test("shared core is the calculation seam and CI blocks deployment on tests", ()
     path.join(repositoryRoot, ".github", "workflows", "pages.yml"),
     "utf8",
   );
-  assert.match(workflow, /node --test tests\/calculator-\*\.test\.cjs/);
+  assert.match(workflow, /node --test tests\/\*\.test\.cjs/);
   assert.match(workflow, /needs: verify/);
   assert.match(workflow, /if: github\.event_name != 'pull_request'/);
   assert.doesNotMatch(workflow.slice(0, workflow.indexOf("jobs:")), /pages:\s*write|id-token:\s*write/);
@@ -168,7 +168,7 @@ test("GitHub Pages build keeps indexing controls without exposing environment no
   });
   assert.equal(build.status, 0, build.stderr || build.stdout);
 
-  for (const route of ["opioidcalculator", "UDS"]) {
+  for (const route of ["opioidcalculator"]) {
     const generated = fs.readFileSync(
       path.join(repositoryRoot, "dist", "github-pages", route, "index.html"),
       "utf8",
@@ -188,8 +188,34 @@ test("GitHub Pages build keeps indexing controls without exposing environment no
     ),
     "utf8",
   );
-  assert.match(generatedCalculator, /src="\.\.\/calculator-core\.js\?v=/);
-  assert.match(generatedCalculator, /src="\.\.\/calculator-provenance\.js\?v=/);
+  assert.match(generatedCalculator, /src="\/Equianalgesic_Dosing_Calculator_Staging\/calculator-core\.js\?v=/);
+  assert.match(generatedCalculator, /src="\/Equianalgesic_Dosing_Calculator_Staging\/calculator-provenance\.js\?v=/);
   assert.match(publicHtml, /<meta name="robots" content="index, follow"/);
   assert.doesNotMatch(publicHtml, /data-staging-environment/);
+
+  const artifact = path.join(repositoryRoot, "dist", "github-pages");
+  const files = fs.readdirSync(artifact, {recursive: true}).map(String).filter(name => fs.statSync(path.join(artifact, name)).isFile());
+  assert.deepEqual(files.sort(), [".nojekyll", "404.html", "OpioidConversionSite.png", "calculator-core.js",
+    "calculator-provenance.js", "favicon.svg", "index.html", "opioidcalculator.html",
+    path.join("opioidcalculator", "index.html"), "robots.txt", "script.js", "styles.css"].sort());
+  assert.doesNotMatch(generatedCalculator, /UDS|uds-tool|uds-workflow-guide/);
+  for (const match of generatedCalculator.matchAll(/(?:src|href)="(\/Equianalgesic_Dosing_Calculator_Staging\/[^"?#]+)(?:[^\"]*)"/g)) {
+    const relative = match[1].replace("/Equianalgesic_Dosing_Calculator_Staging/", "");
+    assert.ok(fs.existsSync(path.join(artifact, relative)), `missing asset ${relative}`);
+  }
+  const notFound = fs.readFileSync(path.join(artifact, "404.html"), "utf8");
+  const redirectScript = notFound.match(/<script>([\s\S]*?)<\/script>/)[1];
+  const vm = require("node:vm");
+  const base = "/Equianalgesic_Dosing_Calculator_Staging/";
+  for (const route of ["UDS", "UDS/", "UDS.html", "uds", "uds/", "uds.html", "opioidcalculator", "unknown", "uds-tool.js"]) {
+    let destination = null;
+    vm.runInNewContext(redirectScript, {location: {pathname: base + route, search: "?test=1", hash: "#top", replace: url => {destination = url;}}});
+    assert.equal(destination, ["unknown", "uds-tool.js"].includes(route) ? null : `${base}opioidcalculator/?test=1#top`, route);
+  }
+  assert.match(fs.readFileSync(path.join(artifact, "robots.txt"), "utf8"), /Disallow: \//);
+  const wrongRepository = spawnSync(process.execPath, ["scripts/prepare-github-pages.mjs"], {
+    cwd: repositoryRoot, encoding: "utf8", env: {...process.env, GITHUB_REPOSITORY: "rb666/calc-med"},
+  });
+  assert.notEqual(wrongRepository.status, 0);
+  assert.match(wrongRepository.stderr, /targets .*Staging only/);
 });

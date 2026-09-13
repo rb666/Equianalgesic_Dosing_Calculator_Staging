@@ -7,9 +7,9 @@ approval record.
 ## Current version and status
 
 - Manifest: `public/calculator-provenance.js`
-- Manifest version: `2026-08-08.1`
-- Effective date: `2026-08-08`
-- Clinical review status: **unreviewed**
+- Manifest version: `2026-09-13.1`
+- Effective date: `2026-09-13`
+- Overall ruleset review status: **unreviewed**; existing conversion ratios have committee approval confirmed by the owner, as described below.
 - Named reviewer, credentials, scope, date, and attestation: **not present**
 
 Every configured opioid conversion row, methadone band/constant, benzodiazepine
@@ -55,7 +55,7 @@ changed as part of the assurance remediation.
 
 ## Source handling
 
-The four corrected DailyMed PK records (Hysingla, Exalgo, methadone, and MS Contin)
+The five corrected DailyMed PK records (Hysingla, Exalgo, methadone, MS Contin, and OxyContin)
 keep both a current display URL and a version-pinned evidence URL in the manifest.
 Other row-level links remain identified as current, mutable references rather than
 immutable evidence. The PK interface identifies Exalgo as archival. MS Contin is
@@ -86,7 +86,7 @@ reintroduced into either generated route.
 The dependency-free test suite runs under Node's built-in test runner:
 
 ```text
-node --test tests/calculator-*.test.cjs
+node --test tests/*.test.cjs
 ```
 
 The gate covers:
@@ -117,3 +117,11 @@ qualified reviewer's identity and credentials, exact manifest/rule versions,
 review date, scope, limitations, and attestation. That evidence should be retained
 in an appropriate controlled system and referenced immutably; it must not be
 invented from repository history or generic source citations.
+
+## Existing conversion ratio approval and preservation (2026-09-13)
+
+The project owner confirmed that clinical oversight committees approved the conversion ratios already listed and used on the site. This user attestation is recorded in conversionRatioApproval in the manifest. Conversion rule clinicalReviewStatus fields record approved-user-attested. Other clinical content retains its existing review status. Committee identities and original dates were not supplied.
+
+An exact comparison against production 6fde4f9 and staging c281351 found no changes to all 36 opioid rows, 13 benzodiazepine equivalences, six methadone bands, four methadone constants, seven hepatic rows or five buprenorphine schedules. A frozen baseline fixture now blocks accidental changes. No alternate published conversion ratios were substituted.
+
+The OxyContin PK correction changes only the displayed half-life/profile from 8 hours (text 8-12) to the labeled 4.5 hours, and steady-state text from 18-24 to 24-36 hours. Evidence: DailyMed set bfdfe235-d717-4855-a3c8-a13d26dadede, version 44, section 12.3; published 2026-06-26, retrieved 2026-09-13. This PK profile does not feed dose conversion.

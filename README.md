@@ -1,68 +1,23 @@
 # Equianalgesic Dose Calculator
 
-Static clinical decision support website for converting between opioid
-equianalgesic doses, calculating oral morphine equivalents, and opening
-specialty methadone, buprenorphine-transition, and UDS workflow tools. The site is published
-with GitHub Pages from the static files in `public/`.
+Active staging development is consolidated in this workspace. The site remains a static clinical calculator. UDS is temporarily retired and its files are retained in archive/uds/ outside the deployment artifact.
 
-The main converter includes methadone source and route-switching entries:
-10 mg oral methadone is configured as 47 mg oral morphine equivalent, and
-5 mg IV methadone is configured as equivalent to 10 mg oral methadone. When
-Total MME contains only oral methadone, the calculator also shows a conservative
-3.0 multiplier estimate. The specialty methadone calculator mirrors the
-production morphine:methadone workflow with oral/IV route output and a 0-90%
-methadone safety reduction.
+[Staging calculator](https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/)
 
-## Files
+See [AGENTS.md](AGENTS.md) for the authoritative workspace and release instructions, [PUBLISHING.md](PUBLISHING.md) for deployment, and [CLINICAL_DATA.md](CLINICAL_DATA.md) for clinical-data traceability.
 
-- `public/opioidcalculator.html` contains the calculator interface, safety
-  warning, and reference tables.
-- `public/UDS.html`, `public/uds-tool.js`, and related UDS assets contain the
-  urine drug screen workflow tool.
-- `public/styles.css` contains responsive styling.
-- `public/calculator-core.js` contains browser/Node-compatible pure calculator logic.
-- `public/calculator-provenance.js` contains the versioned rule-level manifest.
-- `public/script.js` contains clinical tables and the browser adapter.
-- `scripts/prepare-github-pages.mjs` prepares GitHub Pages-compatible clean
-  routes from the `public/` folder.
-- `CLINICAL_DATA.md` documents input, composition, provenance, and approval status.
+The project owner confirmed committee approval of the existing conversion ratios. All original opioid and benzodiazepine ratios and methadone bands/constants are preserved and locked by regression tests. This attestation does not imply a new review of other clinical guidance.
 
-## GitHub Pages
+## Local checks
 
-GitHub Pages deploys from `.github/workflows/pages.yml` on every push to
-`main`. The workflow prepares `dist/github-pages` and publishes it with the
-official GitHub Pages Actions.
+Run Node 22+ commands from this folder:
 
-The source files stay in `public/`; do not edit generated files under `dist/`.
+    node --test tests/*.test.cjs
+    node scripts/prepare-github-pages.mjs
+    node scripts/preview-github-pages.mjs
 
-## Calculator assurance
+Open http://127.0.0.1:8788/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/.
 
-The manifest is intentionally marked unreviewed because this repository contains
-no named clinical attestation. Traceability and regression coverage do not imply
-clinical approval.
+Only dist/github-pages is published. Do not edit generated files. Staging receives noindex/nofollow and excludes UDS, archives, tests and backups. Source assets remain in public/. No framework, package installation or backend is required.
 
-Run the release gate locally with:
-
-```powershell
-node --check public\calculator-core.js
-node --check public\calculator-provenance.js
-node --check public\script.js
-node --test tests\calculator-*.test.cjs
-node scripts\prepare-github-pages.mjs
-```
-
-The generated GitHub Pages artifact receives `noindex, nofollow`; shared
-`public/` source remains environment-neutral for a deliberate production
-promotion.
-
-## Consumer-facing interface boundary
-
-Staging is a client/consumer-facing product surface. Never render developer or
-release metadata in either route, including environment/QA banners, build labels,
-manifest versions, provenance counts, repository state, attestation status, or CI
-status. Those records belong only in repository documentation, machine-readable
-manifests, tests, and controlled review systems.
-
-Clinically important limitations must still be shown, but as plain, actionable
-clinical safety guidance rather than internal governance language. The static
-contract tests enforce this boundary for both source and generated pages.
+The staging remote is the only release destination. The production origin and original/base repository remain unchanged. The previous staging folder and its untracked drafts are preserved as an inactive local backup in workspace-backups/previous-staging-checkout.

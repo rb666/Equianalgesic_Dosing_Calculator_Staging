@@ -103,7 +103,7 @@
       expected: ["Fentanyl"],
       detected: [],
       absent: ["Norfentanyl"],
-      absentVerified: true,
+      absentVerified: false,
     },
     clonazepamMetabolite: {
       label: "Clonazepam expected; 7-aminoclonazepam detected",

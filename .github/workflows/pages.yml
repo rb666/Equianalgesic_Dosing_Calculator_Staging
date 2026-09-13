@@ -31,18 +31,18 @@ jobs:
           node --check public/calculator-core.js
           node --check public/calculator-provenance.js
           node --check public/script.js
-          node --check public/uds-tool.js
-          node --check public/uds-workflow-guide.js
+          node --check archive/uds/uds-tool.js
+          node --check archive/uds/uds-workflow-guide.js
 
-      - name: Run calculator regression and assurance tests
-        run: node --test tests/calculator-*.test.cjs
+      - name: Run calculator, archive, and deployment regression tests
+        run: node --test tests/*.test.cjs
 
       - name: Verify GitHub Pages build
         run: node scripts/prepare-github-pages.mjs
 
   deploy:
     needs: verify
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.repository == 'rb666/Equianalgesic_Dosing_Calculator_Staging'
     permissions:
       contents: read
       pages: write

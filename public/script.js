@@ -1071,15 +1071,15 @@ const pharmacokineticsRows = [
   {
     name: "Oxycodone oral (ER)",
     route: "Oral",
-    profile: { type: "absorptive", peakHours: 5, halfLifeHours: 8, scaleHours: 24 },
+    profile: { type: "absorptive", peakHours: 5, halfLifeHours: 4.5, scaleHours: 24 },
     timing: "Delayed onset with slow continuous absorption; peak plasma concentrations occur around 4-6 hours.",
-    halfLife: "Effective elimination half-life is prolonged, typically averaging 8-12 hours depending on formulation.",
+    halfLife: "OxyContin: apparent elimination half-life is 4.5 hours. This product-specific value should not be generalized to other extended-release formulations.",
     metabolism:
       "Metabolized primarily in the liver by CYP3A4 (noroxycodone) and CYP2D6 (oxymorphone). Parent drug mediates most effect. Excreted renally.",
     mechanism:
       "Primarily a full agonist at the mu-opioid receptor (MOR); weak activity at KOR; minimal clinically relevant DOR activity.",
     behavior:
-      "Provides flat peak-trough profiles, improving baseline analgesia and reducing dosing frequency (typically dosed every 12 hours). Takes time to reach steady-state levels (18-24 hours). Indicated for chronic pain; not appropriate for acute breakthrough pain due to delayed onset.",
+      "OxyContin delivers oxycodone over 12 hours. Repeated-dose studies reached steady state within 24-36 hours. It is intended for severe, persistent pain requiring extended treatment and is not an as-needed analgesic.",
     interactions:
       "CYP3A4 inhibitors (clarithromycin, ketoconazole, ritonavir) can cause highly dangerous, delayed increases in drug levels and respiratory depression. CYP3A4 inducers reduce efficacy. CYP2D6 inhibitors reduce oxymorphone formation. Extreme caution in hepatic impairment. Concomitant use with alcohol or CNS depressants (benzodiazepines) carries a high risk of profound sedation, coma, and death.",
     sources: [
@@ -2541,12 +2541,12 @@ const renderRegimenSummaryTable = (parsedEntries) => {
       }
 
       const patchOption = entry.patchOption;
-      const doseText = patchOption
+      const doseText = !entry.doseInputValid ? "Dose unavailable" : patchOption
         ? `${formatDose(entry.doseValue)} patch${entry.doseValue === 1 ? "" : "es"}`
         : `${formatDose(entry.doseValue)} ${option.doseUnit}`;
       const frequencyText = patchOption
         ? "Standing 24-hour exposure"
-        : `${formatDose(entry.frequencyValue)}/day`;
+        : entry.frequencyInputValid ? `${formatDose(entry.frequencyValue)}/day` : "Frequency unavailable";
       const invalidEntryText =
         entry.inputsValid && !entry.calculationFinite
           ? "Outside supported range"

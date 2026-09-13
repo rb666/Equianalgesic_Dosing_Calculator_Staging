@@ -11,8 +11,8 @@
   };
 
   const schemaVersion = "1.0.0";
-  const manifestVersion = "2026-08-08.1";
-  const effectiveDate = "2026-08-08";
+  const manifestVersion = "2026-09-13.1";
+  const effectiveDate = "2026-09-13";
   const retrievedAt = "2026-08-08";
 
   const sources = {
@@ -169,6 +169,18 @@
       retrievedAt,
       lifecycle: "current",
     },
+    "dailymed-oxycontin-v44": {
+      authority: "National Library of Medicine / FDA SPL",
+      type: "product-label",
+      title: "OXYCONTIN (oxycodone hydrochloride extended-release tablets)",
+      displayUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bfdfe235-d717-4855-a3c8-a13d26dadede",
+      evidenceUrl: "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=bfdfe235-d717-4855-a3c8-a13d26dadede&version=44",
+      setId: "bfdfe235-d717-4855-a3c8-a13d26dadede",
+      labelVersion: "44",
+      publicationDate: "2026-06-26",
+      retrievedAt: "2026-09-13",
+      lifecycle: "current",
+    },
     "repository-local-configuration": {
       authority: "calc.med repository",
       type: "local-configuration",
@@ -266,7 +278,7 @@
         ? "exact"
         : "conflicts",
       limitations:
-        "Many configured ratios differ from, or are outside the route/scope of, the cited NHS oral-equivalence table. They remain unreviewed local configuration.",
+        "Some committee-approved ratios differ from, or are outside the route/scope of, the cited NHS oral-equivalence table. Preserve the approved local ratios; the external citation is not the approval authority.",
       testIds: ["benzodiazepine-self", "benzodiazepine-pair"],
     });
   });
@@ -275,7 +287,7 @@
     const ruleId = `methadone.band.${id}`;
     rules[ruleId] = localRule(ruleId, [`methadoneRatioTable.${id}`], {
       limitations:
-        "Configured nonlinear band with no source or named clinical approval record. Integer boundaries are intentionally enforced.",
+        "Committee-approved nonlinear band per project-owner attestation. Integer boundaries are intentionally preserved; original committee names and review dates were not supplied.",
       testIds: ["methadone-boundaries", "methadone-fraction-rejected"],
     });
   });
@@ -391,6 +403,7 @@
     "hydromorphone-oral-er": "dailymed-exalgo-v1",
     "methadone-oral": "dailymed-methadone-v47",
     "morphine-oral-er": "dailymed-ms-contin-v17",
+    "oxycodone-oral-er": "dailymed-oxycontin-v44",
   };
   inventory.pharmacokinetics.forEach((id) => {
     pkClaimTypes.forEach((claimType) => {
@@ -424,19 +437,40 @@
     });
   });
 
+  // Committee approval is distinct from agreement with any one external reference.
+  for (const rule of Object.values(rules)) {
+    if (/^(conversion\.|benzodiazepine\.|methadone\.)/.test(rule.id)) {
+      rule.clinicalReviewStatus = "approved-user-attested";
+      rule.clinicalOwner = "Clinical oversight committees (project-owner attestation)";
+      rule.approvalAttestedAt = "2026-09-13";
+      if (rule.limitations.startsWith("Traceable configuration only.")) {
+        rule.limitations = "Existing committee-approved conversion ratio per project-owner attestation; original committee names and review dates were not supplied.";
+      }
+    }
+  }
+
   root.CALCULATOR_PROVENANCE = deepFreeze({
     schemaVersion,
     manifestVersion,
     effectiveDate,
     contentDigest:
-      "sha256-2478a71540608254e1e7f0fd884c9a07404f38d629d51cb453fdc99c65bcc74f",
+      "sha256-bfb095658bb19ab960aa991008397a40743e3bde8b2f0a46f5c8322e104d7c01",
     clinicalReview: {
       status: "unreviewed",
       reviewer: null,
       reviewedAt: null,
       scope: [],
       statement:
-        "Traceability and regression coverage do not constitute clinical approval. No named clinical approval record is present for this ruleset.",
+        "Overall ruleset review is separate from the user-confirmed committee approval of existing conversion ratios recorded in conversionRatioApproval.",
+    },
+    conversionRatioApproval: {
+      status: "approved-user-attested",
+      attestedAt: "2026-09-13",
+      authority: "Clinical oversight committees, as confirmed by the project owner",
+      scope: ["Existing opioid conversion ratios", "Existing benzodiazepine equivalences", "Existing methadone conversion ratios"],
+      baselineProductionCommit: "6fde4f914cafa7d21cd127c73a95f106c4e88524",
+      baselineFixture: "tests/fixtures/approved-clinical-tables.json",
+      statement: "Preserve the existing approved ratios. Committee names and original review dates were not supplied; no new committee review or approval of other guidance is implied.",
     },
     inputPolicy: {
       maximum: null,

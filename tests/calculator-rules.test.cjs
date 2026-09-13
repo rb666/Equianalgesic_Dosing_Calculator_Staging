@@ -75,9 +75,9 @@ test("every clinical data row and claim has a rule-level manifest record", () =>
   }
 });
 
-test("source references resolve and uncertainty never becomes approval", () => {
+test("source references resolve and committee attestation remains scoped to conversion ratios", () => {
   for (const rule of Object.values(manifest.rules)) {
-    assert.equal(rule.clinicalReviewStatus, "unreviewed", rule.id);
+    assert.equal(rule.clinicalReviewStatus, /^(conversion\.|benzodiazepine\.|methadone\.)/.test(rule.id) ? "approved-user-attested" : "unreviewed", rule.id);
     assert.ok(rule.limitations, rule.id);
     assert.ok(Array.isArray(rule.testIds), rule.id);
 
@@ -94,7 +94,7 @@ test("source references resolve and uncertainty never becomes approval", () => {
     }
 
     if (["none", "conflicts"].includes(rule.evidenceMatch)) {
-      assert.equal(rule.clinicalReviewStatus, "unreviewed", rule.id);
+      assert.ok(["unreviewed", "approved-user-attested"].includes(rule.clinicalReviewStatus), rule.id);
     }
   }
 });

@@ -167,6 +167,7 @@
     panelDraft: blankPanelDraft(),
     panelDraftCoverageStatus: "included",
     panelDraftError: "",
+    entryError: "",
     lastSummary: "",
     lastShortSummary: "",
     lastPatientScript: "",
@@ -466,12 +467,13 @@
 
   function renderInterpret() {
     const result = analyzeInterpretation();
-    state.lastSummary = result.chartNote;
-    state.lastShortSummary = result.shortSummary;
-    state.lastPatientScript = result.patientScript;
+    state.lastSummary = result.copyBlocked ? "" : result.chartNote;
+    state.lastShortSummary = result.copyBlocked ? "" : result.shortSummary;
+    state.lastPatientScript = result.copyBlocked ? "" : result.patientScript;
     return `
       <section class="uds-workflow-grid">
         <form class="uds-card" data-form="interpret" autocomplete="off">
+          ${state.entryError ? `<p role="alert">${escapeHtml(state.entryError)}</p>` : ""}
           <div class="uds-card-head">
             <div>
               <p class="uds-eyebrow">Primary workflow</p>
@@ -516,9 +518,9 @@
           ${renderDetails("Optional supportive findings to check", result.supportiveNotEntered)}
           ${renderDetails("Expected parent findings to check", result.expectedParentNotEntered)}
           <div class="uds-copy-grid">
-            <button class="uds-primary-button" data-action="copy-summary" type="button">Copy chart note</button>
-            <button class="uds-secondary-button" data-action="copy-short-summary" type="button">Copy short summary</button>
-            <button class="uds-secondary-button" data-action="copy-patient" type="button">Copy patient script</button>
+            <button class="uds-primary-button" data-action="copy-summary" type="button" ${result.copyBlocked ? "disabled" : ""}>Copy chart note</button>
+            <button class="uds-secondary-button" data-action="copy-short-summary" type="button" ${result.copyBlocked ? "disabled" : ""}>Copy short summary</button>
+            <button class="uds-secondary-button" data-action="copy-patient" type="button" ${result.copyBlocked ? "disabled" : ""}>Copy patient script</button>
           </div>
           <pre class="uds-note-preview">${escapeHtml(result.chartNote)}</pre>
         </section>
@@ -1019,6 +1021,20 @@
   }
 
   function analyzeInterpretation() {
+    const conflicts = state.detected.filter(id => state.absent.includes(id));
+    if (conflicts.length) {
+      const message = `Resolve conflicting results for ${conflicts.map(itemLabel).sort().join(", ")}. The same analyte cannot be both detected and absent in this review. Remove the incorrect entry; review separate specimens or methods separately.`;
+      return {
+        copyBlocked: true, label: "Resolve conflicting results", tone: "warning",
+        confirmationLevel: "Interpretation unavailable", nextStep: message,
+        chartNote: message, shortSummary: "", patientScript: "",
+        explained: [], contextNeeded: [], notExplained: [], absentConcerns: [],
+        absentReviews: [], expectedNegatives: [], expectedReference: [],
+        supportiveNotEntered: [], expectedParentNotEntered: [], methodNotes: [],
+        panelWarnings: [], validityNotes: [], validityWarnings: [], safetyFlags: [],
+        canSupport: [], cannotSupport: ["Interpretation or copied conclusions while results conflict."],
+      };
+    }
     const profile = selectedProfile();
     const explained = [];
     const contextNeeded = [];
@@ -1031,7 +1047,7 @@
       const label = "Nonclinical or forensic use not supported";
       const nextStep = "Use appropriate chain-of-custody, forensic or workplace protocols, certified laboratory processes, and qualified review. This clinical reference tool should not be used for legal, employment, custody, or forensic conclusions.";
       const chartNote = [
-        "UDS clinical reference review, no patient identifiers entered.",
+        "UDS clinical reference review.",
         "Selected context is legal, employment, or forensic, which is outside this tool's intended use.",
         `Next step: ${nextStep}`,
       ].join("\n");
@@ -1072,7 +1088,12 @@
         explained.push(`${itemLabel(detectedId)} is listed as expected and was detected.`);
         return;
       }
-      const match = findExpectedRelationship(detectedId);
+      const matches = findExpectedRelationships(detectedId);
+      if (matches.length > 1) {
+        contextNeeded.push(`${itemLabel(detectedId)} has multiple possible relationships to the entered expected substances: ${matches.map(row => `${itemLabel(row.from)} (${row.note})`).join("; ")}. This finding cannot establish a unique source. Review the full pattern, method, timing, and cutoff.`);
+        return;
+      }
+      const match = matches[0];
       if (match) {
         const line = `${itemLabel(detectedId)} can fit ${itemLabel(match.from)}: ${match.note}`;
         if (match.strength === "strong") {
@@ -1195,10 +1216,11 @@
     };
   }
 
-  function findExpectedRelationship(detectedId) {
+  function findExpectedRelationships(detectedId) {
     return state.expected
       .flatMap((expectedId) => (relationshipsByFrom.get(expectedId) || []).map((row) => ({ ...row })))
-      .find((row) => row.to === detectedId) || null;
+      .filter((row) => row.to === detectedId)
+      .sort((a, b) => a.from.localeCompare(b.from));
   }
 
   function buildExpectedReferencePreview() {
@@ -1550,7 +1572,7 @@
   function buildSafetyFlags() {
     const detected = state.detected.map(getItem).filter(Boolean);
     const expected = state.expected.map(getItem).filter(Boolean);
-    const absent = state.absent.map(getItem).filter(Boolean);
+    const absentReviews = state.absent.map(id => classifyAbsent(id, selectedProfile()));
     const allKnown = [...detected, ...expected];
     const flags = [];
     const hasExpectedOrDetectedOpioid = allKnown.some((entry) => entry.tags.includes("opioid"));
@@ -1562,16 +1584,14 @@
     const fentanylDetected = detected.some((entry) => ["fentanyl", "norfentanyl"].includes(entry.id));
     const hasExpectedOudMedicationAbsent =
       state.context === "oud" &&
-      state.absentVerified &&
-      absent.some((entry) => ["buprenorphine", "methadone"].includes(entry.id)) &&
-      state.expected.some((id) => ["buprenorphine", "methadone"].includes(id));
+      absentReviews.some(row => row.severity === "unexpected_negative" &&
+        ["buprenorphine", "methadone"].includes(row.id) && state.expected.includes(row.id));
     const hasExpectedOudSupportiveMetaboliteAbsent =
       state.context === "oud" &&
-      state.absentVerified &&
-      (
-        (state.expected.includes("buprenorphine") && state.absent.includes("norbuprenorphine")) ||
-        (state.expected.includes("methadone") && state.absent.includes("eddp"))
-      );
+      absentReviews.some(row => row.severity === "supportive_absent" && (
+        (state.expected.includes("buprenorphine") && row.id === "norbuprenorphine") ||
+        (state.expected.includes("methadone") && row.id === "eddp")
+      ));
 
     if (hasExpectedOrDetectedOpioid && hasDetectedBenzo) flags.push("Opioid therapy or exposure plus benzodiazepine detected: assess sedation and overdose risk and naloxone access.");
     if (hasDetectedOpioid && hasExpectedBenzo) flags.push("Opioid detected with expected benzodiazepine therapy: assess sedation and overdose risk and coordination of prescribing.");
@@ -1759,7 +1779,7 @@
     const absent = state.absent.map(itemLabel).join(", ") || "none entered";
     const validityDetailSummary = buildValidityDetailSummary();
     return [
-      "UDS clinical reference review, no patient identifiers entered.",
+      "UDS clinical reference review.",
       `Context: ${formatContext(state.context)}. Decision impact: ${state.consequence}.`,
       `Result source: ${formatResultSource(state.resultSource)}. Method / panel: ${formatMethod(state.method)}; ${selectedProfile().label}. Specimen validity: ${formatValidity(state.validityFlag)}.`,
       validityDetailSummary.length ? `Optional validity details entered: ${validityDetailSummary.join("; ")}.` : "",
@@ -1855,6 +1875,13 @@
   function addChipById(key, id) {
     const entry = getItem(id);
     if (!entry || state[key].includes(entry.id)) return false;
+    const opposingKey = key === "detected" ? "absent" : key === "absent" ? "detected" : null;
+    if (opposingKey && state[opposingKey].includes(entry.id)) {
+      state.entryError = `${itemLabel(id)} is already entered as ${opposingKey}. Remove that entry before changing its result.`;
+      render();
+      return false;
+    }
+    state.entryError = "";
     if (key === "detected") state.detectedNoneReported = false;
     state[key] = [...state[key], entry.id];
     render();
@@ -1862,6 +1889,7 @@
   }
 
   function removeChip(key, id) {
+    state.entryError = "";
     state[key] = state[key].filter((entryId) => entryId !== id);
     render();
   }
@@ -2191,6 +2219,7 @@
 
   function snapshotState() {
     return {
+      entryError: state.entryError,
       context: state.context,
       consequence: state.consequence,
       resultSource: state.resultSource,

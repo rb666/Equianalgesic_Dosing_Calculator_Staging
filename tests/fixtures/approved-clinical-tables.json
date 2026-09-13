@@ -1,0 +1,820 @@
+{
+  "productionCommit": "6fde4f914cafa7d21cd127c73a95f106c4e88524",
+  "stagingCommit": "c28135133ad5831c1c6a70da8d94d6129275aa0e",
+  "tables": {
+    "conversionOptions": [
+      {
+        "id": "Morphine_IV",
+        "medication": "Morphine",
+        "route": "IV",
+        "referenceDose": 10,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Morphine IV",
+        "targetable": true
+      },
+      {
+        "id": "Morphine_Oral",
+        "medication": "Morphine",
+        "route": "Oral (IR)",
+        "referenceDose": 25,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Morphine oral (IR)",
+        "targetable": true
+      },
+      {
+        "id": "Morphine_Oral_ER",
+        "medication": "Morphine",
+        "route": "Oral (ER)",
+        "referenceDose": 25,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Morphine oral (ER)",
+        "targetable": true
+      },
+      {
+        "id": "Codeine_IV",
+        "medication": "Codeine",
+        "route": "IV",
+        "referenceDose": 10,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 3,
+        "label": "Codeine IV",
+        "targetable": true
+      },
+      {
+        "id": "Codeine_Oral",
+        "medication": "Codeine",
+        "route": "Oral (IR)",
+        "referenceDose": 10,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 1.5,
+        "label": "Codeine oral (IR)",
+        "targetable": true
+      },
+      {
+        "id": "Hydrocodone_Oral",
+        "medication": "Hydrocodone",
+        "route": "Oral (IR)",
+        "referenceDose": 25,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Hydrocodone oral (IR)",
+        "targetable": true
+      },
+      {
+        "id": "Hydrocodone_Oral_ER",
+        "medication": "Hydrocodone",
+        "route": "Oral (ER)",
+        "referenceDose": 25,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Hydrocodone oral (ER)",
+        "targetable": true
+      },
+      {
+        "id": "Oxycodone_Oral",
+        "medication": "Oxycodone",
+        "route": "Oral (IR)",
+        "referenceDose": 10,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 15,
+        "label": "Oxycodone oral (IR)",
+        "targetable": true
+      },
+      {
+        "id": "Oxycodone_Oral_ER",
+        "medication": "Oxycodone",
+        "route": "Oral (ER)",
+        "referenceDose": 10,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 15,
+        "label": "Oxycodone oral (ER)",
+        "targetable": true
+      },
+      {
+        "id": "Hydromorphone_IV",
+        "medication": "Hydromorphone",
+        "route": "IV",
+        "referenceDose": 2,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Hydromorphone IV",
+        "targetable": true
+      },
+      {
+        "id": "Hydromorphone_Oral",
+        "medication": "Hydromorphone",
+        "route": "Oral (IR)",
+        "referenceDose": 5,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Hydromorphone oral (IR)",
+        "targetable": true
+      },
+      {
+        "id": "Hydromorphone_Oral_ER",
+        "medication": "Hydromorphone",
+        "route": "Oral (ER)",
+        "referenceDose": 5,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Hydromorphone oral (ER)",
+        "targetable": true
+      },
+      {
+        "id": "Methadone_Oral",
+        "medication": "Methadone",
+        "route": "Oral",
+        "referenceDose": 10,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 47,
+        "label": "Methadone oral",
+        "targetable": true
+      },
+      {
+        "id": "Methadone_IV",
+        "medication": "Methadone",
+        "route": "IV",
+        "referenceDose": 5,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 47,
+        "label": "Methadone IV",
+        "targetable": true
+      },
+      {
+        "id": "Meperidine_IV",
+        "medication": "Meperidine",
+        "route": "IV",
+        "referenceDose": 100,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Meperidine IV",
+        "targetable": true
+      },
+      {
+        "id": "Meperidine_Oral",
+        "medication": "Meperidine",
+        "route": "Oral (IR)",
+        "referenceDose": 300,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Meperidine oral (IR)",
+        "targetable": true
+      },
+      {
+        "id": "Fentanyl_Patch_12",
+        "medication": "Fentanyl",
+        "route": "Patch 12 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 30,
+        "label": "Fentanyl patch 12 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Fentanyl_Patch_25",
+        "medication": "Fentanyl",
+        "route": "Patch 25 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 60,
+        "label": "Fentanyl patch 25 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Fentanyl_Patch_37",
+        "medication": "Fentanyl",
+        "route": "Patch 37 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 90,
+        "label": "Fentanyl patch 37 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Fentanyl_Patch_50",
+        "medication": "Fentanyl",
+        "route": "Patch 50 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 120,
+        "label": "Fentanyl patch 50 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Fentanyl_Patch_62",
+        "medication": "Fentanyl",
+        "route": "Patch 62 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 150,
+        "label": "Fentanyl patch 62 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Fentanyl_Patch_75",
+        "medication": "Fentanyl",
+        "route": "Patch 75 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 180,
+        "label": "Fentanyl patch 75 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Fentanyl_Patch_87",
+        "medication": "Fentanyl",
+        "route": "Patch 87 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 210,
+        "label": "Fentanyl patch 87 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Fentanyl_Patch_100",
+        "medication": "Fentanyl",
+        "route": "Patch 100 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 240,
+        "label": "Fentanyl patch 100 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Fentanyl_IV",
+        "medication": "Fentanyl",
+        "route": "IV",
+        "referenceDose": 0.15,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Fentanyl IV",
+        "targetable": true
+      },
+      {
+        "id": "Tramadol_IV",
+        "medication": "Tramadol",
+        "route": "IV",
+        "referenceDose": 100,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Tramadol IV",
+        "targetable": true
+      },
+      {
+        "id": "Tramadol_Oral",
+        "medication": "Tramadol",
+        "route": "Oral (IR)",
+        "referenceDose": 120,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Tramadol oral (IR)",
+        "targetable": true
+      },
+      {
+        "id": "Tramadol_Oral_ER",
+        "medication": "Tramadol",
+        "route": "Oral (ER)",
+        "referenceDose": 120,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Tramadol oral (ER)",
+        "targetable": true
+      },
+      {
+        "id": "Tapentadol_Oral",
+        "medication": "Tapentadol",
+        "route": "Oral (IR)",
+        "referenceDose": 100,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Tapentadol oral (IR)",
+        "targetable": true
+      },
+      {
+        "id": "Tapentadol_Oral_ER",
+        "medication": "Tapentadol",
+        "route": "Oral (ER)",
+        "referenceDose": 100,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Tapentadol oral (ER)",
+        "targetable": true
+      },
+      {
+        "id": "Oxymorphone_IV",
+        "medication": "Oxymorphone",
+        "route": "IV",
+        "referenceDose": 1,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Oxymorphone IV",
+        "targetable": true
+      },
+      {
+        "id": "Oxymorphone_Oral",
+        "medication": "Oxymorphone",
+        "route": "Oral (IR)",
+        "referenceDose": 10,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Oxymorphone oral (IR)",
+        "targetable": true
+      },
+      {
+        "id": "Oxymorphone_Oral_ER",
+        "medication": "Oxymorphone",
+        "route": "Oral (ER)",
+        "referenceDose": 10,
+        "doseUnit": "mg",
+        "oralMorphineEquivalent": 25,
+        "label": "Oxymorphone oral (ER)",
+        "targetable": true
+      },
+      {
+        "id": "Buprenorphine_Patch_5",
+        "medication": "Buprenorphine",
+        "route": "Patch 5 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 15,
+        "label": "Buprenorphine patch 5 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Buprenorphine_Patch_10",
+        "medication": "Buprenorphine",
+        "route": "Patch 10 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 30,
+        "label": "Buprenorphine patch 10 mcg/hr",
+        "targetable": false
+      },
+      {
+        "id": "Buprenorphine_Patch_20",
+        "medication": "Buprenorphine",
+        "route": "Patch 20 mcg/hr",
+        "referenceDose": 1,
+        "doseUnit": "patch",
+        "oralMorphineEquivalent": 48,
+        "label": "Buprenorphine patch 20 mcg/hr",
+        "targetable": false
+      }
+    ],
+    "benzoConversionOptions": [
+      {
+        "id": "alprazolam_po",
+        "medication": "Alprazolam",
+        "brand": "Xanax",
+        "route": "PO",
+        "equiv": 1,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "chlordiazepoxide_po",
+        "medication": "Chlordiazepoxide",
+        "brand": "Librium",
+        "route": "PO",
+        "equiv": 25,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "clonazepam_po",
+        "medication": "Clonazepam",
+        "brand": "Klonopin",
+        "route": "PO",
+        "equiv": 1,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "clorazepate_po",
+        "medication": "Clorazepate",
+        "brand": "Tranxene",
+        "route": "PO",
+        "equiv": 15,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "diazepam_po",
+        "medication": "Diazepam",
+        "brand": "Valium",
+        "route": "PO",
+        "equiv": 10,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "diazepam_iv",
+        "medication": "Diazepam",
+        "brand": "Valium",
+        "route": "IV",
+        "equiv": 10,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "lorazepam_po",
+        "medication": "Lorazepam",
+        "brand": "Ativan",
+        "route": "PO",
+        "equiv": 2,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "lorazepam_iv",
+        "medication": "Lorazepam",
+        "brand": "Ativan",
+        "route": "IV",
+        "equiv": 2,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "midazolam_po",
+        "medication": "Midazolam",
+        "brand": "Versed",
+        "route": "PO",
+        "equiv": 12,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "midazolam_iv",
+        "medication": "Midazolam",
+        "brand": "Versed",
+        "route": "IV",
+        "equiv": 4,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "oxazepam_po",
+        "medication": "Oxazepam",
+        "brand": "Serax",
+        "route": "PO",
+        "equiv": 30,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "temazepam_po",
+        "medication": "Temazepam",
+        "brand": "Restoril",
+        "route": "PO",
+        "equiv": 15,
+        "doseUnit": "mg"
+      },
+      {
+        "id": "triazolam_po",
+        "medication": "Triazolam",
+        "brand": "Halcion",
+        "route": "PO",
+        "equiv": 0.25,
+        "doseUnit": "mg"
+      }
+    ],
+    "methadoneRatioTable": [
+      {
+        "min": 0,
+        "max": 30,
+        "label": "0-30 mg/day",
+        "ratio": 2
+      },
+      {
+        "min": 31,
+        "max": 99,
+        "label": "31-99 mg/day",
+        "ratio": 4
+      },
+      {
+        "min": 100,
+        "max": 299,
+        "label": "100-299 mg/day",
+        "ratio": 8
+      },
+      {
+        "min": 300,
+        "max": 499,
+        "label": "300-499 mg/day",
+        "ratio": 12
+      },
+      {
+        "min": 500,
+        "max": 999,
+        "label": "500-999 mg/day",
+        "ratio": 15
+      },
+      {
+        "min": 1000,
+        "max": "Infinity",
+        "label": "1000 mg/day or more",
+        "ratio": 20
+      }
+    ],
+    "hepaticGuidanceRows": [
+      {
+        "medication": "Morphine",
+        "mild": {
+          "label": "Reduce 0-25%",
+          "minReduction": 0,
+          "maxReduction": 25
+        },
+        "moderate": {
+          "label": "Reduce 50%",
+          "minReduction": 50,
+          "maxReduction": 50
+        },
+        "severe": {
+          "label": "Avoid",
+          "avoid": true
+        }
+      },
+      {
+        "medication": "Hydromorphone",
+        "mild": {
+          "label": "Reduce 0-25%",
+          "minReduction": 0,
+          "maxReduction": 25
+        },
+        "moderate": {
+          "label": "Reduce 25-50%",
+          "minReduction": 25,
+          "maxReduction": 50
+        },
+        "severe": {
+          "label": "Reduce 50-75% or avoid if you are not a specialist",
+          "minReduction": 50,
+          "maxReduction": 75
+        }
+      },
+      {
+        "medication": "Oxycodone",
+        "mild": {
+          "label": "Reduce 25%",
+          "minReduction": 25,
+          "maxReduction": 25
+        },
+        "moderate": {
+          "label": "Reduce 50%",
+          "minReduction": 50,
+          "maxReduction": 50
+        },
+        "severe": {
+          "label": "Reduce 50-75% or avoid if you are not a specialist",
+          "minReduction": 50,
+          "maxReduction": 75
+        }
+      },
+      {
+        "medication": "Tramadol",
+        "mild": {
+          "label": "Reduce 25%",
+          "minReduction": 25,
+          "maxReduction": 25
+        },
+        "moderate": {
+          "label": "Reduce 50-75%",
+          "minReduction": 50,
+          "maxReduction": 75
+        },
+        "severe": {
+          "label": "Avoid",
+          "avoid": true
+        }
+      },
+      {
+        "medication": "Fentanyl",
+        "mild": {
+          "label": "Reduce 0-25%",
+          "minReduction": 0,
+          "maxReduction": 25
+        },
+        "moderate": {
+          "label": "Reduce 25-50%",
+          "minReduction": 25,
+          "maxReduction": 50
+        },
+        "severe": {
+          "label": "Reduce 50%; may slowly titrate higher",
+          "minReduction": 50,
+          "maxReduction": 50
+        }
+      },
+      {
+        "medication": "Methadone",
+        "mild": {
+          "label": "Minimal change; experts only",
+          "infoOnly": true
+        },
+        "moderate": {
+          "label": "Reduce 25-50%; experts only",
+          "minReduction": 25,
+          "maxReduction": 50
+        },
+        "severe": {
+          "label": "Reduce 50% with very slow titration upward; experts only",
+          "minReduction": 50,
+          "maxReduction": 50
+        }
+      },
+      {
+        "medication": "Buprenorphine",
+        "mild": {
+          "label": "Reduce 0-25%",
+          "minReduction": 0,
+          "maxReduction": 25
+        },
+        "moderate": {
+          "label": "Reduce 25-50%",
+          "minReduction": 25,
+          "maxReduction": 50
+        },
+        "severe": {
+          "label": "Reduce 50% with cautious use; experts only",
+          "minReduction": 50,
+          "maxReduction": 50
+        }
+      }
+    ],
+    "buprenorphineSchedules": [
+      {
+        "id": "30_59",
+        "label": "30-59 mg MEDD",
+        "title": "30-59 mg MEDD",
+        "product": "Belbuca (buprenorphine buccal film)",
+        "fullAgonistSummary": "Continue full agonist opioids during days 1-4 while Belbuca is increased.",
+        "stopSummary": "Stop full agonist opioids on day 5+.",
+        "days": [
+          {
+            "day": "1",
+            "fullAgonist": "Continue",
+            "buprenorphine": "150 mcg BID (300 mcg TDD)"
+          },
+          {
+            "day": "2",
+            "fullAgonist": "Continue",
+            "buprenorphine": "300 mcg BID (600 mcg TDD)"
+          },
+          {
+            "day": "3",
+            "fullAgonist": "Continue",
+            "buprenorphine": "450 mcg BID (900 mcg TDD)"
+          },
+          {
+            "day": "4",
+            "fullAgonist": "Continue",
+            "buprenorphine": "450 mcg BID (900 mcg TDD)"
+          },
+          {
+            "day": "5+",
+            "fullAgonist": "STOP",
+            "buprenorphine": "450 mcg BID (900 mcg TDD)"
+          }
+        ]
+      },
+      {
+        "id": "60_89",
+        "label": "60-89 mg MEDD",
+        "title": "60-89 mg MEDD",
+        "product": "Belbuca (buprenorphine buccal film)",
+        "fullAgonistSummary": "Continue full agonist opioids during days 1-4 while Belbuca is increased.",
+        "stopSummary": "Stop full agonist opioids on day 5+.",
+        "days": [
+          {
+            "day": "1",
+            "fullAgonist": "Continue",
+            "buprenorphine": "150 mcg BID (300 mcg TDD)"
+          },
+          {
+            "day": "2",
+            "fullAgonist": "Continue",
+            "buprenorphine": "300 mcg BID (600 mcg TDD)"
+          },
+          {
+            "day": "3",
+            "fullAgonist": "Continue",
+            "buprenorphine": "450 mcg BID (900 mcg TDD)"
+          },
+          {
+            "day": "4",
+            "fullAgonist": "Continue",
+            "buprenorphine": "600 mcg BID (1200 mcg TDD)"
+          },
+          {
+            "day": "5+",
+            "fullAgonist": "STOP",
+            "buprenorphine": "600 mcg BID (1200 mcg TDD)"
+          }
+        ]
+      },
+      {
+        "id": "90_120",
+        "label": "90-120 mg MEDD",
+        "title": "90-120 mg MEDD",
+        "product": "Belbuca (buprenorphine buccal film)",
+        "fullAgonistSummary": "Continue full agonist opioids during days 1-4 while Belbuca is increased.",
+        "stopSummary": "Stop full agonist opioids on day 5+.",
+        "days": [
+          {
+            "day": "1",
+            "fullAgonist": "Continue",
+            "buprenorphine": "300 mcg BID (600 mcg TDD)"
+          },
+          {
+            "day": "2",
+            "fullAgonist": "Continue",
+            "buprenorphine": "300 mcg QAM + 600 mcg QPM (900 mcg TDD)"
+          },
+          {
+            "day": "3",
+            "fullAgonist": "Continue",
+            "buprenorphine": "600 mcg BID (1200 mcg TDD)"
+          },
+          {
+            "day": "4",
+            "fullAgonist": "Continue",
+            "buprenorphine": "600 mcg QAM + 900 mcg QPM (1500 mcg TDD)"
+          },
+          {
+            "day": "5+",
+            "fullAgonist": "STOP",
+            "buprenorphine": "600 mcg QAM + 900 mcg QPM (1500 mcg TDD)"
+          }
+        ]
+      },
+      {
+        "id": "121_160",
+        "label": "121-160 mg MEDD",
+        "title": "121-160 mg MEDD",
+        "product": "Belbuca (buprenorphine buccal film)",
+        "fullAgonistSummary": "Continue full agonist opioids during days 1-4 while Belbuca is increased.",
+        "stopSummary": "Stop full agonist opioids on day 5+.",
+        "days": [
+          {
+            "day": "1",
+            "fullAgonist": "Continue",
+            "buprenorphine": "300 mcg BID (600 mcg TDD)"
+          },
+          {
+            "day": "2",
+            "fullAgonist": "Continue",
+            "buprenorphine": "300 mcg QAM + 600 mcg QPM (900 mcg TDD)"
+          },
+          {
+            "day": "3",
+            "fullAgonist": "Continue",
+            "buprenorphine": "600 mcg BID (1200 mcg TDD)"
+          },
+          {
+            "day": "4",
+            "fullAgonist": "Continue",
+            "buprenorphine": "600 mcg QAM + 900 mcg QPM (1500 mcg TDD)"
+          },
+          {
+            "day": "5+",
+            "fullAgonist": "STOP",
+            "buprenorphine": "900 mcg BID (1800 mcg TDD)"
+          }
+        ]
+      },
+      {
+        "id": "161_300",
+        "label": "161-300 mg MEDD",
+        "title": "161-300 mg MEDD",
+        "product": "Suboxone (buprenorphine/naloxone 2 mg/0.5 mg film)",
+        "fullAgonistSummary": "Continue the full agonist full dose on days 1-3, reduce to 2/3 dose on day 4, then none or minimal usage with slow titration on day 5.",
+        "stopSummary": "Day 5: none or minimal usage with slow titration.",
+        "days": [
+          {
+            "day": "1",
+            "fullAgonist": "Full dose",
+            "buprenorphine": "0.5 mg twice a day (1/4 film)"
+          },
+          {
+            "day": "2",
+            "fullAgonist": "Full dose",
+            "buprenorphine": "1 mg twice a day (1/2 film)"
+          },
+          {
+            "day": "3",
+            "fullAgonist": "Full dose",
+            "buprenorphine": "1 mg three times a day (1/2 film)"
+          },
+          {
+            "day": "4",
+            "fullAgonist": "2/3 dose",
+            "buprenorphine": "1 film (2 mg) three times a day"
+          },
+          {
+            "day": "5",
+            "fullAgonist": "None OR minimal usage with slow titration",
+            "buprenorphine": "1 film (2 mg) three times per day"
+          }
+        ]
+      }
+    ]
+  },
+  "constants": {
+    "METHADONE_ORAL_REFERENCE_DOSE": "const METHADONE_ORAL_REFERENCE_DOSE = 10;",
+    "METHADONE_ORAL_MORPHINE_FACTOR": "const METHADONE_ORAL_MORPHINE_FACTOR = 4.7;",
+    "METHADONE_IV_REFERENCE_DOSE": "const METHADONE_IV_REFERENCE_DOSE = METHADONE_ORAL_REFERENCE_DOSE / 2;",
+    "METHADONE_CONSERVATIVE_ORAL_MORPHINE_FACTOR": "const METHADONE_CONSERVATIVE_ORAL_MORPHINE_FACTOR = 3;"
+  }
+}

@@ -15,6 +15,10 @@ This folder is now the active staging development workspace. The project owner e
 
 The prior staging checkout, including its Git history and untracked UDS drafts, is preserved under ignored workspace-backups/previous-staging-checkout. The old production operating manual is workspace-backups/production-AGENTS.md. These backups are inactive and must never be committed or deployed. Do active work here, not in the backup.
 
+## Historical version preservation
+
+The owner designated production `6fde4f914cafa7d21cd127c73a95f106c4e88524` as **v1.0**, the historical clinically reviewed baseline, and staging `8d77242ae9382e016bd2260dcfca347585fd4167` as **v2.0**. Both annotated tags and their source history are preserved on the staging remote. Never move, delete, replace, or reuse these tags, including during a later production promotion. Preserve the approved-ratio scope of the owner's clinical-review attestation; version 2.0 has no newly attested committee review. See `RELEASES.md` and `releases/1.0.json` / `releases/2.0.json` for exact identities, verification evidence, and retrieval instructions. Keep these original records intact and add later evidence separately.
+
 ## Architecture and files
 
 The application remains plain static HTML/CSS/JavaScript with no package manifest, dependencies, framework, backend, telemetry, or clinical-data transmission. Node 22+ runs dependency-free tests and prepares the GitHub Pages artifact; this is static file preparation, not bundling.

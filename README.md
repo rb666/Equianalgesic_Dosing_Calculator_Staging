@@ -4,6 +4,8 @@ Active staging development is consolidated in this workspace. The site remains a
 
 [Staging calculator](https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/)
 
+Historical releases are preserved as **v1.0** (the production clinical-history baseline) and **v2.0** (the staging successor). See [RELEASES.md](RELEASES.md) for fixed commits, review scope, integrity records, and source downloads that remain usable after future deployments.
+
 See [AGENTS.md](AGENTS.md) for the authoritative workspace and release instructions, [PUBLISHING.md](PUBLISHING.md) for deployment, and [CLINICAL_DATA.md](CLINICAL_DATA.md) for clinical-data traceability.
 
 The project owner confirmed committee approval of the existing conversion ratios. All original opioid and benzodiazepine ratios and methadone bands/constants are preserved and locked by regression tests. This attestation does not imply a new review of other clinical guidance.

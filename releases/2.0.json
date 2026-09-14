@@ -1,0 +1,190 @@
+{
+  "recordSchemaVersion": 1,
+  "version": "2.0",
+  "tag": "v2.0",
+  "recordedOn": "2026-09-13",
+  "recordedTimeZone": "America/Denver",
+  "sourceRepository": "https://github.com/rb666/Equianalgesic_Dosing_Calculator_Staging",
+  "archiveRepository": "https://github.com/rb666/Equianalgesic_Dosing_Calculator_Staging",
+  "sourceCommit": "8d77242ae9382e016bd2260dcfca347585fd4167",
+  "sourceTree": "df92a8cd3bed72699ff498d6834f7f942607fafa",
+  "sourceCommitTime": "2026-09-13T22:39:51-06:00",
+  "observedEnvironment": "staging",
+  "observedCalculatorUrl": "https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/",
+  "clinicalReview": {
+    "designation": "Staging successor preserving the version 1.0 approved conversion ratios",
+    "evidence": "Frozen approved-table regression fixture and passing engineering checks",
+    "newCommitteeReviewAttested": false,
+    "scopeNote": "The version number and engineering verification do not represent a new committee clinical review."
+  },
+  "integrity": {
+    "algorithm": "SHA-256",
+    "sourceBytes": "Exact Git blob bytes; no normalization",
+    "sourceFiles": [
+      {
+        "path": "public/.nojekyll",
+        "gitBlob": "7fa48572b4c49d426e1afe1972732e0a1195482a",
+        "bytes": 45,
+        "sha256": "9276698c6f232004492d17411c033c505225787e12bedba8b0239a9131577821"
+      },
+      {
+        "path": "public/OpioidConversionSite.png",
+        "gitBlob": "45340978faa68a07ad650c1639428c2e751d556e",
+        "bytes": 976467,
+        "sha256": "02e2d968bc811928934376f41dd37ed0052fc320cb16f6d82415c969597a2964"
+      },
+      {
+        "path": "public/_redirects",
+        "gitBlob": "d93c6a55a36813546018fd08943f622f5bf83ec4",
+        "bytes": 277,
+        "sha256": "5007b8dc2d88a8dae86866dd0a6233497a54214140b8fb7ccb14e3987b731d67"
+      },
+      {
+        "path": "public/calculator-core.js",
+        "gitBlob": "4b8a7765b9b17797db8e450dc80ac79391f31629",
+        "bytes": 11702,
+        "sha256": "c1ba72be101c2049ed565344609e6619b2cda70f32e33c68368c2323dd14f258"
+      },
+      {
+        "path": "public/calculator-provenance.js",
+        "gitBlob": "47e854e179f294a52e083a41bb42e133dbe5a0de",
+        "bytes": 20692,
+        "sha256": "bda8d30c172f9c21b6b6d370c75d25dd18b588aa5551690c55ca07f29e569ee5"
+      },
+      {
+        "path": "public/favicon.svg",
+        "gitBlob": "e6b99873d01d65250a4b0cf91d71281a026de97f",
+        "bytes": 940,
+        "sha256": "bf15d9f194f0c042909f857fbaa553e371caae7566368dbb3a127bdf53889486"
+      },
+      {
+        "path": "public/opioidcalculator.html",
+        "gitBlob": "21135244c6b6a388db31274702230dac1d09a4cf",
+        "bytes": 44951,
+        "sha256": "ab87880a89224b822be50c66846209d4d468ef17a2111788e6a7e98956e21741"
+      },
+      {
+        "path": "public/robots.txt",
+        "gitBlob": "a411b7eacf0488a9849cc0290c30454447498c9a",
+        "bytes": 62,
+        "sha256": "2d0fbb22e2b9f05d46d067e073125ac7ebd7df490c3701f64d4baeb6e305a804"
+      },
+      {
+        "path": "public/script.js",
+        "gitBlob": "9358773a7bc46439db3d972f470a245c64d5db5c",
+        "bytes": 134424,
+        "sha256": "ec0e0fdb2081e62fe819ca0917348ed01e47505ef91c866d6d6d1b58d5db5a54"
+      },
+      {
+        "path": "public/sitemap.xml",
+        "gitBlob": "6d229e0c5cadd2494ad39bf784fcc5dc1a0415ef",
+        "bytes": 210,
+        "sha256": "45ad9e9d2ca68f8eca2b9e47f2b15c6654aad077704d78af3bf94d61692a3cdd"
+      },
+      {
+        "path": "public/styles.css",
+        "gitBlob": "4f997342d82e40758393f0dd2aeed6792346a106",
+        "bytes": 39464,
+        "sha256": "ea7f378c65793d14a76cf3490c97a9d7ad3b6a24caaf46765a81824bbd921e4a"
+      }
+    ]
+  },
+  "liveVerification": {
+    "scope": "Listed application HTML, scripts, styles, and visual assets. Hosting settings, HTTP headers, and external reference contents are not archived by Git.",
+    "observations": [
+      {
+        "sourcePath": "public/opioidcalculator.html",
+        "url": "https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/",
+        "observedAtUtc": "2026-09-14T04:49:48.884Z",
+        "servedSha256": "b7815036efae5cc2779c18088017b11be7093bcb184e5dfefd7675191fc5b398",
+        "comparison": "GitHub Pages artifact generated from pinned source commit",
+        "comparisonSha256": "b7815036efae5cc2779c18088017b11be7093bcb184e5dfefd7675191fc5b398",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/script.js",
+        "url": "https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/script.js",
+        "observedAtUtc": "2026-09-14T04:49:49.059Z",
+        "servedSha256": "ec0e0fdb2081e62fe819ca0917348ed01e47505ef91c866d6d6d1b58d5db5a54",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "ec0e0fdb2081e62fe819ca0917348ed01e47505ef91c866d6d6d1b58d5db5a54",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/styles.css",
+        "url": "https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/styles.css",
+        "observedAtUtc": "2026-09-14T04:49:48.857Z",
+        "servedSha256": "ea7f378c65793d14a76cf3490c97a9d7ad3b6a24caaf46765a81824bbd921e4a",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "ea7f378c65793d14a76cf3490c97a9d7ad3b6a24caaf46765a81824bbd921e4a",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/calculator-core.js",
+        "url": "https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/calculator-core.js",
+        "observedAtUtc": "2026-09-14T04:49:49.240Z",
+        "servedSha256": "c1ba72be101c2049ed565344609e6619b2cda70f32e33c68368c2323dd14f258",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "c1ba72be101c2049ed565344609e6619b2cda70f32e33c68368c2323dd14f258",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/calculator-provenance.js",
+        "url": "https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/calculator-provenance.js",
+        "observedAtUtc": "2026-09-14T04:49:49.397Z",
+        "servedSha256": "bda8d30c172f9c21b6b6d370c75d25dd18b588aa5551690c55ca07f29e569ee5",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "bda8d30c172f9c21b6b6d370c75d25dd18b588aa5551690c55ca07f29e569ee5",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/OpioidConversionSite.png",
+        "url": "https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/OpioidConversionSite.png",
+        "observedAtUtc": "2026-09-14T04:49:49.517Z",
+        "servedSha256": "02e2d968bc811928934376f41dd37ed0052fc320cb16f6d82415c969597a2964",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "02e2d968bc811928934376f41dd37ed0052fc320cb16f6d82415c969597a2964",
+        "transformations": [],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/favicon.svg",
+        "url": "https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/favicon.svg",
+        "observedAtUtc": "2026-09-14T04:49:49.808Z",
+        "servedSha256": "bf15d9f194f0c042909f857fbaa553e371caae7566368dbb3a127bdf53889486",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "bf15d9f194f0c042909f857fbaa553e371caae7566368dbb3a127bdf53889486",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      }
+    ]
+  },
+  "approvedTableFixture": {
+    "path": "tests/fixtures/approved-clinical-tables.json",
+    "sha256": "1bd939c2f99a69b7d41b5e9ba6ed94a73a82f1c5ca3a396e14d4cc21fdf325d3"
+  },
+  "deployment": {
+    "workflowRun": "https://github.com/rb666/Equianalgesic_Dosing_Calculator_Staging/actions/runs/34806888255",
+    "commit": "8d77242ae9382e016bd2260dcfca347585fd4167",
+    "verify": "success",
+    "deploy": "success",
+    "regressionTestsPassed": 29
+  }
+}

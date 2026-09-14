@@ -1,0 +1,239 @@
+{
+  "recordSchemaVersion": 1,
+  "version": "1.0",
+  "tag": "v1.0",
+  "recordedOn": "2026-09-13",
+  "recordedTimeZone": "America/Denver",
+  "sourceRepository": "https://github.com/rb666/calc-med",
+  "archiveRepository": "https://github.com/rb666/Equianalgesic_Dosing_Calculator_Staging",
+  "sourceCommit": "6fde4f914cafa7d21cd127c73a95f106c4e88524",
+  "sourceTree": "b58e2f3ea2a49d7fc4bc97fcbcf5d0c1606ba3af",
+  "sourceCommitTime": "2026-05-24T21:12:22-06:00",
+  "observedEnvironment": "production",
+  "observedCalculatorUrl": "https://calc.med/opioidcalculator",
+  "clinicalReview": {
+    "designation": "Historical clinically reviewed baseline, designated by project owner",
+    "evidence": "Project-owner attestation in this task on 2026-09-13 (America/Denver)",
+    "confirmedApprovalScope": [
+      "Existing opioid conversion ratios",
+      "Existing benzodiazepine equivalences",
+      "Existing methadone conversion ratios"
+    ],
+    "scopeNote": "Earlier owner clarification limits confirmed committee approval to conversion ratios; this designation does not extend approval to UDS, PK profiles, other guidance, or the entire implementation."
+  },
+  "integrity": {
+    "algorithm": "SHA-256",
+    "sourceBytes": "Exact Git blob bytes; no normalization",
+    "sourceFiles": [
+      {
+        "path": "public/.nojekyll",
+        "gitBlob": "7fa48572b4c49d426e1afe1972732e0a1195482a",
+        "bytes": 45,
+        "sha256": "9276698c6f232004492d17411c033c505225787e12bedba8b0239a9131577821"
+      },
+      {
+        "path": "public/OpioidConversionSite.png",
+        "gitBlob": "45340978faa68a07ad650c1639428c2e751d556e",
+        "bytes": 976467,
+        "sha256": "02e2d968bc811928934376f41dd37ed0052fc320cb16f6d82415c969597a2964"
+      },
+      {
+        "path": "public/UDS.html",
+        "gitBlob": "d0936192877daff109bb0e3b71b0e4e539236359",
+        "bytes": 2933,
+        "sha256": "37eb9ff45e5ab1f694d01511d1f316933e28c7478942de6bfef4e073de61aed0"
+      },
+      {
+        "path": "public/_redirects",
+        "gitBlob": "7debff111f3a358f0837b13ad4821958c9f92565",
+        "bytes": 136,
+        "sha256": "db5f4b52e4a80f39786d7c4842af84d2ce7879aa96ff28899d628e3da57928a8"
+      },
+      {
+        "path": "public/favicon.svg",
+        "gitBlob": "e6b99873d01d65250a4b0cf91d71281a026de97f",
+        "bytes": 940,
+        "sha256": "bf15d9f194f0c042909f857fbaa553e371caae7566368dbb3a127bdf53889486"
+      },
+      {
+        "path": "public/opioidcalculator.html",
+        "gitBlob": "c2d6e1c0e10a7f0e70aa6f115c651a745c638430",
+        "bytes": 40641,
+        "sha256": "d59f29ca41e63f74ffc67b9454b49b3da8d4f869a1a10bd84293e9f9ac838955"
+      },
+      {
+        "path": "public/robots.txt",
+        "gitBlob": "a411b7eacf0488a9849cc0290c30454447498c9a",
+        "bytes": 62,
+        "sha256": "2d0fbb22e2b9f05d46d067e073125ac7ebd7df490c3701f64d4baeb6e305a804"
+      },
+      {
+        "path": "public/script.js",
+        "gitBlob": "09d0843fa55a3211a3874f1251f2949dc0c527fe",
+        "bytes": 117783,
+        "sha256": "530c196a7b1cb794d5ace83ec03f6ec46d5b35e13ec352ff36026e02ae3151f0"
+      },
+      {
+        "path": "public/sitemap.xml",
+        "gitBlob": "f3c8eb6a9aeb9d57596f113813638d09dc42c8fc",
+        "bytes": 297,
+        "sha256": "7b5b71ccd2deefc8335f347c01168010e1b6f9f962b91b9786b8c992a107347b"
+      },
+      {
+        "path": "public/styles.css",
+        "gitBlob": "2d357b5e3948a1a77281b303b3e2c2a6581025e5",
+        "bytes": 37950,
+        "sha256": "f46f546f4c7712e4db08e569985411dea43c6e20bea7026d9a26f98d93c0e940"
+      },
+      {
+        "path": "public/uds-tool.css",
+        "gitBlob": "40d641b90a2cfc916f7aea09dc29150999cc954c",
+        "bytes": 24104,
+        "sha256": "51c2cf2d56f30ee2c66528a1854eaefd93be2084ed6780e18e5f56acecb353a0"
+      },
+      {
+        "path": "public/uds-tool.js",
+        "gitBlob": "5edac75252e24464739c726486284df006298088",
+        "bytes": 128846,
+        "sha256": "0eeecb23d0f7c8e6a641b21845f5192a329c93c92dc4c14b6211fe3c17779b7c"
+      },
+      {
+        "path": "public/uds-workflow-guide.css",
+        "gitBlob": "99578e9b8b1d7c73ce13fadcfda2c23812221665",
+        "bytes": 10134,
+        "sha256": "1bec8d17d1f486fbe4c43cceefd4fbdf43f955e99351c8445f8fac754f216d15"
+      },
+      {
+        "path": "public/uds-workflow-guide.js",
+        "gitBlob": "4deec246bcfca51fd616872832c5f2a4c0aea5f7",
+        "bytes": 23631,
+        "sha256": "44328948260955f7bfa7e62bb6c0efee53d8df7c26cc59b3421c57d52d380214"
+      }
+    ]
+  },
+  "liveVerification": {
+    "scope": "Listed application HTML, scripts, styles, and visual assets. Hosting settings, HTTP headers, and external reference contents are not archived by Git.",
+    "observations": [
+      {
+        "sourcePath": "public/opioidcalculator.html",
+        "url": "https://calc.med/opioidcalculator",
+        "observedAtUtc": "2026-09-14T04:49:45.624Z",
+        "servedSha256": "d181c2ab03aa55a314918cefd31fedb4c7db1ffa2b7cd4d2c60c1a7d8711c4f0",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "d59f29ca41e63f74ffc67b9454b49b3da8d4f869a1a10bd84293e9f9ac838955",
+        "transformations": [
+          "CRLF normalized to LF",
+          "Removed 1 Cloudflare /cdn-cgi/content hidden link and 1 Cloudflare JS detection script before comparison"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/UDS.html",
+        "url": "https://calc.med/UDS",
+        "observedAtUtc": "2026-09-14T04:49:45.572Z",
+        "servedSha256": "8af8d915560b5d774650b18c3f12f5c7ccd110323396831af8b017d2903b7ede",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "37eb9ff45e5ab1f694d01511d1f316933e28c7478942de6bfef4e073de61aed0",
+        "transformations": [
+          "CRLF normalized to LF",
+          "Removed 1 Cloudflare /cdn-cgi/content hidden link and 1 Cloudflare JS detection script before comparison"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/script.js",
+        "url": "https://calc.med/script.js",
+        "observedAtUtc": "2026-09-14T04:49:45.677Z",
+        "servedSha256": "01adfd50f9a6fcf9f8f1f0b7ac354ac2fc584dd145dc6d75cfc53ab0d44d8c54",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "530c196a7b1cb794d5ace83ec03f6ec46d5b35e13ec352ff36026e02ae3151f0",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/styles.css",
+        "url": "https://calc.med/styles.css",
+        "observedAtUtc": "2026-09-14T04:49:45.874Z",
+        "servedSha256": "c8f06b80bbb7c92d42638fcb9984351dd7aba04c32ba6782b99f6b2557b3b888",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "f46f546f4c7712e4db08e569985411dea43c6e20bea7026d9a26f98d93c0e940",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/OpioidConversionSite.png",
+        "url": "https://calc.med/OpioidConversionSite.png",
+        "observedAtUtc": "2026-09-14T04:49:46.054Z",
+        "servedSha256": "02e2d968bc811928934376f41dd37ed0052fc320cb16f6d82415c969597a2964",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "02e2d968bc811928934376f41dd37ed0052fc320cb16f6d82415c969597a2964",
+        "transformations": [],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/favicon.svg",
+        "url": "https://calc.med/favicon.svg",
+        "observedAtUtc": "2026-09-14T04:49:45.939Z",
+        "servedSha256": "d20c491a62ca384ce0c0355a7fecc50e88dc5a0a4a57291fe8e6367ef02776a1",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "bf15d9f194f0c042909f857fbaa553e371caae7566368dbb3a127bdf53889486",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/uds-tool.js",
+        "url": "https://calc.med/uds-tool.js",
+        "observedAtUtc": "2026-09-14T04:49:46.398Z",
+        "servedSha256": "244bc79b576e859c76bca92ef240a8e2704447556af85679bd59f5cb10cce39b",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "0eeecb23d0f7c8e6a641b21845f5192a329c93c92dc4c14b6211fe3c17779b7c",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/uds-tool.css",
+        "url": "https://calc.med/uds-tool.css",
+        "observedAtUtc": "2026-09-14T04:49:46.346Z",
+        "servedSha256": "5834d0e37ec15ae0e1e3b5394d09b52465fa8422a52b0b743b2c5aa79d96821b",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "51c2cf2d56f30ee2c66528a1854eaefd93be2084ed6780e18e5f56acecb353a0",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/uds-workflow-guide.js",
+        "url": "https://calc.med/uds-workflow-guide.js",
+        "observedAtUtc": "2026-09-14T04:49:46.296Z",
+        "servedSha256": "663d0331f5cef0691d4140872d7c9792a3152533948a6bd1bf06fd407b6d903b",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "44328948260955f7bfa7e62bb6c0efee53d8df7c26cc59b3421c57d52d380214",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      },
+      {
+        "sourcePath": "public/uds-workflow-guide.css",
+        "url": "https://calc.med/uds-workflow-guide.css",
+        "observedAtUtc": "2026-09-14T04:49:46.657Z",
+        "servedSha256": "808998c5cc32f67e27e897a2e461f1fd564a2e0a42e10048f24b28e80018b44c",
+        "comparison": "Pinned Git source blob",
+        "comparisonSha256": "1bec8d17d1f486fbe4c43cceefd4fbdf43f955e99351c8445f8fac754f216d15",
+        "transformations": [
+          "CRLF normalized to LF"
+        ],
+        "matches": true
+      }
+    ]
+  }
+}

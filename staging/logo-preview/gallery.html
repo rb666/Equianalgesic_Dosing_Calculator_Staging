@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>calc.med — Logo studies</title>
+  <link rel="stylesheet" href="./studio.css?v=__PREVIEW_VERSION__">
+  <script src="./logos.js?v=__PREVIEW_VERSION__" defer></script>
+  <script src="./studio.js?v=__PREVIEW_VERSION__" defer></script>
+</head>
+<body>
+  <main class="studio">
+    <header class="heading">
+      <div class="masthead"><span class="brand">calc.med</span><span>Logo study</span></div>
+      <h1>Eight logo directions.</h1>
+      <p>Compare the current logo with seven alternative concepts.</p>
+    </header>
+
+    <section class="toolbar" aria-label="Comparison controls">
+      <div class="view-controls" role="group" aria-label="Comparison layout">
+        <button type="button" data-view="all" aria-pressed="true">All eight</button>
+        <button type="button" data-view="pair" aria-pressed="false">Compare two</button>
+      </div>
+      <span class="toolbar-hint"><a href="../opioidcalculator/?logo=06">Try all eight on the site →</a></span>
+      <div class="pair-controls" hidden>
+        <label>Left<select id="leftLogo"></select></label>
+        <span class="pair-divider" aria-hidden="true">/</span>
+        <label>Right<select id="rightLogo"></select></label>
+        <button type="button" id="swapLogos" class="quiet-button">Swap sides</button>
+      </div>
+    </section>
+
+    <div id="logoGrid" class="logo-grid"></div>
+    <p id="comparisonStatus" class="sr-only" role="status" aria-live="polite"></p>
+    <noscript><p>Enable JavaScript to view and compare the logo concepts.</p></noscript>
+    <footer><span>Concepts for discussion · Original artwork preserved</span><span>Temporary staging logo study</span></footer>
+  </main>
+
+  <dialog id="logoDialog" aria-labelledby="dialogTitle">
+    <div class="dialog-header"><div><span id="dialogNumber" class="eyebrow"></span><h2 id="dialogTitle"></h2></div><button type="button" id="closeDialog">Close</button></div>
+    <div class="dialog-art"><img id="dialogImage" alt=""></div>
+    <p id="dialogIntent"></p>
+    <a id="dialogAsset" href="" target="_blank" rel="noopener">Open original artwork <span aria-hidden="true">↗</span></a>
+  </dialog>
+</body>
+</html>

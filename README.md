@@ -4,6 +4,8 @@ Active staging development is consolidated in this workspace. The site remains a
 
 [Staging calculator](https://rb666.github.io/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/)
 
+Staging temporarily opens an eight-logo switcher for design review. The calculator remains usable underneath it. [Preview and restoration details](staging/logo-preview/README.md).
+
 Historical releases are preserved as **v1.0** (the production clinical-history baseline) and **v2.0** (the staging successor). See [RELEASES.md](RELEASES.md) for fixed commits, review scope, integrity records, and source downloads that remain usable after future deployments.
 
 The **v2.1** SEO update is documented in [SEO.md](SEO.md). Production promotion remains separately authorized; staging stays excluded from indexing.

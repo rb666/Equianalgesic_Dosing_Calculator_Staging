@@ -1,6 +1,7 @@
 import { copyFile, lstat, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { prepareLogoPreview } from "./prepare-logo-preview.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourceDir = path.join(root, "public");
@@ -12,6 +13,11 @@ if (process.env.GITHUB_REPOSITORY && process.env.GITHUB_REPOSITORY !== stagingRe
 const basePath = process.env.GITHUB_PAGES_BASE_PATH || "/Equianalgesic_Dosing_Calculator_Staging/";
 if (!/^\/(?:[A-Za-z0-9_-]+\/)*$/.test(basePath)) throw new Error("Invalid Pages base path");
 const calculatorUrl = `${basePath}opioidcalculator/`;
+const release = JSON.parse(await readFile(path.join(root, "staging", "release.json"), "utf8"));
+if (typeof release.logoPreview !== "boolean") throw new Error("Invalid staging logo-preview setting");
+const previewOverride = process.env.GITHUB_PAGES_LOGO_PREVIEW;
+if (previewOverride !== undefined && !["0", "1"].includes(previewOverride)) throw new Error("Invalid logo-preview override");
+const logoPreviewEnabled = previewOverride === undefined ? release.logoPreview : previewOverride === "1";
 
 // Never recursively remove an output directory through a symlink/junction.
 if (path.relative(root, outputDir) !== path.join("dist", "github-pages")) {
@@ -42,13 +48,14 @@ if (!html.includes('<meta name="robots" content="noindex, nofollow" />')) {
 }
 for (const asset of assets) html = html.replaceAll(`="/${asset}`, `="${basePath}${asset}`);
 html = html.replaceAll('href="/opioidcalculator"', `href="${calculatorUrl}"`);
+if (logoPreviewEnabled) html = await prepareLogoPreview({ root, outputDir, basePath, calculatorHtml: html, version: release.logoPreviewVersion });
 await writeFile(path.join(outputDir, "opioidcalculator", "index.html"), html);
 for (const name of ["index.html", "opioidcalculator.html"]) {
   await writeFile(path.join(outputDir, name), redirectPage());
 }
 await writeFile(path.join(outputDir, "404.html"), notFoundPage());
 await writeFile(path.join(outputDir, "robots.txt"), "User-agent: *\nDisallow: /\n");
-console.log(`Prepared calculator-only Pages artifact at ${outputDir} (${basePath})`);
+console.log(`Prepared ${logoPreviewEnabled ? "temporary logo-preview" : "calculator-only"} Pages artifact at ${outputDir} (${basePath})`);
 
 function redirectPage() {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8">

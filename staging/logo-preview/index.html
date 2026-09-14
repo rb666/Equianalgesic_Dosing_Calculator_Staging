@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>calc.med — Logo preview</title>
+  <link rel="icon" href="__BASE_PATH__favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="__PREVIEW_BASE__preview.css?v=__PREVIEW_VERSION__">
+  <link rel="preload" as="image" href="__PREVIEW_BASE__assets/06-conversion-grid.png?v=__PREVIEW_VERSION__">
+  <script src="__PREVIEW_BASE__logos.js?v=__PREVIEW_VERSION__" defer></script>
+  <script src="__PREVIEW_BASE__preview.js?v=__PREVIEW_VERSION__" defer></script>
+</head>
+<body>
+  <header class="preview-toolbar" aria-label="Logo preview controls">
+    <div class="preview-heading"><strong>Logo preview</strong><span>Choose a design to see it on the site</span></div>
+    <div class="logo-picker">
+      <label class="sr-only" for="logoSelect">Logo design</label>
+      <button type="button" id="previousLogo" class="arrow" aria-label="Previous logo" title="Previous logo" disabled>←</button>
+      <select id="logoSelect" disabled><option>Loading logos…</option></select>
+      <button type="button" id="nextLogo" class="arrow" aria-label="Next logo" title="Next logo" disabled>→</button>
+    </div>
+    <a class="gallery-link" href="__PREVIEW_BASE__">All eight logos ↗</a>
+  </header>
+  <p id="previewStatus" class="sr-only" role="status" aria-live="polite">Loading site preview.</p>
+  <div id="previewError" class="preview-error" hidden role="alert"></div>
+  <main class="preview-stage">
+    <iframe id="siteFrame" src="./site/" title="Calculator site preview"></iframe>
+  </main>
+  <noscript><p class="no-script">JavaScript is required to switch logos and use the calculator.</p></noscript>
+</body>
+</html>

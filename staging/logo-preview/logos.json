@@ -1,0 +1,122 @@
+[
+  {
+    "id": "01",
+    "title": "Current identity",
+    "kind": "Current",
+    "file": "01-current.png",
+    "intent": "The familiar calculator, capsule, and circular arrows. Explicit about the tool and its purpose; included as the continuity reference.",
+    "width": 1254,
+    "height": 1254,
+    "bounds": {
+      "x": 153,
+      "y": 95,
+      "width": 957,
+      "height": 1052
+    }
+  },
+  {
+    "id": "02",
+    "title": "Conversion arrows",
+    "kind": "New",
+    "file": "02-conversion-arrows.svg",
+    "intent": "Opposing arrows and an equals sign above calc.med. A compact conversion symbol with a warm gold accent.",
+    "width": 320,
+    "height": 320,
+    "bounds": {
+      "x": 57,
+      "y": 30,
+      "width": 205,
+      "height": 254
+    }
+  },
+  {
+    "id": "03",
+    "title": "Balanced measures",
+    "kind": "New",
+    "file": "03-balanced-measures.png",
+    "intent": "Paired measured forms make comparison the central idea. A restrained mathematical identity with a clear, horizontal name.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 225,
+      "y": 375,
+      "width": 1090,
+      "height": 258
+    }
+  },
+  {
+    "id": "04",
+    "title": "Transfer loop",
+    "kind": "New",
+    "file": "04-transfer-loop.png",
+    "intent": "Interlocking arcs turn conversion into a compact, continuous symbol. Retains the movement of the current arrows in a simpler mark.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 125,
+      "y": 349,
+      "width": 1288,
+      "height": 307
+    }
+  },
+  {
+    "id": "05",
+    "title": "Clinical monogram",
+    "kind": "New",
+    "file": "05-clinical-monogram.png",
+    "intent": "A compact c/m monogram gives the site a recognizable signature. Geometry and negative space carry the identity without a literal medical icon.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 159,
+      "y": 385,
+      "width": 1220,
+      "height": 251
+    }
+  },
+  {
+    "id": "06",
+    "title": "Conversion grid",
+    "kind": "New",
+    "file": "06-conversion-grid.png",
+    "intent": "A modular mathematical grid recalls a calculator. The emphasis is on a precise, practical tool with a strong small symbol.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 145,
+      "y": 357,
+      "width": 1249,
+      "height": 292
+    }
+  },
+  {
+    "id": "07",
+    "title": "Typographic precision",
+    "kind": "New",
+    "file": "07-typographic-precision.png",
+    "intent": "The name does the work. Carefully shaped lettering and a deliberate dot create a quieter, more editorial identity.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 166,
+      "y": 363,
+      "width": 1217,
+      "height": 259
+    }
+  },
+  {
+    "id": "08",
+    "title": "Shared baseline",
+    "kind": "New",
+    "file": "08-shared-baseline.png",
+    "intent": "Different measured paths meet a common reference. An abstract expression of standardization, with a calm scientific character.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 124,
+      "y": 369,
+      "width": 1282,
+      "height": 255
+    }
+  }
+]

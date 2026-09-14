@@ -65,6 +65,12 @@ is `2026-09-14.2`; its shared asset key is `20260914-migration-refinements-1`.
 The deployment workflow links its verification and deployment to this exact source
 commit. The approved fixture and v1.0/v2.0 historical records remain unchanged.
 
+## Temporary staging logo review (2026-09-14)
+
+At the owner's request, staging temporarily opens the eight-logo switcher and its comparison gallery. Original #06 remains the default; #02 is labeled New because it was never implemented in production. The preview uses balanced, borderless logo presentation without a mobile-size toggle. Its single activation setting is `staging/release.json`; disabling it and deploying restores the normal calculator-only artifact.
+
+This is a staging presentation experiment within the v2.1 series, not a new clinical version. The public calculator HTML, JS, CSS, clinical tables, approved-table fixture, and cumulative v1.0-to-v2.1 footer note remain unchanged. The exact release commit and GitHub Actions run identify the deployment. No historical tag, production deployment, or original/base repository changes.
+
 ## Preservation policy
 
 - Never move, replace, delete, or reuse `v1.0`, `v2.0` or `v2.1`. They refer permanently to their recorded commits, even if production or staging moves forward.

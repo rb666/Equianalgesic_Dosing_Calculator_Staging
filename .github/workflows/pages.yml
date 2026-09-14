@@ -33,6 +33,9 @@ jobs:
           node --check public/script.js
           node --check archive/uds/uds-tool.js
           node --check archive/uds/uds-workflow-guide.js
+          node --check scripts/prepare-logo-preview.mjs
+          node --check staging/logo-preview/preview.js
+          node --check staging/logo-preview/studio.js
 
       - name: Run calculator, archive, and deployment regression tests
         run: node --test tests/*.test.cjs

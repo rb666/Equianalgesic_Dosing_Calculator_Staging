@@ -161,61 +161,147 @@ test("shared core is the calculation seam and CI blocks deployment on tests", ()
   assert.match(workflow, /deploy:[\s\S]*?permissions:[\s\S]*?pages:\s*write[\s\S]*?id-token:\s*write/);
 });
 
-test("GitHub Pages build keeps indexing controls without exposing environment notes", () => {
+test("GitHub Pages preview is allowlisted, preserves the calculator, and can be removed completely", () => {
+  const artifact = path.join(repositoryRoot, "dist", "github-pages");
+  const base = "/Equianalgesic_Dosing_Calculator_Staging/";
+  const normalFiles = [".nojekyll", "404.html", "OpioidConversionSite.png", "calculator-core.js",
+    "calculator-provenance.js", "favicon.svg", "index.html", "opioidcalculator.html",
+    path.join("opioidcalculator", "index.html"), "robots.txt", "script.js", "styles.css"];
+  const logoFiles = ["01-current.png", "02-conversion-arrows.svg", "03-balanced-measures.png",
+    "04-transfer-loop.png", "05-clinical-monogram.png", "06-conversion-grid.png",
+    "07-typographic-precision.png", "08-shared-baseline.png"];
+  const previewFiles = ["index.html", "logos.js", "preview.js", "preview.css",
+    "logo-treatment.css", "studio.js", "studio.css"].map(file => path.join("logo-preview", file));
+  const listFiles = () => fs.readdirSync(artifact, {recursive: true}).map(String)
+    .filter(name => fs.statSync(path.join(artifact, name)).isFile()).sort();
+  const readArtifact = file => fs.readFileSync(path.join(artifact, file), "utf8");
   const build = spawnSync(process.execPath, ["scripts/prepare-github-pages.mjs"], {
     cwd: repositoryRoot,
     encoding: "utf8",
+    env: {...process.env, GITHUB_PAGES_LOGO_PREVIEW: "1"},
   });
   assert.equal(build.status, 0, build.stderr || build.stdout);
 
-  for (const route of ["opioidcalculator"]) {
-    const generated = fs.readFileSync(
-      path.join(repositoryRoot, "dist", "github-pages", route, "index.html"),
-      "utf8",
-    );
+  const routes = ["opioidcalculator", "opioidcalculator/site", "logo-preview"];
+  for (const route of routes) {
+    const generated = readArtifact(path.join(route, "index.html"));
     assert.equal((generated.match(/data-staging-environment/g) || []).length, 0, route);
     assert.doesNotMatch(generated, /Staging environment|For verification only/i);
     assert.match(generated, /<meta name="robots" content="noindex, nofollow"/);
+    assert.doesNotMatch(generated, /UDS|uds-tool|uds-workflow-guide|__BASE_PATH__|__PREVIEW_/);
+    const routeUrl = new URL(`${base}${route}/`, "https://example.test");
+    for (const match of generated.matchAll(/(?:src|href)="([^"#][^"]*)"/g)) {
+      const url = new URL(match[1], routeUrl);
+      if (url.origin !== routeUrl.origin) continue;
+      assert.ok(url.pathname.startsWith(base), `asset escaped project prefix: ${url.pathname}`);
+      const relative = url.pathname.slice(base.length);
+      assert.ok(fs.existsSync(path.join(artifact, relative)), `missing asset ${relative}`);
+    }
   }
 
-  const generatedCalculator = fs.readFileSync(
-    path.join(
-      repositoryRoot,
-      "dist",
-      "github-pages",
-      "opioidcalculator",
-      "index.html",
-    ),
-    "utf8",
-  );
+  const wrapper = readArtifact("opioidcalculator/index.html");
+  assert.match(wrapper, /<iframe[^>]*id="siteFrame"[^>]*src="\.\/site\/"[^>]*title="[^"]+"/);
+  assert.match(wrapper, /<noscript>[\s\S]*JavaScript[\s\S]*<\/noscript>/);
+  assert.doesNotMatch(wrapper, /data-size=|Site preview width|>Mobile<|>Full width</);
+  assert.match(wrapper, /href="\/Equianalgesic_Dosing_Calculator_Staging\/logo-preview\/"/);
+  const generatedCalculator = readArtifact("opioidcalculator/site/index.html");
   assert.match(generatedCalculator, /src="\/Equianalgesic_Dosing_Calculator_Staging\/calculator-core\.js\?v=/);
   assert.match(generatedCalculator, /src="\/Equianalgesic_Dosing_Calculator_Staging\/calculator-provenance\.js\?v=/);
-  assert.match(publicHtml, /<meta name="robots" content="index, follow"/);
-  assert.doesNotMatch(publicHtml, /data-staging-environment/);
-
-  const artifact = path.join(repositoryRoot, "dist", "github-pages");
-  const files = fs.readdirSync(artifact, {recursive: true}).map(String).filter(name => fs.statSync(path.join(artifact, name)).isFile());
-  assert.deepEqual(files.sort(), [".nojekyll", "404.html", "OpioidConversionSite.png", "calculator-core.js",
-    "calculator-provenance.js", "favicon.svg", "index.html", "opioidcalculator.html",
-    path.join("opioidcalculator", "index.html"), "robots.txt", "script.js", "styles.css"].sort());
-  assert.doesNotMatch(generatedCalculator, /UDS|uds-tool|uds-workflow-guide/);
-  for (const match of generatedCalculator.matchAll(/(?:src|href)="(\/Equianalgesic_Dosing_Calculator_Staging\/[^"?#]+)(?:[^\"]*)"/g)) {
-    const relative = match[1].replace("/Equianalgesic_Dosing_Calculator_Staging/", "");
-    assert.ok(fs.existsSync(path.join(artifact, relative)), `missing asset ${relative}`);
+  const treatmentLink = generatedCalculator.match(/^[ \t]*<link rel="stylesheet" href="[^"\n]*\/logo-treatment\.css\?v=[^"]+">\r?\n/m);
+  assert.ok(treatmentLink, "the iframe adds the separate preview logo treatment");
+  const release = JSON.parse(fs.readFileSync(path.join(repositoryRoot, "staging", "release.json"), "utf8"));
+  for (const file of ["logos.js", "preview.js", "preview.css"]) {
+    assert.ok(wrapper.includes(`${file}?v=${release.logoPreviewVersion}`), `${file} cache key`);
   }
-  const notFound = fs.readFileSync(path.join(artifact, "404.html"), "utf8");
-  const redirectScript = notFound.match(/<script>([\s\S]*?)<\/script>/)[1];
+  assert.ok(treatmentLink[0].includes(`?v=${release.logoPreviewVersion}`));
+  assert.match(publicHtml, /<meta name="robots" content="index, follow"/);
+  assert.doesNotMatch(publicHtml, /data-staging-environment|logo-preview|logo-treatment|siteFrame/);
+
+  assert.deepEqual(listFiles(), [...normalFiles, ...previewFiles,
+    path.join("opioidcalculator", "site", "index.html"),
+    ...logoFiles.map(file => path.join("logo-preview", "assets", file))].sort());
+  for (const file of ["calculator-core.js", "calculator-provenance.js", "script.js", "styles.css", "OpioidConversionSite.png"]) {
+    assert.deepEqual(fs.readFileSync(path.join(artifact, file)), fs.readFileSync(path.join(repositoryRoot, "public", file)), `${file} remains byte-identical`);
+  }
   const vm = require("node:vm");
-  const base = "/Equianalgesic_Dosing_Calculator_Staging/";
+  const context = {window: {}};
+  vm.runInNewContext(readArtifact("logo-preview/logos.js"), context);
+  const logos = Array.from(context.window.logoPreviewCatalog);
+  assert.deepEqual(logos.map(logo => logo.file), logoFiles);
+  assert.equal(logos[1].kind, "New");
+  assert.equal(logos[1].title, "Conversion arrows");
+  for (const logo of logos) {
+    assert.equal(logo.src, `${base}logo-preview/assets/${logo.file}?v=${release.logoPreviewVersion}`);
+    assert.deepEqual(fs.readFileSync(path.join(artifact, "logo-preview", "assets", logo.file)),
+      fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "assets", logo.file)), `${logo.id} artwork is unchanged`);
+  }
+  const gallery = readArtifact("logo-preview/index.html");
+  assert.doesNotMatch(gallery, /06-refinements|Separate from staging|earlier alternative|Six new concepts/i);
+  const sitePreviewLink = gallery.match(/<a href="([^"]+)">Try all eight on the site/);
+  assert.ok(sitePreviewLink, "gallery links back to the working site preview");
+  assert.equal(new URL(sitePreviewLink[1], `https://example.test${base}logo-preview/`).pathname, `${base}opioidcalculator/`);
+  const notFound = readArtifact("404.html");
+  const redirectScript = notFound.match(/<script>([\s\S]*?)<\/script>/)[1];
   for (const route of ["UDS", "UDS/", "UDS.html", "uds", "uds/", "uds.html", "opioidcalculator", "unknown", "uds-tool.js"]) {
     let destination = null;
     vm.runInNewContext(redirectScript, {location: {pathname: base + route, search: "?test=1", hash: "#top", replace: url => {destination = url;}}});
     assert.equal(destination, ["unknown", "uds-tool.js"].includes(route) ? null : `${base}opioidcalculator/?test=1#top`, route);
   }
   assert.match(fs.readFileSync(path.join(artifact, "robots.txt"), "utf8"), /Disallow: \//);
+  // Keep the two builds serialized: both clear the same artifact directory.
+  const disabledBuild = spawnSync(process.execPath, ["scripts/prepare-github-pages.mjs"], {
+    cwd: repositoryRoot, encoding: "utf8", env: {...process.env, GITHUB_PAGES_LOGO_PREVIEW: "0"},
+  });
+  assert.equal(disabledBuild.status, 0, disabledBuild.stderr || disabledBuild.stdout);
+  assert.deepEqual(listFiles(), normalFiles.sort(), "disabling the experiment removes every preview file");
+  const restoredCalculator = readArtifact("opioidcalculator/index.html");
+  assert.equal(restoredCalculator, generatedCalculator.replace(treatmentLink[0], ""), "disabling restores the same calculator without the logo treatment");
+  assert.doesNotMatch(restoredCalculator, /logo-preview|logo-treatment|siteFrame/);
+  assert.match(restoredCalculator, /<meta name="robots" content="noindex, nofollow"/);
   const wrongRepository = spawnSync(process.execPath, ["scripts/prepare-github-pages.mjs"], {
     cwd: repositoryRoot, encoding: "utf8", env: {...process.env, GITHUB_REPOSITORY: "rb666/calc-med"},
   });
   assert.notEqual(wrongRepository.status, 0);
   assert.match(wrongRepository.stderr, /targets .*Staging only/);
+});
+
+test("logo preview preserves shared calculator links and defaults invalid logo choices to original 06", () => {
+  const vm = require("node:vm");
+  const previewScript = fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "preview.js"), "utf8");
+  const logos = JSON.parse(fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "logos.json"), "utf8"));
+  const rootUrl = "https://example.test/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/";
+  for (const [search, expectedLogo] of [["", "06"], ["?logo=02", "02"], ["?logo=99", "06"], ["?logo=05&view=mobile&source=review%20link", "05"]]) {
+    const location = new URL(`${rootUrl}${search}#calculatorTabMethadone`);
+    const elements = new Map();
+    const select = {replaceChildren() {}, addEventListener() {}, value: ""};
+    const frame = {
+      src: new URL("site/", rootUrl).href,
+      getAttribute: () => "./site/",
+      contentDocument: null,
+      addEventListener() {},
+    };
+    elements.set("#logoSelect", select);
+    elements.set("#siteFrame", frame);
+    const context = {
+      window: {logoPreviewCatalog: logos, addEventListener() {}},
+      document: {querySelector(selector) {
+        if (!elements.has(selector)) elements.set(selector, {addEventListener() {}});
+        return elements.get(selector);
+      }},
+      location, URL, URLSearchParams,
+      history: {replaceState(_state, _title, url) {location.href = String(url);}},
+      Option: function(text, value) {this.text = text; this.value = value;},
+    };
+    vm.runInNewContext(previewScript, context);
+    assert.equal(select.value, expectedLogo, search);
+    assert.equal(location.searchParams.get("logo"), expectedLogo, search);
+    assert.equal(location.searchParams.has("view"), false, "removed width toggle does not persist");
+    assert.equal(location.hash, "#calculatorTabMethadone");
+    const child = new URL(frame.src);
+    assert.equal(child.pathname, new URL("site/", rootUrl).pathname);
+    assert.equal(child.hash, location.hash, "shared calculator link reaches the iframe");
+    assert.equal(child.searchParams.has("logo"), false, "logo selection remains a wrapper setting");
+    assert.equal(child.searchParams.has("view"), false);
+    assert.equal(child.searchParams.get("source"), location.searchParams.get("source"), "other URL context is retained");
+  }
 });

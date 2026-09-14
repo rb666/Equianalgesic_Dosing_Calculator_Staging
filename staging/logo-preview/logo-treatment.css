@@ -1,0 +1,70 @@
+/* Temporary staging logo study: let the mark sit directly on the page. */
+.brand-logo-card {
+  --logo-max-height: 240px;
+  width: min(340px, calc(100% - 24px));
+  height: 240px;
+  display: grid;
+  place-items: center;
+  transform: translateX(calc(0px - var(--warning-right-inset)));
+  transform-origin: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  mix-blend-mode: multiply;
+}
+
+.logo-artwork {
+  position: relative;
+  width: min(100%, calc(var(--logo-max-height) * var(--logo-ratio)));
+  aspect-ratio: var(--logo-ratio);
+  overflow: hidden;
+}
+
+.brand-logo-card > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-logo-card .logo-artwork img {
+  position: absolute;
+  width: var(--art-width);
+  height: var(--art-height);
+  max-width: none;
+  left: var(--art-left);
+  top: var(--art-top);
+}
+
+.brand-logo-card img,
+:root[data-theme="dark"] .brand-logo-card img:hover {
+  border-radius: 0;
+  opacity: 1;
+  transition: none;
+}
+
+/* The concept PNGs contain ivory artboards. Blending removes the visible
+   rectangle without editing the source artwork or its proportions. */
+.brand-logo-card img {
+  filter: brightness(1.06);
+}
+
+:root[data-theme="dark"] .brand-logo-card {
+  mix-blend-mode: screen;
+}
+
+:root[data-theme="dark"] .brand-logo-card img,
+:root[data-theme="dark"] .brand-logo-card img:hover {
+  filter: brightness(1.06) invert(1) hue-rotate(180deg);
+  opacity: 1;
+}
+
+@media (max-width: 850px) {
+  .brand-logo-card {
+    --logo-max-height: 160px;
+    width: min(250px, 64vw, 100%);
+    height: 176px;
+    transform: none;
+  }
+}

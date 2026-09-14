@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+  <title id="title">calc.med — Opioid Conversion</title>
+  <desc id="desc">Two opposing arrows around an equals sign, above the calc.med wordmark.</desc>
+  <rect width="320" height="320" rx="20" fill="#f6f7f2"/>
+  <rect x="84" y="34" width="152" height="152" rx="42" fill="#174f49"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M111 86h98m-18-18 18 18-18 18" stroke="#f6f7f2" stroke-width="9"/>
+    <path d="M209 137h-98m18-18-18 18 18 18" stroke="#eacb80" stroke-width="9"/>
+    <path d="M150 106h20m-20 11h20" stroke="#f6f7f2" stroke-width="5"/>
+  </g>
+  <text x="160" y="246" text-anchor="middle" fill="#174f49" font-family="Arial, Helvetica, sans-serif" font-size="47" font-weight="700">calc.med</text>
+  <text x="160" y="276" text-anchor="middle" fill="#334c46" font-family="Arial, Helvetica, sans-serif" font-size="20">Opioid Conversion</text>
+</svg>

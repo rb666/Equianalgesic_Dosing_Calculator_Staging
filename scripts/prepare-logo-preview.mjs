@@ -2,9 +2,10 @@ import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 export const logoAssetFiles = [
-  '01-current.png', '02-conversion-arrows.svg', '03-balanced-measures.png',
-  '04-transfer-loop.png', '05-clinical-monogram.png', '06-conversion-grid.png',
-  '07-typographic-precision.png', '08-shared-baseline.png',
+  '01-current.png', '04-transfer-loop.png', '06-conversion-grid.png',
+  '12-serif-grid.png', '15-equals-tile.png', '07-typographic-precision.png',
+  '07b-equals-badge.png', '09-open-interval.png', '14b-matched-brackets.png',
+  '14c-inline-interval.png', '16-bracketed-masthead.png',
 ];
 const uiFiles = ['preview.css', 'preview.js', 'logo-treatment.css', 'studio.css', 'studio.js'];
 
@@ -17,14 +18,20 @@ export async function prepareLogoPreview({ root, outputDir, basePath, calculator
   await mkdir(path.join(output, 'assets'), { recursive: true });
   await mkdir(child, { recursive: true });
   const logos = JSON.parse(await readFile(path.join(source, 'logos.json'), 'utf8'));
-  if (logos.length !== 8 || logos.some((logo, i) => logo.id !== String(i + 1).padStart(2, '0') || logo.file !== logoAssetFiles[i])) {
-    throw new Error('Logo preview must contain exactly the original eight allowlisted designs');
+  if (logos.length !== logoAssetFiles.length || logos.some((logo, i) => logo.id !== String(i + 1).padStart(2, '0') || logo.file !== logoAssetFiles[i])) {
+    throw new Error('Logo preview must contain exactly the eleven shortlisted designs in their numbered order');
   }
   for (const logo of logos) {
     const b = logo.bounds;
     if (![logo.width, logo.height, b?.x, b?.y, b?.width, b?.height].every(Number.isFinite) ||
         logo.width <= 0 || logo.height <= 0 || b.x < 0 || b.y < 0 || b.width <= 0 || b.height <= 0 ||
         b.x + b.width > logo.width || b.y + b.height > logo.height) throw new Error(`Invalid artwork bounds: ${logo.id}`);
+    if (!logo.reference && (!Number.isFinite(logo.wordmarkHeight) || logo.wordmarkHeight <= 0 || logo.wordmarkHeight > b.height)) {
+      throw new Error(`Invalid wordmark height: ${logo.id}`);
+    }
+    if (logo.compactScale !== undefined && (!Number.isFinite(logo.compactScale) || logo.compactScale <= 0 || logo.compactScale > 1)) {
+      throw new Error(`Invalid compact scale: ${logo.id}`);
+    }
   }
   for (const file of logoAssetFiles) await copyFile(path.join(source, 'assets', file), path.join(output, 'assets', file));
   for (const file of uiFiles) await copyFile(path.join(source, file), path.join(output, file));

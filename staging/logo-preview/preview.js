@@ -6,7 +6,7 @@ const error = document.querySelector('#previewError');
 const previous = document.querySelector('#previousLogo');
 const next = document.querySelector('#nextLogo');
 const params = new URLSearchParams(location.search);
-let selected = logos.find(logo => logo.id === params.get('logo')) || logos.find(logo => logo.id === '06');
+let selected = logos.find(logo => logo.id === params.get('logo')) || logos.find(logo => logo.id === '03');
 let frameReady = false;
 let requestNumber = 0;
 let initializedDocument = null;
@@ -58,6 +58,11 @@ async function showLogo(logo, { reveal = false } = {}) {
     }
     const bounds = logo.bounds;
     card.style.setProperty('--logo-ratio', String(bounds.width / bounds.height));
+    card.style.setProperty('--logo-width-per-letter', String(bounds.width / (logo.wordmarkHeight || bounds.height)));
+    card.style.setProperty('--logo-compact-scale', String(logo.compactScale || 1));
+    card.setAttribute('data-logo-reference', String(Boolean(logo.reference)));
+    card.setAttribute('data-logo-compact', String(Boolean(logo.compact)));
+    card.setAttribute('data-logo-transparent', String(Boolean(logo.transparent)));
     viewport.style.setProperty('--art-width', `${100 * logo.width / bounds.width}%`);
     viewport.style.setProperty('--art-height', `${100 * logo.height / bounds.height}%`);
     viewport.style.setProperty('--art-left', `${-100 * bounds.x / bounds.width}%`);

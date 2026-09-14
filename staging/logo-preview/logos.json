@@ -2,9 +2,9 @@
   {
     "id": "01",
     "title": "Current identity",
-    "kind": "Current",
+    "kind": "Original · unchanged",
     "file": "01-current.png",
-    "intent": "The familiar calculator, capsule, and circular arrows. Explicit about the tool and its purpose; included as the continuity reference.",
+    "intent": "The original remains the continuity reference, with its full wording intact.",
     "width": 1254,
     "height": 1254,
     "bounds": {
@@ -12,89 +12,115 @@
       "y": 95,
       "width": 957,
       "height": 1052
-    }
+    },
+    "reference": true,
+    "round": "earlier",
+    "winner": false,
+    "originalId": "01"
   },
   {
     "id": "02",
-    "title": "Conversion arrows",
-    "kind": "New",
-    "file": "02-conversion-arrows.svg",
-    "intent": "Opposing arrows and an equals sign above calc.med. A compact conversion symbol with a warm gold accent.",
-    "width": 320,
-    "height": 320,
-    "bounds": {
-      "x": 57,
-      "y": 30,
-      "width": 205,
-      "height": 254
-    }
-  },
-  {
-    "id": "03",
-    "title": "Balanced measures",
-    "kind": "New",
-    "file": "03-balanced-measures.png",
-    "intent": "Paired measured forms make comparison the central idea. A restrained mathematical identity with a clear, horizontal name.",
-    "width": 1536,
-    "height": 1024,
-    "bounds": {
-      "x": 225,
-      "y": 375,
-      "width": 1090,
-      "height": 258
-    }
-  },
-  {
-    "id": "04",
     "title": "Transfer loop",
-    "kind": "New",
+    "kind": "Earlier concept",
     "file": "04-transfer-loop.png",
-    "intent": "Interlocking arcs turn conversion into a compact, continuous symbol. Retains the movement of the current arrows in a simpler mark.",
-    "width": 1536,
-    "height": 1024,
-    "bounds": {
-      "x": 125,
-      "y": 349,
-      "width": 1288,
-      "height": 307
-    }
-  },
-  {
-    "id": "05",
-    "title": "Clinical monogram",
-    "kind": "New",
-    "file": "05-clinical-monogram.png",
-    "intent": "A compact c/m monogram gives the site a recognizable signature. Geometry and negative space carry the identity without a literal medical icon.",
+    "intent": "A compact loop preserves movement without overpowering the name.",
     "width": 1536,
     "height": 1024,
     "bounds": {
       "x": 159,
-      "y": 385,
-      "width": 1220,
-      "height": 251
-    }
+      "y": 368,
+      "width": 1218,
+      "height": 265
+    },
+    "wordmarkHeight": 146,
+    "round": "earlier",
+    "winner": false,
+    "originalId": "04"
   },
   {
-    "id": "06",
+    "id": "03",
     "title": "Conversion grid",
-    "kind": "New",
+    "kind": "Winner",
     "file": "06-conversion-grid.png",
-    "intent": "A modular mathematical grid recalls a calculator. The emphasis is on a precise, practical tool with a strong small symbol.",
+    "intent": "A clear tool symbol, a strong name, and a structure that scales well.",
     "width": 1536,
     "height": 1024,
     "bounds": {
-      "x": 145,
-      "y": 357,
-      "width": 1249,
-      "height": 292
-    }
+      "x": 160,
+      "y": 369,
+      "width": 1233,
+      "height": 251
+    },
+    "wordmarkHeight": 178,
+    "round": "earlier",
+    "winner": true,
+    "favoriteTier": 1,
+    "originalId": "06"
+  },
+  {
+    "id": "04",
+    "title": "Serif grid",
+    "kind": "Winner",
+    "file": "12-serif-grid.png",
+    "intent": "The familiar calculator grid paired with the warmth of the serif name.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 141,
+      "y": 363,
+      "width": 1270,
+      "height": 254
+    },
+    "wordmarkHeight": 191,
+    "round": "earlier",
+    "winner": true,
+    "favoriteTier": 1,
+    "originalId": "12"
+  },
+  {
+    "id": "05",
+    "title": "Equals tile",
+    "kind": "Earlier concept",
+    "file": "15-equals-tile.png",
+    "intent": "A single equals key brings the serif name a simple, readable calculation symbol.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 189,
+      "y": 363,
+      "width": 1174,
+      "height": 238
+    },
+    "wordmarkHeight": 191,
+    "round": "earlier",
+    "originalId": "15"
+  },
+  {
+    "id": "06",
+    "title": "Typographic precision",
+    "kind": "Winner",
+    "file": "07-typographic-precision.png",
+    "intent": "The wordmark carries the identity; simpler details improve small use.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 166,
+      "y": 363,
+      "width": 1217,
+      "height": 258
+    },
+    "wordmarkHeight": 221,
+    "round": "earlier",
+    "winner": true,
+    "favoriteTier": 1,
+    "originalId": "07"
   },
   {
     "id": "07",
-    "title": "Typographic precision",
-    "kind": "New",
-    "file": "07-typographic-precision.png",
-    "intent": "The name does the work. Carefully shaped lettering and a deliberate dot create a quieter, more editorial identity.",
+    "title": "Typographic precision — equals",
+    "kind": "Winner",
+    "file": "07b-equals-badge.png",
+    "intent": "The earlier serif wordmark, with an equals sign inside its teal period.",
     "width": 1536,
     "height": 1024,
     "bounds": {
@@ -102,21 +128,91 @@
       "y": 363,
       "width": 1217,
       "height": 259
-    }
+    },
+    "wordmarkHeight": 221,
+    "round": "earlier",
+    "winner": true,
+    "favoriteTier": 1,
+    "originalId": "07B"
   },
   {
     "id": "08",
-    "title": "Shared baseline",
-    "kind": "New",
-    "file": "08-shared-baseline.png",
-    "intent": "Different measured paths meet a common reference. An abstract expression of standardization, with a calm scientific character.",
+    "title": "Open interval",
+    "kind": "Winner",
+    "file": "09-open-interval.png",
+    "intent": "A precise interval mark pairs a friendly name with a broad tools descriptor.",
     "width": 1536,
     "height": 1024,
     "bounds": {
-      "x": 124,
-      "y": 369,
-      "width": 1282,
-      "height": 255
-    }
+      "x": 213,
+      "y": 346,
+      "width": 1113,
+      "height": 295
+    },
+    "wordmarkHeight": 157,
+    "transparent": true,
+    "round": "earlier",
+    "winner": true,
+    "favoriteTier": 1,
+    "originalId": "09"
+  },
+  {
+    "id": "09",
+    "title": "Matched brackets",
+    "kind": "Revised",
+    "file": "14b-matched-brackets.png",
+    "intent": "The lighter calc.med frame, now with both brackets in the same dark teal.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 122,
+      "y": 335,
+      "width": 1293,
+      "height": 303
+    },
+    "wordmarkHeight": 220,
+    "revision": 2,
+    "round": "earlier",
+    "originalId": "14B"
+  },
+  {
+    "id": "10",
+    "title": "Inline interval",
+    "kind": "Winner",
+    "file": "14c-inline-interval.png",
+    "intent": "One-color brackets read as punctuation around the open name calc med.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 126,
+      "y": 348,
+      "width": 1285,
+      "height": 282
+    },
+    "wordmarkHeight": 216,
+    "round": "earlier",
+    "winner": true,
+    "favoriteTier": 1,
+    "originalId": "14C"
+  },
+  {
+    "id": "11",
+    "title": "Bracketed masthead",
+    "kind": "Earlier concept",
+    "file": "16-bracketed-masthead.png",
+    "intent": "The open serif stack and quiet brackets form a compact mathematical identity.",
+    "width": 1536,
+    "height": 1024,
+    "bounds": {
+      "x": 358,
+      "y": 197,
+      "width": 821,
+      "height": 615
+    },
+    "wordmarkHeight": 264,
+    "compact": true,
+    "compactScale": 0.85,
+    "round": "earlier",
+    "originalId": "16"
   }
 ]

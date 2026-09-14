@@ -167,9 +167,22 @@ test("GitHub Pages preview is allowlisted, preserves the calculator, and can be 
   const normalFiles = [".nojekyll", "404.html", "OpioidConversionSite.png", "calculator-core.js",
     "calculator-provenance.js", "favicon.svg", "index.html", "opioidcalculator.html",
     path.join("opioidcalculator", "index.html"), "robots.txt", "script.js", "styles.css"];
-  const logoFiles = ["01-current.png", "02-conversion-arrows.svg", "03-balanced-measures.png",
-    "04-transfer-loop.png", "05-clinical-monogram.png", "06-conversion-grid.png",
-    "07-typographic-precision.png", "08-shared-baseline.png"];
+  // Keep the owner's selected order independent of the generated/source catalog.
+  // The source filenames retain their historical identities after renumbering.
+  const selectedDesigns = [
+    ["01", "01", "Current identity", "01-current.png", [153, 95, 957, 1052]],
+    ["02", "04", "Transfer loop", "04-transfer-loop.png", [159, 368, 1218, 265]],
+    ["03", "06", "Conversion grid", "06-conversion-grid.png", [160, 369, 1233, 251]],
+    ["04", "12", "Serif grid", "12-serif-grid.png", [141, 363, 1270, 254]],
+    ["05", "15", "Equals tile", "15-equals-tile.png", [189, 363, 1174, 238]],
+    ["06", "07", "Typographic precision", "07-typographic-precision.png", [166, 363, 1217, 258]],
+    ["07", "07B", "Typographic precision — equals", "07b-equals-badge.png", [166, 363, 1217, 259]],
+    ["08", "09", "Open interval", "09-open-interval.png", [213, 346, 1113, 295]],
+    ["09", "14B", "Matched brackets", "14b-matched-brackets.png", [122, 335, 1293, 303]],
+    ["10", "14C", "Inline interval", "14c-inline-interval.png", [126, 348, 1285, 282]],
+    ["11", "16", "Bracketed masthead", "16-bracketed-masthead.png", [358, 197, 821, 615]],
+  ];
+  const logoFiles = selectedDesigns.map(design => design[3]);
   const previewFiles = ["index.html", "logos.js", "preview.js", "preview.css",
     "logo-treatment.css", "studio.js", "studio.css"].map(file => path.join("logo-preview", file));
   const listFiles = () => fs.readdirSync(artifact, {recursive: true}).map(String)
@@ -203,6 +216,7 @@ test("GitHub Pages preview is allowlisted, preserves the calculator, and can be 
   assert.match(wrapper, /<iframe[^>]*id="siteFrame"[^>]*src="\.\/site\/"[^>]*title="[^"]+"/);
   assert.match(wrapper, /<noscript>[\s\S]*JavaScript[\s\S]*<\/noscript>/);
   assert.doesNotMatch(wrapper, /data-size=|Site preview width|>Mobile<|>Full width</);
+  assert.doesNotMatch(wrapper, /\beight\b/i);
   assert.match(wrapper, /href="\/Equianalgesic_Dosing_Calculator_Staging\/logo-preview\/"/);
   const generatedCalculator = readArtifact("opioidcalculator/site/index.html");
   assert.match(generatedCalculator, /src="\/Equianalgesic_Dosing_Calculator_Staging\/calculator-core\.js\?v=/);
@@ -226,20 +240,36 @@ test("GitHub Pages preview is allowlisted, preserves the calculator, and can be 
   const vm = require("node:vm");
   const context = {window: {}};
   vm.runInNewContext(readArtifact("logo-preview/logos.js"), context);
-  const logos = Array.from(context.window.logoPreviewCatalog);
+  const logos = JSON.parse(JSON.stringify(context.window.logoPreviewCatalog));
+  const sourceCatalog = JSON.parse(fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "logos.json"), "utf8"));
+  assert.equal(logos.length, 11);
   assert.deepEqual(logos.map(logo => logo.file), logoFiles);
-  assert.equal(logos[1].kind, "New");
-  assert.equal(logos[1].title, "Conversion arrows");
+  assert.deepEqual(logos.map(logo => [logo.id, logo.originalId, logo.title, logo.file,
+    [logo.bounds.x, logo.bounds.y, logo.bounds.width, logo.bounds.height]]), selectedDesigns);
+  assert.deepEqual(logos.map(({src, ...metadata}) => metadata), sourceCatalog, "all selected metadata survives publication");
+  assert.equal(logos[0].kind, "Original · unchanged");
+  assert.equal(logos[0].reference, true);
   for (const logo of logos) {
+    assert.equal(logo.width, logo.id === "01" ? 1254 : 1536);
+    assert.equal(logo.height, logo.id === "01" ? 1254 : 1024);
+    assert.ok(Object.values(logo.bounds).every(Number.isFinite), `${logo.id} finite artwork bounds`);
+    assert.ok(logo.bounds.x >= 0 && logo.bounds.y >= 0 && logo.bounds.width > 0 && logo.bounds.height > 0,
+      `${logo.id} positive artwork bounds`);
+    assert.ok(logo.bounds.x + logo.bounds.width <= logo.width && logo.bounds.y + logo.bounds.height <= logo.height,
+      `${logo.id} artwork fits its source image`);
     assert.equal(logo.src, `${base}logo-preview/assets/${logo.file}?v=${release.logoPreviewVersion}`);
     assert.deepEqual(fs.readFileSync(path.join(artifact, "logo-preview", "assets", logo.file)),
       fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "assets", logo.file)), `${logo.id} artwork is unchanged`);
   }
+  assert.deepEqual(fs.readFileSync(path.join(artifact, "logo-preview", "assets", "01-current.png")),
+    fs.readFileSync(path.join(repositoryRoot, "public", "OpioidConversionSite.png")), "original 01 artwork remains byte-identical to the production source");
   const gallery = readArtifact("logo-preview/index.html");
-  assert.doesNotMatch(gallery, /06-refinements|Separate from staging|earlier alternative|Six new concepts/i);
-  const sitePreviewLink = gallery.match(/<a href="([^"]+)">Try all eight on the site/);
+  assert.doesNotMatch(gallery, /06-refinements|Separate from staging|earlier alternative|Six new concepts|\beight\b/i);
+  const sitePreviewLink = gallery.match(/<a\b[^>]*href="([^"]+)"[^>]*>\s*Try these logos on the site/i);
   assert.ok(sitePreviewLink, "gallery links back to the working site preview");
-  assert.equal(new URL(sitePreviewLink[1], `https://example.test${base}logo-preview/`).pathname, `${base}opioidcalculator/`);
+  const galleryPreviewUrl = new URL(sitePreviewLink[1], `https://example.test${base}logo-preview/`);
+  assert.equal(galleryPreviewUrl.pathname, `${base}opioidcalculator/`);
+  assert.equal(galleryPreviewUrl.searchParams.get("logo"), "03", "gallery returns to the selected conversion-grid default");
   const notFound = readArtifact("404.html");
   const redirectScript = notFound.match(/<script>([\s\S]*?)<\/script>/)[1];
   for (const route of ["UDS", "UDS/", "UDS.html", "uds", "uds/", "uds.html", "opioidcalculator", "unknown", "uds-tool.js"]) {
@@ -265,21 +295,60 @@ test("GitHub Pages preview is allowlisted, preserves the calculator, and can be 
   assert.match(wrongRepository.stderr, /targets .*Staging only/);
 });
 
+test("logo preview rejects unselected assets and invalid geometry before publishing artwork", async t => {
+  const os = require("node:os");
+  const {pathToFileURL} = require("node:url");
+  const {prepareLogoPreview} = await import(pathToFileURL(path.join(repositoryRoot, "scripts", "prepare-logo-preview.mjs")).href);
+  const sourceCatalog = JSON.parse(fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "logos.json"), "utf8"));
+  const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "calc-med-logo-allowlist-"));
+  t.after(() => {
+    // Delete only the exact temporary directory created by this test.
+    const resolved = fs.realpathSync(temporaryRoot);
+    assert.equal(path.dirname(resolved), fs.realpathSync(os.tmpdir()));
+    assert.ok(path.basename(resolved).startsWith("calc-med-logo-allowlist-"));
+    fs.rmSync(resolved, {recursive: true, force: true});
+  });
+  const source = path.join(temporaryRoot, "staging", "logo-preview");
+  fs.mkdirSync(source, {recursive: true});
+  const invalidCatalogs = [
+    ["unknown asset", logos => {logos[1].file = "unselected-logo.png";}, /allowlist|catalog|designs/i],
+    ["retired SVG", logos => {logos[1].file = "02-conversion-arrows.svg";}, /allowlist|catalog|designs/i],
+    ["asset path traversal", logos => {logos[1].file = "../unselected-logo.png";}, /allowlist|catalog|designs/i],
+    ["duplicate selection ID", logos => {logos[1].id = "01";}, /allowlist|catalog|designs/i],
+    ["extra unselected design", logos => {logos.push({...logos[0], id: "12"});}, /allowlist|catalog|designs/i],
+    ["out-of-image bounds", logos => {logos[1].bounds.width = logos[1].width + 1;}, /Invalid artwork bounds/i],
+    ["zero wordmark height", logos => {logos[1].wordmarkHeight = 0;}, /Invalid wordmark height/i],
+    ["oversized compact scale", logos => {logos[10].compactScale = 2;}, /Invalid compact scale/i],
+  ];
+  for (const [label, mutate, expectedError] of invalidCatalogs) {
+    const logos = structuredClone(sourceCatalog);
+    mutate(logos);
+    fs.writeFileSync(path.join(source, "logos.json"), JSON.stringify(logos));
+    const outputDir = path.join(temporaryRoot, label.replaceAll(" ", "-"));
+    await assert.rejects(prepareLogoPreview({root: temporaryRoot, outputDir,
+      basePath: "/Equianalgesic_Dosing_Calculator_Staging/", calculatorHtml: "<head></head>", version: "test"}), expectedError, label);
+    const assets = path.join(outputDir, "logo-preview", "assets");
+    assert.deepEqual(fs.existsSync(assets) ? fs.readdirSync(assets) : [], [], `${label} publishes no artwork`);
+  }
+});
+
 test("logo preview restores shared tool state without navigating to a focusable fragment", () => {
   const vm = require("node:vm");
   const previewScript = fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "preview.js"), "utf8");
   const logos = JSON.parse(fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "logos.json"), "utf8"));
   const rootUrl = "https://example.test/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/";
   const cases = [
-    ["#calculatorTabMme", "06", "mme", ""],
+    ["", "03", null, ""],
+    ["#calculatorTabMme", "03", "mme", ""],
     ["?logo=02#calculatorTabConvert", "02", "convert", ""],
-    ["?logo=99#calculatorTabMethadone", "06", "methadone", ""],
+    ["?logo=99#calculatorTabMethadone", "03", "methadone", ""],
     ["?logo=05&view=mobile&source=review%20link#calculatorTabBuprenorphine", "05", "buprenorphine", ""],
     ["?logo=08&tool=mme#calculatorTabBenzo", "08", "benzo", ""],
     ["?logo=03&tool=methadone", "03", "methadone", ""],
     ["?logo=04&tool=benzo#conversionReference", "04", "benzo", "#conversionReference"],
     ["?logo=07#unknown", "07", null, "#unknown"],
     ["?logo=06#calculatorTabMme?dose=100", "06", null, "#calculatorTabMme?dose=100"],
+    ["?logo=11&tool=convert", "11", "convert", ""],
   ];
   for (const [suffix, expectedLogo, expectedTool, expectedHash] of cases) {
     const location = new URL(`${rootUrl}${suffix}`);

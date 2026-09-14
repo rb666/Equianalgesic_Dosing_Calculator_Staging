@@ -4,44 +4,42 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>calc.med — Logo studies</title>
-  <link rel="stylesheet" href="./studio.css?v=__PREVIEW_VERSION__">
-  <script src="./logos.js?v=__PREVIEW_VERSION__" defer></script>
-  <script src="./studio.js?v=__PREVIEW_VERSION__" defer></script>
+  <meta name="color-scheme" content="light">
+  <title>calc.med · Logo shortlist</title>
+  <link rel="stylesheet" href="__PREVIEW_BASE__studio.css?v=__PREVIEW_VERSION__">
+  <script src="__PREVIEW_BASE__logos.js?v=__PREVIEW_VERSION__" defer></script>
+  <script src="__PREVIEW_BASE__studio.js?v=__PREVIEW_VERSION__" defer></script>
 </head>
 <body>
-  <main class="studio">
-    <header class="heading">
-      <div class="masthead"><span class="brand">calc.med</span><span>Logo study</span></div>
-      <h1>Eight logo directions.</h1>
-      <p>Compare the current logo with seven alternative concepts.</p>
-    </header>
-
+  <main class="studio" data-site-url="__BASE_PATH__opioidcalculator/">
+    <header class="masthead"><span class="brand">calc.med</span><span>Logo shortlist · Preview</span></header>
+    <div class="heading">
+      <h1>Clinical tools — logo shortlist</h1>
+      <p>The current shortlist is grouped by visual style, with the unchanged original first. Main and small samples make the differences easier to judge.</p>
+    </div>
     <section class="toolbar" aria-label="Comparison controls">
       <div class="view-controls" role="group" aria-label="Comparison layout">
-        <button type="button" data-view="all" aria-pressed="true">All eight</button>
+        <button type="button" data-view="all" aria-pressed="true">All concepts</button>
+        <button type="button" data-view="winners" aria-pressed="false">Winners</button>
         <button type="button" data-view="pair" aria-pressed="false">Compare two</button>
       </div>
-      <span class="toolbar-hint"><a href="../opioidcalculator/?logo=06">Try all eight on the site →</a></span>
+      <a class="site-launch" href="__BASE_PATH__opioidcalculator/?logo=03">Try these logos on the site <span aria-hidden="true">→</span></a>
       <div class="pair-controls" hidden>
-        <label>Left<select id="leftLogo"></select></label>
-        <span class="pair-divider" aria-hidden="true">/</span>
-        <label>Right<select id="rightLogo"></select></label>
-        <button type="button" id="swapLogos" class="quiet-button">Swap sides</button>
+        <label>Left logo<select id="leftLogo"></select></label>
+        <label>Right logo<select id="rightLogo"></select></label>
+        <button type="button" class="quiet-button" id="swapLogos">Swap sides</button>
       </div>
     </section>
-
-    <div id="logoGrid" class="logo-grid"></div>
-    <p id="comparisonStatus" class="sr-only" role="status" aria-live="polite"></p>
-    <noscript><p>Enable JavaScript to view and compare the logo concepts.</p></noscript>
-    <footer><span>Concepts for discussion · Original artwork preserved</span><span>Temporary staging logo study</span></footer>
+    <p class="sr-only" id="comparisonStatus" role="status">Loading logos.</p>
+    <section id="logoGrid" class="logo-grid" aria-label="Logo comparison"></section>
+    <noscript><p>Enable JavaScript to compare logos, or <a href="__BASE_PATH__opioidcalculator/">open the calculator</a>.</p></noscript>
+    <footer><div><span id="winnerSummary">Selected logos: #03, #04, #06, #07, #08, #10</span><span>#01 stays unchanged.</span></div><span>Temporary staging logo study</span></footer>
   </main>
-
   <dialog id="logoDialog" aria-labelledby="dialogTitle">
-    <div class="dialog-header"><div><span id="dialogNumber" class="eyebrow"></span><h2 id="dialogTitle"></h2></div><button type="button" id="closeDialog">Close</button></div>
-    <div class="dialog-art"><img id="dialogImage" alt=""></div>
+    <div class="dialog-header"><div><div class="eyebrow" id="dialogNumber"></div><h2 id="dialogTitle"></h2></div><button type="button" class="quiet-button" id="closeDialog">Close</button></div>
+    <div id="dialogArt" class="dialog-art"></div>
     <p id="dialogIntent"></p>
-    <a id="dialogAsset" href="" target="_blank" rel="noopener">Open original artwork <span aria-hidden="true">↗</span></a>
+    <div class="dialog-actions"><a class="site-launch" id="dialogSite" href="__BASE_PATH__opioidcalculator/?logo=03">Try on the site <span aria-hidden="true">→</span></a><a id="dialogAsset" href="__PREVIEW_BASE__assets/01-current.png?v=__PREVIEW_VERSION__" download="01-current-identity.png">Download this logo <span aria-hidden="true">↓</span></a></div>
   </dialog>
 </body>
 </html>

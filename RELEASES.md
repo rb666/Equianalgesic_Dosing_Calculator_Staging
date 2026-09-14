@@ -73,6 +73,12 @@ This is a staging presentation experiment within the v2.1 series, not a new clin
 
 The staging refresh correction on 2026-09-14 separates saved tool selection from anchor navigation in the shared calculator and logo preview. Existing calculator-tab links become `?tool=...` selections; fresh loads and refreshes start at the top without focusing a selector button. Explicit guide links and keyboard navigation retain their focus behavior. The cumulative v2.1 note records the resulting direct-link behavior, and all approved clinical data remain unchanged.
 
+### Eleven-design staging shortlist (2026-09-14)
+
+The owner subsequently selected the current local comparison for staging: eleven designs grouped by visual style and renumbered 01–11. Conversion grid remains the default under its new number #03. The switcher and gallery share the same catalog, including the six retained winner selections and each design's historical id. See [the numbering record](staging/logo-preview/numbering-map.md).
+
+This update replaces the earlier eight-design preview and excludes the removed arrow, monogram, and other retired concepts from the Pages allowlist. The borderless header uses measured wordmark heights and compact proportions for the stacked design; the original #01 keeps its source colors. The preview cache version is `20260914-logo-shortlist-3`. Public calculator assets, approved clinical data, the cumulative v2.1 note, and historical tags remain unchanged. GitHub Actions identifies the exact commit and verification/deployment results.
+
 ## Preservation policy
 
 - Never move, replace, delete, or reuse `v1.0`, `v2.0` or `v2.1`. They refer permanently to their recorded commits, even if production or staging moves forward.

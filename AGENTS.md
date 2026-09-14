@@ -24,6 +24,7 @@ The application remains plain static HTML/CSS/JavaScript with no package manifes
 - public/calculator-core.js: shared calculation functions and numeric validation.
 - public/calculator-provenance.js: data digest, sources, scoped approval attestation and traceability.
 - public/styles.css: shared responsive styling and light/dark themes.
+- public/OpioidConversionSite.png: original logo, used on the page and in social previews.
 - archive/uds/: retained UDS document, JS, CSS and workflow guide; excluded from deployment.
 - tests/: calculator, approved-table, archive and deployment regression checks.
 - scripts/prepare-github-pages.mjs: explicit calculator asset allowlist, clean Pages route, retired-route handling.

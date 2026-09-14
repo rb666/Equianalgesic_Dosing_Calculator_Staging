@@ -1791,17 +1791,32 @@ const clampReduction = (value) => calculatorCore.clampWholePercent(value, 100);
 const clampMethadoneReduction = (value) =>
   calculatorCore.clampWholePercent(value, 90);
 
-const syncReduction = (source) => {
-  const value = clampReduction(source.value);
-  reductionRange.value = value;
-  reductionNumber.value = value;
+const hasValidReductionInput = (control) => {
+  const valid =
+    control.value.trim() !== "" &&
+    Number.isFinite(Number(control.value)) &&
+    control.validity.valid;
+  control.setAttribute("aria-invalid", String(!valid));
+  return valid;
 };
 
-const syncMethadoneReduction = (source) => {
-  const value = clampMethadoneReduction(source.value);
-  methadoneReductionRange.value = value;
-  methadoneReductionNumber.value = value;
+const syncReductionControls = (source, range, number, maximum) => {
+  // An empty editing state is not an intentional zero-percent reduction.
+  if (source.value.trim() === "" || !Number.isFinite(Number(source.value))) {
+    number.setAttribute("aria-invalid", "true");
+    return;
+  }
+  const value = calculatorCore.clampWholePercent(source.value, maximum);
+  range.value = value;
+  number.value = value;
+  number.setAttribute("aria-invalid", "false");
 };
+
+const syncReduction = (source) =>
+  syncReductionControls(source, reductionRange, reductionNumber, 100);
+
+const syncMethadoneReduction = (source) =>
+  syncReductionControls(source, methadoneReductionRange, methadoneReductionNumber, 90);
 
 const createRegimenEntry = (overrides = {}) => {
   regimenEntryId += 1;
@@ -1809,8 +1824,8 @@ const createRegimenEntry = (overrides = {}) => {
   return {
     key: regimenEntryId,
     drugId: overrides.drugId || "Hydromorphone_IV",
-    dose: overrides.dose || "2",
-    dosesPerDay: overrides.dosesPerDay || "1",
+    dose: overrides.dose ?? "2",
+    dosesPerDay: overrides.dosesPerDay ?? "1",
   };
 };
 
@@ -1892,9 +1907,9 @@ const buildRegimenEntryMarkup = (entry, index) => {
     calculation.inputsValid && !calculation.calculationFinite;
   const canRemove = regimenEntriesState.length > 1;
   const doseValue = patchOption
-    ? entry.dose || "1"
-    : entry.dose || String(option?.referenceDose || "");
-  const frequencyValue = patchOption ? "1" : entry.dosesPerDay || "1";
+    ? entry.dose ?? "1"
+    : entry.dose ?? String(option?.referenceDose ?? "");
+  const frequencyValue = patchOption ? "1" : entry.dosesPerDay ?? "1";
 
   return `
     <section class="regimen-entry" data-entry-key="${entry.key}">
@@ -2501,6 +2516,11 @@ const getActiveHepaticSeverity = () => {
 };
 
 const updateRenalBandNote = () => {
+  egfrInput.setAttribute("aria-invalid", String(!egfrInput.validity.valid));
+  if (!egfrInput.validity.valid) {
+    renalBandNote.textContent = "Enter a valid eGFR of 0 or greater, or clear the field to omit kidney guidance.";
+    return;
+  }
   const band = getEgfrBand(egfrInput.value);
 
   if (!band) {
@@ -2851,11 +2871,16 @@ const getHepaticAdvice = ({
   };
 };
 
-const showInvalidRegimen = (parsedEntries, title = "Enter a valid regimen") => {
+const showInvalidRegimen = (
+  parsedEntries,
+  title = "Enter a valid regimen",
+  inputMessage = null,
+) => {
   const calculationOutOfRange = title === "Result exceeds supported range";
-  const unavailableReason = calculationOutOfRange
-    ? "Reduce the entered values before calculating"
-    : "Complete the regimen before conversion";
+  const unavailableReason =
+    inputMessage || (calculationOutOfRange
+      ? "Reduce the entered values before calculating"
+      : "Complete the regimen before conversion");
   renderRegimenSummaryTable(parsedEntries);
   finalDose.textContent = "—";
   finalUnit.textContent = "";
@@ -2883,6 +2908,12 @@ const showInvalidRegimen = (parsedEntries, title = "Enter a valid regimen") => {
   hepaticAdviceBody.textContent = calculationOutOfRange
     ? "Hepatic advice is unavailable while the calculation is outside the supported numeric range."
     : "Hepatic advice appears after the regimen entries are complete.";
+  if (inputMessage) {
+    renalAdviceTitle.textContent = "Input needs attention";
+    hepaticAdviceTitle.textContent = "Input needs attention";
+    renalAdviceBody.textContent = inputMessage;
+    hepaticAdviceBody.textContent = inputMessage;
+  }
   setLiveStatus(conversionResultStatus, `${title}. No dose is available.`);
 };
 
@@ -2894,6 +2925,19 @@ const calculate = () => {
   const targetOption = findOption(targetDrugSelect.value);
   const reductionPercentage = clampReduction(reductionNumber.value);
   const isMMeMode = calculationModeSelect.value === "mme";
+
+  if (!egfrInput.validity.valid) {
+    showInvalidRegimen(parsedEntries, "Check kidney function input", renalBandNote.textContent);
+    return;
+  }
+  if (!isMMeMode && !hasValidReductionInput(reductionNumber)) {
+    showInvalidRegimen(
+      parsedEntries,
+      "Enter a safety reduction",
+      "Enter a safety reduction from 0% to 100%. Use 0 only when no reduction is intended.",
+    );
+    return;
+  }
 
   renderRegimenSummaryTable(parsedEntries);
   methadoneConservativeMme.classList.add("is-hidden");
@@ -3056,8 +3100,9 @@ const getMethadoneRoute = () => {
 const showInvalidMethadoneResult = (
   title = "Enter a valid whole-number OME",
   message = "Enter a whole-number OME of 0 or greater.",
+  invalidControl = methadoneMorphineDoseInput,
 ) => {
-  methadoneMorphineDoseInput.setAttribute("aria-invalid", "true");
+  invalidControl.setAttribute("aria-invalid", "true");
   methadoneDoseHint.textContent = message;
   methadoneResultTitle.textContent = title;
   methadoneFinalDose.textContent = "—";
@@ -3089,6 +3134,15 @@ const calculateMethadone = () => {
   }
 
   const route = getMethadoneRoute();
+  methadoneMorphineDoseInput.setAttribute("aria-invalid", "false");
+  if (!hasValidReductionInput(methadoneReductionNumber)) {
+    showInvalidMethadoneResult(
+      "Enter a safety reduction",
+      "Enter a methadone safety reduction from 0% to 90%.",
+      methadoneReductionNumber,
+    );
+    return;
+  }
   const result = calculatorCore.calculateMethadone({
     oralMorphineDaily,
     ratioTable: methadoneRatioTable,
@@ -3117,7 +3171,7 @@ const calculateMethadone = () => {
 
   methadoneMorphineDoseInput.setAttribute("aria-invalid", "false");
   methadoneDoseHint.textContent = "mg/day OME (whole numbers)";
-  methadoneResultTitle.textContent = "Conservative starting estimate";
+  methadoneResultTitle.textContent = "Calculated methadone estimate";
   methadoneFinalDose.textContent = formatDose(reducedMethadoneDaily);
   methadoneFinalUnit.textContent = route.unitLabel;
   methadoneRatioOutput.textContent = `${bracket.ratio}:1`;
@@ -3154,8 +3208,9 @@ const populateBenzoSelects = () => {
 const showInvalidBenzoResult = (
   title = "Enter a valid daily dose",
   message = "Enter a finite daily dose greater than 0.",
+  invalidControl = benzoSourceDoseInput,
 ) => {
-  benzoSourceDoseInput.setAttribute("aria-invalid", "true");
+  invalidControl.setAttribute("aria-invalid", "true");
   benzoDoseValidation.textContent = message;
   benzoResultTitle.textContent = title;
   benzoFinalDose.textContent = "—";
@@ -3190,6 +3245,15 @@ const calculateBenzo = () => {
     return;
   }
 
+  benzoSourceDoseInput.setAttribute("aria-invalid", "false");
+  if (!hasValidReductionInput(benzoReductionNumber)) {
+    showInvalidBenzoResult(
+      "Enter a safety reduction",
+      "Enter a benzodiazepine safety reduction from 0% to 50%.",
+      benzoReductionNumber,
+    );
+    return;
+  }
   const result = calculatorCore.calculateBenzodiazepine({
     sourceDose,
     sourceEquivalent: sourceBenzo.equiv,
@@ -3216,7 +3280,7 @@ const calculateBenzo = () => {
 
   benzoSourceDoseInput.setAttribute("aria-invalid", "false");
   benzoDoseValidation.textContent = "";
-  benzoResultTitle.textContent = "Equivalent starting estimate";
+  benzoResultTitle.textContent = "Calculated benzodiazepine equivalent";
   benzoFinalDose.textContent = formatDose(targetDose);
   benzoFinalUnit.textContent = `${targetBenzo.doseUnit}/day`;
   benzoRawDiazepamEquiv.textContent = `${formatDose(rawDiazepamEquiv)} mg Diazepam/day`;
@@ -3443,11 +3507,8 @@ buprenorphineMeddRangeSelect.addEventListener("input", () => {
   renderBuprenorphineSchedule();
 });
 
-const syncBenzoReduction = (source) => {
-  const val = Math.max(0, Math.min(50, Math.round(Number(source.value) || 0)));
-  benzoReductionRange.value = val;
-  benzoReductionNumber.value = val;
-};
+const syncBenzoReduction = (source) =>
+  syncReductionControls(source, benzoReductionRange, benzoReductionNumber, 50);
 
 [
   benzoSourceDrugSelect,

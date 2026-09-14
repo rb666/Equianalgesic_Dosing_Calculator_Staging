@@ -11,7 +11,7 @@
   };
 
   const schemaVersion = "1.0.0";
-  const manifestVersion = "2026-09-13.1";
+  const manifestVersion = "2026-09-13.2";
   const effectiveDate = "2026-09-13";
   const retrievedAt = "2026-08-08";
 
@@ -454,7 +454,7 @@
     manifestVersion,
     effectiveDate,
     contentDigest:
-      "sha256-bfb095658bb19ab960aa991008397a40743e3bde8b2f0a46f5c8322e104d7c01",
+      "sha256-7a3767c0bc9fe694a6559dabe8796d916025cc364ffca27b43d9c610bc884c4c",
     clinicalReview: {
       status: "unreviewed",
       reviewer: null,

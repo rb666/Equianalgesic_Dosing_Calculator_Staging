@@ -7,10 +7,10 @@ approval record.
 ## Current version and status
 
 - Manifest: `public/calculator-provenance.js`
-- Manifest version: `2026-09-13.1`
+- Manifest version: `2026-09-13.2`
 - Effective date: `2026-09-13`
 - Overall ruleset review status: **unreviewed**; existing conversion ratios have committee approval confirmed by the owner, as described below.
-- Named reviewer, credentials, scope, date, and attestation: **not present**
+- Existing conversion-ratio approval: **owner attestation recorded on 2026-09-13**. Committee identities, credentials and original review dates were not supplied. No approval was attested for the other clinical guidance.
 
 Every configured opioid conversion row, methadone band/constant, benzodiazepine
 row, renal rule, hepatic medication/severity rule, buprenorphine schedule and day,
@@ -22,6 +22,13 @@ Traceability and passing tests do not turn a local rule into an approved rule.
 
 - Main opioid-regimen dose and frequency may be zero. A calculated zero remains
   numeric `0`; invalid, blank, or non-finite results are unavailable (`—`).
+- A positive value below 0.001 is displayed as `<0.001`, not as zero. This is a
+  display bound; full numeric precision remains in the calculation. It is not a
+  recommendation about measurable or dispensable dose increments.
+- Clearing a safety-reduction field leaves the result unavailable until a
+  percentage is entered. Existing valid-input rounding, ranges and defaults are
+  unchanged. Invalid eGFR input blocks the main result until corrected or cleared;
+  an intentionally empty eGFR still means optional kidney guidance is omitted.
 - Methadone OME may be zero and must be a whole number. Benzodiazepine source dose
   must be greater than zero.
 - Non-patch opioid dose may be decimal. Doses/day must be a whole number. Patch
@@ -64,8 +71,10 @@ not provide a representative peak suitable for that graph.
 
 The manifest uses `evidenceMatch` values such as `exact`, `representative`,
 `partial`, `background-only`, `conflicts`, and `none`. A source citation must never
-be rendered as an approval badge. Rules marked `conflicts` or `none` must remain
-unreviewed and show a limitation.
+be rendered as an approval badge. Rules marked `conflicts` or `none` retain an
+evidence limitation. Evidence match and local approval are separate facts:
+the owner's attestation of committee approval for existing conversion ratios
+remains valid even where an external reference uses a different ratio.
 
 ## Consumer-facing copy boundary
 

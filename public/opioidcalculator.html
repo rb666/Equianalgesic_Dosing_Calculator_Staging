@@ -26,7 +26,7 @@
     />
     <meta name="twitter:image" content="https://calc.med/OpioidConversionSite.png" />
     <title>Equianalgesic Dose Calculator</title>
-    <link rel="icon" href="/favicon.svg?v=20260913-calculator-only-1" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.svg?v=20260913-typography-preview-2" type="image/svg+xml" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -55,7 +55,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260913-calculator-only-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260913-typography-preview-2" />
   </head>
   <body>
     <div class="environment-banner">
@@ -124,7 +124,7 @@
         </div>
         <div class="brand-logo-card" aria-label="Opioid Conversion logo">
           <img
-            src="/OpioidConversionSite.png?v=20260913-calculator-only-1"
+            src="/OpioidConversionSite.png?v=20260913-typography-preview-2"
             alt="Opioid Conversion"
             width="1254"
             height="1254"
@@ -260,6 +260,8 @@
                   <input
                     aria-label="Safety reduction percentage value"
                     id="reductionNumber"
+                    required
+                    aria-describedby="conversionResultStatus"
                     name="reductionNumber"
                     type="number"
                     min="0"
@@ -342,6 +344,7 @@
                     eGFR
                     <input
                       id="egfrInput"
+                      aria-describedby="renalBandNote"
                       name="egfrInput"
                       type="number"
                       min="0"
@@ -574,6 +577,8 @@
                     <input
                       aria-label="Methadone safety reduction percentage value"
                       id="methadoneReductionNumber"
+                      required
+                      aria-describedby="methadoneResultStatus"
                       name="methadoneReductionNumber"
                       type="number"
                       min="0"
@@ -613,7 +618,7 @@
           <section class="result-panel">
             <div class="section-heading">
               <p class="eyebrow">Methadone result</p>
-              <h2 id="methadoneResultTitle">Conservative starting estimate</h2>
+              <h2 id="methadoneResultTitle">Calculated methadone estimate</h2>
             </div>
 
             <div class="dose-result">
@@ -821,6 +826,8 @@
                     <input
                       aria-label="Benzodiazepine safety reduction percentage value"
                       id="benzoReductionNumber"
+                      required
+                      aria-describedby="benzoResultStatus"
                       name="benzoReductionNumber"
                       type="number"
                       min="0"
@@ -858,7 +865,7 @@
           <section class="result-panel">
             <div class="section-heading">
               <p class="eyebrow">Benzodiazepine result</p>
-              <h2 id="benzoResultTitle">Equivalent starting estimate</h2>
+              <h2 id="benzoResultTitle">Calculated benzodiazepine equivalent</h2>
             </div>
 
             <div class="dose-result">
@@ -1120,8 +1127,8 @@
         window.setTimeout(showCalculatorLoadFailure, 5000);
       })();
     </script>
-    <script src="/calculator-core.js?v=20260913-calculator-only-1"></script>
-    <script src="/calculator-provenance.js?v=20260913-calculator-only-1"></script>
-    <script src="/script.js?v=20260913-calculator-only-1"></script>
+    <script src="/calculator-core.js?v=20260913-typography-preview-2"></script>
+    <script src="/calculator-provenance.js?v=20260913-typography-preview-2"></script>
+    <script src="/script.js?v=20260913-typography-preview-2"></script>
   </body>
 </html>

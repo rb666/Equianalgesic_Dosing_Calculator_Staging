@@ -14,6 +14,16 @@ const closeTo = (actual, expected, tolerance = 1e-10) =>
     `expected ${actual} to be within ${tolerance} of ${expected}`,
   );
 
+test("display precision never turns a positive dose or range into zero", () => {
+  assert.equal(core.formatDose(0), "0");
+  for (const value of [Number.MIN_VALUE, 0.00001, 0.0004, 0.0009]) {
+    assert.equal(core.formatDose(value), "<0.001");
+  }
+  assert.equal(core.formatDose(0.001), "0.001");
+  assert.equal(core.formatDoseRange(0, 0.00001, "mg"), "0-<0.001 mg");
+  assert.equal(core.formatDoseRange(0.00001, 0.00002, "mg"), "<0.001 mg");
+});
+
 test("all configured conversion rows self-reference and round-trip", () => {
   assert.equal(conversionOptions.length, 36);
   assert.equal(new Set(conversionOptions.map((item) => item.id)).size, 36);

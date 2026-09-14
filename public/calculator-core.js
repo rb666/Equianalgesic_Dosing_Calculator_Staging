@@ -55,6 +55,10 @@
       return "—";
     }
 
+    if (value > 0 && value < 0.001) {
+      return "<0.001";
+    }
+
     if (value >= 100) {
       return value.toFixed(0);
     }
@@ -71,7 +75,7 @@
       return "Not available";
     }
 
-    if (Math.abs(minimum - maximum) < 0.0001) {
+    if (minimum === maximum || formatDose(minimum) === formatDose(maximum)) {
       return `${formatDose(minimum)} ${unitLabel}`;
     }
 

@@ -107,6 +107,8 @@ test("direct tool links activate only existing tabs and leave arbitrary URL frag
   for (const tab of tabs) {
     calls.length = 0; location.hash = `#${tab.id}`; activate();
     assert.deepEqual(calls, [tab.dataset.calculatorTab, "focus", "scroll"]);
+    calls.length = 0; activate({ moveFocus: false });
+    assert.deepEqual(calls, [tab.dataset.calculatorTab, "scroll"]);
   }
   for (const hash of ["", "#unknown", "#calculatorTabs", "#calculatorTabMme?dose=100", "#<script>"]) {
     calls.length = 0; location.hash = hash; activate(); assert.deepEqual(calls, []);
@@ -115,6 +117,9 @@ test("direct tool links activate only existing tabs and leave arbitrary URL frag
     calls.length = 0; location.hash = `#${id}`; activate();
     assert.equal(disclosure.open, true);
     assert.deepEqual(calls, [`${id}-focus`, `${id}-scroll`]);
+    calls.length = 0; disclosure.open = false; activate({ moveFocus: false });
+    assert.equal(disclosure.open, true);
+    assert.deepEqual(calls, [`${id}-scroll`]);
   }
 });
 

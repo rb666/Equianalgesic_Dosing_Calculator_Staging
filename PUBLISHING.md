@@ -2,6 +2,8 @@
 
 Release only to rb666/Equianalgesic_Dosing_Calculator_Staging. Production calc.med is paused at its existing release; pushing production origin or deploying Cloudflare is outside this release.
 
+By the owner's standing instruction, "deploy" includes committing the intended changes, pushing, deploying, and verifying the published result. The default destination is staging; production still requires an explicit production release request.
+
 1. Inspect git status and remotes. Complete the syntax checks and browser checks in AGENTS.md.
 2. Run node --test tests/*.test.cjs and git diff --check. Tests lock the existing approved conversion tables and verify calculator-only artifact contents.
 3. Commit intended files, then run git push staging HEAD:main. Use fast-forward pushes only.

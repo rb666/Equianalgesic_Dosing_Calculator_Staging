@@ -1797,6 +1797,52 @@ footer {
   font-weight: 700;
 }
 
+.footer-content > p {
+  margin: 0;
+}
+
+.release-note {
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.release-note > summary {
+  width: fit-content;
+  min-height: 32px;
+  margin-left: auto;
+  padding: 5px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.release-note > summary:hover {
+  color: var(--ink);
+}
+
+.release-note > summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.release-note-body {
+  max-width: 75ch;
+  padding: 4px 0 8px;
+  color: var(--ink);
+}
+
+.release-note-body p {
+  margin: 0 0 8px;
+}
+
+.release-note-body ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.release-note-body li + li {
+  margin-top: 4px;
+}
+
 .reference-modal {
   position: fixed;
   inset: 0;

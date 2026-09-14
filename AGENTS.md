@@ -49,6 +49,8 @@ The frozen fixture tests/fixtures/approved-clinical-tables.json was extracted fr
 
 ## Verification and release
 
+The owner's standing preference is that a request to "deploy" includes committing the intended changes, pushing, deploying, and verifying the published result. Unless production is explicitly requested, use the staging release boundary above.
+
 Before editing inspect git status --short --branch, git remote -v, git log --oneline -10 and the owning files. Preserve unrelated changes and backup material. Never reset shared history or repoint origin. Routine bootstrap publishing is disabled.
 
 Run node --check for public/calculator-core.js, public/calculator-provenance.js, public/script.js, archive/uds/uds-tool.js and archive/uds/uds-workflow-guide.js. Run node --test tests/*.test.cjs, node scripts/prepare-github-pages.mjs and git diff --check. Changed clinical tables/core require a new manifest version and digest; UI-only edits do not change the digest. Refresh calculator HTML asset keys whenever assets change.

@@ -679,16 +679,16 @@ const sourceReferences = [
       "Supplemental reference for benzodiazepine equivalence values and tapering context. Equivalence estimates remain approximate and patient-specific.",
   },
   {
-    title: "Urine Drug Tests: Ordering and Interpretation – American Family Physician",
-    url: "https://www.aafp.org/pubs/afp/issues/2019/0101/p33.html",
+    title: "BELBUCA (buprenorphine buccal film) prescribing information – DailyMed",
+    url: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bc2b7a3d-72cf-497c-95b0-ba2b71f63c64",
     note:
-      "Reference for UDS immunoassay limitations, unexpected results, opioid and benzodiazepine interpretation issues, and confirmation principles.",
+      "Product-label reference for buccal administration, initiation, titration, and safety precautions. The overlap schedules shown here differ from the label's initiation instructions.",
   },
   {
-    title: "Drug Testing – ARUP Consult",
-    url: "https://www.arupconsult.com/content/drug-testing",
+    title: "SUBOXONE (buprenorphine/naloxone film) prescribing information – DailyMed",
+    url: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8a5edcf9-828c-4f97-b671-268ab13a8ecd",
     note:
-      "Reference for UDS test selection, confirmatory testing, and limitations of opiate, oxycodone, benzodiazepine, and synthetic opioid immunoassays.",
+      "Product-label reference for administration, induction, maintenance, and safety precautions. The overlap schedule shown here differs from the label's initiation instructions.",
   },
 ];
 
@@ -1103,12 +1103,12 @@ const pharmacokineticsRows = [
     behavior:
       "Taken orally, it provides predictable drug levels across patients due to non-CYP metabolism. Dosing is typically every 4 to 6 hours. Has fewer serotonergic side effects than tramadol, but still provides effective monoaminergic pain modulation.",
     interactions:
-      "Avoid or use extreme caution with MAO inhibitors (MAOIs) due to risk of severe serotonergic/noradrenergic hypertensive or CNS crises. Caution with other norepinephrine-enhancing drugs (SNRIs, TCAs, stimulants) due to risk of hypertension and tachycardia. Fewer CYP-mediated drug interactions. Renal impairment raises inactive metabolite levels. Additive CNS/respiratory depression with benzodiazepines, alcohol, or other opioids.",
+      "Contraindicated with monoamine oxidase inhibitors (MAOIs) or within 14 days of stopping an MAOI. Concomitant serotonergic drugs (including SSRIs, SNRIs, TCAs, and triptans) can cause life-threatening serotonin syndrome. Caution with other norepinephrine-enhancing drugs due to cardiovascular effects. Fewer CYP-mediated drug interactions. Renal impairment raises inactive metabolite levels. Additive CNS/respiratory depression with benzodiazepines, alcohol, or other opioids.",
     sources: [
       {
         title: "DailyMed Nucynta tablets",
         url:
-          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7997e6da-7e98-4520-9d1b-0b8341bac64a",
+          "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=80938c30-9fe3-4c7d-9d9c-5476638cfb2d",
       },
     ],
   },
@@ -1143,9 +1143,16 @@ const pharmacokineticsRows = [
   {
     name: "Tramadol IV",
     route: "IV / injection",
-    profile: { type: "absorptive", peakHours: 0.75, halfLifeHours: 6, scaleHours: 24 },
+    profile: {
+      available: false,
+      type: "absorptive",
+      peakHours: null,
+      halfLifeHours: 6,
+      unavailableReason:
+        "The cited injection label's 45-minute peak applies to IM administration, not IV use.",
+    },
     timing:
-      "Injection product may be given slow IV, IM, SC, or infusion; the referenced SmPC reports rapid and complete IM absorption with Cmax at about 45 minutes.",
+      "The referenced injection product may be given by slow IV injection, IM or SC injection, or infusion. Its 45-minute peak concentration describes IM absorption and should not be used as an IV peak; no IV concentration curve is plotted here.",
     halfLife:
       "Elimination half-life is about 6 hours regardless of route; active O-desmethyltramadol (M1) metabolite half-life is about 7.9 hours.",
     metabolism:
@@ -1482,6 +1489,7 @@ const hepaticGuidanceTableBody = document.querySelector("#hepaticGuidanceTable")
 const sourceTable = document.querySelector("#sourceTable");
 const pharmacokineticsTable = document.querySelector("#pharmacokineticsTable");
 const pharmacokineticsGraphGrid = document.querySelector("#pharmacokineticsGraphGrid");
+const pharmacokineticsProfileSelect = document.querySelector("#pharmacokineticsProfileSelect");
 const pharmacokineticsSelectedDetail = document.querySelector(
   "#pharmacokineticsSelectedDetail",
 );
@@ -1824,8 +1832,8 @@ const createRegimenEntry = (overrides = {}) => {
   return {
     key: regimenEntryId,
     drugId: overrides.drugId || "Hydromorphone_IV",
-    dose: overrides.dose ?? "2",
-    dosesPerDay: overrides.dosesPerDay ?? "1",
+    dose: overrides.dose ?? "",
+    dosesPerDay: overrides.dosesPerDay ?? "",
   };
 };
 
@@ -1990,19 +1998,12 @@ const renderTargetOptions = (preferredValue = targetDrugSelect.value) => {
     }),
   );
 
-  targetDrugSelect.innerHTML = targetOptions.map(optionMarkup).join("");
-
-  if (targetOptions.some((item) => item.id === preferredValue)) {
-    targetDrugSelect.value = preferredValue;
-    return;
-  }
-
-  if (targetOptions.some((item) => item.id === "Oxycodone_Oral")) {
-    targetDrugSelect.value = "Oxycodone_Oral";
-    return;
-  }
-
-  targetDrugSelect.value = targetOptions[0]?.id || "";
+  targetDrugSelect.innerHTML =
+    '<option value="">Select target drug and route</option>' +
+    targetOptions.map(optionMarkup).join("");
+  targetDrugSelect.value = targetOptions.some((item) => item.id === preferredValue)
+    ? preferredValue
+    : "";
 };
 
 const renderRegimenEntries = ({ focusKey = null, focusField = null } = {}) => {
@@ -2225,6 +2226,13 @@ const renderPharmacokineticsGraphs = () => {
     return;
   }
 
+  if (pharmacokineticsProfileSelect) {
+    pharmacokineticsProfileSelect.innerHTML = pharmacokineticsRows
+      .map((item, index) => `<option value="${index}">${item.name}</option>`)
+      .join("");
+    pharmacokineticsProfileSelect.value = String(selectedPharmacokineticsIndex);
+  }
+
   pharmacokineticsGraphGrid.innerHTML = pharmacokineticsRows
     .map((item, index) => {
       const profile = item.profile;
@@ -2357,6 +2365,9 @@ const renderPharmacokineticsReference = () => {
 };
 
 const updatePharmacokineticsSelection = () => {
+  if (pharmacokineticsProfileSelect) {
+    pharmacokineticsProfileSelect.value = String(selectedPharmacokineticsIndex);
+  }
   pharmacokineticsGraphGrid
     ?.querySelectorAll("[data-pk-index]")
     .forEach((card) => {
@@ -2926,7 +2937,8 @@ const calculate = () => {
   const reductionPercentage = clampReduction(reductionNumber.value);
   const isMMeMode = calculationModeSelect.value === "mme";
 
-  if (!egfrInput.validity.valid) {
+  targetDrugSelect.setAttribute("aria-invalid", String(!isMMeMode && !targetOption));
+  if (!isMMeMode && !egfrInput.validity.valid) {
     showInvalidRegimen(parsedEntries, "Check kidney function input", renalBandNote.textContent);
     return;
   }
@@ -3012,7 +3024,11 @@ const calculate = () => {
   }
 
   if (!targetOption) {
-    showInvalidRegimen(parsedEntries);
+    showInvalidRegimen(
+      parsedEntries,
+      "Choose a target drug and route",
+      "Select the intended target before calculating a conversion.",
+    );
     return;
   }
 
@@ -3280,7 +3296,8 @@ const calculateBenzo = () => {
 
   benzoSourceDoseInput.setAttribute("aria-invalid", "false");
   benzoDoseValidation.textContent = "";
-  benzoResultTitle.textContent = "Calculated benzodiazepine equivalent";
+  const targetLabel = `${targetBenzo.medication} (${targetBenzo.route})`;
+  benzoResultTitle.textContent = `${targetLabel} equivalent`;
   benzoFinalDose.textContent = formatDose(targetDose);
   benzoFinalUnit.textContent = `${targetBenzo.doseUnit}/day`;
   benzoRawDiazepamEquiv.textContent = `${formatDose(rawDiazepamEquiv)} mg Diazepam/day`;
@@ -3288,7 +3305,7 @@ const calculateBenzo = () => {
   benzoReductionApplied.textContent = `${reductionPercentage}% reduction`;
   setLiveStatus(
     benzoResultStatus,
-    `Benzodiazepine estimate: ${formatDose(targetDose)} ${targetBenzo.doseUnit} per day.`,
+    `${targetLabel} estimate: ${formatDose(targetDose)} ${targetBenzo.doseUnit} per day.`,
   );
 };
 
@@ -3342,8 +3359,8 @@ const handleRegimenEntryInput = (event) => {
     const option = findOption(entry.drugId);
 
     if (option) {
-      entry.dose = isPatchOption(option) ? "1" : String(option.referenceDose);
-      entry.dosesPerDay = isPatchOption(option) ? "1" : "1";
+      entry.dose = "";
+      entry.dosesPerDay = isPatchOption(option) ? "1" : "";
     }
 
     renderRegimenEntries({ focusKey: entryKey, focusField: "drugId" });
@@ -3620,6 +3637,13 @@ if (pharmacokineticsModal) {
   });
 }
 
+if (pharmacokineticsProfileSelect) {
+  pharmacokineticsProfileSelect.addEventListener("change", () => {
+    selectedPharmacokineticsIndex = Number(pharmacokineticsProfileSelect.value);
+    updatePharmacokineticsSelection();
+  });
+}
+
 if (pharmacokineticsGraphGrid) {
   pharmacokineticsGraphGrid.addEventListener("click", (event) => {
     const selectedCard = event.target.closest("[data-pk-index]");
@@ -3681,6 +3705,7 @@ renderSourceTable();
 renderPharmacokineticsReference();
 renderBuprenorphineOptions();
 setRegimenEntries([{}]);
+renderTargetOptions("Oxycodone_Oral");
 renderSpecialtyTool();
 renderBuprenorphineSchedule();
 updateRenalBandNote();

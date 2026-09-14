@@ -32,7 +32,7 @@
     <meta name="twitter:image" content="https://calc.med/OpioidConversionSite.png" />
     <meta name="twitter:image:alt" content="Opioid Conversion — Calculate. Convert. Care." />
     <title>Opioid Conversion &amp; MME Calculator | calc.med</title>
-    <link rel="icon" href="/favicon.svg?v=20260913-footer-layout-1" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.svg?v=20260914-workflow-fixes-1" type="image/svg+xml" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -115,7 +115,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260913-footer-layout-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260914-workflow-fixes-1" />
   </head>
   <body>
     <a class="skip-link" href="#calculatorTabs">Skip to calculators</a>
@@ -186,7 +186,7 @@
         </div>
         <div class="brand-logo-card" aria-label="Opioid Conversion logo">
           <img
-            src="/OpioidConversionSite.png?v=20260913-footer-layout-1"
+            src="/OpioidConversionSite.png?v=20260914-workflow-fixes-1"
             alt="Opioid Conversion"
             width="1254"
             height="1254"
@@ -574,7 +574,7 @@
             <h3>Before ordering</h3>
             <ul>
               <li>Multi-drug totals are intended for regimen-level review; they do not replace opioid-specific bedside assessment.</li>
-              <li>Patch entries are treated as standing 24-hour exposure estimates and not as initiation or titration instructions.</li>
+              <li>Patch entries are treated as standing 24-hour exposure estimates and not as initiation or titration instructions. A fractional quantity is not an instruction to cut a patch.</li>
               <li>Methadone totals are especially approximate; use the methadone tab and specialist input when rotating to methadone.</li>
               <li>Renal and hepatic cards show dose-guidance estimates; they are not validated severity scores.</li>
               <li>Reassess analgesia, respiratory rate, sedation, organ function, and adverse effects after conversion.</li>
@@ -767,7 +767,11 @@
             </p>
             <p class="note-box" role="note">
               <strong>Off-label transition schedule.</strong> These overlap schedules
-              differ from the cited Belbuca and Suboxone product-label initiation
+              differ from the cited
+              <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bc2b7a3d-72cf-497c-95b0-ba2b71f63c64" target="_blank" rel="noreferrer">Belbuca</a>
+              and
+              <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8a5edcf9-828c-4f97-b671-268ab13a8ecd" target="_blank" rel="noreferrer">Suboxone</a>
+              product-label initiation
               instructions. Confirm the approach against institutional protocol and
               specialist review before use.
             </p>
@@ -962,6 +966,7 @@
             <div class="clinical-notes">
               <h3 style="color: var(--danger, #7f2620);">CRITICAL CLINICAL CAUTIONS</h3>
               <ul>
+                <li>This estimates equivalent daily doses; it does not provide a taper schedule.</li>
                 <li style="font-weight: bold;">NEVER abruptly discontinue benzodiazepines. Abrupt cessation carries a high risk of severe withdrawal symptoms, including life-threatening seizures, delirium, and severe autonomic instability. Always use a gradual, clinical taper.</li>
                 <li>Combining Benzodiazepines with Opioids dramatically increases the risk of profound sedation, respiratory depression, coma, and death. Use extreme caution when co-prescribing.</li>
                 <li>Midazolam (Versed) is included because it is commonly used in ICU settings; oral and IV midazolam are not 1:1.</li>
@@ -1115,8 +1120,10 @@
               <p><strong>Changes since v1.0</strong></p>
               <p>The previously approved conversion ratios are unchanged.</p>
               <ul>
-                <li>Fixed input validation, live result updates, and kidney/liver warning handling.</li>
-                <li>Corrected PK reference details and improved keyboard access, mobile layout, readability, and typography.</li>
+                <li>Improved input validation and live results. New or changed medication entries require dose entry, and unavailable target drugs require a new selection.</li>
+                <li>Improved kidney/liver warning handling and included the target drug and route with benzodiazepine results.</li>
+                <li>Corrected PK reference details and added direct product-label links. Mobile PK profiles now keep the selected chart and clinical details together.</li>
+                <li>Improved keyboard access, mobile layout, readability, and typography.</li>
                 <li>Added a usage guide, direct calculator links, and clearer search and sharing previews.</li>
                 <li>Urine drug screening tools are temporarily unavailable.</li>
               </ul>
@@ -1163,6 +1170,10 @@
               and half-life values. They are intended to characterize relative onset,
               peak, and offset behavior, not predict patient-specific concentrations.
             </p>
+            <label class="pk-profile-picker" for="pharmacokineticsProfileSelect">
+              PK profile
+              <select id="pharmacokineticsProfileSelect"></select>
+            </label>
             <div class="pk-interactive-layout">
               <div class="pk-graph-grid" id="pharmacokineticsGraphGrid"></div>
               <section class="pk-selected-detail" id="pharmacokineticsSelectedDetail"></section>
@@ -1248,8 +1259,8 @@
         window.setTimeout(showCalculatorLoadFailure, 5000);
       })();
     </script>
-    <script src="/calculator-core.js?v=20260913-footer-layout-1"></script>
-    <script src="/calculator-provenance.js?v=20260913-footer-layout-1"></script>
-    <script src="/script.js?v=20260913-footer-layout-1"></script>
+    <script src="/calculator-core.js?v=20260914-workflow-fixes-1"></script>
+    <script src="/calculator-provenance.js?v=20260914-workflow-fixes-1"></script>
+    <script src="/script.js?v=20260914-workflow-fixes-1"></script>
   </body>
 </html>

@@ -1393,6 +1393,10 @@ dd {
   gap: 14px;
 }
 
+.pk-profile-picker {
+  display: none;
+}
+
 .pk-graph-card {
   display: grid;
   gap: 10px;
@@ -2077,6 +2081,21 @@ footer {
 }
 
 @media (max-width: 960px) {
+  .pk-profile-picker {
+    display: grid;
+    gap: 8px;
+  }
+
+  .pk-graph-card:not(.is-selected) {
+    display: none;
+  }
+
+  .pk-selected-detail {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
   .pk-interactive-layout,
   .compact-grid,
   .regimen-entry-grid {

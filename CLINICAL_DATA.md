@@ -7,8 +7,8 @@ approval record.
 ## Current version and status
 
 - Manifest: `public/calculator-provenance.js`
-- Manifest version: `2026-09-13.2`
-- Effective date: `2026-09-13`
+- Manifest version: `2026-09-14.1`
+- Effective date: `2026-09-14`
 - Overall ruleset review status: **unreviewed**; existing conversion ratios have committee approval confirmed by the owner, as described below.
 - Existing conversion-ratio approval: **owner attestation recorded on 2026-09-13**. Committee identities, credentials and original review dates were not supplied. No approval was attested for the other clinical guidance.
 
@@ -22,12 +22,16 @@ Traceability and passing tests do not turn a local rule into an approved rule.
 
 - Main opioid-regimen dose and frequency may be zero. A calculated zero remains
   numeric `0`; invalid, blank, or non-finite results are unavailable (`—`).
+- New or changed source-drug rows require dose and frequency entry (patch exposure
+  retains its fixed 24-hour factor). Explicit examples remain populated. An
+  unavailable target requires a new selection rather than substituting another drug.
 - A positive value below 0.001 is displayed as `<0.001`, not as zero. This is a
   display bound; full numeric precision remains in the calculation. It is not a
   recommendation about measurable or dispensable dose increments.
 - Clearing a safety-reduction field leaves the result unavailable until a
   percentage is entered. Existing valid-input rounding, ranges and defaults are
-  unchanged. Invalid eGFR input blocks the main result until corrected or cleared;
+  unchanged. Invalid eGFR input blocks Conversion until corrected or cleared,
+  but does not block Total MME where organ adjustments do not apply;
   an intentionally empty eGFR still means optional kidney guidance is omitted.
 - Methadone OME may be zero and must be a whole number. Benzodiazepine source dose
   must be greater than zero.
@@ -75,6 +79,29 @@ be rendered as an approval badge. Rules marked `conflicts` or `none` retain an
 evidence limitation. Evidence match and local approval are separate facts:
 the owner's attestation of committee approval for existing conversion ratios
 remains valid even where an external reference uses a different ratio.
+
+## Workflow review corrections (2026-09-14)
+
+The v2.1 workflow follow-up preserves the frozen approved tables and calculation
+core. Historical review confirmed intentional whole-number methadone inputs,
+half-patch exposure increments, percentage rounding/clamping, existing
+buprenorphine ranges and film fractions, and Codeine IV availability. These were
+not replaced with new clinical policies. Patch and benzodiazepine copy clarifies
+the exposure-estimate and equivalence-calculator scope without changing dosing.
+
+The clinical-content manifest changes only for two reference corrections:
+
+- Tramadol IV no longer plots an IM-derived 45-minute peak as an IV curve. The
+  [cited SmPC, section 5.2](https://www.medicines.org.uk/emc/product/13177/smpc)
+  assigns that absorption timing to IM administration. Its IV graph is unavailable
+  rather than populated with an unsupported value.
+- Tapentadol IR now states the MAOI contraindication, including the 14-day
+  exclusion after discontinuation, and serotonin-syndrome risk from the current
+  [NUCYNTA prescribing information](https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=80938c30-9fe3-4c7d-9d9c-5476638cfb2d).
+
+Both primary references were retrieved on 2026-09-14. Belbuca/Suboxone label links
+are now visible with their existing off-label schedule caveat; stale UDS source
+rows were removed. This work does not attest a new clinical committee review.
 
 ## Consumer-facing copy boundary
 

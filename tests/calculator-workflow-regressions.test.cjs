@@ -21,14 +21,20 @@ function load(name, context) {
   return vm.runInNewContext(`${definition(name)}; ${name};`, context);
 }
 
-test("new regimen rows remain incomplete until patient doses are entered", () => {
+test("initial and added regimen rows show example inputs and calculated output", () => {
   const create = load("createRegimenEntry", { regimenEntryId: 0 });
   const existing = create({ drugId: "Morphine_Oral", dose: "10", dosesPerDay: "3" });
   const added = create();
-  assert.equal(added.dose, "");
-  assert.equal(added.dosesPerDay, "");
-  assert.equal(parseEntry(added).valid, false);
-  assert.equal(core.sumRegimenOralMorphineEquivalent([parseEntry(existing), parseEntry(added)]).valid, false);
+  assert.equal(added.dose, "2");
+  assert.equal(added.dosesPerDay, "1");
+  assert.equal(parseEntry(added).oralMorphineEquivalent, 25);
+  assert.equal(core.sumRegimenOralMorphineEquivalent([parseEntry(existing), parseEntry(added)]).total, 55);
+
+  // Explicitly cleared inputs must not be replaced with the example defaults.
+  const cleared = create({ dose: "", dosesPerDay: "" });
+  assert.equal(cleared.dose, "");
+  assert.equal(cleared.dosesPerDay, "");
+  assert.equal(parseEntry(cleared).valid, false);
 
   // Explicit patient values and load-example values still calculate normally.
   const zero = create({ dose: "0", dosesPerDay: "1" });
@@ -39,7 +45,7 @@ test("new regimen rows remain incomplete until patient doses are entered", () =>
   assert.equal(core.sumRegimenOralMorphineEquivalent([parseEntry(existing), parseEntry(added)]).total, 80);
 });
 
-test("changing source drug or route clears patient dose instead of substituting reference doses", () => {
+test("changing source drug or route restores its populated reference example", () => {
   for (const selectedId of ["Morphine_Oral_ER", "Fentanyl_Patch_25"]) {
     const entry = { key: 7, drugId: "Morphine_Oral", dose: "15", dosesPerDay: "4" };
     let recalculated = false;
@@ -54,9 +60,9 @@ test("changing source drug or route clears patient dose instead of substituting 
       closest: () => ({ dataset: { entryKey: "7" } }),
     } });
     assert.equal(entry.drugId, selectedId);
-    assert.equal(entry.dose, "");
-    assert.equal(entry.dosesPerDay, selectedId === "Fentanyl_Patch_25" ? "1" : "");
-    assert.equal(parseEntry(entry).valid, false);
+    assert.equal(entry.dose, selectedId === "Fentanyl_Patch_25" ? "1" : String(findOption(selectedId).referenceDose));
+    assert.equal(entry.dosesPerDay, "1");
+    assert.equal(parseEntry(entry).valid, true);
     assert.equal(recalculated, true);
   }
 });

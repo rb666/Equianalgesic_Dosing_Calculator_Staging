@@ -1832,8 +1832,8 @@ const createRegimenEntry = (overrides = {}) => {
   return {
     key: regimenEntryId,
     drugId: overrides.drugId || "Hydromorphone_IV",
-    dose: overrides.dose ?? "",
-    dosesPerDay: overrides.dosesPerDay ?? "",
+    dose: overrides.dose ?? "2",
+    dosesPerDay: overrides.dosesPerDay ?? "1",
   };
 };
 
@@ -3359,8 +3359,8 @@ const handleRegimenEntryInput = (event) => {
     const option = findOption(entry.drugId);
 
     if (option) {
-      entry.dose = "";
-      entry.dosesPerDay = isPatchOption(option) ? "1" : "";
+      entry.dose = isPatchOption(option) ? "1" : String(option.referenceDose);
+      entry.dosesPerDay = "1";
     }
 
     renderRegimenEntries({ focusKey: entryKey, focusField: "drugId" });

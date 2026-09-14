@@ -22,9 +22,12 @@ Traceability and passing tests do not turn a local rule into an approved rule.
 
 - Main opioid-regimen dose and frequency may be zero. A calculated zero remains
   numeric `0`; invalid, blank, or non-finite results are unavailable (`—`).
-- New or changed source-drug rows require dose and frequency entry (patch exposure
-  retains its fixed 24-hour factor). Explicit examples remain populated. An
-  unavailable target requires a new selection rather than substituting another drug.
+- Initial and added source-drug rows use the existing example dose and frequency.
+  Changing a drug or route fills its reference dose (one patch for patch rows) and
+  one dose per day. The owner explicitly requested this populated presentation on
+  2026-09-14 so the input/output structure is visible immediately. Deliberately
+  cleared fields remain incomplete; an unavailable target requires a new selection
+  rather than substituting another drug.
 - A positive value below 0.001 is displayed as `<0.001`, not as zero. This is a
   display bound; full numeric precision remains in the calculation. It is not a
   recommendation about measurable or dispensable dose increments.

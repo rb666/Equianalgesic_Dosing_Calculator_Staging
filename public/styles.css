@@ -1944,16 +1944,34 @@ footer {
   padding: 24px;
 }
 
-.pk-profile-unavailable {
+.pk-reference-card {
+  align-content: start;
+  align-self: start;
+}
+
+.pk-reference-summary,
+.pk-reference-fact {
   display: grid;
-  min-height: 96px;
-  place-items: center;
-  margin: 8px 0;
-  border: 1.5px dashed var(--line-strong);
-  border-radius: 6px;
-  color: var(--muted);
-  font-size: 0.9rem;
+  gap: 5px;
+}
+
+.pk-reference-summary {
+  gap: 12px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.pk-reference-label {
+  color: var(--ink);
+  font-size: 0.8rem;
   font-weight: 700;
+}
+
+.pk-reference-limitation {
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
 }
 
 @media (prefers-reduced-motion: reduce) {

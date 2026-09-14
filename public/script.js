@@ -2234,6 +2234,19 @@ const getPharmacokineticsSourceMarkup = (item) =>
 const getSelectedPharmacokineticsRow = () =>
   pharmacokineticsRows[selectedPharmacokineticsIndex] || pharmacokineticsRows[0];
 
+const buildPharmacokineticsReferenceSummary = (item) => `
+  <span class="pk-reference-summary">
+    <span class="pk-reference-fact">
+      <strong class="pk-reference-label">Half-life reference</strong>
+      <span>${item.halfLife}</span>
+    </span>
+    <span class="pk-reference-fact pk-reference-limitation">
+      <strong class="pk-reference-label">Why no curve?</strong>
+      <span>${item.profile.unavailableReason}</span>
+    </span>
+  </span>
+`;
+
 const renderPharmacokineticsGraphs = () => {
   if (!pharmacokineticsGraphGrid) {
     return;
@@ -2252,22 +2265,18 @@ const renderPharmacokineticsGraphs = () => {
       const isSelected = index === selectedPharmacokineticsIndex;
       const profileAvailable = profile.available !== false;
       const peakLabel =
-        !profileAvailable
-          ? "Numeric profile not plotted"
-          : profile.type === "patch"
+        profile.type === "patch"
           ? `Steady/peak: ~${formatGraphTime(profile.peakHours)}`
           : `Peak: ~${formatGraphTime(profile.peakHours)}`;
       const offsetLabel =
-        !profileAvailable
-          ? profile.unavailableReason
-          : profile.type === "patch"
+        profile.type === "patch"
           ? `Patch wear: ${formatGraphTime(profile.wearHours)}`
           : `Half-life: ~${formatGraphTime(profile.halfLifeHours)}`;
 
       return `
         <button
           aria-pressed="${isSelected}"
-          class="pk-graph-card${isSelected ? " is-selected" : ""}"
+          class="pk-graph-card${profileAvailable ? "" : " pk-reference-card"}${isSelected ? " is-selected" : ""}"
           data-pk-index="${index}"
           type="button"
         >
@@ -2277,13 +2286,13 @@ const renderPharmacokineticsGraphs = () => {
           </div>
           ${
             profileAvailable
-              ? buildPharmacokineticsGraphSvg(profile)
-              : '<div class="pk-profile-unavailable" aria-hidden="true">Graph unavailable</div>'
+              ? `${buildPharmacokineticsGraphSvg(profile)}
+                  <div class="pk-graph-meta">
+                    <span>${peakLabel}</span>
+                    <span>${offsetLabel}</span>
+                  </div>`
+              : buildPharmacokineticsReferenceSummary(item)
           }
-          <div class="pk-graph-meta">
-            <span>${peakLabel}</span>
-            <span>${offsetLabel}</span>
-          </div>
         </button>
       `;
     })
@@ -2304,7 +2313,7 @@ const renderSelectedPharmacokineticsDetail = () => {
       <span class="pk-selected-route">${selectedItem.route}</span>
       <p>
         Route behavior and monitoring details are shown here by default so the
-        selected chart and clinical notes stay together.
+        selected profile and clinical notes stay together.
       </p>
     </div>
     <dl class="pk-selected-detail-grid">

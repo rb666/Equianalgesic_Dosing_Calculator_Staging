@@ -720,9 +720,16 @@ const pharmacokineticsRows = [
   {
     name: "Codeine IV",
     route: "IV",
-    profile: { type: "absorptive", peakHours: 0.5, halfLifeHours: 3, scaleHours: 12 },
+    profile: {
+      available: false,
+      type: "absorptive",
+      peakHours: null,
+      halfLifeHours: 3,
+      unavailableReason:
+        "The cited injection label's 30-minute peak applies to IM administration, not IV use.",
+    },
     timing:
-      "No current IV label basis; accessible reference is for IM use (peak ~30 mins). IV onset is rapid.",
+      "The cited injection label describes IM administration and an IM peak of about 30 minutes. That timing should not be used as an IV peak; no IV concentration curve is plotted here.",
     halfLife:
       "Terminal half-life is approximately 3 to 4 hours.",
     metabolism:
@@ -1795,9 +1802,9 @@ const getEntryFrequencyHint = (option) =>
     ? "Patch rows are treated as continuous 24-hour exposure"
     : "Example: q6h = 4 doses/day";
 
-const clampReduction = (value) => calculatorCore.clampWholePercent(value, 100);
+const clampReduction = (value) => calculatorCore.clampPercent(value, 100);
 const clampMethadoneReduction = (value) =>
-  calculatorCore.clampWholePercent(value, 90);
+  calculatorCore.clampPercent(value, 90);
 
 const hasValidReductionInput = (control) => {
   const valid =
@@ -1808,14 +1815,20 @@ const hasValidReductionInput = (control) => {
   return valid;
 };
 
-const syncReductionControls = (source, range, number, maximum) => {
+const syncReductionControls = (source, range, number, maximum, { commit = false } = {}) => {
   // An empty editing state is not an intentional zero-percent reduction.
   if (source.value.trim() === "" || !Number.isFinite(Number(source.value))) {
     number.setAttribute("aria-invalid", "true");
     return;
   }
-  const value = calculatorCore.clampWholePercent(source.value, maximum);
+  const value = calculatorCore.clampPercent(source.value, maximum);
   range.value = value;
+  // Preserve a typed decimal draft until change/blur; rewriting on each key can
+  // erase the decimal separator or round a value before entry is complete.
+  if (source === number && !commit) {
+    number.setAttribute("aria-invalid", String(!number.validity.valid));
+    return;
+  }
   number.value = value;
   number.setAttribute("aria-invalid", "false");
 };
@@ -3242,7 +3255,7 @@ const calculateBenzo = () => {
   const sourceId = benzoSourceDrugSelect.value;
   const targetId = benzoTargetDrugSelect.value;
   const sourceDose = Number(benzoSourceDoseInput.value);
-  const reductionPercentage = calculatorCore.clampWholePercent(
+  const reductionPercentage = calculatorCore.clampPercent(
     benzoReductionNumber.value,
     50,
   );
@@ -3442,6 +3455,19 @@ const activateCalculatorMode = (mode) => {
   calculate();
 };
 
+const updateCalculatorLink = (mode) => {
+  const tab = calculatorTabs.find((button) => button.dataset.calculatorTab === mode);
+  if (!tab || window.location.hash === `#${tab.id}`) return;
+
+  // Switching tools should keep a copied link accurate without adding history
+  // entries or scrolling away from the current controls. Inputs stay out of URLs.
+  window.history.replaceState(
+    window.history.state,
+    "",
+    `${window.location.pathname}${window.location.search}#${tab.id}`,
+  );
+};
+
 // Static guide links can open a tool directly without putting clinical inputs in URLs.
 const activateLinkedCalculator = () => {
   const linkedTab = calculatorTabs.find((button) => `#${button.id}` === window.location.hash);
@@ -3449,8 +3475,8 @@ const activateLinkedCalculator = () => {
     activateCalculatorMode(linkedTab.dataset.calculatorTab);
     linkedTab.focus({ preventScroll: true });
     linkedTab.scrollIntoView({ block: "start" });
-  } else if (window.location.hash === "#conversionReference") {
-    const reference = document.querySelector("#conversionReference");
+  } else if (["#conversionReference", "#calculatorGuide"].includes(window.location.hash)) {
+    const reference = document.querySelector(window.location.hash);
     reference.open = true;
     reference.querySelector("summary").focus({ preventScroll: true });
     reference.scrollIntoView({ block: "start" });
@@ -3467,6 +3493,7 @@ document.querySelectorAll(".calculator-guide a[href^='#']").forEach((link) => {
 
 calculatorTabs.forEach((button, index) => {
   button.addEventListener("click", () => {
+    updateCalculatorLink(button.dataset.calculatorTab);
     activateCalculatorMode(button.dataset.calculatorTab);
   });
 
@@ -3491,6 +3518,7 @@ calculatorTabs.forEach((button, index) => {
     event.preventDefault();
     const nextButton = calculatorTabs[nextIndex];
     nextButton.focus();
+    updateCalculatorLink(nextButton.dataset.calculatorTab);
     activateCalculatorMode(nextButton.dataset.calculatorTab);
   });
 });
@@ -3504,6 +3532,11 @@ targetDrugSelect.addEventListener("input", () => {
     syncReduction(control);
     calculate();
   });
+});
+
+reductionNumber.addEventListener("change", () => {
+  syncReductionControls(reductionNumber, reductionRange, reductionNumber, 100, { commit: true });
+  calculate();
 });
 
 document.querySelectorAll("[data-reduction-quickset]").forEach((button) => {
@@ -3547,6 +3580,11 @@ buprenorphineMeddRangeSelect.addEventListener("input", () => {
   renderBuprenorphineSchedule();
 });
 
+methadoneReductionNumber.addEventListener("change", () => {
+  syncReductionControls(methadoneReductionNumber, methadoneReductionRange, methadoneReductionNumber, 90, { commit: true });
+  calculateMethadone();
+});
+
 const syncBenzoReduction = (source) =>
   syncReductionControls(source, benzoReductionRange, benzoReductionNumber, 50);
 
@@ -3568,6 +3606,9 @@ const syncBenzoReduction = (source) =>
       calculateBenzo();
     });
     control.addEventListener("change", () => {
+      if (control === benzoReductionNumber) {
+        syncReductionControls(control, benzoReductionRange, benzoReductionNumber, 50, { commit: true });
+      }
       calculateBenzo();
     });
   }
@@ -3659,6 +3700,7 @@ if (pharmacokineticsGraphGrid) {
 
 exampleButton.addEventListener("click", () => {
   calculationModeSelect.value = "convert";
+  updateCalculatorLink("convert");
   setRegimenEntries([
     {
       drugId: "Hydromorphone_IV",
@@ -3683,6 +3725,7 @@ exampleButton.addEventListener("click", () => {
 
 mmeExampleButton.addEventListener("click", () => {
   calculationModeSelect.value = "mme";
+  updateCalculatorLink("mme");
   setRegimenEntries([
     {
       drugId: "Fentanyl_Patch_25",

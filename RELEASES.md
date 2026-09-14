@@ -48,9 +48,26 @@ git archive --format=zip --prefix=calc-med-1.0/ --output=calc-med-1.0-source.zip
 
 Git tags preserve the complete tracked source tree, including files outside `public/`. The per-file SHA-256 records use exact Git blob bytes; working-directory line-ending conversion can change a file's local byte hash. Hosting configuration outside Git, response headers, browser state, and the changing contents of external clinical references are not captured by these source archives.
 
+## Version 2.1 series (2026-09-14)
+
+The immutable `v2.1` tag identifies the initial SEO release at
+`b533417716545664674df8d464ea57796a84b7d9`. Later staging deployments retain the
+visible v2.1 designation and its cumulative **v1.0 to current** user-facing note.
+They are identified by their exact Git commit and successful GitHub Actions run,
+not by moving that tag. For example, `40b4bbcf4f529fad22976f72f5f59d078718e71d`
+was the compact-selector revision, verified and deployed by
+[run 34816181336](https://github.com/rb666/Equianalgesic_Dosing_Calculator_Staging/actions/runs/34816181336).
+
+The migration follow-up in this commit adds 0.1% reduction precision, a compact
+optional usage guide below the references, synchronized calculator URL fragments
+and a correction to the Codeine IV reference graph. Its clinical-content manifest
+is `2026-09-14.2`; its shared asset key is `20260914-migration-refinements-1`.
+The deployment workflow links its verification and deployment to this exact source
+commit. The approved fixture and v1.0/v2.0 historical records remain unchanged.
+
 ## Preservation policy
 
-- Never move, replace, delete, or reuse `v1.0` or `v2.0`. They refer permanently to the commits above, even if production or staging moves forward.
+- Never move, replace, delete, or reuse `v1.0`, `v2.0` or `v2.1`. They refer permanently to their recorded commits, even if production or staging moves forward.
 - Keep the original integrity records intact. Record later corrections or additional review evidence as dated additions that identify the relevant historical commit.
-- Use a new version tag for each future release. Advancing `main` or deploying a newer version does not change these historical identities.
+- Use a new version tag when assigning a new public version. Deployments within a version series use exact commits and their successful workflow runs; update the cumulative user note to describe net changes from v1.0. Advancing `main` does not change historical identities.
 - Do not equate a higher software version, passing tests, or unchanged ratios with a new clinical approval. Record any future committee review and its scope separately.

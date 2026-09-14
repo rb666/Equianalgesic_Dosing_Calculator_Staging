@@ -115,7 +115,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260914-selector-compact-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260914-migration-refinements-1" />
   </head>
   <body>
     <a class="skip-link" href="#calculatorTabs">Skip to calculators</a>
@@ -328,9 +328,10 @@
                     aria-describedby="conversionResultStatus"
                     name="reductionNumber"
                     type="number"
+                    inputmode="decimal"
                     min="0"
                     max="100"
-                    step="1"
+                    step="0.1"
                     value="0"
                   />
                   <span aria-hidden="true">%</span>
@@ -343,7 +344,7 @@
                 type="range"
                 min="0"
                 max="100"
-                step="1"
+                step="0.1"
                 value="0"
               />
               <div class="range-labels" aria-hidden="true">
@@ -645,9 +646,10 @@
                       aria-describedby="methadoneResultStatus"
                       name="methadoneReductionNumber"
                       type="number"
+                      inputmode="decimal"
                       min="0"
                       max="90"
-                      step="1"
+                      step="0.1"
                       value="0"
                     />
                     <span aria-hidden="true">%</span>
@@ -660,7 +662,7 @@
                   type="range"
                   min="0"
                   max="90"
-                  step="1"
+                  step="0.1"
                   value="0"
                 />
                 <div class="range-labels" aria-hidden="true">
@@ -898,9 +900,10 @@
                       aria-describedby="benzoResultStatus"
                       name="benzoReductionNumber"
                       type="number"
+                      inputmode="decimal"
                       min="0"
                       max="50"
-                      step="1"
+                      step="0.1"
                       value="0"
                     />
                     <span aria-hidden="true">%</span>
@@ -913,7 +916,7 @@
                   type="range"
                   min="0"
                   max="50"
-                  step="1"
+                  step="0.1"
                   value="0"
                 />
                 <div class="range-labels" aria-hidden="true">
@@ -977,44 +980,6 @@
             </div>
           </section>
         </section>
-      </section>
-
-      <section class="reference-section calculator-guide" id="calculatorGuide" aria-labelledby="calculatorGuideTitle">
-        <h2 id="calculatorGuideTitle">Using the opioid conversion and MME calculator</h2>
-        <p>
-          calc.med is a free equianalgesic dose calculator for clinicians. Review
-          a single medication or a regimen, compare opioid doses, and consult
-          the conversion tables and pharmacokinetics references on this page.
-          Calculations run in your browser; JavaScript is required to use the tools.
-        </p>
-        <h3>Choose the calculation you need</h3>
-        <ul class="calculator-guide-links">
-          <li><a href="#calculatorTabMme">Total MME calculator</a> — see the regimen's daily oral morphine equivalent (OME), also expressed here as morphine milligram equivalents (MME).</li>
-          <li><a href="#calculatorTabConvert">Opioid conversion calculator</a> — select a target drug and route, then review the equianalgesic estimate and safety adjustments.</li>
-          <li><a href="#calculatorTabMethadone">Methadone conversion calculator</a> — use the separate oral morphine-to-methadone tool and its cautions.</li>
-          <li><a href="#calculatorTabBuprenorphine">Buprenorphine transition schedules</a> — view the existing schedules and their formulation-specific cautions.</li>
-          <li><a href="#calculatorTabBenzo">Benzodiazepine equivalence calculator</a> — compare the listed benzodiazepines using the tool's diazepam reference.</li>
-        </ul>
-        <h3>Enter a regimen and review the result</h3>
-        <p>
-          Select each drug and route, enter the dose per administration and doses
-          per day, and add another drug when needed. Check the units and entry
-          summaries. For conversion, choose the target opioid and the intended
-          safety reduction, then review any kidney or liver guidance separately.
-          A regimen MME total and a target-drug dose answer different questions;
-          confirm which tool and units you are using.
-        </p>
-        <h3>References and clinical use</h3>
-        <p>
-          Open <a href="#conversionReference">conversion tables and sources</a>
-          to inspect the values and references used. These include
-          <a href="https://pain.ucsf.edu/opioid-analgesics/calculation-oral-morphine-equivalents-ome">UCSF's oral morphine equivalent reference</a>
-          and the
-          <a href="https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm">CDC opioid prescribing guideline</a>.
-          Equivalences are approximate; sources, routes, and formulations can
-          differ. This clinical decision support tool does not replace
-          patient-specific assessment, institutional policy, or pharmacist review.
-        </p>
       </section>
 
       <details class="compact-section" id="conversionReference" aria-label="Conversion reference">
@@ -1102,6 +1067,47 @@
         </section>
       </details>
 
+      <details class="calculator-guide" id="calculatorGuide" aria-labelledby="calculatorGuideTitle">
+        <summary id="calculatorGuideTitle">How to use this calculator</summary>
+        <div class="calculator-guide-body">
+          <h2>Using the opioid conversion and MME calculator</h2>
+          <p>
+            calc.med is a free equianalgesic dose calculator for clinicians. Review
+            a single medication or a regimen, compare opioid doses, and consult
+            the conversion tables and pharmacokinetics references on this page.
+            Calculations run in your browser; JavaScript is required to use the tools.
+          </p>
+          <h3>Choose the calculation you need</h3>
+          <ul class="calculator-guide-links">
+            <li><a href="#calculatorTabMme">Total MME calculator</a> — see the regimen's daily oral morphine equivalent (OME), also expressed here as morphine milligram equivalents (MME).</li>
+            <li><a href="#calculatorTabConvert">Opioid conversion calculator</a> — select a target drug and route, then review the equianalgesic estimate and safety adjustments.</li>
+            <li><a href="#calculatorTabMethadone">Methadone conversion calculator</a> — use the separate oral morphine-to-methadone tool and its cautions.</li>
+            <li><a href="#calculatorTabBuprenorphine">Buprenorphine transition schedules</a> — view the existing schedules and their formulation-specific cautions.</li>
+            <li><a href="#calculatorTabBenzo">Benzodiazepine equivalence calculator</a> — compare the listed benzodiazepines using the tool's diazepam reference.</li>
+          </ul>
+          <h3>Enter a regimen and review the result</h3>
+          <p>
+            Select each drug and route, enter the dose per administration and doses
+            per day, and add another drug when needed. Check the units and entry
+            summaries. For conversion, choose the target opioid and the intended
+            safety reduction, then review any kidney or liver guidance separately.
+            A regimen MME total and a target-drug dose answer different questions;
+            confirm which tool and units you are using.
+          </p>
+          <h3>References and clinical use</h3>
+          <p>
+            Open <a href="#conversionReference">conversion tables and sources</a>
+            to inspect the values and references used. These include
+            <a href="https://pain.ucsf.edu/opioid-analgesics/calculation-oral-morphine-equivalents-ome">UCSF's oral morphine equivalent reference</a>
+            and the
+            <a href="https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm">CDC opioid prescribing guideline</a>.
+            Equivalences are approximate; sources, routes, and formulations can
+            differ. This clinical decision support tool does not replace
+            patient-specific assessment, institutional policy, or pharmacist review.
+          </p>
+        </div>
+      </details>
+
     </main>
 
     <footer>
@@ -1120,11 +1126,11 @@
               <p><strong>Changes since v1.0</strong></p>
               <p>The previously approved conversion ratios are unchanged.</p>
               <ul>
-                <li>Improved input validation and live results. Unavailable target drugs require a new selection.</li>
+                <li>Improved input validation and live results, with safety reductions adjustable in 0.1% increments. Unavailable target drugs require a new selection.</li>
                 <li>Improved kidney/liver warning handling and included the target drug and route with benzodiazepine results.</li>
-                <li>Corrected PK reference details and added direct product-label links. Mobile PK profiles now keep the selected chart and clinical details together.</li>
-                <li>Improved keyboard access, mobile layout, readability, and typography, with a more compact calculator selector.</li>
-                <li>Added a usage guide, direct calculator links, and clearer search and sharing previews.</li>
+                <li>Corrected reference details and added direct product-label links. Mobile PK profiles now keep the selected chart and clinical details together.</li>
+                <li>Improved keyboard access, mobile layout, readability, and typography.</li>
+                <li>Added a collapsible usage guide below the references, direct calculator links, and clearer search and sharing previews.</li>
                 <li>Urine drug screening tools are temporarily unavailable.</li>
               </ul>
             </div>
@@ -1259,8 +1265,8 @@
         window.setTimeout(showCalculatorLoadFailure, 5000);
       })();
     </script>
-    <script src="/calculator-core.js?v=20260914-selector-compact-1"></script>
-    <script src="/calculator-provenance.js?v=20260914-selector-compact-1"></script>
-    <script src="/script.js?v=20260914-selector-compact-1"></script>
+    <script src="/calculator-core.js?v=20260914-migration-refinements-1"></script>
+    <script src="/calculator-provenance.js?v=20260914-migration-refinements-1"></script>
+    <script src="/script.js?v=20260914-migration-refinements-1"></script>
   </body>
 </html>

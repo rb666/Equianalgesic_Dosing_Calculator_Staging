@@ -11,7 +11,7 @@
   };
 
   const schemaVersion = "1.0.0";
-  const manifestVersion = "2026-09-14.1";
+  const manifestVersion = "2026-09-14.2";
   const effectiveDate = "2026-09-14";
   const retrievedAt = "2026-08-08";
 
@@ -299,9 +299,9 @@
       "methadone.specialty-iv-route-factor",
       "CalculatorCore.METHADONE_ROUTE_FACTORS.iv",
     ],
-    ["policy.general-safety-reduction", "0-100 whole percent"],
-    ["policy.methadone-safety-reduction", "0-90 whole percent"],
-    ["policy.benzodiazepine-safety-reduction", "0-50 whole percent"],
+    ["policy.general-safety-reduction", "0-100 percent in 0.1% increments"],
+    ["policy.methadone-safety-reduction", "0-90 percent in 0.1% increments"],
+    ["policy.benzodiazepine-safety-reduction", "0-50 percent in 0.1% increments"],
     ["policy.zero-inputs", "tool-specific zero contract"],
     ["policy.maximum-inputs", "no clinical maximum; finite arithmetic required"],
     ["policy.organ-composition", "independent; never automatically stacked"],
@@ -454,7 +454,7 @@
     manifestVersion,
     effectiveDate,
     contentDigest:
-      "sha256-6a4bbdc8fe388ef42104e16dc9f63ce02fc79cb51b6d41d38b001b0c9e3433f6",
+      "sha256-62d60779a7efd25a8e1511e310963e7debf28110f9799ab75407911e36219375",
     clinicalReview: {
       status: "unreviewed",
       reviewer: null,
@@ -482,6 +482,7 @@
       patchQuantityStep: 0.5,
       methadoneOmeMinimum: 0,
       methadoneOmeWholeNumber: true,
+      safetyReductionStep: 0.1,
       benzodiazepineDoseExclusiveMinimum: 0,
       organComposition: "independent-not-stacked",
     },

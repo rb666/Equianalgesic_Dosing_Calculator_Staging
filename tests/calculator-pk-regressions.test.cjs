@@ -5,37 +5,46 @@ const { evaluateArray, scriptText } = require("./calculator-test-helpers.cjs");
 require("../public/calculator-provenance.js");
 const manifest = global.CALCULATOR_PROVENANCE;
 
-test("PK cards do not present the IM tramadol peak as an IV concentration curve", () => {
-  const rows = evaluateArray("pharmacokineticsRows");
-  const grid = { innerHTML: "" };
-  const picker = { innerHTML: "", value: "" };
-  const renderer = scriptText.slice(
-    scriptText.indexOf("const formatGraphTime ="),
-    scriptText.indexOf("const renderSelectedPharmacokineticsDetail ="),
-  );
+for (const { drug, imPeakMinutes, oralPeakHours } of [
+  { drug: "Codeine", imPeakMinutes: 30, oralPeakHours: 1 },
+  { drug: "Tramadol", imPeakMinutes: 45, oralPeakHours: 2 },
+]) {
+  test(`PK cards do not present the IM ${drug.toLowerCase()} peak as an IV concentration curve`, () => {
+    const rows = evaluateArray("pharmacokineticsRows");
+    const intravenousName = `${drug} IV`;
+    const oralName = `${drug} oral (IR)`;
+    const grid = { innerHTML: "" };
+    const picker = { innerHTML: "", value: "" };
+    const renderer = scriptText.slice(
+      scriptText.indexOf("const formatGraphTime ="),
+      scriptText.indexOf("const renderSelectedPharmacokineticsDetail ="),
+    );
 
-  vm.runInNewContext(`${renderer}\nrenderPharmacokineticsGraphs();`, {
-    pharmacokineticsRows: rows.filter((row) =>
-      ["Tramadol IV", "Tramadol oral (IR)"].includes(row.name),
-    ),
-    pharmacokineticsGraphGrid: grid,
-    pharmacokineticsProfileSelect: picker,
-    selectedPharmacokineticsIndex: 0,
-    formatDose: String,
+    vm.runInNewContext(`${renderer}\nrenderPharmacokineticsGraphs();`, {
+      pharmacokineticsRows: rows.filter((row) =>
+        [intravenousName, oralName].includes(row.name),
+      ),
+      pharmacokineticsGraphGrid: grid,
+      pharmacokineticsProfileSelect: picker,
+      selectedPharmacokineticsIndex: 0,
+      formatDose: String,
+    });
+
+    const [intravenousCard, oralCard] = grid.innerHTML.match(/<button[\s\S]*?<\/button>/g);
+    assert.ok(intravenousCard.includes(intravenousName));
+    assert.match(intravenousCard, /Numeric profile not plotted/);
+    assert.ok(intravenousCard.includes(
+      `${imPeakMinutes}-minute peak applies to IM administration, not IV use`,
+    ));
+    assert.doesNotMatch(intravenousCard, /<svg|Peak:/);
+    assert.ok(oralCard.includes(oralName));
+    assert.match(oralCard, /<svg/);
+    assert.ok(oralCard.includes(`Peak: ~${oralPeakHours} h`));
+    assert.equal(picker.value, "0");
+    assert.ok(picker.innerHTML.includes(`<option value="0">${intravenousName}</option>`));
+    assert.ok(picker.innerHTML.includes(`<option value="1">${oralName}</option>`));
   });
-
-  const [intravenousCard, oralCard] = grid.innerHTML.match(/<button[\s\S]*?<\/button>/g);
-  assert.match(intravenousCard, /Tramadol IV/);
-  assert.match(intravenousCard, /Numeric profile not plotted/);
-  assert.match(intravenousCard, /45-minute peak applies to IM administration, not IV use/);
-  assert.doesNotMatch(intravenousCard, /<svg|Peak: ~45/);
-  assert.match(oralCard, /Tramadol oral \(IR\)/);
-  assert.match(oralCard, /<svg/);
-  assert.match(oralCard, /Peak: ~2 h/);
-  assert.equal(picker.value, "0");
-  assert.match(picker.innerHTML, /<option value="0">Tramadol IV<\/option>/);
-  assert.match(picker.innerHTML, /<option value="1">Tramadol oral \(IR\)<\/option>/);
-});
+}
 
 test("tapentadol IR interaction guidance preserves the MAOI exclusion and serotonin warning", () => {
   const row = evaluateArray("pharmacokineticsRows").find(

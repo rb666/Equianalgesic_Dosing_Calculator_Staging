@@ -7,7 +7,7 @@ approval record.
 ## Current version and status
 
 - Manifest: `public/calculator-provenance.js`
-- Manifest version: `2026-09-14.1`
+- Manifest version: `2026-09-14.2`
 - Effective date: `2026-09-14`
 - Overall ruleset review status: **unreviewed**; existing conversion ratios have committee approval confirmed by the owner, as described below.
 - Existing conversion-ratio approval: **owner attestation recorded on 2026-09-13**. Committee identities, credentials and original review dates were not supplied. No approval was attested for the other clinical guidance.
@@ -32,8 +32,9 @@ Traceability and passing tests do not turn a local rule into an approved rule.
   display bound; full numeric precision remains in the calculation. It is not a
   recommendation about measurable or dispensable dose increments.
 - Clearing a safety-reduction field leaves the result unavailable until a
-  percentage is entered. Existing valid-input rounding, ranges and defaults are
-  unchanged. Invalid eGFR input blocks Conversion until corrected or cleared,
+  percentage is entered. Safety reductions use 0.1% increments as requested by
+  the owner on 2026-09-14; existing ranges and defaults are unchanged.
+  Invalid eGFR input blocks Conversion until corrected or cleared,
   but does not block Total MME where organ adjustments do not apply;
   an intentionally empty eGFR still means optional kidney guidance is omitted.
 - Methadone OME may be zero and must be a whole number. Benzodiazepine source dose
@@ -105,6 +106,23 @@ The clinical-content manifest changes only for two reference corrections:
 Both primary references were retrieved on 2026-09-14. Belbuca/Suboxone label links
 are now visible with their existing off-label schedule caveat; stale UDS source
 rows were removed. This work does not attest a new clinical committee review.
+
+## Migration assessment follow-up (2026-09-14)
+
+Manifest `2026-09-14.2` records the owner's requested change from whole-percent
+rounding to 0.1% increments for opioid, methadone and benzodiazepine safety
+reductions. Typed decimal drafts are retained while editing; committing an input
+rounds to the nearest tenth (half up) within the existing 100%, 90% and 50%
+limits. Empty drafts remain invalid rather than becoming zero. Dose/frequency
+constraints, presets, populated defaults and approved conversion tables remain
+unchanged.
+
+Codeine IV no longer plots the cited injection label's IM absorption peak as an
+IV curve. The [MHRA assessment, sections 4.2 and 5.2](https://mhraproducts4853.blob.core.windows.net/docs/0858170bda543fc8bb09f20876ba508aa199d95d)
+describes IM administration and an approximately 30-minute IM peak. The IV
+profile is explicitly unavailable; its source links and approved conversion row
+are retained. This correction changes no conversion ratio or dose calculation.
+The source was retrieved on 2026-09-14. No new clinical approval is implied.
 
 ## Consumer-facing copy boundary
 

@@ -98,7 +98,7 @@ function mainCalculatorContext() {
     setAttribute(name, value) { this[name] = value; },
   });
   const context = {
-    calculatorCore: core, findOption, clampReduction: (value) => core.clampWholePercent(value, 100),
+    calculatorCore: core, findOption, clampReduction: (value) => core.clampPercent(value, 100),
     formatDose: core.formatDose, setModeVisibility() {}, updateRenalBandNote() {},
     hasValidReductionInput: () => true,
     parseRegimenEntries: () => [parseEntry({ drugId: "Morphine_Oral", dose: "10", dosesPerDay: "3" })],

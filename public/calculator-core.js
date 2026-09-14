@@ -82,8 +82,14 @@
     return `${formatDose(minimum)}-${formatDose(maximum)} ${unitLabel}`;
   };
 
-  const clampWholePercent = (value, maximum) =>
-    Math.min(maximum, Math.max(0, Math.round(Number(value) || 0)));
+  const clampPercent = (value, maximum) => {
+    const boundedValue = Math.min(maximum, Math.max(0, Number(value) || 0));
+    // Shift the decimal before rounding so a .05 tie is not lost to binary multiplication.
+    // Clamp first so extreme finite input never overflows while shifting.
+    const [significand, exponent = "0"] = String(boundedValue).split("e");
+    const shiftedValue = Number(`${significand}e${Number(exponent) + 1}`);
+    return Math.min(maximum, Math.round(shiftedValue) / 10);
+  };
 
   const isStepAligned = (value, step) => {
     const scaledValue = value / step;
@@ -192,7 +198,7 @@
       return Object.freeze({ valid: false, reason: "invalid-input" });
     }
 
-    const normalizedReduction = clampWholePercent(reductionPercentage, 100);
+    const normalizedReduction = clampPercent(reductionPercentage, 100);
     const rawTargetDose = getTargetDose(targetOption, oralMorphineEquivalent);
     const adjustedTargetDose = rawTargetDose * (1 - normalizedReduction / 100);
 
@@ -278,7 +284,7 @@
     }
 
     const bracket = getMethadoneBracket(oralMorphineDaily, ratioTable);
-    const normalizedReduction = clampWholePercent(reductionPercentage, 90);
+    const normalizedReduction = clampPercent(reductionPercentage, 90);
     const rawOralMethadoneDaily = oralMorphineDaily / bracket.ratio;
     const reducedOralMethadoneDaily =
       rawOralMethadoneDaily * (1 - normalizedReduction / 100);
@@ -326,7 +332,7 @@
       return Object.freeze({ valid: false, reason: "invalid-input" });
     }
 
-    const normalizedReduction = clampWholePercent(reductionPercentage, 50);
+    const normalizedReduction = clampPercent(reductionPercentage, 50);
     const rawDiazepamEquivalent = (sourceDose / sourceEquivalent) * 10;
     const reducedDiazepamEquivalent =
       rawDiazepamEquivalent * (1 - normalizedReduction / 100);
@@ -384,7 +390,7 @@
     calculateIndependentDoseRange,
     calculateMethadone,
     calculateRegimenEntry,
-    clampWholePercent,
+    clampPercent,
     formatDose,
     formatDoseRange,
     getCurrentOralMorphineEquivalent,

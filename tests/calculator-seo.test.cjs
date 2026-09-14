@@ -43,6 +43,42 @@ test("search snippets exclude calculation outputs and static guide links resolve
   assert.doesNotMatch(html, /name="keywords"|"@type":\s*"FAQPage"/);
 });
 
+test("the usage guide remains complete in initial HTML inside a closed disclosure after references", () => {
+  const guide = html.match(/<details\b([^>]*\bid="calculatorGuide"[^>]*)>([\s\S]*?)<\/details>/);
+  const references = html.match(/<details\b[^>]*\bid="conversionReference"[^>]*>[\s\S]*?<\/details>/);
+  assert.ok(guide, "guide must be a native details disclosure");
+  assert.ok(references, "conversion references must remain available");
+  assert.ok(guide.index > references.index + references[0].length, "references precede the guide");
+  assert.ok(guide.index < html.indexOf("</main>"), "guide remains in the main page content");
+  assert.doesNotMatch(guide[1], /(?:^|\s)(?:open|hidden)(?=\s|=|$)/);
+
+  const summary = guide[2].match(/^\s*<summary\b([^>]*)>([^<]+)<\/summary>/);
+  assert.ok(summary, "native summary is the first disclosure child");
+  assert.equal(summary[2].trim(), "How to use this calculator");
+  const titleId = guide[1].match(/aria-labelledby="([^"]+)"/)?.[1];
+  assert.ok(titleId);
+  assert.ok(summary[1].includes(`id="${titleId}"`), "accessible title points to the summary");
+  assert.doesNotMatch(summary[1], /tabindex="-1"|\srole=/);
+
+  for (const content of [
+    "Using the opioid conversion and MME calculator",
+    "Choose the calculation you need",
+    "Enter a regimen and review the result",
+    "References and clinical use",
+    "JavaScript is required to use the tools.",
+    "patient-specific assessment, institutional policy, or pharmacist review.",
+  ]) assert.ok(guide[2].includes(content), content);
+
+  const guideLinks = [...guide[2].matchAll(/href="#([^"]+)"/g)].map(match => match[1]);
+  assert.deepEqual(guideLinks, [
+    "calculatorTabMme", "calculatorTabConvert", "calculatorTabMethadone",
+    "calculatorTabBuprenorphine", "calculatorTabBenzo", "conversionReference",
+  ]);
+  assert.ok(guide[2].includes('href="https://pain.ucsf.edu/opioid-analgesics/calculation-oral-morphine-equivalents-ome"'));
+  assert.ok(guide[2].includes('href="https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm"'));
+  assert.doesNotMatch(guide[2], /<script\b|<template\b|aria-hidden="true"/);
+});
+
 test("direct tool links activate only existing tabs and leave arbitrary URL fragments alone", () => {
   const start = scriptText.indexOf("const activateLinkedCalculator = ");
   const end = scriptText.indexOf("\n};", start) + 3;
@@ -53,10 +89,20 @@ test("direct tool links activate only existing tabs and leave arbitrary URL frag
     focus() { calls.push("focus"); }, scrollIntoView() { calls.push("scroll"); },
   }));
   const location = {hash: ""};
-  const reference = {open: false, querySelector: () => ({focus() { calls.push("reference-focus"); }}), scrollIntoView() { calls.push("reference-scroll"); }};
+  const disclosures = Object.fromEntries(["conversionReference", "calculatorGuide"].map(id => [id, {
+    open: false,
+    querySelector(selector) {
+      assert.equal(selector, "summary");
+      return {focus() { calls.push(`${id}-focus`); }};
+    },
+    scrollIntoView() { calls.push(`${id}-scroll`); },
+  }]));
   const activate = vm.runInNewContext(scriptText.slice(start, end) + ";activateLinkedCalculator;", {
     calculatorTabs: tabs, window: {location}, activateCalculatorMode: mode => calls.push(mode),
-    document: {querySelector: selector => { assert.equal(selector, "#conversionReference"); return reference; }},
+    document: {querySelector: selector => {
+      assert.ok(disclosures[selector.slice(1)], selector);
+      return disclosures[selector.slice(1)];
+    }},
   });
   for (const tab of tabs) {
     calls.length = 0; location.hash = `#${tab.id}`; activate();
@@ -65,7 +111,65 @@ test("direct tool links activate only existing tabs and leave arbitrary URL frag
   for (const hash of ["", "#unknown", "#calculatorTabs", "#calculatorTabMme?dose=100", "#<script>"]) {
     calls.length = 0; location.hash = hash; activate(); assert.deepEqual(calls, []);
   }
-  location.hash = "#conversionReference"; activate();
-  assert.equal(reference.open, true);
-  assert.deepEqual(calls, ["reference-focus", "reference-scroll"]);
+  for (const [id, disclosure] of Object.entries(disclosures)) {
+    calls.length = 0; location.hash = `#${id}`; activate();
+    assert.equal(disclosure.open, true);
+    assert.deepEqual(calls, [`${id}-focus`, `${id}-scroll`]);
+  }
+});
+
+test("tool selection replaces stale fragments while preserving the URL context and history entry", () => {
+  const start = scriptText.indexOf("const updateCalculatorLink = ");
+  const end = scriptText.indexOf("\n};", start) + 3;
+  assert.ok(start >= 0 && end > start);
+  const tabs = [
+    ["mme", "calculatorTabMme"], ["convert", "calculatorTabConvert"],
+    ["methadone", "calculatorTabMethadone"], ["buprenorphine", "calculatorTabBuprenorphine"],
+    ["benzo", "calculatorTabBenzo"],
+  ].map(([mode, id]) => ({ id, dataset: { calculatorTab: mode } }));
+  const pathname = "/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/";
+  const search = "?view=compact&source=review%20link";
+  const location = { pathname, search, hash: "#conversionReference" };
+  const state = Object.freeze({ scrollPosition: 420, entryId: "existing-entry" });
+  const replacements = [];
+  const history = {
+    state,
+    length: 7,
+    replaceState(nextState, title, url) {
+      replacements.push({ nextState, title, url });
+      location.hash = url.slice(url.indexOf("#"));
+    },
+    pushState() { assert.fail("switching tools must not add a history entry"); },
+  };
+  const update = vm.runInNewContext(scriptText.slice(start, end) + ";updateCalculatorLink;", {
+    calculatorTabs: tabs, window: { location, history },
+  });
+
+  for (const tab of tabs) {
+    location.hash = "#conversionReference";
+    replacements.length = 0;
+    update(tab.dataset.calculatorTab);
+    assert.equal(replacements.length, 1);
+    assert.equal(replacements[0].nextState, state, "existing history state is passed through");
+    assert.equal(replacements[0].title, "");
+    assert.equal(replacements[0].url, `${pathname}${search}#${tab.id}`);
+    assert.equal(location.pathname, pathname);
+    assert.equal(location.search, search);
+    assert.equal(location.hash, `#${tab.id}`);
+    assert.equal(history.state, state);
+    assert.equal(history.length, 7);
+
+    update(tab.dataset.calculatorTab);
+    assert.equal(replacements.length, 1, "an already-correct fragment is left alone");
+  }
+
+  for (const mode of ["", undefined, "unknown", "convert?dose=100"]) {
+    replacements.length = 0;
+    location.hash = "#calculatorGuide";
+    update(mode);
+    assert.equal(replacements.length, 0);
+    assert.equal(location.hash, "#calculatorGuide");
+    assert.equal(history.state, state);
+    assert.equal(history.length, 7);
+  }
 });

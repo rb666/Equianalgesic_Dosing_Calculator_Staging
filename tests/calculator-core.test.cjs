@@ -70,8 +70,80 @@ test("mixed regimen and intentional reductions remain characterized", () => {
   closeTo(totalOme, 90);
   closeTo(result.rawTargetDose, 60);
   closeTo(result.adjustedTargetDose, 45);
-  assert.equal(core.clampWholePercent(12.5, 100), 13);
-  assert.equal(core.clampWholePercent(1000, 100), 100);
+  assert.equal(core.clampPercent(12.5, 100), 12.5);
+  assert.equal(core.clampPercent(1000, 100), 100);
+});
+
+test("percentage rounding preserves tenths, handles decimal ties, and clamps before scaling", () => {
+  const cases = [
+    [0, 0], [12.5, 12.5], [12.54, 12.5], [12.56, 12.6],
+    [0.04, 0], [0.05, 0.1], [0.04999999999999999, 0],
+    [0.05000000000000001, 0.1], [1.15, 1.2], [1.25, 1.3],
+    [12.44999999999999, 12.4], [12.45, 12.5],
+    ["1.256e1", 12.6], [Number.MIN_VALUE, 0], [-Number.MAX_VALUE, 0],
+  ];
+  for (const maximum of [100, 90, 50]) {
+    for (const [input, expected] of cases) {
+      assert.equal(core.clampPercent(input, maximum), expected, `${input} / ${maximum}`);
+    }
+    for (const input of [maximum, maximum + 0.01, maximum + 1000, Number.MAX_VALUE]) {
+      assert.equal(core.clampPercent(input, maximum), maximum, String(input));
+    }
+    for (let tenth = 0; tenth <= maximum * 10; tenth += 1) {
+      assert.equal(core.clampPercent(tenth / 10, maximum), tenth / 10);
+      if (tenth < maximum * 10) {
+        const midpoint = (tenth * 10 + 5) / 100;
+        assert.equal(core.clampPercent(midpoint, maximum), (tenth + 1) / 10, String(midpoint));
+        assert.equal(core.clampPercent(midpoint - 0.000001, maximum), tenth / 10);
+      }
+    }
+  }
+});
+
+test("all three calculators apply the same one-decimal safety reduction to their doses", () => {
+  const morphine = conversionOptions.find((item) => item.id === "Morphine_Oral");
+  const lorazepam = benzoOptions.find((item) => item.id === "lorazepam_po");
+  const diazepam = benzoOptions.find((item) => item.id === "diazepam_po");
+  const calculators = [
+    {
+      maximum: 100,
+      run: (reductionPercentage) => core.calculateConversion({
+        oralMorphineEquivalent: 100, targetOption: morphine, reductionPercentage,
+      }),
+      dose: (result) => result.adjustedTargetDose,
+      baseline: 100,
+    },
+    {
+      maximum: 90,
+      run: (reductionPercentage) => core.calculateMethadone({
+        oralMorphineDaily: 200, ratioTable: methadoneRatioTable, reductionPercentage,
+        routeFactor: core.METHADONE_ROUTE_FACTORS.oral,
+      }),
+      dose: (result) => result.reducedMethadoneDaily,
+      baseline: 25,
+    },
+    {
+      maximum: 50,
+      run: (reductionPercentage) => core.calculateBenzodiazepine({
+        sourceDose: 2, sourceEquivalent: lorazepam.equiv, targetEquivalent: diazepam.equiv,
+        reductionPercentage,
+      }),
+      dose: (result) => result.targetDose,
+      baseline: 10,
+    },
+  ];
+  for (const calculator of calculators) {
+    for (const [input, normalized] of [
+      [12.5, 12.5], [12.56, 12.6], [12.45, 12.5],
+      [0, 0], [25, 25], [50, 50], [-100, 0],
+      [calculator.maximum, calculator.maximum], [Number.MAX_VALUE, calculator.maximum],
+    ]) {
+      const result = calculator.run(input);
+      assert.equal(result.valid, true);
+      assert.equal(result.reductionPercentage, normalized);
+      closeTo(calculator.dose(result), calculator.baseline * (1 - normalized / 100));
+    }
+  }
 });
 
 test("input policy distinguishes valid zero, blank, precision, and overflow", () => {

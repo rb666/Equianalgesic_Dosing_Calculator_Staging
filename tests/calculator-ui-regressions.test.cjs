@@ -29,6 +29,56 @@ test("clearing a reduction keeps an invalid draft instead of selecting zero", ()
   }
 });
 
+test("decimal reduction drafts are preserved until commit and sliders update both controls", () => {
+  const start = scriptText.indexOf("const hasValidReductionInput = ");
+  const end = scriptText.indexOf("\nconst syncReduction = ", start);
+  const {sync, valid} = vm.runInNewContext(scriptText.slice(start, end) +
+    ";({sync: syncReductionControls, valid: hasValidReductionInput});", {calculatorCore: core});
+  const input = (initial, maximum) => {
+    let value = initial;
+    return {
+      get value() { return value; },
+      set value(next) { value = String(next); },
+      get validity() {
+        const numeric = Number(value);
+        return {valid: value.trim() !== "" && Number.isFinite(numeric) &&
+          numeric >= 0 && numeric <= maximum && core.isStepAligned(numeric, 0.1)};
+      },
+      setAttribute(name, next) { this[name] = next; },
+    };
+  };
+  for (const maximum of [100, 90, 50]) {
+    const range = input("25", maximum);
+    const number = input("12.5", maximum);
+    sync(number, range, number, maximum);
+    assert.equal(number.value, "12.5");
+    assert.equal(range.value, "12.5");
+    assert.equal(valid(number), true);
+
+    number.value = "12.56";
+    sync(number, range, number, maximum);
+    assert.equal(number.value, "12.56");
+    assert.equal(range.value, "12.6");
+    assert.equal(valid(number), false);
+    assert.equal(number["aria-invalid"], "true");
+    sync(number, range, number, maximum, {commit: true});
+    assert.equal(number.value, "12.6");
+    assert.equal(range.value, "12.6");
+    assert.equal(valid(number), true);
+
+    number.value = "";
+    sync(number, range, number, maximum, {commit: true});
+    assert.equal(number.value, "");
+    assert.equal(range.value, "12.6");
+    assert.equal(valid(number), false);
+    range.value = "0.1";
+    sync(range, range, number, maximum);
+    assert.equal(number.value, "0.1");
+    assert.equal(range.value, "0.1");
+    assert.equal(valid(number), true);
+  }
+});
+
 test("rebuilding regimen fields preserves cleared inputs and actual zero", () => {
   const start = scriptText.indexOf("const buildRegimenEntryMarkup = ");
   const end = scriptText.indexOf("\n};", start) + 3;

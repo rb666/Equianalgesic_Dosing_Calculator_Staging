@@ -1720,7 +1720,38 @@ dd {
 }
 
 .calculator-guide {
+  margin: -8px 0 24px;
   line-height: 1.65;
+}
+
+.calculator-guide > summary {
+  width: fit-content;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 8px 4px;
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.calculator-guide > summary:hover {
+  color: var(--ink);
+}
+
+.calculator-guide > summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.calculator-guide-body {
+  padding: 12px 0 4px;
+}
+
+.calculator-guide-body > h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
 }
 
 .calculator-guide p,

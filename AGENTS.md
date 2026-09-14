@@ -43,6 +43,13 @@ SEO changes must preserve the staging indexing exclusion and the production hold
 
 The footer version note is user-facing. Describe visible improvements and tool availability; keep internal file retention, repository, and deployment details in project documentation.
 
+The owner requested on 2026-09-14 that this note remain a cumulative **net comparison from frozen v1.0 to the current version**, not a deployment-by-deployment log. Its source of truth is the single `#version-notes` disclosure in `public/opioidcalculator.html`. For every update, review the note against v1.0 (`6fde4f914cafa7d21cd127c73a95f106c4e88524`) and the resulting implementation, and include any necessary wording changes in the same commit as the implementation. Before every deployment, verify that the note is current.
+
+- Update an existing item for the same behavior/value instead of appending intermediate edits. If X changes from 2 to 5 to 7 to 11, report only **X: 2 → 11**.
+- If a behavior/value returns to its v1.0 state, remove that difference from the note. If only part of an item is reverted, describe only the remaining differences. Restored original input defaults, for example, are not a new difference from v1.0.
+- Consolidate overlapping items by user-visible outcome. Do not create extra footer notes for each commit or deployment, or invent an entry for changes with no user-visible effect.
+- Preserve the unchanged-approved-ratios statement and its scoped attestation. Net-change wording must not rewrite Git history, immutable v1.0/v2.0 tags, or historical release/audit records; those retain the detailed sequence.
+
 ## Preserve approved ratios
 
 The owner confirmed on 2026-09-13 that the existing conversion ratios were approved by clinical oversight committees. Preserve them. Do not replace them with different published ratios or label them unapproved because an approval document is not stored here. The scoped user attestation is recorded separately from the overall review status of other clinical content.

@@ -3548,15 +3548,26 @@ const activateCalculatorMode = (mode) => {
 
 const updateCalculatorLink = (mode) => {
   const tab = calculatorTabs.find((button) => button.dataset.calculatorTab === mode);
-  if (!tab || window.location.hash === `#${tab.id}`) return;
+  if (!tab) return;
+  const url = new URL(window.location.href);
+  url.searchParams.set("tool", mode);
+  url.hash = "";
+  if (url.href === window.location.href) return;
 
   // Switching tools should keep a copied link accurate without adding history
   // entries or scrolling away from the current controls. Inputs stay out of URLs.
   window.history.replaceState(
     window.history.state,
     "",
-    `${window.location.pathname}${window.location.search}#${tab.id}`,
+    url,
   );
+};
+
+const restoreCalculatorSelection = () => {
+  const mode = new URLSearchParams(window.location.search).get("tool");
+  if (calculatorTabs.some((button) => button.dataset.calculatorTab === mode)) {
+    activateCalculatorMode(mode);
+  }
 };
 
 // Static guide links can open a tool directly without putting clinical inputs in URLs.
@@ -3574,7 +3585,10 @@ const activateLinkedCalculator = ({ moveFocus = true } = {}) => {
   }
 };
 
-window.addEventListener("hashchange", () => activateLinkedCalculator());
+window.addEventListener("hashchange", () => {
+  if (!window.location.hash) restoreCalculatorSelection();
+  else activateLinkedCalculator();
+});
 
 document.querySelectorAll(".calculator-guide a[href^='#']").forEach((link) => {
   link.addEventListener("click", () => {
@@ -3847,6 +3861,7 @@ calculate();
 calculateMethadone();
 populateBenzoSelects();
 calculateBenzo();
-// Restore the linked tool on load without treating a refresh as keyboard navigation.
+// Query selection restores the tool without focusing or scrolling to its tab.
+restoreCalculatorSelection();
 activateLinkedCalculator({ moveFocus: false });
 document.documentElement.dataset.calculatorReady = "true";

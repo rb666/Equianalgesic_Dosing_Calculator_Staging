@@ -265,13 +265,25 @@ test("GitHub Pages preview is allowlisted, preserves the calculator, and can be 
   assert.match(wrongRepository.stderr, /targets .*Staging only/);
 });
 
-test("logo preview preserves shared calculator links and defaults invalid logo choices to original 06", () => {
+test("logo preview restores shared tool state without navigating to a focusable fragment", () => {
   const vm = require("node:vm");
   const previewScript = fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "preview.js"), "utf8");
   const logos = JSON.parse(fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "logos.json"), "utf8"));
   const rootUrl = "https://example.test/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/";
-  for (const [search, expectedLogo] of [["", "06"], ["?logo=02", "02"], ["?logo=99", "06"], ["?logo=05&view=mobile&source=review%20link", "05"]]) {
-    const location = new URL(`${rootUrl}${search}#calculatorTabMethadone`);
+  const cases = [
+    ["#calculatorTabMme", "06", "mme", ""],
+    ["?logo=02#calculatorTabConvert", "02", "convert", ""],
+    ["?logo=99#calculatorTabMethadone", "06", "methadone", ""],
+    ["?logo=05&view=mobile&source=review%20link#calculatorTabBuprenorphine", "05", "buprenorphine", ""],
+    ["?logo=08&tool=mme#calculatorTabBenzo", "08", "benzo", ""],
+    ["?logo=03&tool=methadone", "03", "methadone", ""],
+    ["?logo=04&tool=benzo#conversionReference", "04", "benzo", "#conversionReference"],
+    ["?logo=07#unknown", "07", null, "#unknown"],
+    ["?logo=06#calculatorTabMme?dose=100", "06", null, "#calculatorTabMme?dose=100"],
+  ];
+  for (const [suffix, expectedLogo, expectedTool, expectedHash] of cases) {
+    const location = new URL(`${rootUrl}${suffix}`);
+    const state = Object.freeze({entryId: "current-preview"});
     const elements = new Map();
     const select = {replaceChildren() {}, addEventListener() {}, value: ""};
     const frame = {
@@ -289,19 +301,104 @@ test("logo preview preserves shared calculator links and defaults invalid logo c
         return elements.get(selector);
       }},
       location, URL, URLSearchParams,
-      history: {replaceState(_state, _title, url) {location.href = String(url);}},
+      history: {state, replaceState(nextState, _title, url) {
+        assert.equal(nextState, state, "preview navigation retains the existing history state");
+        location.href = String(url);
+      }},
       Option: function(text, value) {this.text = text; this.value = value;},
     };
     vm.runInNewContext(previewScript, context);
-    assert.equal(select.value, expectedLogo, search);
-    assert.equal(location.searchParams.get("logo"), expectedLogo, search);
+    assert.equal(select.value, expectedLogo, suffix);
+    assert.equal(location.searchParams.get("logo"), expectedLogo, suffix);
     assert.equal(location.searchParams.has("view"), false, "removed width toggle does not persist");
-    assert.equal(location.hash, "#calculatorTabMethadone");
+    assert.equal(location.searchParams.get("tool"), expectedTool, suffix);
+    assert.equal(location.hash, expectedHash, suffix);
     const child = new URL(frame.src);
     assert.equal(child.pathname, new URL("site/", rootUrl).pathname);
-    assert.equal(child.hash, location.hash, "shared calculator link reaches the iframe");
+    assert.equal(child.hash, expectedHash, "only intentional section links reach the iframe as fragments");
+    assert.equal(child.searchParams.get("tool"), expectedTool, "selected tool reaches the iframe as state");
     assert.equal(child.searchParams.has("logo"), false, "logo selection remains a wrapper setting");
     assert.equal(child.searchParams.has("view"), false);
     assert.equal(child.searchParams.get("source"), location.searchParams.get("source"), "other URL context is retained");
   }
+});
+
+test("logo preview immediately mirrors a ready calculator and later tool changes without reloading it", () => {
+  const vm = require("node:vm");
+  const previewScript = fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "preview.js"), "utf8");
+  const logos = JSON.parse(fs.readFileSync(path.join(repositoryRoot, "staging", "logo-preview", "logos.json"), "utf8"));
+  const rootUrl = "https://example.test/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/";
+  const location = new URL(`${rootUrl}?logo=02&view=mobile`);
+  const childLocation = new URL(`${rootUrl}site/?tool=benzo`);
+  const state = Object.freeze({entryId: "ready-frame"});
+  const parentListeners = new Map();
+  const childListeners = new Map();
+  const observers = [];
+  const tabs = {};
+  const doc = {
+    URL: childLocation.href,
+    readyState: "complete",
+    querySelector(selector) {
+      if (selector === ".brand-logo-card img") return {};
+      if (selector === "#calculatorTabs") return tabs;
+      assert.fail(`unexpected DOM access: ${selector}`);
+    },
+    querySelectorAll(selector) {
+      assert.equal(selector, "a[href]");
+      return [];
+    },
+  };
+  const frame = {
+    // iframe.src retains its attribute even after its document replaces history.
+    get src() {return new URL("site/", rootUrl).href;},
+    set src(_url) {assert.fail("an already-ready calculator must not reload to synchronize selection");},
+    getAttribute: () => "./site/",
+    contentDocument: doc,
+    contentWindow: {location: childLocation, addEventListener(name, callback) {childListeners.set(name, callback);}},
+    addEventListener() {},
+  };
+  const elements = new Map([["#siteFrame", frame]]);
+  const context = {
+    window: {logoPreviewCatalog: logos, addEventListener(name, callback) {parentListeners.set(name, callback);}},
+    document: {querySelector(selector) {
+      if (!elements.has(selector)) elements.set(selector, {replaceChildren() {}, addEventListener() {}});
+      return elements.get(selector);
+    }},
+    location, URL, URLSearchParams,
+    history: {state, replaceState(nextState, _title, url) {
+      assert.equal(nextState, state);
+      location.href = String(url);
+    }},
+    Option: function(text, value) {this.text = text; this.value = value;},
+    // Image decoding is independent of restoring tool state. Keep it pending to
+    // exercise initialization while artwork is still loading.
+    Image: class {decode() {return new Promise(() => {});}},
+    MutationObserver: class {
+      constructor(callback) {this.callback = callback; observers.push(this);}
+      observe(element, options) {
+        assert.equal(element, tabs);
+        assert.equal(options.attributeFilter[0], "aria-selected");
+      }
+      disconnect() {}
+    },
+  };
+  vm.runInNewContext(previewScript, context);
+  assert.equal(location.searchParams.get("logo"), "02");
+  assert.equal(location.searchParams.get("tool"), "benzo", "ready child selection is mirrored before image decoding finishes");
+  assert.equal(location.hash, "");
+  assert.equal(observers.length, 1);
+  childLocation.searchParams.set("tool", "methadone");
+  observers[0].callback();
+  assert.equal(location.searchParams.get("tool"), "methadone", "replaceState tab changes reach the shareable preview URL");
+  assert.equal(location.hash, "");
+  location.hash = "#conversionReference";
+  parentListeners.get("hashchange")();
+  assert.equal(childLocation.hash, "#conversionReference", "explicit section navigation still reaches the calculator");
+  childListeners.get("hashchange")();
+  assert.equal(location.hash, "#conversionReference");
+  childLocation.hash = "#calculatorTabMme";
+  childListeners.get("hashchange")();
+  assert.equal(location.searchParams.get("tool"), "mme");
+  assert.equal(location.hash, "", "an explicitly followed tab link becomes refresh-safe shareable state");
+  assert.equal(childLocation.hash, "#calculatorTabMme", "the preview leaves the child's explicit anchor action intact");
 });

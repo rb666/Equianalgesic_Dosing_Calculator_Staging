@@ -3,6 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script id="calculator-startup">
+      (() => {
+        // A saved tool is selection state, not a request to focus its tab.
+        const url = new URL(location.href);
+        const legacyTool = /^#calculatorTab(Mme|Convert|Methadone|Buprenorphine|Benzo)$/.exec(url.hash)?.[1].toLowerCase();
+        if (legacyTool) {
+          url.searchParams.set("tool", legacyTool);
+          url.hash = "";
+          history.replaceState(history.state, "", url);
+        }
+        history.scrollRestoration = performance.getEntriesByType("navigation")[0]?.type === "back_forward" ? "auto" : "manual";
+        window.addEventListener("pageshow", (event) => {
+          if (event.persisted) history.scrollRestoration = "auto";
+        });
+      })();
+    </script>
     <meta
       name="description"
       content="Calculate daily morphine milligram equivalents (MME) and equianalgesic opioid doses. Includes methadone and benzodiazepine tools for clinician use."
@@ -115,7 +131,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260914-teal-focus-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260914-refresh-navigation-1" />
   </head>
   <body>
     <a class="skip-link" href="#calculatorTabs">Skip to calculators</a>
@@ -1130,7 +1146,7 @@
                 <li>Improved kidney/liver warning handling and included the target drug and route with benzodiazepine results.</li>
                 <li>Corrected reference details, added source-linked PK illustrations, and clarified graph limitations. Mobile PK profiles keep the selected graph with its clinical details.</li>
                 <li>Improved keyboard access, mobile layout, readability, and typography.</li>
-                <li>Added a collapsible usage guide below the references, direct calculator links, and clearer search and sharing previews.</li>
+                <li>Added a collapsible usage guide below the references, direct calculator links that retain tool selection without jumping down the page on refresh, and clearer search and sharing previews.</li>
                 <li>Urine drug screening tools are temporarily unavailable.</li>
               </ul>
             </div>
@@ -1248,8 +1264,8 @@
         window.setTimeout(showCalculatorLoadFailure, 5000);
       })();
     </script>
-    <script src="/calculator-core.js?v=20260914-teal-focus-1"></script>
-    <script src="/calculator-provenance.js?v=20260914-teal-focus-1"></script>
-    <script src="/script.js?v=20260914-teal-focus-1"></script>
+    <script src="/calculator-core.js?v=20260914-refresh-navigation-1"></script>
+    <script src="/calculator-provenance.js?v=20260914-refresh-navigation-1"></script>
+    <script src="/script.js?v=20260914-refresh-navigation-1"></script>
   </body>
 </html>

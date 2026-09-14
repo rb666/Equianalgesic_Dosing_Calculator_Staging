@@ -15,12 +15,21 @@ let tabObserver = null;
 select.replaceChildren(...logos.map(logo => new Option(`${logo.id} · ${logo.title}`, logo.id)));
 select.value = selected.id;
 
-function syncUrl(hash = location.hash) {
+function syncUrl(source = location) {
   const url = new URL(location.href);
+  const sourceUrl = new URL(source.href);
+  const tool = sourceUrl.searchParams.get('tool');
+  if (tool) url.searchParams.set('tool', tool);
+  else url.searchParams.delete('tool');
   url.searchParams.set('logo', selected.id);
   url.searchParams.delete('view');
-  url.hash = hash;
-  history.replaceState(null, '', url);
+  url.hash = sourceUrl.hash;
+  const legacyTool = /^#calculatorTab(Mme|Convert|Methadone|Buprenorphine|Benzo)$/.exec(url.hash)?.[1].toLowerCase();
+  if (legacyTool) {
+    url.searchParams.set('tool', legacyTool);
+    url.hash = '';
+  }
+  history.replaceState(history.state, '', url);
 }
 
 function announceError(message) {
@@ -107,13 +116,14 @@ async function initializeFrame() {
       link.relList.add('noopener', 'noreferrer');
     }
   }
-  const mirrorHash = () => syncUrl(frame.contentWindow.location.hash);
+  const mirrorSelection = () => syncUrl(frame.contentWindow.location);
   // Calculator tabs use replaceState, so observe their selected state as well
   // as native anchor navigation. Never patch the calculator's own history API.
-  tabObserver = new MutationObserver(mirrorHash);
+  tabObserver = new MutationObserver(mirrorSelection);
   const tabs = doc.querySelector('#calculatorTabs');
   if (tabs) tabObserver.observe(tabs, { subtree: true, attributes: true, attributeFilter: ['aria-selected'] });
-  frame.contentWindow.addEventListener('hashchange', mirrorHash);
+  frame.contentWindow.addEventListener('hashchange', mirrorSelection);
+  mirrorSelection();
   await showLogo(selected);
 }
 

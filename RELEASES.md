@@ -71,6 +71,8 @@ At the owner's request, staging temporarily opens the eight-logo switcher and it
 
 This is a staging presentation experiment within the v2.1 series, not a new clinical version. The public calculator HTML, JS, CSS, clinical tables, approved-table fixture, and cumulative v1.0-to-v2.1 footer note remain unchanged. The exact release commit and GitHub Actions run identify the deployment. No historical tag, production deployment, or original/base repository changes.
 
+The staging refresh correction on 2026-09-14 separates saved tool selection from anchor navigation in the shared calculator and logo preview. Existing calculator-tab links become `?tool=...` selections; fresh loads and refreshes start at the top without focusing a selector button. Explicit guide links and keyboard navigation retain their focus behavior. The cumulative v2.1 note records the resulting direct-link behavior, and all approved clinical data remain unchanged.
+
 ## Preservation policy
 
 - Never move, replace, delete, or reuse `v1.0`, `v2.0` or `v2.1`. They refer permanently to their recorded commits, even if production or staging moves forward.

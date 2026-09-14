@@ -123,7 +123,135 @@ test("direct tool links activate only existing tabs and leave arbitrary URL frag
   }
 });
 
-test("tool selection replaces stale fragments while preserving the URL context and history entry", () => {
+test("startup normalizes legacy tool links before controls parse and prevents refresh scroll restoration", () => {
+  const bootstrap = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
+    .find(match => match[1].includes("scrollRestoration"));
+  assert.ok(bootstrap, "startup behavior is available before deferred application code");
+  assert.ok(bootstrap.index < html.indexOf("</head>"), "legacy fragments are handled before the matching controls parse");
+  const origin = "https://example.test";
+  const pathname = "/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/";
+  const state = Object.freeze({ entryId: "existing-entry" });
+  const cases = [
+    ["#calculatorTabMme", "mme"], ["#calculatorTabConvert", "convert"],
+    ["#calculatorTabMethadone", "methadone"], ["#calculatorTabBuprenorphine", "buprenorphine"],
+    ["#calculatorTabBenzo", "benzo"],
+    ["", null], ["#conversionReference", null], ["#calculatorGuide", null],
+    ["#calculatorTabs", null], ["#unknown", null], ["#calculatorTabMme?dose=100", null],
+  ];
+  for (const navigationType of ["navigate", "reload", "back_forward"]) {
+    for (const [hash, mode] of cases) {
+      const location = new URL(`${origin}${pathname}?source=review%20link&tool=convert${hash}`);
+      const history = {
+        state, scrollRestoration: "auto", length: 4,
+        replaceState(nextState, _title, url) {
+          assert.equal(nextState, state, "normalizing a legacy link keeps the current history state");
+          location.href = new URL(url, location).href;
+        },
+        pushState() { assert.fail("startup must not add history entries"); },
+      };
+      const context = {
+        location, history, URL, URLSearchParams,
+        performance: { getEntriesByType(type) {
+          assert.equal(type, "navigation");
+          return [{type: navigationType}];
+        }},
+        document: {documentElement: {dataset: {}}},
+        localStorage: {getItem() {return null;}},
+        addEventListener(name, callback) {
+          assert.equal(name, "pageshow");
+          this.onPageShow = callback;
+        },
+      };
+      context.window = context;
+      vm.runInNewContext(bootstrap[1], context);
+      assert.equal(location.pathname, pathname);
+      assert.equal(location.searchParams.get("source"), "review link");
+      assert.equal(location.searchParams.get("tool"), mode || "convert", `${navigationType} ${hash}`);
+      assert.equal(location.hash, mode ? "" : hash, "only exact legacy tool fragments are converted");
+      assert.equal(history.length, 4);
+      assert.equal(history.state, state);
+      assert.equal(history.scrollRestoration, navigationType === "back_forward" ? "auto" : "manual");
+      context.onPageShow({persisted: false});
+      assert.equal(history.scrollRestoration, navigationType === "back_forward" ? "auto" : "manual");
+      context.onPageShow({persisted: true});
+      assert.equal(history.scrollRestoration, "auto", "restoring a cached history page retains ordinary scroll restoration");
+    }
+  }
+});
+
+test("restoring a saved tool selects it without moving focus or scrolling", () => {
+  const start = scriptText.indexOf("const restoreCalculatorSelection = ");
+  const end = scriptText.indexOf("\n};", start) + 3;
+  assert.ok(start >= 0 && end > start);
+  const modes = ["mme", "convert", "methadone", "buprenorphine", "benzo"];
+  const calls = [];
+  const tabs = modes.map(mode => ({
+    dataset: {calculatorTab: mode},
+    focus() { assert.fail("restored tool must not acquire keyboard focus"); },
+    scrollIntoView() { assert.fail("restored tool must not scroll the page"); },
+  }));
+  const location = new URL("https://example.test/opioidcalculator/");
+  const restore = vm.runInNewContext(scriptText.slice(start, end) + ";restoreCalculatorSelection;", {
+    calculatorTabs: tabs, window: {location}, URLSearchParams,
+    activateCalculatorMode: mode => calls.push(mode),
+  });
+  for (const mode of modes) {
+    calls.length = 0;
+    location.search = `?source=review&tool=${mode}`;
+    restore();
+    assert.deepEqual(calls, [mode]);
+  }
+  for (const search of ["", "?tool=", "?tool=unknown", "?tool=Methadone", "?tool=mme%3Fdose%3D100", "?dose=100"]) {
+    calls.length = 0;
+    location.search = search;
+    restore();
+    assert.deepEqual(calls, [], search);
+  }
+  assert.match(scriptText, /restoreCalculatorSelection\(\);\s*activateLinkedCalculator\(\{ moveFocus: false \}\);/,
+    "startup restores selection separately from intentional section links");
+});
+
+test("Back from an explicit guide link restores query selection without retaining anchor focus", () => {
+  const functionText = name => {
+    const start = scriptText.indexOf(`const ${name} = `);
+    const end = scriptText.indexOf("\n};", start) + 3;
+    assert.ok(start >= 0 && end > start);
+    return scriptText.slice(start, end);
+  };
+  const listenerStart = scriptText.indexOf('window.addEventListener("hashchange", ');
+  const listenerEnd = scriptText.indexOf("\n});", listenerStart) + 4;
+  assert.ok(listenerStart >= 0 && listenerEnd > listenerStart);
+  const calls = [];
+  const location = new URL("https://example.test/opioidcalculator/?tool=convert");
+  let onHashChange;
+  const tabs = [["convert", "calculatorTabConvert"], ["methadone", "calculatorTabMethadone"]]
+    .map(([mode, id]) => ({
+      id, dataset: {calculatorTab: mode},
+      focus() {calls.push("focus");},
+      scrollIntoView() {calls.push("scroll");},
+    }));
+  vm.runInNewContext([
+    functionText("restoreCalculatorSelection"),
+    functionText("activateLinkedCalculator"),
+    scriptText.slice(listenerStart, listenerEnd),
+  ].join("\n"), {
+    calculatorTabs: tabs, URLSearchParams,
+    window: {location, addEventListener(name, callback) {
+      assert.equal(name, "hashchange");
+      onHashChange = callback;
+    }},
+    activateCalculatorMode: mode => calls.push(mode),
+  });
+  location.hash = "#calculatorTabMethadone";
+  onHashChange();
+  assert.deepEqual(calls, ["methadone", "focus", "scroll"], "following a guide link remains intentional navigation");
+  calls.length = 0;
+  location.hash = "";
+  onHashChange();
+  assert.deepEqual(calls, ["convert"], "returning to the query-state entry restores its tool without another focus or scroll action");
+});
+
+test("tool selection is input-free URL state without a fragment target or extra history entry", () => {
   const start = scriptText.indexOf("const updateCalculatorLink = ");
   const end = scriptText.indexOf("\n};", start) + 3;
   assert.ok(start >= 0 && end > start);
@@ -134,7 +262,7 @@ test("tool selection replaces stale fragments while preserving the URL context a
   ].map(([mode, id]) => ({ id, dataset: { calculatorTab: mode } }));
   const pathname = "/Equianalgesic_Dosing_Calculator_Staging/opioidcalculator/";
   const search = "?view=compact&source=review%20link";
-  const location = { pathname, search, hash: "#conversionReference" };
+  const location = new URL(`https://example.test${pathname}${search}#conversionReference`);
   const state = Object.freeze({ scrollPosition: 420, entryId: "existing-entry" });
   const replacements = [];
   const history = {
@@ -142,12 +270,12 @@ test("tool selection replaces stale fragments while preserving the URL context a
     length: 7,
     replaceState(nextState, title, url) {
       replacements.push({ nextState, title, url });
-      location.hash = url.slice(url.indexOf("#"));
+      location.href = new URL(url, location).href;
     },
     pushState() { assert.fail("switching tools must not add a history entry"); },
   };
   const update = vm.runInNewContext(scriptText.slice(start, end) + ";updateCalculatorLink;", {
-    calculatorTabs: tabs, window: { location, history },
+    calculatorTabs: tabs, window: { location, history }, URL, URLSearchParams,
   });
 
   for (const tab of tabs) {
@@ -157,15 +285,20 @@ test("tool selection replaces stale fragments while preserving the URL context a
     assert.equal(replacements.length, 1);
     assert.equal(replacements[0].nextState, state, "existing history state is passed through");
     assert.equal(replacements[0].title, "");
-    assert.equal(replacements[0].url, `${pathname}${search}#${tab.id}`);
+    const changed = new URL(replacements[0].url, location);
+    assert.equal(changed.pathname, pathname);
+    assert.deepEqual([...changed.searchParams], [
+      ["view", "compact"], ["source", "review link"], ["tool", tab.dataset.calculatorTab],
+    ]);
+    assert.equal(changed.hash, "");
     assert.equal(location.pathname, pathname);
-    assert.equal(location.search, search);
-    assert.equal(location.hash, `#${tab.id}`);
+    assert.equal(location.searchParams.get("tool"), tab.dataset.calculatorTab);
+    assert.equal(location.hash, "");
     assert.equal(history.state, state);
     assert.equal(history.length, 7);
 
     update(tab.dataset.calculatorTab);
-    assert.equal(replacements.length, 1, "an already-correct fragment is left alone");
+    assert.equal(replacements.length, 1, "an already-correct tool URL is left alone");
   }
 
   for (const mode of ["", undefined, "unknown", "convert?dose=100"]) {

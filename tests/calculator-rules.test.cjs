@@ -166,7 +166,7 @@ test("repaired DailyMed links and claim-specific PK profiles remain aligned", ()
     manifest.rules["pk.morphine-oral-er.profile"].sourceRefs[0].sourceId,
     "dailymed-ms-contin-v17",
   );
-  assert.match(msContin.timing, /does not provide a representative peak/i);
+  assert.match(msContin.timing, /not a concentration curve or a universal peak/i);
 
   const tapentadol = pkRows.find((item) => item.name === "Tapentadol oral (ER)");
   assert.deepEqual([...tapentadol.profile.peakRangeHours], [3, 6]);

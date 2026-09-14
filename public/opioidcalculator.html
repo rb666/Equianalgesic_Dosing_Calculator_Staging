@@ -115,7 +115,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260914-pk-soft-area-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260914-pk-compact-1" />
   </head>
   <body>
     <a class="skip-link" href="#calculatorTabs">Skip to calculators</a>
@@ -1150,11 +1150,7 @@
       <div class="reference-dialog">
         <div class="reference-modal-header">
           <div>
-            <p class="eyebrow">Pharmacokinetics</p>
             <h2 id="pharmacokineticsModalTitle">Pharmacokinetics reference</h2>
-            <p>
-              Visual profile graphs, timing behavior, metabolism, and source notes.
-            </p>
           </div>
           <button
             class="secondary-button modal-close-button"
@@ -1167,14 +1163,10 @@
 
         <div class="reference-modal-body">
           <section class="pk-reference-block">
-            <div class="section-heading">
-              <p class="eyebrow">Graphs</p>
-              <h3>Pharmacokinetic profiles and reference graphs</h3>
-            </div>
+            <h3 class="visually-hidden">Pharmacokinetic profiles</h3>
             <p class="reference-copy">
-              Illustrative graphs, not patient-specific predictions or dosing guidance.
-              Labels distinguish timing profiles, terminal elimination, and study peak timing.
-              Scales vary; heights do not compare potency or effect.
+              Illustrative profiles, not drug-effect predictions.
+              Time scales vary; heights do not compare potency.
             </p>
             <label class="pk-profile-picker" for="pharmacokineticsProfileSelect">
               PK profile
@@ -1196,9 +1188,7 @@
           <details class="pk-comparison-details">
             <summary>
               <span>
-                <span class="eyebrow">Comparison table</span>
-                <strong>Compare all route behavior rows</strong>
-                <span>Optional full table for side-by-side source review.</span>
+                <strong>Compare all profiles</strong>
               </span>
               <span class="summary-action" aria-hidden="true"></span>
             </summary>
@@ -1228,13 +1218,6 @@
             </div>
           </details>
 
-          <div class="clinical-notes pharmacokinetics-notes">
-            <h3>Reference notes</h3>
-            <ul>
-              <li>Methadone IV is intentionally omitted from this table for a separate, more detailed review due to highly variable and nonlinear pharmacokinetics. Methadone PO is included in this reference to detail its highly variable half-life, multi-receptor mechanism, and high accumulation risks. Use extreme caution when titrating.</li>
-              <li>Codeine IV is included as a requested caution row. The accessible injection reference located for this pass is intramuscular-only, so IV use should not be inferred from that product reference.</li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>
@@ -1265,8 +1248,8 @@
         window.setTimeout(showCalculatorLoadFailure, 5000);
       })();
     </script>
-    <script src="/calculator-core.js?v=20260914-pk-soft-area-1"></script>
-    <script src="/calculator-provenance.js?v=20260914-pk-soft-area-1"></script>
-    <script src="/script.js?v=20260914-pk-soft-area-1"></script>
+    <script src="/calculator-core.js?v=20260914-pk-compact-1"></script>
+    <script src="/calculator-provenance.js?v=20260914-pk-compact-1"></script>
+    <script src="/script.js?v=20260914-pk-compact-1"></script>
   </body>
 </html>

@@ -5,23 +5,27 @@ const { evaluateArray, scriptText } = require("./calculator-test-helpers.cjs");
 require("../public/calculator-provenance.js");
 const manifest = global.CALCULATOR_PROVENANCE;
 
-const renderProfileCards = (rows) => {
+const renderProfileCards = (rows, selectedIndex = 0) => {
   const grid = { innerHTML: "" };
   const picker = { innerHTML: "", value: "" };
+  const detail = { innerHTML: "" };
   const renderer = scriptText.slice(
     scriptText.indexOf("const formatGraphTime ="),
-    scriptText.indexOf("const renderSelectedPharmacokineticsDetail ="),
+    scriptText.indexOf("const renderPharmacokineticsTable ="),
   );
 
-  vm.runInNewContext(`${renderer}\nrenderPharmacokineticsGraphs();`, {
+  vm.runInNewContext(`${renderer}\nrenderPharmacokineticsGraphs();\nrenderSelectedPharmacokineticsDetail();`, {
     pharmacokineticsRows: rows,
     pharmacokineticsGraphGrid: grid,
     pharmacokineticsProfileSelect: picker,
-    selectedPharmacokineticsIndex: 0,
+    pharmacokineticsSelectedDetail: detail,
+    pharmacokineticsSelectionStatus: {},
+    selectedPharmacokineticsIndex: selectedIndex,
+    setLiveStatus() {},
     formatDose: String,
   });
 
-  return { cards: grid.innerHTML.match(/<button[\s\S]*?<\/button>/g), picker };
+  return { cards: grid.innerHTML.match(/<button[\s\S]*?<\/button>/g), picker, detail: detail.innerHTML };
 };
 
 const attributes = (tag) => Object.fromEntries(
@@ -47,7 +51,7 @@ for (const { drug, imPeakMinutes, oralPeakHours, halfLifeHours } of [
     const intravenousName = `${drug} IV`;
     const oralName = `${drug} oral (IR)`;
     const intravenousRow = rows.find((row) => row.name === intravenousName);
-    const { cards: [intravenousCard, oralCard], picker } = renderProfileCards(
+    const { cards: [intravenousCard, oralCard], picker, detail } = renderProfileCards(
       rows.filter((row) =>
         [intravenousName, oralName].includes(row.name),
       ),
@@ -62,8 +66,10 @@ for (const { drug, imPeakMinutes, oralPeakHours, halfLifeHours } of [
     ));
     assert.match(intravenousCard, /Terminal elimination only/);
     assert.match(intravenousCard, /Relative parent-drug level/);
-    assert.match(intravenousCard, /100% = reference level within the terminal phase, not an injection peak/);
-    assert.match(intravenousCard, /Excludes[\s\S]*distribution/);
+    assert.match(intravenousCard, /Time within terminal phase/);
+    assert.match(intravenousCard, /class="visually-hidden">Relative parent-drug level[\s\S]*100% is a reference level, not an injection peak\.<\/span>/);
+    assert.match(detail, /excludes|not modeled/);
+    assert.match(detail, /distribution/);
     assert.ok(intravenousCard.includes(`Model half-life: ~${halfLifeHours} h`));
     assert.ok(intravenousCard.includes(`>${halfLifeHours * 4} h</text>`));
     assert.doesNotMatch(intravenousCard, /Peak:|Graph unavailable/);
@@ -89,14 +95,15 @@ for (const { drug, imPeakMinutes, oralPeakHours, halfLifeHours } of [
     closeTo(Number(halfMarker.y1), (top + bottom) / 2, `${drug}: 50% guide`);
 
     if (drug === "Codeine") {
-      assert.match(intravenousCard, /healthy-volunteer IV study \(n=6\)/);
-      assert.match(intravenousCard, /active morphine/);
-      assert.match(intravenousCard, /IV codeine remains a caution row/);
-      assert.match(intravenousRow.behavior, /Avoid routine IV use/);
+      assert.match(detail, /six healthy volunteers/);
+      assert.match(detail, /Time starts within the terminal phase, not at injection/);
+      assert.match(detail, /active morphine/);
+      assert.match(detail, /Avoid routine IV use/);
+      assert.ok(detail.includes('href="https://pubmed.ncbi.nlm.nih.gov/3335120/"'));
     } else {
-      assert.match(intravenousCard, /Parent tramadol[\s\S]*injection label half-life/);
-      assert.match(intravenousCard, /active M1/);
-      assert.match(intravenousRow.timing, /analgesic effect are not modeled/);
+      assert.match(detail, /active M1/);
+      assert.match(detail, /analgesic effect are not modeled/);
+      assert.ok(detail.includes('href="https://www.medicines.org.uk/emc/product/13177/smpc"'));
     }
     assert.ok(oralCard.includes(oralName));
     assert.match(oralCard, /<svg/);
@@ -109,20 +116,22 @@ for (const { drug, imPeakMinutes, oralPeakHours, halfLifeHours } of [
 
 test("Morphine ER plots study peak timing and one standard deviation without inventing a concentration curve", () => {
   const row = evaluateArray("pharmacokineticsRows").find((item) => item.name === "Morphine oral (ER)");
-  const { cards: [card] } = renderProfileCards([row]);
+  const { cards: [card], detail } = renderProfileCards([row]);
   assert.equal(row.profile.available, false);
   assert.equal(row.profile.peakHours, null);
   assert.equal(row.profile.halfLifeHours, null);
   assert.equal(row.profile.referenceGraph.meanHours, 3.6);
   assert.equal(row.profile.referenceGraph.standardDeviationHours, 2.3);
   assert.equal(row.profile.referenceGraph.intervalHours, 12);
-  assert.match(card, /Study peak timing/);
-  assert.match(card, /18 cancer patients/);
-  assert.match(card, /steady state/);
-  assert.match(card, /every 12 h/);
-  assert.match(card, /Whiskers: mean ± 1 SD, not the observed range/);
-  assert.match(card, /not a concentration curve or a universal morphine ER peak/);
-  assert.match(card, /Peak time: 3\.6 h ± 2\.3 h \(mean ± SD\)/);
+  assert.match(card, /MS Contin study peak timing/);
+  assert.match(card, /Time after scheduled dose/);
+  assert.match(card, /class="visually-hidden">Repeated dosing\.[\s\S]*dot shows the mean peak time and whiskers show one standard deviation\.<\/span>/);
+  assert.match(detail, /18 cancer patients/);
+  assert.match(detail, /steady state/);
+  assert.match(detail, /every 12 hours/);
+  assert.match(detail, /not a concentration curve or a universal peak for morphine ER products/);
+  assert.ok(detail.includes('href="https://pubmed.ncbi.nlm.nih.gov/2720576/"'));
+  assert.match(card, /Mean ± SD: 3\.6 ± 2\.3 h/);
   assert.doesNotMatch(card, /<polyline|<polygon|Relative parent-drug level|100%/);
 
   const axis = elements(card, "line", "pk-axis")[0];
@@ -135,9 +144,9 @@ test("Morphine ER plots study peak timing and one standard deviation without inv
   closeTo(hoursAt(whisker.x2), 5.9, "Morphine ER mean plus SD");
   assert.equal(spread.length, 3);
   assert.equal(spread.filter((line) => line.x1 === line.x2).length, 2);
-  assert.match(row.halfLife, /effective morphine half-life of 2-4 hours/);
-  assert.match(row.halfLife, /longer terminal phase of about 15 hours/);
-  assert.match(row.halfLife, /8-12 hour dosing interval is not presented as a formulation half-life/);
+  assert.match(detail, /effective morphine half-life of 2-4 hours/);
+  assert.match(detail, /longer terminal phase of about 15 hours/);
+  assert.match(detail, /8-12 hour dosing interval is not presented as a formulation half-life/);
 });
 
 test("all 21 PK cards retain useful plots, labels and selection without invalid output", () => {
@@ -160,9 +169,16 @@ test("all 21 PK cards retain useful plots, labels and selection without invalid 
     assert.doesNotMatch(card, /Graph unavailable|Numeric profile not plotted|NaN|Infinity|undefined|\shidden(?:\s|=|>)/);
 
     if (row.profile.available === false) {
-      const readableText = card.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
-      assert.ok(readableText.includes(row.profile.referenceGraph.sourceNote), `Missing study context: ${row.name}`);
-      assert.ok(readableText.includes(row.profile.referenceGraph.limitation), `Missing evidence limitation: ${row.name}`);
+      const { detail, picker: selectedPicker } = renderProfileCards(rows, index);
+      assert.equal(selectedPicker.value, String(index));
+      assert.ok(!card.includes(row.profile.referenceGraph.sourceNote), `Repeated source paragraph in compact card: ${row.name}`);
+      assert.ok(!card.includes(row.profile.referenceGraph.limitation), `Repeated limitation paragraph in compact card: ${row.name}`);
+      assert.match(card, /class="visually-hidden">[^<]+<\/span>/);
+      assert.ok(detail.includes(row.timing), `Missing selected-profile timing context: ${row.name}`);
+      assert.ok(detail.includes(row.behavior), `Missing selected-profile clinical context: ${row.name}`);
+      for (const source of row.sources) {
+        assert.ok(detail.includes(`href="${source.url}"`), `Missing selected-profile source: ${row.name}`);
+      }
       assert.match(card, /pk-reference-svg/);
     } else {
       assert.match(card, /<svg[\s\S]*<polyline/);

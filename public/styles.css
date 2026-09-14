@@ -1400,13 +1400,14 @@ dd {
 
 .pk-graph-card {
   display: grid;
-  gap: 10px;
+  grid-template-rows: auto 1fr auto;
+  gap: 8px;
   min-width: 0;
   min-height: auto;
-  align-self: start;
+  align-self: stretch;
   border: 1.5px solid color-mix(in srgb, var(--line) 85%, var(--surface));
   border-radius: 10px;
-  padding: 14px;
+  padding: 12px;
   background: var(--surface);
   color: var(--ink);
   text-align: left;
@@ -1430,6 +1431,7 @@ dd {
 
 .pk-graph-card-head {
   display: grid;
+  align-content: start;
   gap: 2px;
 }
 
@@ -1449,7 +1451,9 @@ dd {
 .pk-profile-svg {
   display: block;
   width: 100%;
-  min-height: 96px;
+  height: 104px;
+  min-height: 0;
+  align-self: center;
   overflow: visible;
 }
 
@@ -1497,6 +1501,7 @@ dd {
   gap: 6px 12px;
   justify-content: space-between;
   font-variant-numeric: tabular-nums;
+  line-height: 1.35;
 }
 
 .pk-selected-detail {
@@ -1956,49 +1961,19 @@ footer {
   padding: 24px;
 }
 
-.pk-reference-card {
-  align-content: start;
-  align-self: start;
-}
-
-.pk-reference-summary,
-.pk-reference-fact {
-  display: grid;
-  gap: 5px;
-}
-
-.pk-reference-summary {
-  gap: 12px;
-  font-size: 0.85rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.pk-reference-label {
-  color: var(--ink);
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.pk-reference-svg {
-  min-height: 132px;
-}
-
 .pk-reference-peak {
   fill: var(--accent);
   stroke: var(--surface);
   stroke-width: 1.5;
 }
 
+.pk-reference-svg .pk-axis-label {
+  font-size: 14px;
+}
+
 .pk-reference-spread {
   stroke: var(--accent);
   stroke-width: 2;
-}
-
-.pk-reference-limitation {
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -15,7 +15,7 @@
   --danger: #7f2620;
   --danger-soft: #fff2df;
   --stage: #314f55;
-  --focus: #9c6b10;
+  --focus: var(--accent);
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.025), 0 4px 12px rgba(0, 0, 0, 0.025);
   --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.035);
   --banner-end: #46676b;
@@ -77,7 +77,7 @@
   --danger: #dfa29a;
   --danger-soft: #241b1a;
   --stage: #13282d;
-  --focus: #d8a657;
+  --focus: var(--accent);
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.08);
   --banner-end: #253f42;
@@ -151,6 +151,7 @@ body.uds-screen-open footer {
 }
 
 .environment-banner {
+  --focus: #b8d0ca;
   padding: 10px 16px;
   background: var(--stage);
   color: var(--banner-text);
@@ -211,9 +212,10 @@ select {
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
-a:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 3px;
+a:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 .site-header {
@@ -301,6 +303,11 @@ a:focus-visible {
   color: var(--reference-hover-text);
   box-shadow: none;
   transform: none;
+}
+
+.topbar-reference-button:focus-visible {
+  outline-color: var(--accent);
+  outline-offset: -4px;
 }
 
 .topbar-reference-button + .topbar-reference-button {
@@ -1757,11 +1764,6 @@ dd {
   color: var(--ink);
 }
 
-.calculator-guide > summary:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
 .calculator-guide-body {
   padding: 12px 0 4px;
 }
@@ -1874,11 +1876,6 @@ footer {
 
 .release-note > summary:hover {
   color: var(--ink);
-}
-
-.release-note > summary:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
 }
 
 .release-note-body {

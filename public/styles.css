@@ -1789,6 +1789,7 @@ footer {
 }
 
 .footer-content {
+  position: relative;
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
   padding: 11px 0;
@@ -1799,6 +1800,7 @@ footer {
 
 .footer-content > p {
   margin: 0;
+  padding-right: 4.5rem;
 }
 
 .release-note {
@@ -1807,9 +1809,11 @@ footer {
 }
 
 .release-note > summary {
+  position: absolute;
+  top: 6px;
+  right: 0;
   width: fit-content;
   min-height: 32px;
-  margin-left: auto;
   padding: 5px 4px;
   border-radius: 4px;
   cursor: pointer;
@@ -1826,7 +1830,7 @@ footer {
 
 .release-note-body {
   max-width: 75ch;
-  padding: 4px 0 8px;
+  padding: 12px 0 8px;
   color: var(--ink);
 }
 

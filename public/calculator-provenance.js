@@ -11,11 +11,38 @@
   };
 
   const schemaVersion = "1.0.0";
-  const manifestVersion = "2026-09-14.2";
+  const manifestVersion = "2026-09-14.3";
   const effectiveDate = "2026-09-14";
   const retrievedAt = "2026-08-08";
 
   const sources = {
+    "codeine-iv-study-3335120": {
+      authority: "Original pharmacokinetic study / PubMed",
+      type: "clinical-study",
+      title: "Pharmacokinetics and pharmacodynamics of codeine in end-stage renal disease",
+      displayUrl: "https://pubmed.ncbi.nlm.nih.gov/3335120/",
+      evidenceUrl: "https://pubmed.ncbi.nlm.nih.gov/3335120/",
+      retrievedAt: "2026-09-14",
+      lifecycle: "archival",
+    },
+    "ms-contin-study-2720576": {
+      authority: "Original pharmacokinetic study / PubMed",
+      type: "clinical-study",
+      title: "Pharmacokinetics and clinical efficacy of oral morphine solution and controlled-release morphine tablets in cancer patients",
+      displayUrl: "https://pubmed.ncbi.nlm.nih.gov/2720576/",
+      evidenceUrl: "https://pubmed.ncbi.nlm.nih.gov/2720576/",
+      retrievedAt: "2026-09-14",
+      lifecycle: "archival",
+    },
+    "emc-tramadol-injection-13177": {
+      authority: "AS Kalceks / electronic Medicines Compendium",
+      type: "product-label",
+      title: "Tramadol 50 mg/ml solution for injection/infusion SmPC",
+      displayUrl: "https://www.medicines.org.uk/emc/product/13177/smpc",
+      evidenceUrl: "https://www.medicines.org.uk/emc/product/13177/smpc",
+      retrievedAt: "2026-09-14",
+      lifecycle: "current",
+    },
     "cdc-opioid-2022": {
       authority: "Centers for Disease Control and Prevention",
       type: "clinical-guideline",
@@ -437,6 +464,31 @@
     });
   });
 
+  rules["pk.graph.terminal-elimination"] = localRule(
+    "pk.graph.terminal-elimination",
+    ["buildPharmacokineticsReferenceGraph.elimination"],
+    {
+      basis: "local-visual-model",
+      sourceRefs: [
+        { sourceId: "codeine-iv-study-3335120", locator: "Table I: healthy-volunteer IV elimination half-life, 4.04 h (SD 0.60); rounded to 4 h for the illustration" },
+        { sourceId: "emc-tramadol-injection-13177", locator: "Section 5.2: terminal half-life about 6 h irrespective of administration route" },
+      ],
+      limitations: "The exponential 2^(-t/half-life) shows parent-drug decline from an arbitrary reference point within the terminal phase. It excludes administration, distribution, active metabolites and analgesic effect. The source half-lives do not validate a complete IV concentration curve. Codeine IV remains a caution row, not a route recommendation.",
+      testIds: ["pk-terminal-elimination-reference", "pk-no-im-peak-as-iv"],
+    },
+  );
+  rules["pk.graph.study-peak-timing"] = localRule(
+    "pk.graph.study-peak-timing",
+    ["pharmacokineticsRows.morphine-oral-er.profile.referenceGraph"],
+    {
+      basis: "source-summary",
+      evidenceMatch: "representative",
+      sourceRefs: [{ sourceId: "ms-contin-study-2720576", locator: "Table 3: steady-state MS Contin Tmax 3.6 +/- 2.3 h (mean +/- SD), 18 cancer patients taking individually titrated doses every 12 h" }],
+      limitations: "The marker and whiskers show the study mean and one standard deviation, not a measured concentration curve, confidence interval or observed range. They are not a universal peak for morphine ER products. No ER half-life is inferred from its dosing interval or from IV morphine.",
+      testIds: ["pk-ms-contin-study-timing"],
+    },
+  );
+
   // Committee approval is distinct from agreement with any one external reference.
   for (const rule of Object.values(rules)) {
     if (/^(conversion\.|benzodiazepine\.|methadone\.)/.test(rule.id)) {
@@ -454,7 +506,7 @@
     manifestVersion,
     effectiveDate,
     contentDigest:
-      "sha256-62d60779a7efd25a8e1511e310963e7debf28110f9799ab75407911e36219375",
+      "sha256-5a5040853009bcd6bf9e95d089865b1f67dbf11b7149e90b9449bcc42934c62e",
     clinicalReview: {
       status: "unreviewed",
       reviewer: null,

@@ -725,11 +725,17 @@ const pharmacokineticsRows = [
       type: "absorptive",
       peakHours: null,
       halfLifeHours: 3,
+      referenceGraph: {
+        type: "elimination",
+        halfLifeHours: 4,
+        sourceNote: "Parent codeine · healthy-volunteer IV study (n=6).",
+        limitation: "Excludes distribution and active morphine. IV codeine remains a caution row.",
+      },
       unavailableReason:
         "The cited injection label's 30-minute peak applies to IM administration, not IV use.",
     },
     timing:
-      "The cited injection label describes IM administration and an IM peak of about 30 minutes. That timing should not be used as an IV peak; no IV concentration curve is plotted here.",
+      "The cited injection label describes IM administration and an IM peak of about 30 minutes. That timing should not be used as an IV peak. The graph illustrates terminal elimination only, using an approximately 4-hour half-life from the healthy-volunteer IV study; it excludes distribution, morphine formation, and analgesic effect.",
     halfLife:
       "Terminal half-life is approximately 3 to 4 hours.",
     metabolism:
@@ -1032,11 +1038,19 @@ const pharmacokineticsRows = [
       type: "absorptive",
       peakHours: null,
       halfLifeHours: null,
+      referenceGraph: {
+        type: "peak-timing",
+        meanHours: 3.6,
+        standardDeviationHours: 2.3,
+        intervalHours: 12,
+        sourceNote: "MS Contin study · 18 cancer patients · steady state, every 12 h.",
+        limitation: "Study-specific timing, not a concentration curve or a universal morphine ER peak.",
+      },
       unavailableReason:
         "The current MS Contin label does not provide a representative peak suitable for this normalized graph.",
     },
-    timing: "The current MS Contin label describes release as slower than immediate-release morphine, steady state at about one day, and q8h or q12h administration; it does not provide a representative peak suitable for this graph.",
-    halfLife: "The current label describes an effective morphine half-life of 2-4 hours and a longer terminal phase of about 15 hours in some studies. The 8-12 hour dosing interval is not presented as a formulation half-life.",
+    timing: "The current MS Contin label describes release as slower than immediate-release morphine, steady state at about one day, and q8h or q12h administration; it does not provide a representative peak. A separate study in 18 cancer patients taking individually titrated MS Contin every 12 hours at steady state reported a mean peak time of 3.6 +/- 2.3 hours. The timing plot describes that study, not a universal ER concentration curve.",
+    halfLife: "The current label describes an effective morphine half-life of 2-4 hours after IV administration and a longer terminal phase of about 15 hours in some studies. The 8-12 hour dosing interval is not presented as a formulation half-life.",
     metabolism:
       "Extensive pre-systemic glucuronidation via UGT2B7 to active M6G and inactive M3G. Excreted primarily through the urine.",
     mechanism:
@@ -1049,6 +1063,10 @@ const pharmacokineticsRows = [
       {
         title: "DailyMed MS Contin tablets",
         url: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c354b3bf-86c0-4bb8-8b1f-be2164942698",
+      },
+      {
+        title: "PubMed MS Contin steady-state PK study",
+        url: "https://pubmed.ncbi.nlm.nih.gov/2720576/",
       },
     ],
   },
@@ -1155,11 +1173,17 @@ const pharmacokineticsRows = [
       type: "absorptive",
       peakHours: null,
       halfLifeHours: 6,
+      referenceGraph: {
+        type: "elimination",
+        halfLifeHours: 6,
+        sourceNote: "Parent tramadol · injection label half-life.",
+        limitation: "Excludes injection/infusion timing, distribution, and active M1.",
+      },
       unavailableReason:
         "The cited injection label's 45-minute peak applies to IM administration, not IV use.",
     },
     timing:
-      "The referenced injection product may be given by slow IV injection, IM or SC injection, or infusion. Its 45-minute peak concentration describes IM absorption and should not be used as an IV peak; no IV concentration curve is plotted here.",
+      "The referenced injection product may be given by slow IV injection, IM or SC injection, or infusion. Its 45-minute peak concentration describes IM absorption and should not be used as an IV peak. The graph illustrates terminal elimination only; injection/infusion timing, distribution, active M1, and analgesic effect are not modeled.",
     halfLife:
       "Elimination half-life is about 6 hours regardless of route; active O-desmethyltramadol (M1) metabolite half-life is about 7.9 hours.",
     metabolism:
@@ -2112,7 +2136,7 @@ const formatGraphRange = (range, fallback) => {
 
 const getPharmacokineticsTimingText = (item) => {
   if (item.profile.available === false) {
-    return `Numeric profile not plotted. ${item.timing}`;
+    return `${item.profile.referenceGraph?.type === "peak-timing" ? "Study peak-timing plot." : "Terminal elimination illustration."} ${item.timing}`;
   }
 
   const label =
@@ -2174,7 +2198,17 @@ const getGraphScaleHours = (profile) => {
   return profile.scaleHours || profile.peakHours + profile.halfLifeHours * 4;
 };
 
-const buildPharmacokineticsGraphSvg = (profile) => {
+const buildPharmacokineticsArea = (points, left, right, bottom, id) => `
+  <defs>
+    <linearGradient class="pk-profile-gradient" id="pk-area-${id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="currentColor" stop-opacity="0.16" />
+      <stop offset="100%" stop-color="currentColor" stop-opacity="0.025" />
+    </linearGradient>
+  </defs>
+  <polygon class="pk-profile-area" points="${left},${bottom} ${points.join(" ")} ${right},${bottom}" fill="url(#pk-area-${id})" />
+`;
+
+const buildPharmacokineticsGraphSvg = (profile, graphId) => {
   const width = 270;
   const height = 96;
   const xInset = 12;
@@ -2208,6 +2242,7 @@ const buildPharmacokineticsGraphSvg = (profile) => {
       focusable="false"
       viewBox="0 0 ${width} ${height}"
     >
+      ${buildPharmacokineticsArea(points, xInset, width - 8, yBottom, graphId)}
       <line class="pk-axis" x1="${xInset}" y1="${yBottom}" x2="${width - 8}" y2="${yBottom}" />
       <line class="pk-axis" x1="${xInset}" y1="${yTop}" x2="${xInset}" y2="${yBottom}" />
       <line class="pk-marker" x1="${formatDose(peakX)}" y1="${yTop}" x2="${formatDose(peakX)}" y2="${yBottom}" />
@@ -2234,18 +2269,68 @@ const getPharmacokineticsSourceMarkup = (item) =>
 const getSelectedPharmacokineticsRow = () =>
   pharmacokineticsRows[selectedPharmacokineticsIndex] || pharmacokineticsRows[0];
 
-const buildPharmacokineticsReferenceSummary = (item) => `
-  <span class="pk-reference-summary">
-    <span class="pk-reference-fact">
-      <strong class="pk-reference-label">Half-life reference</strong>
-      <span>${item.halfLife}</span>
+// These two reference diagrams deliberately do not use the onset/peak model.
+// Elimination begins at an arbitrary reference point in the terminal phase.
+const buildPharmacokineticsReferenceGraph = (item, graphId) => {
+  const reference = item.profile.referenceGraph;
+  const left = 36;
+  const right = 258;
+  const top = 18;
+  const bottom = 84;
+  let drawing;
+  let label;
+  let summary;
+
+  if (reference.type === "elimination") {
+    const maxHours = reference.halfLifeHours * 4;
+    const x = (hour) => left + (hour / maxHours) * (right - left);
+    const y = (fraction) => bottom - fraction * (bottom - top);
+    const points = Array.from({ length: 61 }, (_, index) => {
+      const hour = (maxHours * index) / 60;
+      return `${formatDose(x(hour))},${formatDose(y(Math.pow(2, -hour / reference.halfLifeHours)))}`;
+    });
+    label = "Terminal elimination only";
+    summary = `Model half-life: ~${formatGraphTime(reference.halfLifeHours)}`;
+    drawing = `
+      ${buildPharmacokineticsArea(points, left, right, bottom, graphId)}
+      <text class="pk-axis-label" x="${left}" y="10">Relative parent-drug level</text>
+      <line class="pk-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" />
+      <line class="pk-axis" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}" />
+      <line class="pk-marker" x1="${left}" y1="${y(0.5)}" x2="${right}" y2="${y(0.5)}" />
+      <text class="pk-axis-label" x="${left - 4}" y="${top + 4}" text-anchor="end">100%</text>
+      <text class="pk-axis-label" x="${left - 4}" y="${y(0.5) + 4}" text-anchor="end">50%</text>
+      <text class="pk-axis-label" x="${left - 4}" y="${bottom + 4}" text-anchor="end">0</text>
+      <polyline class="pk-profile-line" points="${points.join(" ")}" />
+      ${[0, 1, 2, 4].map((multiple) => `<text class="pk-axis-label" x="${x(reference.halfLifeHours * multiple)}" y="102" text-anchor="middle">${multiple === 0 ? "0" : formatGraphTime(reference.halfLifeHours * multiple)}</text>`).join("")}
+      <text class="pk-axis-label" x="147" y="121" text-anchor="middle">Time within terminal phase</text>
+    `;
+  } else {
+    const x = (hour) => left + (hour / reference.intervalHours) * (right - left);
+    label = "Study peak timing";
+    summary = `Peak time: ${formatGraphTime(reference.meanHours)} ± ${formatGraphTime(reference.standardDeviationHours)} (mean ± SD)`;
+    drawing = `
+      <text class="pk-axis-label" x="${left}" y="16">MS Contin · repeated dosing</text>
+      <line class="pk-axis" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" />
+      <line class="pk-marker" x1="${x(reference.meanHours)}" y1="38" x2="${x(reference.meanHours)}" y2="${bottom}" />
+      <line class="pk-reference-spread" x1="${x(reference.meanHours - reference.standardDeviationHours)}" y1="50" x2="${x(reference.meanHours + reference.standardDeviationHours)}" y2="50" />
+      ${[-1, 1].map((sign) => `<line class="pk-reference-spread" x1="${x(reference.meanHours + sign * reference.standardDeviationHours)}" y1="43" x2="${x(reference.meanHours + sign * reference.standardDeviationHours)}" y2="57" />`).join("")}
+      <circle class="pk-reference-peak" cx="${x(reference.meanHours)}" cy="50" r="5" />
+      <text class="pk-axis-label" x="${x(reference.meanHours)}" y="35" text-anchor="middle">${formatGraphTime(reference.meanHours)}</text>
+      ${[0, 4, 8, 12].map((hour) => `<text class="pk-axis-label" x="${x(hour)}" y="102" text-anchor="middle">${hour === 0 ? "0" : formatGraphTime(hour)}</text>`).join("")}
+      <text class="pk-axis-label" x="147" y="121" text-anchor="middle">Time after scheduled dose</text>
+    `;
+  }
+
+  return `
+    <strong class="pk-reference-label">${label}</strong>
+    <svg aria-hidden="true" class="pk-profile-svg pk-reference-svg" focusable="false" viewBox="0 0 270 132">${drawing}</svg>
+    <span class="pk-graph-meta">${summary}</span>
+    <span class="pk-reference-summary">
+      <span>${reference.sourceNote}</span>
+      <span class="pk-reference-limitation">${reference.type === "elimination" ? "100% = reference level within the terminal phase, not an injection peak. " : "Whiskers: mean ± 1 SD, not the observed range. "}${reference.limitation}</span>
     </span>
-    <span class="pk-reference-fact pk-reference-limitation">
-      <strong class="pk-reference-label">Why no curve?</strong>
-      <span>${item.profile.unavailableReason}</span>
-    </span>
-  </span>
-`;
+  `;
+};
 
 const renderPharmacokineticsGraphs = () => {
   if (!pharmacokineticsGraphGrid) {
@@ -2286,12 +2371,12 @@ const renderPharmacokineticsGraphs = () => {
           </div>
           ${
             profileAvailable
-              ? `${buildPharmacokineticsGraphSvg(profile)}
+              ? `${buildPharmacokineticsGraphSvg(profile, index)}
                   <div class="pk-graph-meta">
                     <span>${peakLabel}</span>
                     <span>${offsetLabel}</span>
                   </div>`
-              : buildPharmacokineticsReferenceSummary(item)
+              : buildPharmacokineticsReferenceGraph(item, index)
           }
         </button>
       `;

@@ -2164,21 +2164,35 @@ footer {
     width: 100%;
   }
 
-  .theme-toggle {
-    width: auto;
-  }
-
-  .reference-control-group {
+  .utility-bar-content,
+  .utility-actions {
     width: 100%;
   }
 
+  .utility-actions {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .theme-toggle {
+    flex: 0 1 auto;
+    width: auto;
+    white-space: normal;
+  }
+
+  .reference-control-group {
+    flex: 0 0 auto;
+    width: auto;
+  }
+
   .reference-control-label {
-    flex: 1 1 auto;
+    padding: 0 8px;
   }
 
   .topbar-reference-button {
-    flex: 1 1 0;
-    width: auto;
+    flex: 0 0 44px;
+    width: 44px;
   }
 
   .reference-modal {

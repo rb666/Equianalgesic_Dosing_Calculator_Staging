@@ -3425,6 +3425,29 @@ const activateCalculatorMode = (mode) => {
   calculate();
 };
 
+// Static guide links can open a tool directly without putting clinical inputs in URLs.
+const activateLinkedCalculator = () => {
+  const linkedTab = calculatorTabs.find((button) => `#${button.id}` === window.location.hash);
+  if (linkedTab) {
+    activateCalculatorMode(linkedTab.dataset.calculatorTab);
+    linkedTab.focus({ preventScroll: true });
+    linkedTab.scrollIntoView({ block: "start" });
+  } else if (window.location.hash === "#conversionReference") {
+    const reference = document.querySelector("#conversionReference");
+    reference.open = true;
+    reference.querySelector("summary").focus({ preventScroll: true });
+    reference.scrollIntoView({ block: "start" });
+  }
+};
+
+window.addEventListener("hashchange", activateLinkedCalculator);
+
+document.querySelectorAll(".calculator-guide a[href^='#']").forEach((link) => {
+  link.addEventListener("click", () => {
+    if (window.location.hash === link.hash) activateLinkedCalculator();
+  });
+});
+
 calculatorTabs.forEach((button, index) => {
   button.addEventListener("click", () => {
     activateCalculatorMode(button.dataset.calculatorTab);
@@ -3665,4 +3688,5 @@ calculate();
 calculateMethadone();
 populateBenzoSelects();
 calculateBenzo();
+activateLinkedCalculator();
 document.documentElement.dataset.calculatorReady = "true";

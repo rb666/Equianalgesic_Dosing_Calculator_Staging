@@ -1693,6 +1693,48 @@ dd {
   padding: 24px;
 }
 
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  z-index: 100;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  transform: translateY(-160%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+#calculatorTabs,
+#conversionReference {
+  scroll-margin-top: 16px;
+}
+
+.calculator-guide {
+  line-height: 1.65;
+}
+
+.calculator-guide p,
+.calculator-guide-links {
+  max-width: 82ch;
+}
+
+.calculator-guide h3 {
+  margin-top: 24px;
+}
+
+.calculator-guide-links {
+  padding-left: 24px;
+}
+
+.calculator-guide-links li + li {
+  margin-top: 10px;
+}
+
 .methadone-reference-heading {
   margin-top: 28px;
 }

@@ -5,43 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="A static equianalgesic opioid dose conversion calculator for clinical decision support."
+      content="Calculate daily morphine milligram equivalents (MME) and equianalgesic opioid doses. Includes methadone and benzodiazepine tools for clinician use."
     />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://calc.med/opioidcalculator" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://calc.med/opioidcalculator" />
-    <meta property="og:title" content="Equianalgesic Dose Calculator" />
+    <meta property="og:title" content="Opioid Conversion &amp; MME Calculator | calc.med" />
     <meta
       property="og:description"
-      content="A static equianalgesic opioid dose conversion calculator for clinical decision support."
+      content="Calculate daily morphine milligram equivalents (MME) and equianalgesic opioid doses. Includes methadone and benzodiazepine tools for clinician use."
     />
     <meta property="og:image" content="https://calc.med/OpioidConversionSite.png" />
     <meta property="og:site_name" content="calc.med" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Equianalgesic Dose Calculator" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1254" />
+    <meta property="og:image:height" content="1254" />
+    <meta property="og:image:alt" content="Opioid Conversion — Calculate. Convert. Care." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Opioid Conversion &amp; MME Calculator | calc.med" />
     <meta
       name="twitter:description"
-      content="A static equianalgesic opioid dose conversion calculator for clinical decision support."
+      content="Calculate daily morphine milligram equivalents (MME) and equianalgesic opioid doses. Includes methadone and benzodiazepine tools for clinician use."
     />
     <meta name="twitter:image" content="https://calc.med/OpioidConversionSite.png" />
-    <title>Equianalgesic Dose Calculator</title>
-    <link rel="icon" href="/favicon.svg?v=20260913-subtle-polish-release-1" type="image/svg+xml" />
+    <meta name="twitter:image:alt" content="Opioid Conversion — Calculate. Convert. Care." />
+    <title>Opioid Conversion &amp; MME Calculator | calc.med</title>
+    <link rel="icon" href="/favicon.svg?v=20260913-seo-1" type="image/svg+xml" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Equianalgesic Dose Calculator",
-        "url": "https://calc.med/opioidcalculator",
-        "applicationCategory": "HealthApplication",
-        "operatingSystem": "Any",
-        "description": "A static equianalgesic opioid dose conversion calculator for clinical decision support.",
-        "isAccessibleForFree": true,
-        "publisher": {
-          "@type": "Organization",
-          "name": "calc.med",
-          "url": "https://calc.med"
-        }
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://calc.med/#publisher",
+            "name": "calc.med",
+            "url": "https://calc.med",
+            "logo": {
+              "@id": "https://calc.med/opioidcalculator#logo"
+            }
+          },
+          {
+            "@type": "ImageObject",
+            "@id": "https://calc.med/opioidcalculator#logo",
+            "url": "https://calc.med/OpioidConversionSite.png",
+            "width": 1254,
+            "height": 1254,
+            "caption": "Opioid Conversion — Calculate. Convert. Care."
+          },
+          {
+            "@type": "MedicalWebPage",
+            "@id": "https://calc.med/opioidcalculator#page",
+            "url": "https://calc.med/opioidcalculator",
+            "name": "Opioid Conversion & MME Calculator | calc.med",
+            "description": "Calculate daily morphine milligram equivalents (MME) and equianalgesic opioid doses. Includes methadone and benzodiazepine tools for clinician use.",
+            "inLanguage": "en",
+            "publisher": {
+              "@id": "https://calc.med/#publisher"
+            },
+            "mainEntity": {
+              "@id": "https://calc.med/opioidcalculator#calculator"
+            },
+            "primaryImageOfPage": {
+              "@id": "https://calc.med/opioidcalculator#logo"
+            },
+            "audience": {
+              "@type": "Audience",
+              "audienceType": "Clinicians"
+            }
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "https://calc.med/opioidcalculator#calculator",
+            "name": "Equianalgesic Dose Calculator",
+            "alternateName": "Opioid Conversion and MME Calculator",
+            "url": "https://calc.med/opioidcalculator",
+            "description": "Calculate daily morphine milligram equivalents (MME) and equianalgesic opioid doses. Includes methadone and benzodiazepine tools for clinician use.",
+            "applicationCategory": "HealthApplication",
+            "operatingSystem": "Any",
+            "browserRequirements": "Requires JavaScript and a modern web browser.",
+            "isAccessibleForFree": true,
+            "inLanguage": "en",
+            "publisher": {
+              "@id": "https://calc.med/#publisher"
+            },
+            "mainEntityOfPage": {
+              "@id": "https://calc.med/opioidcalculator#page"
+            },
+            "featureList": [
+              "Total daily morphine milligram equivalents (MME)",
+              "Equianalgesic opioid dose conversion",
+              "Oral morphine to methadone conversion",
+              "Buprenorphine transition schedules",
+              "Benzodiazepine equivalence calculation"
+            ]
+          }
+        ]
       }
     </script>
     <script>
@@ -55,9 +115,10 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260913-subtle-polish-release-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260913-seo-1" />
   </head>
   <body>
+    <a class="skip-link" href="#calculatorTabs">Skip to calculators</a>
     <div class="environment-banner">
       <div class="utility-bar-content">
         <div class="utility-brand" aria-label="Opioid Conversion">
@@ -98,8 +159,9 @@
             <p class="eyebrow">Clinical decision support</p>
             <h1>Equianalgesic Dose Calculator</h1>
             <p>
-              Calculate total daily oral morphine equivalent, convert to a target
-              opioid, or open the specialty methadone and buprenorphine tools.
+              Calculate total daily morphine milligram equivalents (MME), convert to
+              a target opioid, or open the methadone, buprenorphine, and
+              benzodiazepine tools.
             </p>
           </div>
           <section class="safety-banner" aria-label="Clinical warning and disclaimer">
@@ -124,7 +186,7 @@
         </div>
         <div class="brand-logo-card" aria-label="Opioid Conversion logo">
           <img
-            src="/OpioidConversionSite.png?v=20260913-subtle-polish-release-1"
+            src="/OpioidConversionSite.png?v=20260913-seo-1"
             alt="Opioid Conversion"
             width="1254"
             height="1254"
@@ -135,6 +197,8 @@
 
     <main>
       <nav
+        id="calculatorTabs"
+        tabindex="-1"
         aria-label="Calculator sections"
         aria-orientation="horizontal"
         class="calculator-tabs"
@@ -234,7 +298,7 @@
                 Add another drug
               </button>
             </div>
-            <div class="regimen-entries" id="regimenEntries"></div>
+            <div class="regimen-entries" id="regimenEntries" data-nosnippet></div>
           </section>
 
           <div class="field-grid compact-grid target-field" id="targetField">
@@ -407,7 +471,7 @@
           </div>
         </form>
 
-        <section class="result-panel" id="mainResultPanel">
+        <section class="result-panel" data-nosnippet id="mainResultPanel">
           <noscript>
             <p class="basis-note">
               <strong>Calculator unavailable.</strong> JavaScript is required to
@@ -615,7 +679,7 @@
             </p>
           </form>
 
-          <section class="result-panel">
+          <section class="result-panel" data-nosnippet>
             <div class="section-heading">
               <p class="eyebrow">Methadone result</p>
               <h2 id="methadoneResultTitle">Calculated methadone estimate</h2>
@@ -709,7 +773,7 @@
             </p>
           </form>
 
-          <section class="result-panel">
+          <section class="result-panel" data-nosnippet>
             <div class="section-heading">
               <p class="eyebrow">Schedule</p>
               <h2 id="buprenorphineResultTitle">30-59 mg MEDD</h2>
@@ -862,7 +926,7 @@
             </p>
           </form>
 
-          <section class="result-panel">
+          <section class="result-panel" data-nosnippet>
             <div class="section-heading">
               <p class="eyebrow">Benzodiazepine result</p>
               <h2 id="benzoResultTitle">Calculated benzodiazepine equivalent</h2>
@@ -910,7 +974,45 @@
         </section>
       </section>
 
-      <details class="compact-section" aria-label="Conversion reference">
+      <section class="reference-section calculator-guide" id="calculatorGuide" aria-labelledby="calculatorGuideTitle">
+        <h2 id="calculatorGuideTitle">Using the opioid conversion and MME calculator</h2>
+        <p>
+          calc.med is a free equianalgesic dose calculator for clinicians. Review
+          a single medication or a regimen, compare opioid doses, and consult
+          the conversion tables and pharmacokinetics references on this page.
+          Calculations run in your browser; JavaScript is required to use the tools.
+        </p>
+        <h3>Choose the calculation you need</h3>
+        <ul class="calculator-guide-links">
+          <li><a href="#calculatorTabMme">Total MME calculator</a> — see the regimen's daily oral morphine equivalent (OME), also expressed here as morphine milligram equivalents (MME).</li>
+          <li><a href="#calculatorTabConvert">Opioid conversion calculator</a> — select a target drug and route, then review the equianalgesic estimate and safety adjustments.</li>
+          <li><a href="#calculatorTabMethadone">Methadone conversion calculator</a> — use the separate oral morphine-to-methadone tool and its cautions.</li>
+          <li><a href="#calculatorTabBuprenorphine">Buprenorphine transition schedules</a> — view the existing schedules and their formulation-specific cautions.</li>
+          <li><a href="#calculatorTabBenzo">Benzodiazepine equivalence calculator</a> — compare the listed benzodiazepines using the tool's diazepam reference.</li>
+        </ul>
+        <h3>Enter a regimen and review the result</h3>
+        <p>
+          Select each drug and route, enter the dose per administration and doses
+          per day, and add another drug when needed. Check the units and entry
+          summaries. For conversion, choose the target opioid and the intended
+          safety reduction, then review any kidney or liver guidance separately.
+          A regimen MME total and a target-drug dose answer different questions;
+          confirm which tool and units you are using.
+        </p>
+        <h3>References and clinical use</h3>
+        <p>
+          Open <a href="#conversionReference">conversion tables and sources</a>
+          to inspect the values and references used. These include
+          <a href="https://pain.ucsf.edu/opioid-analgesics/calculation-oral-morphine-equivalents-ome">UCSF's oral morphine equivalent reference</a>
+          and the
+          <a href="https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm">CDC opioid prescribing guideline</a>.
+          Equivalences are approximate; sources, routes, and formulations can
+          differ. This clinical decision support tool does not replace
+          patient-specific assessment, institutional policy, or pharmacist review.
+        </p>
+      </section>
+
+      <details class="compact-section" id="conversionReference" aria-label="Conversion reference">
         <summary>
           <span class="compact-title">
             <span class="eyebrow">Reference</span>
@@ -1127,8 +1229,8 @@
         window.setTimeout(showCalculatorLoadFailure, 5000);
       })();
     </script>
-    <script src="/calculator-core.js?v=20260913-subtle-polish-release-1"></script>
-    <script src="/calculator-provenance.js?v=20260913-subtle-polish-release-1"></script>
-    <script src="/script.js?v=20260913-subtle-polish-release-1"></script>
+    <script src="/calculator-core.js?v=20260913-seo-1"></script>
+    <script src="/calculator-provenance.js?v=20260913-seo-1"></script>
+    <script src="/script.js?v=20260913-seo-1"></script>
   </body>
 </html>

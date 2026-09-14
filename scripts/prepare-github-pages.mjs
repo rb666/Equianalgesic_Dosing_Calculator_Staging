@@ -33,8 +33,13 @@ const assets = [".nojekyll", "favicon.svg", "OpioidConversionSite.png", "styles.
 for (const asset of assets) await copyFile(path.join(sourceDir, asset), path.join(outputDir, asset));
 let html = await readFile(path.join(sourceDir, "opioidcalculator.html"), "utf8");
 if (/\bUDS\b|uds-tool|uds-workflow-guide/i.test(html)) throw new Error("UDS must remain outside the active calculator");
+const robotsTags = html.match(/<meta\b[^>]*\bname=["']robots["'][^>]*>/gi) || [];
+if (robotsTags.length !== 1) throw new Error("Expected exactly one robots meta tag before staging adaptation");
 html = html.replace(/<meta name="robots" content="[^"]*"\s*\/>/,
   '<meta name="robots" content="noindex, nofollow" />');
+if (!html.includes('<meta name="robots" content="noindex, nofollow" />')) {
+  throw new Error("Staging HTML must explicitly exclude search indexing");
+}
 for (const asset of assets) html = html.replaceAll(`="/${asset}`, `="${basePath}${asset}`);
 html = html.replaceAll('href="/opioidcalculator"', `href="${calculatorUrl}"`);
 await writeFile(path.join(outputDir, "opioidcalculator", "index.html"), html);

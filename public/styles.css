@@ -16,8 +16,8 @@
   --danger-soft: #fff2df;
   --stage: #314f55;
   --focus: #9c6b10;
-  --shadow: 0 18px 42px rgba(35, 52, 48, 0.058);
-  --shadow-soft: 0 9px 24px rgba(35, 52, 48, 0.04);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.025), 0 4px 12px rgba(0, 0, 0, 0.025);
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.035);
   --banner-end: #46676b;
   --banner-text: #f8fbfa;
   --eyebrow: #3f625d;
@@ -78,8 +78,8 @@
   --danger-soft: #241b1a;
   --stage: #13282d;
   --focus: #d8a657;
-  --shadow: 0 18px 42px rgba(0, 0, 0, 0.32);
-  --shadow-soft: 0 9px 24px rgba(0, 0, 0, 0.24);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.08);
   --banner-end: #253f42;
   --banner-text: #f0f6f4;
   --eyebrow: #9fc0b9;
@@ -152,7 +152,7 @@ body.uds-screen-open footer {
 
 .environment-banner {
   padding: 10px 16px;
-  background: linear-gradient(90deg, var(--stage), var(--banner-end));
+  background: var(--stage);
   color: var(--banner-text);
 }
 
@@ -235,9 +235,7 @@ a:focus-visible {
   border-radius: 9px;
   background: #f8fbfa;
   color: #24484a;
-  box-shadow:
-    inset 0 0 0 1px rgba(40, 112, 106, 0.1),
-    0 5px 14px rgba(11, 24, 26, 0.16);
+  box-shadow: none;
   font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -252,9 +250,7 @@ a:focus-visible {
   border: 1.5px solid var(--reference-border);
   border-radius: 9px;
   background: var(--reference-bg);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.38),
-    0 5px 14px var(--reference-shadow);
+  box-shadow: none;
 }
 
 .reference-control-label {
@@ -340,9 +336,7 @@ a:focus-visible {
   border-color: rgba(168, 196, 189, 0.58);
   background: #111b1c;
   color: #e7f0ed;
-  box-shadow:
-    inset 0 0 0 1px rgba(120, 170, 163, 0.13),
-    0 5px 14px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
 }
 
 :root[data-theme="dark"] .theme-toggle-track {
@@ -366,7 +360,7 @@ a:focus-visible {
 
 .hero-copy-stack {
   display: grid;
-  gap: 26px;
+  gap: 24px;
 }
 
 .header-copy {
@@ -378,8 +372,8 @@ a:focus-visible {
   justify-self: center;
   width: clamp(194px, 19.8vw, 264px);
   padding: 12px;
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
   background: var(--logo-card-bg);
   box-shadow: var(--shadow-soft);
   transform: translate(calc(var(--warning-right-inset) / -2), -15%) scale(1.15);
@@ -409,7 +403,7 @@ a:focus-visible {
   color: var(--eyebrow);
   font-size: 0.86rem;
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: 0.045em;
   text-transform: uppercase;
 }
 
@@ -433,15 +427,17 @@ h1 {
   max-width: 780px;
   margin: 0;
   font-size: 2.65rem;
-  line-height: 1.05;
-  letter-spacing: 0;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 
 h2 {
   margin: 0;
   font-size: 1.45rem;
-  line-height: 1.2;
-  letter-spacing: 0;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
 h3 {
@@ -457,6 +453,7 @@ h3 {
   color: var(--muted);
   font-size: 1.12rem;
   font-weight: 700;
+  text-wrap: pretty;
 }
 
 main {
@@ -476,7 +473,7 @@ main {
   border: 1.5px solid var(--warning-border);
   border-radius: 10px;
   background: var(--warning-soft);
-  box-shadow: var(--shadow-soft);
+  box-shadow: none;
 }
 
 .safety-banner strong {
@@ -501,12 +498,12 @@ main {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   width: 100%;
-  margin: 26px 0;
+  margin: 24px 0;
   padding: 6px;
-  border: 1.5px solid var(--tabs-border);
-  border-radius: 10px;
+  border: 1px solid var(--tabs-border);
+  border-radius: 14px;
   background: var(--tabs-bg);
-  box-shadow: 0 8px 22px var(--tabs-shadow);
+  box-shadow: none;
 }
 
 .calculator-tab {
@@ -517,7 +514,7 @@ main {
   justify-items: center;
   min-height: 58px;
   border: 1.5px solid transparent;
-  border-radius: 7px;
+  border-radius: 8px;
   padding: 10px 20px;
   background: transparent;
   color: var(--ink);
@@ -537,7 +534,7 @@ main {
   top: 8px;
   bottom: 8px;
   left: -1px;
-  width: 2px;
+  width: 1px;
   background: var(--tab-separator);
   content: "";
 }
@@ -566,9 +563,7 @@ main {
   border-color: var(--accent);
   background: var(--accent-soft);
   color: var(--accent-dark);
-  box-shadow:
-    inset 0 1px 0 var(--active-tab-inset),
-    0 6px 16px var(--active-tab-shadow);
+  box-shadow: none;
 }
 
 .calculator-tab:hover {
@@ -601,15 +596,15 @@ main {
 .result-panel,
 .reference-section {
   min-width: 0;
-  border: 1.5px solid var(--line);
-  border-radius: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   background: var(--surface);
   box-shadow: var(--shadow);
 }
 
 .calculator-panel,
 .result-panel {
-  padding: 26px;
+  padding: 24px;
 }
 
 .result-panel.is-avoid-result {
@@ -758,13 +753,13 @@ main {
 .section-heading,
 .subsection-heading {
   margin-bottom: 20px;
-  padding-bottom: 14px;
-  border-bottom: 2px solid var(--line);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
 }
 
 .field-grid {
   display: grid;
-  gap: 18px;
+  gap: 16px;
 }
 
 .compact-grid {
@@ -789,7 +784,7 @@ main {
 .target-field {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 2px solid var(--line);
+  border-top: 1px solid var(--line);
 }
 
 .field-stack > label {
@@ -834,12 +829,12 @@ input[type="number"] {
   width: 100%;
   min-height: 50px;
   border: 1.5px solid var(--line);
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: var(--surface);
   color: var(--ink);
   padding: 11px 13px;
   font-size: 1rem;
-  box-shadow: inset 0 1px 0 var(--input-inset);
+  box-shadow: none;
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
@@ -865,7 +860,7 @@ select {
 .subsection {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 2px solid var(--line);
+  border-top: 1px solid var(--line);
 }
 
 #calculationMode + .subsection {
@@ -884,11 +879,11 @@ select {
 .regimen-entries {
   display: grid;
   gap: 16px;
-  margin-top: 18px;
+  margin-top: 16px;
 }
 
 .regimen-entry {
-  padding: 18px;
+  padding: 16px;
   border: 1.5px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
@@ -899,7 +894,7 @@ select {
   gap: 16px;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .entry-head h3 {
@@ -918,7 +913,7 @@ select {
 .regimen-entry-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .regimen-entry-grid > label:first-child {
@@ -994,8 +989,8 @@ input[type="range"] {
 .tag-button:hover {
   border-color: var(--control-hover-border);
   background: var(--surface-soft);
-  box-shadow: 0 6px 14px var(--soft-shadow);
-  transform: translateY(-1px);
+  box-shadow: none;
+  transform: none;
 }
 
 .tag-button:active {
@@ -1074,7 +1069,7 @@ input[type="range"] {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 22px;
+  margin-top: 24px;
 }
 
 button {
@@ -1087,7 +1082,7 @@ button {
   font-size: 1rem;
   font-weight: 700;
   padding: 10px 16px;
-  box-shadow: 0 8px 18px var(--button-shadow);
+  box-shadow: none;
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
@@ -1098,12 +1093,12 @@ button {
 
 button:hover {
   background: var(--accent-dark);
-  box-shadow: 0 10px 22px var(--button-hover-shadow);
-  transform: translateY(-1px);
+  box-shadow: none;
+  transform: none;
 }
 
 button:active {
-  box-shadow: 0 4px 12px var(--button-active-shadow);
+  box-shadow: none;
   transform: translateY(0);
 }
 
@@ -1111,22 +1106,20 @@ button:active {
   border: 1.5px solid var(--line);
   background: var(--surface);
   color: var(--ink);
-  box-shadow: 0 6px 16px var(--secondary-shadow);
+  box-shadow: none;
 }
 
 .secondary-button:hover {
   border-color: var(--control-hover-border);
   background: var(--surface-soft);
-  box-shadow: 0 8px 20px var(--secondary-hover-shadow);
+  box-shadow: none;
 }
 
 .theme-toggle:hover {
   border-color: rgba(255, 255, 255, 0.96);
   background: #ffffff;
   color: #183638;
-  box-shadow:
-    inset 0 0 0 1px rgba(40, 112, 106, 0.14),
-    0 6px 15px rgba(11, 24, 26, 0.2);
+  box-shadow: none;
   transform: none;
 }
 
@@ -1134,15 +1127,11 @@ button:active {
   border-color: rgba(168, 196, 189, 0.74);
   background: #172425;
   color: #f2fbf8;
-  box-shadow:
-    inset 0 0 0 1px rgba(120, 170, 163, 0.18),
-    0 6px 15px rgba(0, 0, 0, 0.24);
+  box-shadow: none;
 }
 
 .theme-toggle:active {
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
-    0 3px 10px rgba(11, 24, 26, 0.1);
+  box-shadow: none;
   transform: none;
 }
 
@@ -1155,12 +1144,24 @@ button:active {
 
 .dose-result {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 4px 8px;
   align-items: baseline;
   min-height: 98px;
   margin: 8px 0 10px;
   padding: 8px 0;
   color: var(--accent-dark);
+}
+
+/* Keep changing clinical values visually stable without animating them. */
+input[type="number"],
+.dose-result,
+.calculation-steps dd,
+.entry-summary,
+.regimen-table,
+.schedule-table,
+.pharmacokinetics-table {
+  font-variant-numeric: tabular-nums;
 }
 
 #finalDose,
@@ -1178,6 +1179,7 @@ button:active {
 #benzoFinalUnit {
   font-size: 1.5rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .secondary-dose-card {
@@ -1212,7 +1214,7 @@ button:active {
   align-items: center;
   min-height: 56px;
   padding: 10px 0;
-  border-top: 2px solid var(--line);
+  border-top: 1px solid var(--line);
 }
 
 .calculation-steps .wrap-step {
@@ -1222,7 +1224,7 @@ button:active {
 }
 
 .calculation-steps div:last-child {
-  border-bottom: 2px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
 dt {
@@ -2022,6 +2024,7 @@ footer {
     justify-self: center;
     width: clamp(122px, 34vw, 168px);
     padding: 8px;
+    border-radius: 16px;
     transform: none;
   }
 

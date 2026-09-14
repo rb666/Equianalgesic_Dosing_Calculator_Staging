@@ -41,6 +41,8 @@ Root-relative assets in public/ are adapted to the GitHub project prefix during 
 
 SEO changes must preserve the staging indexing exclusion and the production hold. The owner requested on 2026-09-13 that no reviewer names, committee identities, credentials, review dates, or contact details be publicly listed. Do not invent authorship or approval metadata. See `SEO.md` for the v2.1 changes and remaining production-only follow-up.
 
+The footer version note is user-facing. Describe visible improvements and tool availability; keep internal file retention, repository, and deployment details in project documentation.
+
 ## Preserve approved ratios
 
 The owner confirmed on 2026-09-13 that the existing conversion ratios were approved by clinical oversight committees. Preserve them. Do not replace them with different published ratios or label them unapproved because an approval document is not stored here. The scoped user attestation is recorded separately from the overall review status of other clinical content.

@@ -28,7 +28,8 @@ The application remains plain static HTML/CSS/JavaScript with no package manifes
 - public/calculator-core.js: shared calculation functions and numeric validation.
 - public/calculator-provenance.js: data digest, sources, scoped approval attestation and traceability.
 - public/styles.css: shared responsive styling and light/dark themes.
-- public/OpioidConversionSite.png: original logo, used on the page and in social previews.
+- public/OpioidConversionSite.png: original logo, retained for historical continuity and social previews.
+- public/calc-med-brand.png and public/opioid-conversion-logo.png: approved header brand and complete stacked tool logo, copied unchanged from the selected local designs.
 - archive/uds/: retained UDS document, JS, CSS and workflow guide; excluded from deployment.
 - tests/: calculator, approved-table, archive and deployment regression checks.
 - scripts/prepare-github-pages.mjs: explicit calculator asset allowlist, clean Pages route, retired-route handling.
@@ -39,9 +40,11 @@ UDS must have no active header link, page, script, stylesheet or sitemap entry. 
 
 Root-relative assets in public/ are adapted to the GitHub project prefix during artifact preparation. Never deploy the repository root or archive. Generated dist/ is ignored. Staging has noindex/nofollow and robots Disallow; source metadata retains production canonicals for later intentional promotion.
 
-### Temporary staging logo preview (2026-09-14)
+### Approved header and tool identity (2026-09-15)
 
-The owner authorized staging to temporarily open the logo switcher, now using the eleven-design shortlist grouped and renumbered 01–11. `staging/release.json` enables it, and `staging/logo-preview/` contains the explicit preview source/assets. `/opioidcalculator/` is the wrapper, `/opioidcalculator/site/` its working calculator, and `/logo-preview/` the gallery. The mobile-size toggle is removed. Conversion grid is still the default, now #03 (formerly #06). Current winners are #03, #04, #06, #07, #08, and #10; `staging/logo-preview/numbering-map.md` records historical identities. Removed concepts remain outside the deployment allowlist. The preview uses the shared public calculator source; clinical data remain unchanged. Saved tool selection uses a tool query parameter so fresh loads and refreshes do not scroll or focus a tab; explicit anchor and keyboard navigation keep their focus behavior. See `staging/logo-preview/README.md` for structure and restoration; disabling the flag and redeploying restores the normal calculator-only artifact. Do not deploy the local experiment folders. This temporary exception applies only to the staging Pages build, never production.
+The owner approved the separate local layout proposal for staging: Serif grid brand (brand shortlist #04, historical #12) in the original slate header, and Faithful original cleanup (tool study #10) with its complete lettering below the symbol. These are two different numbering catalogs. The full stacked tool logo uses an unframed, narrower desktop column; existing clinical wording and calculator workflows remain. Apply this presentation to the current public source, never replace it with the older local demo snapshot.
+
+`staging/release.json` now disables the temporary logo switcher. `/opioidcalculator/` directly serves the current calculator; experiment selectors, galleries and wrapper files are excluded from the normal artifact. Retain `staging/logo-preview/` and its numbering/history for later review; see its README for the optional build override. Only the two selected new images join the explicit calculator asset allowlist. Do not deploy local experiment folders, generation prompts, or backups. Saved tool selection still uses a query parameter so fresh loads and refreshes do not scroll or focus a tab; explicit anchor and keyboard navigation keep their focus behavior. Production remains unchanged.
 
 SEO changes must preserve the staging indexing exclusion and the production hold. The owner requested on 2026-09-13 that no reviewer names, committee identities, credentials, review dates, or contact details be publicly listed. Do not invent authorship or approval metadata. See `SEO.md` for the v2.1 changes and remaining production-only follow-up.
 

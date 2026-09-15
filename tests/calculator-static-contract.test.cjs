@@ -161,10 +161,10 @@ test("shared core is the calculation seam and CI blocks deployment on tests", ()
   assert.match(workflow, /deploy:[\s\S]*?permissions:[\s\S]*?pages:\s*write[\s\S]*?id-token:\s*write/);
 });
 
-test("GitHub Pages preview is allowlisted, preserves the calculator, and can be removed completely", () => {
+test("GitHub Pages releases the selected identity directly and keeps the optional preview isolated", () => {
   const artifact = path.join(repositoryRoot, "dist", "github-pages");
   const base = "/Equianalgesic_Dosing_Calculator_Staging/";
-  const normalFiles = [".nojekyll", "404.html", "OpioidConversionSite.png", "calculator-core.js",
+  const normalFiles = [".nojekyll", "404.html", "OpioidConversionSite.png", "calc-med-brand.png", "opioid-conversion-logo.png", "calculator-core.js",
     "calculator-provenance.js", "favicon.svg", "index.html", "opioidcalculator.html",
     path.join("opioidcalculator", "index.html"), "robots.txt", "script.js", "styles.css"];
   // Keep the owner's selected order independent of the generated/source catalog.
@@ -219,6 +219,8 @@ test("GitHub Pages preview is allowlisted, preserves the calculator, and can be 
   assert.doesNotMatch(wrapper, /\beight\b/i);
   assert.match(wrapper, /href="\/Equianalgesic_Dosing_Calculator_Staging\/logo-preview\/"/);
   const generatedCalculator = readArtifact("opioidcalculator/site/index.html");
+  assert.match(generatedCalculator, /<figure class="tool-emblem brand-logo-card"[^>]*><img\b/,
+    "the retained preview receives a replaceable image without altering the fixed release identity");
   assert.match(generatedCalculator, /src="\/Equianalgesic_Dosing_Calculator_Staging\/calculator-core\.js\?v=/);
   assert.match(generatedCalculator, /src="\/Equianalgesic_Dosing_Calculator_Staging\/calculator-provenance\.js\?v=/);
   const treatmentLink = generatedCalculator.match(/^[ \t]*<link rel="stylesheet" href="[^"\n]*\/logo-treatment\.css\?v=[^"]+">\r?\n/m);
@@ -234,7 +236,7 @@ test("GitHub Pages preview is allowlisted, preserves the calculator, and can be 
   assert.deepEqual(listFiles(), [...normalFiles, ...previewFiles,
     path.join("opioidcalculator", "site", "index.html"),
     ...logoFiles.map(file => path.join("logo-preview", "assets", file))].sort());
-  for (const file of ["calculator-core.js", "calculator-provenance.js", "script.js", "styles.css", "OpioidConversionSite.png"]) {
+  for (const file of ["calculator-core.js", "calculator-provenance.js", "script.js", "styles.css", "OpioidConversionSite.png", "calc-med-brand.png", "opioid-conversion-logo.png"]) {
     assert.deepEqual(fs.readFileSync(path.join(artifact, file)), fs.readFileSync(path.join(repositoryRoot, "public", file)), `${file} remains byte-identical`);
   }
   const vm = require("node:vm");
@@ -272,21 +274,35 @@ test("GitHub Pages preview is allowlisted, preserves the calculator, and can be 
   assert.equal(galleryPreviewUrl.searchParams.get("logo"), "03", "gallery returns to the selected conversion-grid default");
   const notFound = readArtifact("404.html");
   const redirectScript = notFound.match(/<script>([\s\S]*?)<\/script>/)[1];
-  for (const route of ["UDS", "UDS/", "UDS.html", "uds", "uds/", "uds.html", "opioidcalculator", "unknown", "uds-tool.js"]) {
+  const unavailableRoutes = ["unknown", "uds-tool.js", "logo-preview/preview.js", "logo-preview/assets/01-current.png", "opioidcalculator/site/script.js"];
+  for (const route of ["UDS", "UDS/", "UDS.html", "uds", "uds/", "uds.html", "opioidcalculator", "opioidcalculator/site/", "opioidcalculator/site/index.html", "logo-preview/", "logo-preview/index.html", ...unavailableRoutes]) {
     let destination = null;
     vm.runInNewContext(redirectScript, {location: {pathname: base + route, search: "?test=1", hash: "#top", replace: url => {destination = url;}}});
-    assert.equal(destination, ["unknown", "uds-tool.js"].includes(route) ? null : `${base}opioidcalculator/?test=1#top`, route);
+    assert.equal(destination, unavailableRoutes.includes(route) ? null : `${base}opioidcalculator/?test=1#top`, route);
   }
   assert.match(fs.readFileSync(path.join(artifact, "robots.txt"), "utf8"), /Disallow: \//);
   // Keep the two builds serialized: both clear the same artifact directory.
+  // A normal release must come directly from the checked-in configuration,
+  // without relying on a developer's environment override to hide the study.
+  assert.equal(release.logoPreview, false, "the accepted identity ends the temporary staging wrapper");
+  const defaultBuildEnvironment = {...process.env};
+  delete defaultBuildEnvironment.GITHUB_PAGES_LOGO_PREVIEW;
   const disabledBuild = spawnSync(process.execPath, ["scripts/prepare-github-pages.mjs"], {
-    cwd: repositoryRoot, encoding: "utf8", env: {...process.env, GITHUB_PAGES_LOGO_PREVIEW: "0"},
+    cwd: repositoryRoot, encoding: "utf8", env: defaultBuildEnvironment,
   });
   assert.equal(disabledBuild.status, 0, disabledBuild.stderr || disabledBuild.stdout);
   assert.deepEqual(listFiles(), normalFiles.sort(), "disabling the experiment removes every preview file");
   const restoredCalculator = readArtifact("opioidcalculator/index.html");
-  assert.equal(restoredCalculator, generatedCalculator.replace(treatmentLink[0], ""), "disabling restores the same calculator without the logo treatment");
+  const fixedIdentity = restoredCalculator.match(/<(div|figure)\b[^>]*class="tool-emblem"[^>]*>[\s\S]*?<\/\1>/)?.[0];
+  assert.ok(fixedIdentity, "the normal release includes the fixed tool identity");
+  const previewWithoutAdaptations = generatedCalculator.replace(treatmentLink[0], "")
+    .replace(/<figure class="tool-emblem brand-logo-card"[^>]*>[\s\S]*?<\/figure>/, fixedIdentity);
+  assert.equal(restoredCalculator, previewWithoutAdaptations, "the optional preview changes only its logo slot and treatment stylesheet");
   assert.doesNotMatch(restoredCalculator, /logo-preview|logo-treatment|siteFrame/);
+  for (const asset of ["calc-med-brand.png", "opioid-conversion-logo.png"]) {
+    assert.ok(restoredCalculator.includes(`${base}${asset}?v=`), `${asset} is project-prefixed and cache-versioned`);
+  }
+  assert.doesNotMatch(restoredCalculator, /toolMarkSelect|Local study|layout-proposal|127\.0\.0\.1/);
   assert.match(restoredCalculator, /<meta name="robots" content="noindex, nofollow"/);
   const wrongRepository = spawnSync(process.execPath, ["scripts/prepare-github-pages.mjs"], {
     cwd: repositoryRoot, encoding: "utf8", env: {...process.env, GITHUB_REPOSITORY: "rb666/calc-med"},

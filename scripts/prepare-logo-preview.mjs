@@ -40,6 +40,13 @@ export async function prepareLogoPreview({ root, outputDir, basePath, calculator
   const adapt = html => html.replaceAll('__BASE_PATH__', basePath).replaceAll('__PREVIEW_BASE__', previewBase).replaceAll('__PREVIEW_VERSION__', version);
   const gallery = adapt(await readFile(path.join(source, 'gallery.html'), 'utf8'));
   await writeFile(path.join(output, 'index.html'), gallery);
-  await writeFile(path.join(child, 'index.html'), calculatorHtml.replace('</head>', `  <link rel="stylesheet" href="${previewBase}logo-treatment.css?v=${version}">\n  </head>`));
+  // The accepted page has a fixed SVG tool identity. Recreate the old image
+  // slot only inside the optional comparison iframe so its retained switcher
+  // can still replace artwork without adding preview hooks to the release.
+  const toolIdentity = /<(div|figure)\b[^>]*class="tool-emblem"[^>]*>[\s\S]*?<\/\1>/g;
+  if ((calculatorHtml.match(toolIdentity) || []).length !== 1) throw new Error('Expected one fixed tool identity for the optional logo preview');
+  const previewCalculator = calculatorHtml.replace(toolIdentity,
+    `<figure class="tool-emblem brand-logo-card" aria-label="Logo preview"><img src="${basePath}OpioidConversionSite.png" width="1254" height="1254" alt="Opioid Conversion"></figure>`);
+  await writeFile(path.join(child, 'index.html'), previewCalculator.replace('</head>', `  <link rel="stylesheet" href="${previewBase}logo-treatment.css?v=${version}">\n  </head>`));
   return adapt(await readFile(path.join(source, 'index.html'), 'utf8'));
 }

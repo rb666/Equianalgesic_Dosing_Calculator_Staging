@@ -79,6 +79,31 @@ The owner subsequently selected the current local comparison for staging: eleven
 
 This update replaces the earlier eight-design preview and excludes the removed arrow, monogram, and other retired concepts from the Pages allowlist. The borderless header uses measured wordmark heights, including per-line sizing for the stacked #11; the original #01 keeps its source colors. The preview cache version is `20260914-logo-shortlist-4`. Public calculator assets, approved clinical data, the cumulative v2.1 note, and historical tags remain unchanged. GitHub Actions identifies the exact commit and verification/deployment results.
 
+## Approved header and tool identity (2026-09-15)
+
+The owner approved the independent compact layout proposal for the v2.1 staging
+series. The current calculator now places the Serif grid calc.med brand in the
+original slate header and the complete Faithful original cleanup tool logo beside
+the introduction. Its original lettering and tagline remain below the symbol.
+The tool's narrower desktop column returns space to the warning; mobile places
+the emblem beside the title and keeps the warning full width. Brand shortlist #04 (historical #12) and tool study
+#10 belong to separate design catalogs.
+
+This release transfers presentation onto the current public calculator. It does
+not copy the earlier local demo's calculator runtime. The temporary staging logo
+switcher is disabled; the normal calculator URL serves the tool directly, without
+experimental selectors or a wrapper. Former preview-page bookmarks redirect to
+the calculator, retaining tool selection. Preview source/history remain available in
+the repository but are excluded from the normal Pages artifact. Only the two
+selected images are added to the explicit deployed asset list; the original image
+remains for social previews and historical continuity.
+
+The shared asset key is `20260915-header-identity-1`. The cumulative v1.0-to-v2.1
+note extends its existing broad design summary to include page organization.
+Clinical scripts, provenance digest, approved conversion fixtures, historical
+tags, production and the base repository remain unchanged. The release commit and
+its GitHub Actions verification/deployment run identify the published build.
+
 ## Preservation policy
 
 - Never move, replace, delete, or reuse `v1.0`, `v2.0` or `v2.1`. They refer permanently to their recorded commits, even if production or staging moves forward.

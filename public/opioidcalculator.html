@@ -48,7 +48,7 @@
     <meta name="twitter:image" content="https://calc.med/OpioidConversionSite.png" />
     <meta name="twitter:image:alt" content="Opioid Conversion — Calculate. Convert. Care." />
     <title>Opioid Conversion &amp; MME Calculator | calc.med</title>
-    <link rel="icon" href="/favicon.svg?v=20260914-default-examples-1" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.svg?v=20260915-header-identity-1" type="image/svg+xml" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -131,16 +131,17 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260914-refresh-navigation-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260915-header-identity-1" />
   </head>
   <body>
     <a class="skip-link" href="#calculatorTabs">Skip to calculators</a>
-    <div class="environment-banner">
+    <header class="environment-banner" aria-label="calc.med">
       <div class="utility-bar-content">
-        <div class="utility-brand" aria-label="Opioid Conversion">
-          <strong>Opioid Conversion</strong>
-          <span>Calculate. Convert. Care.</span>
-        </div>
+        <a class="utility-brand" href="/opioidcalculator/" aria-label="calc.med">
+          <svg viewBox="141 363 1270 254" role="img" aria-label="calc.med" focusable="false">
+            <image href="/calc-med-brand.png?v=20260915-header-identity-1" width="1536" height="1024" />
+          </svg>
+        </a>
         <div class="utility-actions">
           <div class="reference-control-group" aria-label="Clinical references">
             <span class="reference-control-label">Reference</span>
@@ -149,6 +150,7 @@
               aria-expanded="false"
               class="topbar-reference-button"
               id="pharmacokineticsOpenButton"
+              aria-label="Open pharmacokinetic reference"
               type="button"
             >
               PK
@@ -167,9 +169,9 @@
           </button>
         </div>
       </div>
-    </div>
-    <header class="site-header">
-      <section class="intro-layout" aria-label="Safety warning and site logo">
+    </header>
+    <div class="site-header">
+      <section class="intro-layout" aria-label="Calculator introduction and safety warning">
         <div class="hero-copy-stack">
           <div class="header-copy">
             <p class="eyebrow">Clinical decision support</p>
@@ -200,16 +202,13 @@
             </div>
           </section>
         </div>
-        <div class="brand-logo-card" aria-label="Opioid Conversion logo">
-          <img
-            src="/OpioidConversionSite.png?v=20260914-default-examples-1"
-            alt="Opioid Conversion"
-            width="1254"
-            height="1254"
-          />
-        </div>
+        <figure class="tool-emblem">
+          <svg viewBox="150 90 965 1060" role="img" aria-label="Opioid Conversion. Calculate. Convert. Care." focusable="false">
+            <image href="/opioid-conversion-logo.png?v=20260915-header-identity-1" width="1254" height="1254" />
+          </svg>
+        </figure>
       </section>
-    </header>
+    </div>
 
     <main>
       <nav
@@ -1145,7 +1144,7 @@
                 <li>Improved input validation and live results, with safety reductions adjustable in 0.1% increments. Unavailable target drugs require a new selection.</li>
                 <li>Improved kidney/liver warning handling and included the target drug and route with benzodiazepine results.</li>
                 <li>Corrected reference details, added source-linked PK illustrations, and clarified graph limitations. Mobile PK profiles keep the selected graph with its clinical details.</li>
-                <li>Improved keyboard access, mobile layout, readability, and typography.</li>
+                <li>Improved keyboard access, page organization, mobile layout, readability, and typography.</li>
                 <li>Added a collapsible usage guide below the references, direct calculator links that retain tool selection without jumping down the page on refresh, and clearer search and sharing previews.</li>
                 <li>Urine drug screening tools are temporarily unavailable.</li>
               </ul>
@@ -1264,8 +1263,8 @@
         window.setTimeout(showCalculatorLoadFailure, 5000);
       })();
     </script>
-    <script src="/calculator-core.js?v=20260914-refresh-navigation-1"></script>
-    <script src="/calculator-provenance.js?v=20260914-refresh-navigation-1"></script>
-    <script src="/script.js?v=20260914-refresh-navigation-1"></script>
+    <script src="/calculator-core.js?v=20260915-header-identity-1"></script>
+    <script src="/calculator-provenance.js?v=20260915-header-identity-1"></script>
+    <script src="/script.js?v=20260915-header-identity-1"></script>
   </body>
 </html>

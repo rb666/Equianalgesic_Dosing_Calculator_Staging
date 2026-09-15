@@ -34,7 +34,7 @@ await rm(outputDir, { recursive: true, force: true });
 await mkdir(path.join(outputDir, "opioidcalculator"), { recursive: true });
 
 // Explicit release contents prevent archives, source routes, or backups from leaking into Pages.
-const assets = [".nojekyll", "favicon.svg", "OpioidConversionSite.png", "styles.css",
+const assets = [".nojekyll", "favicon.svg", "OpioidConversionSite.png", "calc-med-brand.png", "opioid-conversion-logo.png", "styles.css",
   "calculator-core.js", "calculator-provenance.js", "script.js"];
 for (const asset of assets) await copyFile(path.join(sourceDir, asset), path.join(outputDir, asset));
 let html = await readFile(path.join(sourceDir, "opioidcalculator.html"), "utf8");
@@ -47,7 +47,7 @@ if (!html.includes('<meta name="robots" content="noindex, nofollow" />')) {
   throw new Error("Staging HTML must explicitly exclude search indexing");
 }
 for (const asset of assets) html = html.replaceAll(`="/${asset}`, `="${basePath}${asset}`);
-html = html.replaceAll('href="/opioidcalculator"', `href="${calculatorUrl}"`);
+html = html.replace(/href="\/opioidcalculator\/?"/g, `href="${calculatorUrl}"`);
 if (logoPreviewEnabled) html = await prepareLogoPreview({ root, outputDir, basePath, calculatorHtml: html, version: release.logoPreviewVersion });
 await writeFile(path.join(outputDir, "opioidcalculator", "index.html"), html);
 for (const name of ["index.html", "opioidcalculator.html"]) {
@@ -74,7 +74,7 @@ function notFoundPage() {
   const base = ${JSON.stringify(basePath)};
   if (!location.pathname.startsWith(base)) return;
   const route = location.pathname.slice(base.length).replace(/\\/+$/, "").toLowerCase();
-  if (["", "index.html", "opioidcalculator", "opioidcalculator.html", "uds", "uds.html"].includes(route)) {
+  if (["", "index.html", "opioidcalculator", "opioidcalculator.html", "opioidcalculator/site", "opioidcalculator/site/index.html", "logo-preview", "logo-preview/index.html", "uds", "uds.html"].includes(route)) {
     location.replace(${JSON.stringify(calculatorUrl)} + location.search + location.hash);
   }
 })();</script></body></html>`;

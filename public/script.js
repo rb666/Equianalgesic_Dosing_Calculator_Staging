@@ -3169,7 +3169,7 @@ const calculate = () => {
   mainResultPanel.classList.toggle("is-avoid-result", organPresentation.avoidTarget);
   resultTitle.textContent = organPresentation.avoidTarget
     ? `Avoid ${targetOption.label} with selected organ guidance`
-    : `${targetOption.label} estimate before organ guidance`;
+    : `${targetOption.label} estimate`;
   finalDose.textContent = organPresentation.avoidTarget
     ? "—"
     : formatDose(adjustedTargetDose);
@@ -3195,7 +3195,7 @@ const calculate = () => {
     conversionResultStatus,
     organPresentation.avoidTarget
       ? `${resultTitle.textContent}. No target dose is displayed.`
-      : `${resultTitle.textContent}: ${formatDose(adjustedTargetDose)} ${dailyUnit}.`,
+      : `${resultTitle.textContent}: ${formatDose(adjustedTargetDose)} ${dailyUnit}. ${resultQualifier.textContent}`,
   );
 };
 

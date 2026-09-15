@@ -1053,6 +1053,26 @@ input[type="range"] {
   color: var(--note-warning-text);
 }
 
+.transition-notice {
+  margin: 16px 0 4px;
+  color: var(--ink);
+  font-size: 0.94rem;
+}
+
+.transition-reference > summary {
+  width: fit-content;
+  padding: 10px 0;
+  color: var(--accent);
+  font-size: 0.94rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.transition-reference .reference-copy {
+  margin: 0;
+  font-weight: 400;
+}
+
 .note-box h4 {
   margin: 0 0 8px;
   color: var(--ink);

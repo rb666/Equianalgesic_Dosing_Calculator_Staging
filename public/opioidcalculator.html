@@ -48,7 +48,7 @@
     <meta name="twitter:image" content="https://calc.med/OpioidConversionSite.png" />
     <meta name="twitter:image:alt" content="Opioid Conversion — Calculate. Convert. Care." />
     <title>Opioid Conversion &amp; MME Calculator | calc.med</title>
-    <link rel="icon" href="/favicon.svg?v=20260915-header-identity-1" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.svg?v=20260915-concise-guidance-1" type="image/svg+xml" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -131,7 +131,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/styles.css?v=20260915-header-identity-1" />
+    <link rel="stylesheet" href="/styles.css?v=20260915-concise-guidance-1" />
   </head>
   <body>
     <a class="skip-link" href="#calculatorTabs">Skip to calculators</a>
@@ -139,7 +139,7 @@
       <div class="utility-bar-content">
         <a class="utility-brand" href="/opioidcalculator/" aria-label="calc.med">
           <svg viewBox="141 363 1270 254" role="img" aria-label="calc.med" focusable="false">
-            <image href="/calc-med-brand.png?v=20260915-header-identity-1" width="1536" height="1024" />
+            <image href="/calc-med-brand.png?v=20260915-concise-guidance-1" width="1536" height="1024" />
           </svg>
         </a>
         <div class="utility-actions">
@@ -204,7 +204,7 @@
         </div>
         <figure class="tool-emblem">
           <svg viewBox="150 90 965 1060" role="img" aria-label="Opioid Conversion. Calculate. Convert. Care." focusable="false">
-            <image href="/opioid-conversion-logo.png?v=20260915-header-identity-1" width="1254" height="1254" />
+            <image href="/opioid-conversion-logo.png?v=20260915-concise-guidance-1" width="1254" height="1254" />
           </svg>
         </figure>
       </section>
@@ -268,7 +268,7 @@
           tabindex="-1"
           type="button"
         >
-          <span>Buprenorphine</span>
+          <span>Suboxone / Belbuca</span>
           <small>Transition schedules</small>
         </button>
         <button
@@ -532,7 +532,7 @@
               <dd id="reductionApplied">Not applied</dd>
             </div>
             <div id="safetyAdjustedStep">
-              <dt>After safety reduction, before organ guidance</dt>
+              <dt>After safety reduction</dt>
               <dd id="safetyAdjustedDose">Not available</dd>
             </div>
             <div class="wrap-step" id="renalAdjustmentStep">
@@ -763,7 +763,7 @@
         >
           <form class="calculator-panel" id="buprenorphineForm">
             <div class="section-heading">
-              <p class="eyebrow">Buprenorphine formulations</p>
+              <p class="eyebrow">Suboxone / Belbuca</p>
               <h2>MEDD-based transition schedule</h2>
             </div>
 
@@ -771,27 +771,26 @@
               <label for="buprenorphineMeddRange">
                 Current MEDD range
                 <select id="buprenorphineMeddRange" name="buprenorphineMeddRange"></select>
-                <span class="field-hint">
-                  Choose the current MEDD range; product details appear in the output.
-                </span>
               </label>
             </div>
 
             <p class="basis-note">
-              Select the current MEDD range to view the corresponding
-              transition schedule. Stabilize earlier if pain and
-              withdrawal are controlled.
+              Stabilize earlier if pain and withdrawal are controlled.
             </p>
-            <p class="note-box" role="note">
-              <strong>Off-label transition schedule.</strong> These overlap schedules
-              differ from the cited
-              <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bc2b7a3d-72cf-497c-95b0-ba2b71f63c64" target="_blank" rel="noreferrer">Belbuca</a>
-              and
-              <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8a5edcf9-828c-4f97-b671-268ab13a8ecd" target="_blank" rel="noreferrer">Suboxone</a>
-              product-label initiation
-              instructions. Confirm the approach against institutional protocol and
-              specialist review before use.
+            <p class="transition-notice" role="note">
+              <strong>Off-label overlap schedule;</strong> verify against institutional protocol.
             </p>
+            <details class="transition-reference" id="buprenorphineReference">
+              <summary>Schedule reference</summary>
+              <p class="reference-copy">
+                These overlap schedules differ from the cited
+                <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bc2b7a3d-72cf-497c-95b0-ba2b71f63c64" target="_blank" rel="noreferrer">Belbuca</a>
+                and
+                <a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8a5edcf9-828c-4f97-b671-268ab13a8ecd" target="_blank" rel="noreferrer">Suboxone</a>
+                product-label initiation instructions. Confirm the approach against
+                institutional protocol and specialist review before use.
+              </p>
+            </details>
           </form>
 
           <section class="result-panel" data-nosnippet>
@@ -1142,7 +1141,7 @@
               <p>The previously approved conversion ratios are unchanged.</p>
               <ul>
                 <li>Improved input validation and live results, with safety reductions adjustable in 0.1% increments. Unavailable target drugs require a new selection.</li>
-                <li>Improved kidney/liver warning handling and included the target drug and route with benzodiazepine results.</li>
+                <li>Improved kidney/liver warning handling, clarified transition-product labels, and included the target drug and route with benzodiazepine results.</li>
                 <li>Corrected reference details, added source-linked PK illustrations, and clarified graph limitations. Mobile PK profiles keep the selected graph with its clinical details.</li>
                 <li>Improved keyboard access, page organization, mobile layout, readability, and typography.</li>
                 <li>Added a collapsible usage guide below the references, direct calculator links that retain tool selection without jumping down the page on refresh, and clearer search and sharing previews.</li>
@@ -1263,8 +1262,8 @@
         window.setTimeout(showCalculatorLoadFailure, 5000);
       })();
     </script>
-    <script src="/calculator-core.js?v=20260915-header-identity-1"></script>
-    <script src="/calculator-provenance.js?v=20260915-header-identity-1"></script>
-    <script src="/script.js?v=20260915-header-identity-1"></script>
+    <script src="/calculator-core.js?v=20260915-concise-guidance-1"></script>
+    <script src="/calculator-provenance.js?v=20260915-concise-guidance-1"></script>
+    <script src="/script.js?v=20260915-concise-guidance-1"></script>
   </body>
 </html>

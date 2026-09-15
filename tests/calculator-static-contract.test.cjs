@@ -99,12 +99,13 @@ test("organ safety hierarchy and environment-neutral product naming are locked",
   assert.match(scriptText, /resolveOrganPresentation/);
   assert.match(scriptText, /No target dose is displayed/);
   assert.match(scriptText, /no combined dose is calculated/i);
-  assert.match(publicHtml, /<span>Buprenorphine<\/span>/);
+  assert.match(publicHtml, /<span>Suboxone \/ Belbuca<\/span>/);
   assert.doesNotMatch(publicHtml, /<span>Suboxone<\/span>/);
   assert.doesNotMatch(publicHtml, /Suboxone\s*\/\s*buprenorphine/i);
   assert.doesNotMatch(publicHtml, /staging build|staging rule|staging table|staging guidance/i);
   assert.doesNotMatch(scriptText, /staging build|staging rule|staging table|staging guidance/i);
-  assert.match(publicHtml, /Off-label transition schedule/);
+  assert.match(publicHtml, /<p class="transition-notice" role="note">[\s\S]*?Off-label overlap schedule;[\s\S]*?institutional protocol\.[\s\S]*?<\/p>\s*<details class="transition-reference" id="buprenorphineReference">/);
+  assert.match(publicHtml, /id="buprenorphineReference">\s*<summary>Schedule reference<\/summary>[\s\S]*?dailymed\.nlm\.nih\.gov[\s\S]*?<\/details>/);
   assert.match(publicHtml, /institutional protocol and[\s\S]*specialist review/);
 });
 

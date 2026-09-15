@@ -59,6 +59,15 @@ The owner requested on 2026-09-14 that this note remain a cumulative **net compa
 
 ## Preserve approved ratios
 
+For hospital use, prefer concise guidance and retain familiar product names when
+they describe the tool accurately. The transition selector is **Suboxone / Belbuca**;
+its internal `buprenorphine` identifier and all five schedules remain unchanged.
+Keep the short off-label overlap notice visible and its explanation/source links
+in the closed Schedule reference disclosure. Preserve the original instruction
+to stabilize earlier if pain and withdrawal are controlled. Conversion results
+retain the before-kidney/liver qualifier beside the dose and in spoken output;
+avoid repeating it in every heading or calculation row.
+
 The owner confirmed on 2026-09-13 that the existing conversion ratios were approved by clinical oversight committees. Preserve them. Do not replace them with different published ratios or label them unapproved because an approval document is not stored here. The scoped user attestation is recorded separately from the overall review status of other clinical content.
 
 The frozen fixture tests/fixtures/approved-clinical-tables.json was extracted from production 6fde4f9 and compared exactly with staging c281351 before editing. It locks all 36 opioid rows, 13 benzodiazepine rows, six methadone bands, four methadone constants, seven hepatic rows and five buprenorphine schedules. Do not regenerate it to make a ratio change pass. Existing renal rules and safety reductions must also be preserved. Fix discrepancies and actual bugs; clinical data corrections require source evidence and focused checks. PK profile values do not drive conversion calculations.

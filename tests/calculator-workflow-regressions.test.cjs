@@ -148,3 +148,50 @@ test("a valid regimen with no selected target cannot produce a conversion", () =
   assert.equal(context.resultTitle.textContent, "Choose a target drug and route");
   assert.equal(context.targetDrugSelect["aria-invalid"], "true");
 });
+
+test("concise conversion results preserve the pre-organ qualifier and suppress avoided doses", () => {
+  const context = mainCalculatorContext();
+  context.calculationModeSelect.value = "convert";
+  context.egfrInput.validity.valid = true;
+  context.reductionNumber.value = "25";
+  context.getDailyUnitLabel = load("getDailyUnitLabel", {});
+  context.setLiveStatus = (element, message) => { element.textContent = message; };
+  let avoidPresentation = false;
+  context.mainResultPanel.classList.toggle = (name, enabled) => {
+    assert.equal(name, "is-avoid-result");
+    avoidPresentation = enabled;
+  };
+  const renalAdvice = { summary: "Kidney guidance", resultLabel: "7.5 mg/day", avoidTarget: false };
+  const hepaticAdvice = { summary: "Liver guidance", resultLabel: "10 mg/day", avoidTarget: false };
+  context.getRenalAdvice = () => renalAdvice;
+  context.getHepaticAdvice = () => hepaticAdvice;
+  const calculate = load("calculate", context);
+
+  calculate();
+  // Morphine 30 mg/day -> oxycodone 20 mg/day, then a 25% safety reduction.
+  assert.equal(context.resultTitle.textContent, "Oxycodone oral (IR) estimate");
+  assert.equal(context.finalDose.textContent, "15");
+  assert.equal(context.finalUnit.textContent, "mg/day");
+  assert.equal(context.safetyAdjustedDoseOutput.textContent, "15 mg/day");
+  assert.equal(context.resultQualifier.textContent, "After safety reduction; before kidney and liver guidance.");
+  assert.equal(context.conversionResultStatus.textContent,
+    "Oxycodone oral (IR) estimate: 15 mg/day. After safety reduction; before kidney and liver guidance.");
+  assert.equal(avoidPresentation, false);
+
+  for (const advice of [renalAdvice, hepaticAdvice]) {
+    advice.avoidTarget = true;
+    calculate();
+    assert.equal(context.finalDose.textContent, "—");
+    assert.equal(context.finalUnit.textContent, "");
+    assert.equal(context.resultTitle.textContent, "Avoid Oxycodone oral (IR) with selected organ guidance");
+    assert.match(context.resultQualifier.textContent, /^No target dose is displayed\./);
+    assert.equal(context.conversionResultStatus.textContent,
+      "Avoid Oxycodone oral (IR) with selected organ guidance. No target dose is displayed.");
+    assert.equal(avoidPresentation, true);
+    advice.avoidTarget = false;
+  }
+  calculate();
+  assert.equal(context.finalDose.textContent, "15");
+  assert.match(context.conversionResultStatus.textContent, /before kidney and liver guidance\.$/);
+  assert.equal(avoidPresentation, false);
+});

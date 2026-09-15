@@ -104,6 +104,21 @@ Clinical scripts, provenance digest, approved conversion fixtures, historical
 tags, production and the base repository remain unchanged. The release commit and
 its GitHub Actions verification/deployment run identify the published build.
 
+## Concise hospital guidance (2026-09-15)
+
+The owner approved restoring product recognition with the **Suboxone / Belbuca**
+selector label and reducing repeated guidance. The transition panel removes two
+redundant selection instructions, preserves the original stabilization sentence,
+and shows one short off-label overlap notice. The original explanation and
+product-label citations remain in a closed Schedule reference disclosure.
+Conversion headings and calculation-row labels are shorter; the visible dose
+qualifier and spoken result retain the distinction between safety reduction and
+kidney/liver guidance. Avoid-target presentation remains intact.
+
+All five transition schedules, approved ratios, core calculations and provenance
+remain unchanged. The existing cumulative v2.1 note now includes the clarified
+transition-product labels. Asset key: `20260915-concise-guidance-1`.
+
 ## Preservation policy
 
 - Never move, replace, delete, or reuse `v1.0`, `v2.0` or `v2.1`. They refer permanently to their recorded commits, even if production or staging moves forward.

@@ -2,7 +2,7 @@
 
 Enabled at the owner's request on 2026-09-14. The normal staging calculator URL opens the logo switcher; `/logo-preview/` shows the eleven-design gallery. **03 — Conversion grid** is the default, retaining the same design role as former #06. The current grouped numbering is shared by the switcher, gallery, comparison selectors and individual download names. [The numbering record](numbering-map.md) preserves the previous ids.
 
-The switcher has no mobile-size toggle. It uses the available browser width and the calculator's responsive layout. Logo images retain their proportions and use measured artwork bounds and wordmark heights, a borderless presentation, and light/dark blending. The stacked design uses its overall height for sizing. Original #01 bypasses color filters and blending; transparent artwork bypasses canvas blending. Assets are copied exactly from the selected local shortlist.
+The switcher has no mobile-size toggle. It uses the available browser width and the calculator's responsive layout. Logo images retain their proportions and use measured artwork bounds and wordmark heights, a borderless presentation, and light/dark blending. The stacked #11 uses the same per-line wordmark sizing as the other concepts in the site header; the separate gallery retains its comparison sizing. Original #01 bypasses color filters and blending; transparent artwork bypasses canvas blending. Assets are copied exactly from the selected local shortlist.
 
 ## Deployment boundary and restoration
 

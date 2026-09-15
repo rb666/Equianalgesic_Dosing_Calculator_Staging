@@ -59,9 +59,7 @@ async function showLogo(logo, { reveal = false } = {}) {
     const bounds = logo.bounds;
     card.style.setProperty('--logo-ratio', String(bounds.width / bounds.height));
     card.style.setProperty('--logo-width-per-letter', String(bounds.width / (logo.wordmarkHeight || bounds.height)));
-    card.style.setProperty('--logo-compact-scale', String(logo.compactScale || 1));
     card.setAttribute('data-logo-reference', String(Boolean(logo.reference)));
-    card.setAttribute('data-logo-compact', String(Boolean(logo.compact)));
     card.setAttribute('data-logo-transparent', String(Boolean(logo.transparent)));
     viewport.style.setProperty('--art-width', `${100 * logo.width / bounds.width}%`);
     viewport.style.setProperty('--art-height', `${100 * logo.height / bounds.height}%`);

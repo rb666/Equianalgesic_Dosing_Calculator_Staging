@@ -27,10 +27,6 @@
   width: min(100%, calc(var(--logo-max-height) * var(--logo-ratio)));
 }
 
-.brand-logo-card[data-logo-compact="true"] .logo-artwork {
-  width: min(100%, calc(var(--logo-max-height) * var(--logo-compact-scale) * var(--logo-ratio)));
-}
-
 .brand-logo-card > img {
   width: 100%;
   height: 100%;

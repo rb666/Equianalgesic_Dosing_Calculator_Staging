@@ -77,7 +77,7 @@ The staging refresh correction on 2026-09-14 separates saved tool selection from
 
 The owner subsequently selected the current local comparison for staging: eleven designs grouped by visual style and renumbered 01–11. Conversion grid remains the default under its new number #03. The switcher and gallery share the same catalog, including the six retained winner selections and each design's historical id. See [the numbering record](staging/logo-preview/numbering-map.md).
 
-This update replaces the earlier eight-design preview and excludes the removed arrow, monogram, and other retired concepts from the Pages allowlist. The borderless header uses measured wordmark heights and compact proportions for the stacked design; the original #01 keeps its source colors. The preview cache version is `20260914-logo-shortlist-3`. Public calculator assets, approved clinical data, the cumulative v2.1 note, and historical tags remain unchanged. GitHub Actions identifies the exact commit and verification/deployment results.
+This update replaces the earlier eight-design preview and excludes the removed arrow, monogram, and other retired concepts from the Pages allowlist. The borderless header uses measured wordmark heights, including per-line sizing for the stacked #11; the original #01 keeps its source colors. The preview cache version is `20260914-logo-shortlist-4`. Public calculator assets, approved clinical data, the cumulative v2.1 note, and historical tags remain unchanged. GitHub Actions identifies the exact commit and verification/deployment results.
 
 ## Preservation policy
 
